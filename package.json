@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "bin": {
-    "ginit": "./index.js"
+    "blox-live": "./index.js"
   },
   "dependencies": {
     "aws-sdk": "^2.696.0",
