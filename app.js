@@ -11,16 +11,16 @@ clear();
 
 console.log(
   chalk.yellow(
-    figlet.textSync('Blox Infra', { horizontalLayout: 'full' })
+    figlet.textSync('Blox Staking', { horizontalLayout: 'full' })
   )
 );
 
 const run = async () => {
   try {
     console.log(chalk.blue('+ Authentication'));
-    await aws.getAccessKey();
+    // await aws.getAccessKey();
     console.log(chalk.blue('+ Environment'));
-    await aws.setup();
+    // await aws.setup();
     console.log(chalk.blue('+ Server setup'));
     await server.setupEnv();
     console.log(chalk.green('+ Completed!'));
