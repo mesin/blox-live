@@ -265,22 +265,16 @@ info "Tarball URL: ${UNDERLINE}${BLUE}${URL}${NO_COLOR}"
 check_prefix "${PREFIX}"
 confirm "Install Node.js ${GREEN}${RESOLVED}${NO_COLOR} to ${BOLD}${GREEN}${PREFIX}${NO_COLOR}?"
 
-info "Installing Node.js, please wait…"
+info "Installing Node.js to ${PREFIX}, please wait…"
 
 if [ "${EXT}" = zip ]; then
   fetch "${URL}" \
-    | tar xzf${VERBOSE} - \
-      --exclude CHANGELOG.md \
-      --exclude LICENSE \
-      --exclude README.md \
+    | tar xvz - \
       --strip-components 1 \
       -C "${PREFIX}"
 else
   fetch "${URL}" \
-    | tar xzf${VERBOSE} - \
-      --exclude CHANGELOG.md \
-      --exclude LICENSE \
-      --exclude README.md \
+    | tar xvz - \
       --strip-components 1 \
       -C "${PREFIX}"
 fi
