@@ -18,10 +18,11 @@ console.log(
 const run = async () => {
   try {
     console.log(chalk.blue('+ Authentication'));
-    // await aws.getAccessKey();
+    await aws.getAccessKey();
     console.log(chalk.blue('+ Environment'));
-    // await aws.setup();
+    await aws.setup();
     console.log(chalk.blue('+ Server setup'));
+    await aws.waitForInstanceOk();
     await server.setupEnv();
     console.log(chalk.green('+ Completed!'));
   } catch(err) {
