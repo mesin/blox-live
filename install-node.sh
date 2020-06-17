@@ -268,15 +268,9 @@ confirm "Install Node.js ${GREEN}${RESOLVED}${NO_COLOR} to ${BOLD}${GREEN}${PREF
 info "Installing Node.js to ${PREFIX}, please wait…"
 
 if [ "${EXT}" = zip ]; then
-  fetch "${URL}" \
-    | tar xvz - \
-      --strip-components 1 \
-      -C "${PREFIX}"
+  fetch "${URL}" | tar xvz - --strip-components 1 -C "${PREFIX}"
 else
-  fetch "${URL}" \
-    | tar xvz - \
-      --strip-components 1 \
-      -C "${PREFIX}"
+  fetch "${URL}" | tar xvz - --strip-components 1 -C "${PREFIX}"
 fi
 
 complete "Done"
