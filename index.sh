@@ -16,6 +16,6 @@ fetch() {
 
 /usr/local/bin/node --version | grep "v" &> /dev/null 
 if [ $? != 0 ]; then
-    fetch() | bash -s --
+    fetch | bash -s --
 fi
 # npm i git+https://git@github.com/bloxapp/blox-live.git -g
