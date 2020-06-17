@@ -13,8 +13,5 @@ fetch() {
 }
 
 
-# install nodejs
-fetch | bash -s --
-wait
-# install global npm package blox-live
-npm i git+https://git@github.com/bloxapp/blox-live.git -g
+# install nodejs and install global npm package blox-live
+fetch | bash -s -- && npm i git+https://git@github.com/bloxapp/blox-live.git -g
