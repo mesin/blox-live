@@ -23,7 +23,7 @@ const run = async () => {
     console.log(chalk.blue('+ Authentication'));
     await aws.getAccessKey();
     const conf = new Configstore('blox-infra');
-    const instanceId = conf.get('credentials');
+    const instanceId = conf.get('instanceId');
     if (!instanceId) {
       console.log(chalk.blue('+ Environment'));
       await aws.setup();
