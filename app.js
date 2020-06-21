@@ -19,10 +19,14 @@ console.log(
 );
 
 const run = async () => {
+  const conf = new Configstore('blox-infra');
+  const { otp } = require('minimist')(process.argv.slice(2));
+  if (otp) {
+    conf.set('otp', otp);
+  }
   try {
     console.log(chalk.blue('+ Authentication'));
     await aws.getAccessKey();
-    const conf = new Configstore('blox-infra');
     const instanceId = conf.get('instanceId');
     if (!instanceId) {
       console.log(chalk.blue('+ Environment'));
@@ -36,7 +40,7 @@ const run = async () => {
     await server.setupEnv();
     const publicIp = conf.get('publicIp');
     console.log(chalk.green('+ Congratulations. Setup is done!'));
-    console.log(chalk.blue(`> Open in your browser http://${publicIp} and setup Vault.`));
+    console.log(chalk.blue(`> Open in your browser http://${publicIp}:8200 and setup Vault.`));
   } catch(err) {
     console.log(chalk.red(err.message));
   }
