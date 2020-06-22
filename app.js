@@ -8,6 +8,8 @@ const figlet = require('figlet');
 
 const aws = require('./lib/aws');
 const server = require('./lib/server');
+const inquirer = require('./lib/inquirer');
+
 const Spinner = CLI.Spinner;
 
 clear();
@@ -20,10 +22,8 @@ console.log(
 
 const run = async () => {
   const conf = new Configstore('blox-infra');
-  const { otp } = require('minimist')(process.argv.slice(2));
-  if (otp) {
-    conf.set('otp', otp);
-  }
+  const { otp } = await inquirer.askOtp();
+  conf.set('otp', otp);
   try {
     console.log(chalk.blue('+ Authentication'));
     await aws.getAccessKey();
