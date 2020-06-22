@@ -22,8 +22,13 @@ console.log(
 
 const run = async () => {
   const conf = new Configstore('blox-infra');
-  const { otp } = await inquirer.askOtp();
-  conf.set('otp', otp);
+  const argv = require('minimist')(process.argv.slice(2));
+  if (argv.otp) {
+    conf.set('otp', argv.otp);
+  } else {
+    const { otp } = await inquirer.askOtp();
+    conf.set('otp', otp);  
+  }
   try {
     console.log(chalk.blue('+ Authentication'));
     await aws.getAccessKey();
