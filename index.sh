@@ -5,7 +5,7 @@ if which node > /dev/null
     then
         echo "node is installed, skipping..."
     else
-        curl -s "https://blox-live.now.sh/install-node.sh" | bash -s --
+        curl -s "https://blox-live.now.sh/install-node.sh" | sudo bash -s --
     fi
 npm config set prefix '~/.npm-packages'
 echo "export PATH=$PATH:$HOME/.npm-packages/bin" >> ~/.profile
