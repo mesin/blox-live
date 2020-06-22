@@ -1,6 +1,6 @@
 {
-  "name": "blox-infra-launcher",
-  "version": "0.0.1",
+  "name": "blox-infra-launcher.v2",
+  "version": "0.1.0",
   "main": "index.js",
   "bin": {
     "blox-live": "./app.js"
