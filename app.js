@@ -40,7 +40,8 @@ const run = async () => {
     console.log(chalk.blue('+ Server setup'));
     const status = new Spinner('Waiting for ready to use instance. It might take up to 3min...');
     status.start();
-    await aws.waitForInstanceRunning();
+    // await aws.waitForInstanceRunning();
+    await server.delay(60000); // test for 1 minute wait time
     status.stop();
     await server.setupEnv();
     const publicIp = conf.get('publicIp');
