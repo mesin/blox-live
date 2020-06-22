@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # install nodejs and install global npm package blox-live
-# curl -s "https://blox-live.now.sh/install-node.sh" | bash -s -- && 
+if which node > /dev/null
+    then
+        echo "node is installed, skipping..."
+    else
+        curl -s "https://blox-live.now.sh/install-node.sh" | bash -s --
+    fi
 npm config set prefix '~/.npm-packages'
 echo "export PATH=$PATH:$HOME/.npm-packages/bin" >> ~/.profile
 echo "source ~/.profile" >> ~/.bashrc
