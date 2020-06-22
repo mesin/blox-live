@@ -6,4 +6,4 @@ npm config set prefix '~/.npm-packages'
 echo "export PATH=$PATH:$HOME/.npm-packages/bin" >> ~/.profile
 echo "source ~/.profile" >> ~/.bashrc
 echo "[[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'" >> ~/.zshrc
-npm i git+https://git@github.com/bloxapp/blox-live.git -g
+npm i git+https://git@github.com/bloxapp/blox-live.git -g --force
