@@ -41,5 +41,8 @@
   "bugs": {
     "url": "https://github.com/bloxapp/blox-live/issues"
   },
-  "homepage": "https://github.com/bloxapp/blox-live#readme"
+  "homepage": "https://github.com/bloxapp/blox-live#readme",
+  "pkg": {
+    "assets": "**/*.flf"
+  }
 }
