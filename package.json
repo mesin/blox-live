@@ -1,9 +1,9 @@
 {
-  "name": "blox-infra-launcher.v2",
+  "name": "@bloxapp/blox-live",
   "version": "0.1.0",
   "main": "index.js",
   "bin": {
-    "blox-live": "./app.js"
+    "blox-live": "app.js"
   },
   "dependencies": {
     "aws-sdk": "^2.696.0",
@@ -16,5 +16,30 @@
     "inquirer": "^7.2.0",
     "minimist": "^1.2.5",
     "node-ssh": "^10.0.2"
-  }
+  },
+  "description": "[<img src=\"https://www.bloxstaking.com/wp-content/uploads/2020/04/Blox-Staking_logo_blue.png\" width=\"100\">](https://www.bloxstaking.com/)",
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bloxapp/blox-live.git"
+  },
+  "keywords": [
+    "eth2",
+    "eth",
+    "staking",
+    "ethereum",
+    "2.0"
+  ],
+  "author": "Blox.io",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bloxapp/blox-live/issues"
+  },
+  "homepage": "https://github.com/bloxapp/blox-live#readme"
 }
