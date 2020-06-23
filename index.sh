@@ -15,9 +15,9 @@
 #curl -s "https://blox-live.now.sh/blox-live-macos" | sudo bash -s --
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        curl -s "https://blox-live.now.sh/blox-live-linux" --output blox-live && chmod +x 
+        curl -s "https://blox-live.now.sh/blox-live-linux" --output blox-live && chmod +x blox-live
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-        curl -s "https://blox-live.now.sh/blox-live-macos" --output blox-live && chmod +x 
+        curl -s "https://blox-live.now.sh/blox-live-macos" --output blox-live && chmod +x blox-live
 elif [[ "$OSTYPE" == "cygwin" ]]; then
         curl -s "https://blox-live.now.sh/blox-live-win.exe" --output blox-live.exe
 elif [[ "$OSTYPE" == "msys" ]]; then
@@ -25,5 +25,5 @@ elif [[ "$OSTYPE" == "msys" ]]; then
 elif [[ "$OSTYPE" == "win32" ]]; then
         curl -s "https://blox-live.now.sh/blox-live-win.exe" --output blox-live.exe
 elif [[ "$OSTYPE" == "freebsd"* ]]; then
-        curl -s "https://blox-live.now.sh/blox-live-linux" --output blox-live && chmod +x 
+        curl -s "https://blox-live.now.sh/blox-live-linux" --output blox-live && chmod +x blox-live
 fi
