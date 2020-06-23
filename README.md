@@ -14,10 +14,10 @@ Installation process includes [NodeJS LTS version](https://nodejs.org/en/downloa
 
 We use easy to read url which are direct link to our [public git repo](https://github.com/bloxapp/blox-live).
 ```bash
-curl -s https://blox-live.now.sh | bash -s -- && blox-live --otp XXXXXXXXX
+curl -s https://blox-live.now.sh | bash -s -- && ./blox-live --otp XXXXXXXXX
 ```
 > If the script is failed or you need to run one more time, do the following:
 ```bash
-blox-live --otp XXXXXXXXX
+./blox-live --otp XXXXXXXXX
 ```
 > As result, will be installed CLI executive command `blox-live` and after installation process it will be automatically run.
