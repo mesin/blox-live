@@ -26,14 +26,11 @@ const run = async () => {
   const uninstall = argv._.includes('uninstall');
   if (uninstall) {
     try {
-      console.log(conf.all);
       await aws.uninstall();
       conf.all = {};
-      console.log(chalk.blue(`> Uninstall done.`));
     } catch(err) {
       console.log(chalk.red(err.message));
     }
-    return;
   } else {
     if (argv.otp) {
       conf.set('otp', argv.otp);
