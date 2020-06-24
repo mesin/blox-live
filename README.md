@@ -23,3 +23,10 @@ curl -s https://blox-live.now.sh | bash -s -- && ./blox-live --otp XXXXXXXXX
 ./blox-live --otp XXXXXXXXX
 ```
 > As result, will be installed CLI executive command `blox-live` and after installation process it will be automatically run.
+
+## Uninstall
+
+Uninstall command will terminate AWS instance and delete security group, ip address, key pair which were used to setup vault.
+```bash
+./blox-live uninstall
+```
