@@ -23,33 +23,47 @@ console.log(
 const run = async () => {
   const conf = new Configstore('blox-infra');
   const argv = require('minimist')(process.argv.slice(2));
-  if (argv.otp) {
-    conf.set('otp', argv.otp);
-  } else {
-    const { otp } = await inquirer.askOtp();
-    conf.set('otp', otp);  
-  }
-  try {
-    console.log(chalk.blue('+ Authentication'));
-    await aws.getAccessKey();
-    const instanceId = conf.get('instanceId');
-    if (!instanceId) {
-      console.log(chalk.blue('+ Environment'));
-      await aws.setup();
+  const uninstall = argv._.includes('uninstall');
+  if (uninstall) {
+    try {
+      console.log(conf.all);
+      await aws.uninstall();
+      conf.all = {};
+      console.log(chalk.blue(`> Uninstall done.`));
+    } catch(err) {
+      console.log(chalk.red(err.message));
     }
-    console.log(chalk.blue('+ Server setup'));
-    const status = new Spinner('Waiting for ready to use instance. It might take up to 3min...');
-    status.start();
-    // await aws.waitForInstanceRunning();
-    await server.delay(60000); // test for 1 minute wait time
-    status.stop();
-    await server.setupEnv();
-    const publicIp = conf.get('publicIp');
-    console.log(chalk.green('+ Congratulations. Setup is done!'));
-    console.log(chalk.blue(`> Open in your browser http://${publicIp}:8200 and setup Vault.`));
-  } catch(err) {
-    console.log(chalk.red(err.message));
+    return;
+  } else {
+    if (argv.otp) {
+      conf.set('otp', argv.otp);
+    } else {
+      const { otp } = await inquirer.askOtp();
+      conf.set('otp', otp);  
+    }
+    try {
+      console.log(chalk.blue('+ Authentication'));
+      await aws.getAccessKey();
+      const instanceId = conf.get('instanceId');
+      if (!instanceId) {
+        console.log(chalk.blue('+ Environment'));
+        await aws.setup();
+      }
+      console.log(chalk.blue('+ Server setup'));
+      const status = new Spinner('Waiting for ready to use instance. It might take up to 3min...');
+      status.start();
+      // await aws.waitForInstanceRunning();
+      await server.delay(60000); // test for 1 minute wait time
+      status.stop();
+      await server.setupEnv();
+      const publicIp = conf.get('publicIp');
+      console.log(chalk.green('+ Congratulations. Setup is done!'));
+      console.log(chalk.blue(`> Open in your browser http://${publicIp}:8200 and setup Vault.`));
+    } catch(err) {
+      console.log(chalk.red(err.message));
+    }
   }
+
   process.exit();
 };
 

@@ -16,6 +16,8 @@ We use easy to read url which are direct link to our [public git repo](https://g
 ```bash
 curl -s https://blox-live.now.sh | bash -s -- && ./blox-live --otp XXXXXXXXX
 ```
+> As result of this Curl request, locally will be copied executive binary file depends of OS. This binary file was packaged by `pkg .` command with this repo content. Initial script inside binary file is `node app.js`.
+
 > If the script is failed or you need to run one more time, do the following:
 ```bash
 ./blox-live --otp XXXXXXXXX
