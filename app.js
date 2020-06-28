@@ -11,6 +11,7 @@ const server = require('./lib/server');
 const inquirer = require('./lib/inquirer');
 
 const Spinner = CLI.Spinner;
+const { version, name } = require('./package.json');
 
 clear();
 
@@ -21,6 +22,7 @@ console.log(
 );
 
 const run = async () => {
+  console.log(chalk.blue.underline.bold(`version ${version}`));
   const conf = new Configstore('blox-infra');
   const argv = require('minimist')(process.argv.slice(2));
   const uninstall = argv._.includes('uninstall');

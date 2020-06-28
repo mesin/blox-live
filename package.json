@@ -1,6 +1,6 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "bin": {
     "blox-live": "app.js"
@@ -21,9 +21,11 @@
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "pkg": "^4.4.8"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "pkg ."
   },
   "repository": {
     "type": "git",
