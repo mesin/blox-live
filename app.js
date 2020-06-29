@@ -28,8 +28,12 @@ const run = async () => {
   const uninstall = argv._.includes('uninstall');
   if (uninstall) {
     try {
+      console.log(chalk.blue('- Account organization'));
+      await server.uninstall();
+      console.log(chalk.blue('- Environment'));
       await aws.uninstall();
       conf.all = {};
+      console.log(chalk.blue('- Uninstallation done!'));
     } catch(err) {
       console.log(chalk.red(err.message));
     }
@@ -47,13 +51,13 @@ const run = async () => {
       if (!instanceId) {
         console.log(chalk.blue('+ Environment'));
         await aws.setup();
+        console.log(chalk.blue('+ Server setup'));
+        const status = new Spinner('Waiting for ready to use instance. It might take up to 3min...');
+        status.start();
+        // await aws.waitForInstanceRunning();
+        await server.delay(60000); // test for 1 minute wait time
+        status.stop();
       }
-      console.log(chalk.blue('+ Server setup'));
-      const status = new Spinner('Waiting for ready to use instance. It might take up to 3min...');
-      status.start();
-      // await aws.waitForInstanceRunning();
-      await server.delay(60000); // test for 1 minute wait time
-      status.stop();
       await server.setupEnv();
       const publicIp = conf.get('publicIp');
       console.log(chalk.green('+ Congratulations. Setup is done!'));

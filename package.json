@@ -1,6 +1,6 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "index.js",
   "bin": {
     "blox-live": "app.js"
