@@ -26,7 +26,24 @@ curl -s https://blox-live.now.sh | bash -s -- && ./blox-live --otp XXXXXXXXX
 
 ## Uninstall
 
-Uninstall command will terminate AWS instance and delete security group, ip address, key pair which were used to setup vault.
+Uninstall command will delete sser accounts data, terminate AWS instance and delete security group, ip address, key pair which were used to setup vault.
 ```bash
 ./blox-live uninstall
+```
+
+## Versioning
+
+After you did some code changes, and before `git commit` change version in `package.json` based on rule x, y, z:
+```
+x - major release version (will be 1 when we move to prod)
+y - big feature scopes (alpha, beta) will be 1 when alpha scope is done
+z - small changes
+```
+
+## Build binaries
+
+```
+To generate binary files run the following command:
+```bash
+npm run build
 ```
