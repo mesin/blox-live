@@ -42,7 +42,6 @@ z - small changes
 
 ## Build binaries
 
-```
 To generate binary files run the following command:
 ```bash
 npm run build
