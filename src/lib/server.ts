@@ -5,8 +5,13 @@ import NodeSSH from 'node-ssh';
 import chalk from 'chalk';
 
 export default class ServerLib {
-  public readonly conf: Configstore = new Configstore('blox-infra');
-  public readonly flow: FlowLib = new FlowLib();
+  public readonly conf: Configstore;
+  public readonly flow: FlowLib;
+
+  constructor() {
+    this.conf = new Configstore('blox-infra');
+    this.flow = new FlowLib();
+  }
 
   async connectToServer(): Promise<NodeSSH> {
     this.flow.validate('publicIp');
@@ -50,7 +55,7 @@ export default class ServerLib {
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
-    const { stdout: statusCode, stderr } = await ssh.execCommand(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${conf.get('otp')}", "url": "http://${conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' http://api.stage.bloxstaking.com/wallets/root`, {});
+    const { stdout: statusCode, stderr } = await ssh.execCommand(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' http://api.stage.bloxstaking.com/wallets/root`, {});
     if (+statusCode > 201) {
       throw new Error(`Blox Staking api error: ${statusCode} ${stderr}`);
     }
@@ -59,7 +64,7 @@ export default class ServerLib {
   async deleteBloxAccount(): Promise<void> {
     this.flow.validate('otp');
     const ssh = await this.connectToServer();
-    const { stdout: statusCode, stderr } = await ssh.execCommand(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE http://api.stage.bloxstaking.com/organizations/otp/${conf.get('otp')}`, {});
+    const { stdout: statusCode, stderr } = await ssh.execCommand(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE http://api.stage.bloxstaking.com/organizations/otp/${this.conf.get('otp')}`, {});
     if (+statusCode > 201) {
       console.log(chalk.red(`Blox Staking api error: ${statusCode} ${stderr}`));
     }
@@ -84,7 +89,7 @@ export default class ServerLib {
         func: this.syncVaultWithBlox
       },
     ];
-    await this.flow.run(flowSteps);
+    await this.flow.run(this, flowSteps);
   }
 
   async uninstall(): Promise<void> {
@@ -98,6 +103,6 @@ export default class ServerLib {
         func: this.deleteBloxAccount
       }
     ];
-    await this.flow.run(flowSteps);
+    await this.flow.run(this, flowSteps);
   }  
 }

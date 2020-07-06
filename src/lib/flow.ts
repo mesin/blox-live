@@ -14,13 +14,13 @@ export default class FlowLib {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async run(flowSteps: Array<any>): Promise<void> {
+  async run(instance: any, flowSteps: Array<any>): Promise<void> {
     const steps = new Steps(flowSteps.filter(st => st.name).length);
     for (const step of flowSteps) {
       let stepInfo;
       if (step.name) stepInfo = steps.advance(step.name, 'hammer_and_wrench', '').start();
       try {
-        await step.func();
+        await step.func.bind(instance)();
         step.name && stepInfo.success(step.name, 'white_check_mark');
       } catch (error) {
         step.name && stepInfo.error(step.name);

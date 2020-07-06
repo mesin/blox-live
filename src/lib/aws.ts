@@ -5,9 +5,9 @@ import FlowLib from './flow';
 
 export default class AWSLib {
   public readonly conf: Configstore = new Configstore('blox-infra');
-  public readonly inquirer: InquirerLib = new InquirerLib();
-  public readonly flow: FlowLib = new FlowLib();
-  public readonly ec2: AWS.EC2;
+  public readonly inquirer: InquirerLib;
+  public readonly flow: FlowLib;
+  public ec2!: AWS.EC2;
   public readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   public readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
   public readonly defaultAwsOptions = {
@@ -16,8 +16,8 @@ export default class AWSLib {
   };
   
   constructor() {
-   this.flow.validate('credentials');
-   this.ec2 = new AWS.EC2({ ...this.defaultAwsOptions, credentials: this.conf.get('credentials') });
+    this.inquirer = new InquirerLib();
+    this.flow = new FlowLib();
   }
 
   async initAwsCredentials(): Promise<void> {
@@ -27,6 +27,7 @@ export default class AWSLib {
       const { accessKeyId, secretAccessKey } = await this.inquirer.askAwsCredentials();
       this.conf.set('credentials', { accessKeyId, secretAccessKey });
     }
+    this.ec2 = new AWS.EC2({ ...this.defaultAwsOptions, credentials: this.conf.get('credentials') });
   }
   
   async validateAWSPermissions() {
@@ -65,7 +66,8 @@ export default class AWSLib {
     this.flow.validate('otp');
     if (this.conf.get('securityGroupId')) return;
 
-    const vpc = (await this.ec2.describeVpcs().promise()).Vpcs[0].VpcId;
+    const vpcList = await this.ec2.describeVpcs().promise();
+    const vpc = vpcList?.Vpcs![0].VpcId;
     const securityData = await this.ec2.createSecurityGroup({
       Description: `${this.securityGroupName}-${this.conf.get('otp')}`,
       GroupName: `${this.securityGroupName}-${this.conf.get('otp')}`,
@@ -106,15 +108,16 @@ export default class AWSLib {
       MinCount: 1,
       MaxCount: 1
     }).promise();
-    const instanceId = data.Instances[0].InstanceId;
+    const instanceId = data.Instances![0].InstanceId;
     this.conf.set('instanceId', instanceId);
 
     await this.flow.delay(60000); // need to improve
 
-    await this.ec2.createTags({
-      Resources: [instanceId],
+    const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
+      Resources: [instanceId!],
       Tags: [{ Key: 'Name', Value: 'Blox-Infra-Server' }]
-    }).promise();
+    };
+    await this.ec2.createTags(tagsOptions).promise();
 
     await this.ec2.associateAddress({
       AllocationId: this.conf.get('addressId'),
@@ -162,16 +165,19 @@ export default class AWSLib {
         func: this.createInstance
       },
     ];
-    await this.flow.run(flowSteps);
+    await this.flow.run(this, flowSteps);
   }
 
   async uninstall(): Promise<void> {
     const flowSteps = [
       {
+        func: this.initAwsCredentials
+      },
+      {
         name: 'Delete all EC2 items',
         func: this.uninstallItems
       }
     ];
-    await this.flow.run(flowSteps);
+    await this.flow.run(this, flowSteps);
   }
 }
