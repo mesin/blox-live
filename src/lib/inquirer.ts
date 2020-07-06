@@ -1,13 +1,13 @@
-const inquirer = require('inquirer');
+import inquirer from 'inquirer';
 
-module.exports = {
-  askOtp: () => {
+export default class InquirerLib {
+  askOtp(): Promise<any> {
     const questions = [
       {
         name: 'otp',
         type: 'input',
         message: 'Enter OTP from Blox Stacking signup wizard:',
-        validate: function( value ) {
+        validate: (value: string) => {
           if (value.length) {
             return true;
           } else {
@@ -17,15 +17,15 @@ module.exports = {
       }
     ];
     return inquirer.prompt(questions);
-  },
+  }
 
-  askAwsCredentials: () => {
+  askAwsCredentials(): Promise<any> {
     const questions = [
       {
         name: 'accessKeyId',
         type: 'input',
         message: 'Enter AWS access key id:',
-        validate: function( value ) {
+        validate: (value: string) => {
           if (value.length) {
             return true;
           } else {
@@ -37,7 +37,7 @@ module.exports = {
         name: 'secretAccessKey',
         type: 'password',
         message: 'Enter AWS access secret key:',
-        validate: function(value) {
+        validate: (value: string) => {
           if (value.length) {
             return true;
           } else {

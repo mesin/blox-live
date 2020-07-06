@@ -1,27 +1,29 @@
 #!/usr/bin/env node
-const Configstore = require('configstore');
+import Configstore from 'configstore';
+import chalk from 'chalk';
 
-const chalk = require('chalk');
+import AWSLib from './lib/aws';
+import ServerLib from './lib/server';
+import InquirerLib from './lib/inquirer';
+
 const clear = require('clear');
 const figlet = require('figlet');
 
-const aws = require('./lib/aws');
-const server = require('./lib/server');
-const inquirer = require('./lib/inquirer');
-
-const { version } = require('./package.json');
-
-clear();
-
-console.log(
-  chalk.yellow(
-    figlet.textSync('Blox Staking', { horizontalLayout: 'full' })
-  )
-);
-
 const run = async () => {
-  console.log(chalk.blue.underline.bold(`version ${version}`));
+  clear();
+  console.log(
+    chalk.yellow(
+      figlet.textSync('Blox Staking', { horizontalLayout: 'full' })
+    )
+  );
+  
   const conf = new Configstore('blox-infra');
+  const aws = new AWSLib();
+  const server = new ServerLib();
+  const inquirer = new InquirerLib();
+  const { version } = require('../package.json');
+
+  console.log(chalk.blue.underline.bold(`version ${version}`));
   const argv = require('minimist')(process.argv.slice(2));
   const uninstall = argv._.includes('uninstall');
   if (uninstall) {
