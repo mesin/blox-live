@@ -1,6 +1,6 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "main": "build/index.js",
   "bin": {
     "blox-live": "build/index.js"
@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start:dev": "nodemon",
-    "build": "rimraf ./build && tsc",
+    "build": "rimraf ./build && tsc && pkg .",
     "start": "npm run build && node build/index.js"
   },
   "repository": {
