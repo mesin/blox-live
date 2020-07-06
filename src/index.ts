@@ -3,7 +3,7 @@ import Configstore from 'configstore';
 import chalk from 'chalk';
 
 import AWSLib from './lib/aws';
-import ServerLib from './lib/server';
+import KeyVaultLib from './lib/key-vault';
 import InquirerLib from './lib/inquirer';
 
 const clear = require('clear');
@@ -18,8 +18,9 @@ const run = async () => {
   );
   
   const conf = new Configstore('blox-infra');
+
   const aws = new AWSLib();
-  const server = new ServerLib();
+  const keyVault = new KeyVaultLib();
   const inquirer = new InquirerLib();
   const { version } = require('../package.json');
 
@@ -29,11 +30,14 @@ const run = async () => {
   if (uninstall) {
     try {
       console.log(chalk.blue('- Account organization'));
-      await server.uninstall();
+      !conf.get('uninstalled.keyVault') && await keyVault.uninstall();
+
       console.log(chalk.blue('- Environment'));
-      await aws.uninstall();
+      !conf.get('uninstalled.aws') && await aws.uninstall();
+
       console.log(chalk.blue('- Clean local storage'));
       conf.all = {};
+
       console.log(chalk.blue('- Uninstallation done!'));
     } catch(err) {
       console.log(chalk.red(err.message));
@@ -47,9 +51,11 @@ const run = async () => {
     }
     try {
       console.log(chalk.blue('+ Setup server'));
-      await aws.install();
-      console.log(chalk.blue('+ Install vault plugin'));
-      await server.install();
+      !conf.get('installed.aws') && await aws.install();
+
+      console.log(chalk.blue('+ Install Key Vault'));
+      !conf.get('installed.keyVault') && await keyVault.install();
+
       console.log(chalk.green('+ Congratulations. Setup is done!'));
       console.log(chalk.blue(`> Open in your browser http://${conf.get('publicIp')}:8200 and setup Vault.`));
     } catch(err) {

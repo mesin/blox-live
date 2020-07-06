@@ -2,7 +2,11 @@ import Configstore from 'configstore';
 const Steps = require('cli-step');
 
 export default class FlowLib {
-  public conf: Configstore = new Configstore('blox-infra');
+  public conf: Configstore;
+
+  constructor() {
+    this.conf = new Configstore('blox-infra');
+  }
 
   validate(itemName: string): void {
     if (!this.conf.get(itemName)) {
@@ -14,11 +18,13 @@ export default class FlowLib {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async run(instance: any, flowSteps: Array<any>): Promise<void> {
+  async run(instance: any, flowSteps: Array<any>, scopeKey: string): Promise<void> {
     const steps = new Steps(flowSteps.filter(st => st.name).length);
-    for (const step of flowSteps) {
-      let stepInfo;
-      if (step.name) stepInfo = steps.advance(step.name, 'hammer_and_wrench', '').start();
+    const firstStep = this.conf.get(`${scopeKey}.currentStep`) || 0;
+    for (let i = firstStep; i < flowSteps.length; i++) {
+      this.conf.set(`${scopeKey}.currentStep`, i);
+      const step = flowSteps[i];
+      let stepInfo = step.name && steps.advance(step.name, 'hammer_and_wrench', '').start();
       try {
         await step.func.bind(instance)();
         step.name && stepInfo.success(step.name, 'white_check_mark');

@@ -4,10 +4,12 @@ import InquirerLib from './inquirer';
 import FlowLib from './flow';
 
 export default class AWSLib {
-  public readonly conf: Configstore = new Configstore('blox-infra');
+  public ec2!: AWS.EC2;
+
+  public readonly conf: Configstore;
   public readonly inquirer: InquirerLib;
   public readonly flow: FlowLib;
-  public ec2!: AWS.EC2;
+
   public readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   public readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
   public readonly defaultAwsOptions = {
@@ -16,6 +18,7 @@ export default class AWSLib {
   };
   
   constructor() {
+    this.conf = new Configstore('blox-infra');
     this.inquirer = new InquirerLib();
     this.flow = new FlowLib();
   }
@@ -27,7 +30,10 @@ export default class AWSLib {
       const { accessKeyId, secretAccessKey } = await this.inquirer.askAwsCredentials();
       this.conf.set('credentials', { accessKeyId, secretAccessKey });
     }
-    this.ec2 = new AWS.EC2({ ...this.defaultAwsOptions, credentials: this.conf.get('credentials') });
+    this.ec2 = new AWS.EC2({
+      ...this.defaultAwsOptions,
+      credentials: this.conf.get('credentials')
+    });
   }
   
   async validateAWSPermissions() {
@@ -140,6 +146,7 @@ export default class AWSLib {
   }
 
   async install(): Promise<void> {
+    const scopeKey = 'install.aws';
     const flowSteps = [
       {
         func: this.initAwsCredentials
@@ -164,11 +171,17 @@ export default class AWSLib {
         name: 'Setup VPC Linux Instance',
         func: this.createInstance
       },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
+      }
     ];
-    await this.flow.run(this, flowSteps);
+    await this.flow.run(this, flowSteps, scopeKey);
   }
 
   async uninstall(): Promise<void> {
+    const scopeKey = 'uninstall.aws';
     const flowSteps = [
       {
         func: this.initAwsCredentials
@@ -176,8 +189,13 @@ export default class AWSLib {
       {
         name: 'Delete all EC2 items',
         func: this.uninstallItems
+      },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
       }
     ];
-    await this.flow.run(this, flowSteps);
+    await this.flow.run(this, flowSteps, scopeKey);
   }
 }

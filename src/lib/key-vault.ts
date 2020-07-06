@@ -4,7 +4,7 @@ import FlowLib from './flow';
 import NodeSSH from 'node-ssh';
 import chalk from 'chalk';
 
-export default class ServerLib {
+export default class KeyVaultLib {
   public readonly conf: Configstore;
   public readonly flow: FlowLib;
 
@@ -71,6 +71,7 @@ export default class ServerLib {
   }
 
   async install(): Promise<void> {
+    const scopeKey = 'install.keyVault';
     const flowSteps = [
       {
         name: 'Connect to the server by ssh',
@@ -88,11 +89,17 @@ export default class ServerLib {
         name: 'Sync blox staking with vault plugin container',
         func: this.syncVaultWithBlox
       },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
+      }
     ];
-    await this.flow.run(this, flowSteps);
+    await this.flow.run(this, flowSteps, scopeKey);
   }
 
   async uninstall(): Promise<void> {
+    const scopeKey = 'uninstall.keyVault';
     const flowSteps = [
       {
         name: 'Connect to the server by ssh',
@@ -101,8 +108,13 @@ export default class ServerLib {
       {
         name: 'Delete blox staking account',
         func: this.deleteBloxAccount
+      },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
       }
     ];
-    await this.flow.run(this, flowSteps);
+    await this.flow.run(this, flowSteps, scopeKey);
   }  
 }
