@@ -45,7 +45,7 @@ export default class KeyVaultLib {
     if (runAlready) return;
 
     await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/v0.0.10/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
-    await this.flow.delay(30000);
+    // await this.flow.delay(30000);
   }
 
   async runKeyVaultScripts(): Promise<void> {
