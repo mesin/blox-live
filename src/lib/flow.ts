@@ -19,8 +19,10 @@ export default class FlowLib {
   }
 
   async run(instance: any, flowSteps: Array<any>, scopeKey: string): Promise<void> {
-    const steps = new Steps(flowSteps.filter(st => st.name).length);
     const firstStep = this.conf.get(`${scopeKey}.currentStep`) || 0;
+    const totalSteps = flowSteps.filter((st, index) => st.name && index >= firstStep).length;
+    if (!totalSteps) return;
+    const steps = new Steps(totalSteps);
     for (let i = firstStep; i < flowSteps.length; i++) {
       this.conf.set(`${scopeKey}.currentStep`, i);
       const step = flowSteps[i];

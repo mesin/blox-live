@@ -43,12 +43,15 @@ const run = async () => {
       console.log(chalk.red(err.message));
     }
   } else {
-    if (argv.otp) {
-      conf.set('otp', argv.otp);
-    } else {
-      const { otp } = await inquirer.askOtp();
-      conf.set('otp', otp);  
+    if (!conf.get('otp')) {
+      if (argv.otp) {
+        conf.set('otp', argv.otp);
+      } else {
+        const { otp } = await inquirer.askOtp();
+        conf.set('otp', otp);  
+      }  
     }
+
     try {
       console.log(chalk.blue('+ Setup server'));
       !conf.get('installed.aws') && await aws.install();

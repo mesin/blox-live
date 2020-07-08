@@ -44,8 +44,20 @@ export default class KeyVaultLib {
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
 
-    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/v0.0.10/docker-compose.yml" -o docker-compose.yml && docker-compose up -d vault-image`, {});
+    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/v0.0.10/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
     await this.flow.delay(30000);
+  }
+
+  async runKeyVaultScripts(): Promise<void> {
+    const ssh = await this.connectToServer();
+    const { stdout: containerId } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
+    if (!containerId) {
+      throw new Error('Key Vault docker container not found');
+    }
+    const { stderr } = await ssh.execCommand(`docker exec -t ${containerId} sh -c "/bin/sh /vault/config/vault-init.sh; /bin/sh /vault/config/vault-unseal.sh; /bin/sh /vault/config/vault-plugin.sh"`, {});
+    if (stderr) {
+      throw new Error(`Key Vault entrypoint scripts are failed: ${stderr}`)
+    }
   }
 
   async syncVaultWithBlox(): Promise<void> {
@@ -84,6 +96,10 @@ export default class KeyVaultLib {
       {
         name: 'Run vault plugin docker container',
         func: this.runDockerValut
+      },
+      {
+        name: 'Run key vault setup scripts',
+        func: this.runKeyVaultScripts
       },
       {
         name: 'Sync blox staking with vault plugin container',
