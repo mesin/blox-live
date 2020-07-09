@@ -145,6 +145,11 @@ export default class AWSLib {
     await this.ec2.deleteKeyPair({ KeyPairId: this.conf.get('keyPair').pairId }).promise();
   }
 
+  async rebootInstance() {
+    this.flow.validate('instanceId');
+    await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')], DryRun: true }).promise();
+  }
+
   async install(): Promise<void> {
     const scopeKey = 'install.aws';
     const flowSteps = [
@@ -197,5 +202,18 @@ export default class AWSLib {
       }
     ];
     await this.flow.run(this, flowSteps, scopeKey);
+  }
+
+  async reboot(): Promise<void> {
+    const flowSteps = [
+      {
+        func: this.initAwsCredentials
+      },
+      {
+        name: 'Delete all EC2 items',
+        func: this.rebootInstance
+      }
+    ];
+    await this.flow.run(this, flowSteps);
   }
 }
