@@ -146,7 +146,7 @@ export default class AWSLib {
     this.flow.validate('keyPair');
 
     await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }, () => {}).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }).promise();
     await this.ec2.deleteSecurityGroup({ GroupId: this.conf.get('securityGroupId'), DryRun: false }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
     await this.ec2.deleteKeyPair({ KeyPairId: this.conf.get('keyPair').pairId }).promise();
@@ -156,7 +156,7 @@ export default class AWSLib {
     this.flow.validate('instanceId');
     this.flow.validate('addressId');
     await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }, () => {}).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
   }
 
@@ -234,6 +234,7 @@ export default class AWSLib {
 
 
   async reinstall(): Promise<void> {
+    const scopeKey = 'reinstall.aws';
     const flowSteps = [
       {
         func: this.initAwsCredentials
@@ -245,13 +246,18 @@ export default class AWSLib {
       {
         name: 'Setup VPC Linux Instance',
         func: this.createInstance
+      },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
       }
     ];
     await this.flow.run(this, flowSteps);
   }
 
   async uninstallOldServer(): Promise<void> {
-    const scopeKey = 'uninstall.aws';
+    const scopeKey = 'reinstall.awsOld';
     const flowSteps = [
       {
         func: this.initAwsCredentials

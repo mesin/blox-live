@@ -74,7 +74,6 @@ export default class KeyVaultLib {
   }
 
   async resyncNewVaultWithBlox(): Promise<void> {
-    return;
     this.flow.validate('otp');
     this.flow.validate('publicIp');
     const ssh = await this.connectToServer();

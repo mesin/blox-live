@@ -44,16 +44,17 @@ const run = async () => {
       setClientStorageParams(storeName, { otp: conf.get('otp') });
       const aws = new AWSLib(storeName);
       const keyVault = new KeyVaultLib(storeName);
+      const confClient = new Configstore(storeName);
     
       try {
         console.log(chalk.blue('+ Setup server'));
-        !conf.get('installed.aws') && await aws.install();
+        !conf.get('install.aws.done') && await aws.install();
   
         console.log(chalk.blue('+ Install Key Vault'));
-        !conf.get('installed.keyVault') && await keyVault.install();
+        !conf.get('install.keyVault.done') && await keyVault.install();
   
         console.log(chalk.green('+ Congratulations. Setup is done!'));
-        console.log(chalk.blue(`> Open in your browser http://${conf.get('publicIp')}:8200 and setup Vault.`));
+        console.log(chalk.blue(`> Open in your browser http://${confClient.get('publicIp')}:8200 and setup Vault.`));
       } catch(err) {
         console.log(chalk.red(err.message));
       }
@@ -66,17 +67,19 @@ const run = async () => {
     .action(async() => {
       if (!conf.get('otp')) throw new Error('installation results was not found');
       const storeName = `blox-${conf.get('otp')}`;
+      const confClient = new Configstore(storeName);
       const aws = new AWSLib(storeName);
       const keyVault = new KeyVaultLib(storeName);
       try {
         console.log(chalk.blue('- Account organization'));
-        !conf.get('uninstalled.keyVault') && await keyVault.uninstall();
+        !conf.get('uninstall.keyVault.done') && await keyVault.uninstall();
   
         console.log(chalk.blue('- Environment'));
-        !conf.get('uninstalled.aws') && await aws.uninstall();
+        !conf.get('uninstall.aws.done') && await aws.uninstall();
   
         console.log(chalk.blue('- Clean local storage'));
-        conf.all = {};
+        conf.clear();
+        confClient.clear();
   
         console.log(chalk.blue('- Uninstallation done!'));
       } catch(err) {
@@ -119,17 +122,17 @@ const run = async () => {
       const aws = new AWSLib(tmpStoreName);
       const keyVault = new KeyVaultLib(tmpStoreName);
       const awsOld = new AWSLib(currentStoreName);
+      const confClientTmp = new Configstore(tmpStoreName);
       try {
         console.log(chalk.blue('+ Setup new server'));
-        await aws.reinstall();
+        !confClientTmp.get('reinstall.aws.done') && await aws.reinstall();
 
         console.log(chalk.blue('+ Install new key vault'));
-        await keyVault.reinstall();
+        !confClientTmp.get('reinstall.keyVault.done') && await keyVault.reinstall();
 
         console.log(chalk.blue('- Truncate old server'));
-        !conf.get('uninstalled.aws') && await awsOld.uninstallOldServer();
+        !confClient.get('reinstall.awsOld.done') && await awsOld.uninstallOldServer();
   
-        const confClientTmp = new Configstore(tmpStoreName);
         setClientStorageParams(currentStoreName, {
           addressId: confClientTmp.get('addressId'),
           publicIp: confClientTmp.get('publicIp'),
@@ -138,9 +141,10 @@ const run = async () => {
         });
 
         console.log(chalk.blue('- Clean tmp local storage'));
-        confClientTmp.all = {};
+        confClientTmp.clear();
   
-        console.log(chalk.blue('- Reinstallation done!'));
+        console.log(chalk.blue('+ Reinstallation done!'));
+        console.log(chalk.blue(`> New key vault server url: http://${confClient.get('publicIp')}:8200.`));
       } catch(err) {
         console.log(chalk.red(err.message));
       }
