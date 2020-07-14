@@ -1,9 +1,9 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.3.0",
-  "main": "index.js",
+  "version": "0.0.17",
+  "main": "build/index.js",
   "bin": {
-    "blox-live": "app.js"
+    "blox-live": "build/index.js"
   },
   "dependencies": {
     "aws-sdk": "^2.696.0",
@@ -11,6 +11,7 @@
     "clear": "^0.1.0",
     "cli-step": "^1.0.2",
     "clui": "^0.3.6",
+    "commander": "^5.1.0",
     "configstore": "^5.0.1",
     "figlet": "^1.4.0",
     "inquirer": "^7.2.0",
@@ -18,14 +19,21 @@
     "node-ssh": "^10.0.2"
   },
   "description": "[<img src=\"https://www.bloxstaking.com/wp-content/uploads/2020/04/Blox-Staking_logo_blue.png\" width=\"100\">](https://www.bloxstaking.com/)",
-  "directories": {
-    "lib": "lib"
-  },
   "devDependencies": {
-    "pkg": "^4.4.8"
+    "@types/configstore": "^4.0.0",
+    "@types/inquirer": "^6.5.0",
+    "@types/node": "^14.0.14",
+    "eslint-plugin-shopify": "^35.1.0",
+    "nodemon": "^2.0.4",
+    "pkg": "^4.4.8",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
   },
   "scripts": {
-    "build": "pkg ."
+    "start:dev": "nodemon",
+    "build": "rimraf ./build && tsc && pkg .",
+    "start": "npm run build && node build/index.js"
   },
   "repository": {
     "type": "git",
