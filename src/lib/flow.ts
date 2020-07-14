@@ -4,8 +4,8 @@ const Steps = require('cli-step');
 export default class FlowLib {
   public conf: Configstore;
 
-  constructor() {
-    this.conf = new Configstore('blox-infra');
+  constructor(storeName: string) {
+    this.conf = new Configstore(storeName);
   }
 
   validate(itemName: string): void {

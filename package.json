@@ -1,6 +1,6 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "main": "build/index.js",
   "bin": {
     "blox-live": "build/index.js"

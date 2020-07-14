@@ -17,10 +17,21 @@ export default class AWSLib {
     region: 'us-west-1',
   };
   
-  constructor() {
-    this.conf = new Configstore('blox-infra');
+  constructor(storeName: string) {
+    this.conf = new Configstore(storeName);
     this.inquirer = new InquirerLib();
-    this.flow = new FlowLib();
+    this.flow = new FlowLib(storeName);
+
+    if (!this.ec2 && this.conf.get('credentials')) {
+      this.setAWSCredentials();
+    }
+  }
+
+  async setAWSCredentials(): Promise<void> {
+    this.ec2 = new AWS.EC2({
+      ...this.defaultAwsOptions,
+      credentials: this.conf.get('credentials')
+    });
   }
 
   async initAwsCredentials(): Promise<void> {
@@ -30,10 +41,7 @@ export default class AWSLib {
       const { accessKeyId, secretAccessKey } = await this.inquirer.askAwsCredentials();
       this.conf.set('credentials', { accessKeyId, secretAccessKey });
     }
-    this.ec2 = new AWS.EC2({
-      ...this.defaultAwsOptions,
-      credentials: this.conf.get('credentials')
-    });
+    this.setAWSCredentials();
   }
   
   async validateAWSPermissions() {
@@ -135,7 +143,6 @@ export default class AWSLib {
     this.flow.validate('instanceId');
     this.flow.validate('securityGroupId');
     this.flow.validate('addressId');
-    this.flow.validate('publicIp');
     this.flow.validate('keyPair');
 
     await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
@@ -143,6 +150,14 @@ export default class AWSLib {
     await this.ec2.deleteSecurityGroup({ GroupId: this.conf.get('securityGroupId'), DryRun: false }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
     await this.ec2.deleteKeyPair({ KeyPairId: this.conf.get('keyPair').pairId }).promise();
+  }
+
+  async truncateServer() {
+    this.flow.validate('instanceId');
+    this.flow.validate('addressId');
+    await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }, () => {}).promise();
+    await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
   }
 
   async rebootInstance() {
@@ -215,5 +230,42 @@ export default class AWSLib {
       }
     ];
     await this.flow.run(this, flowSteps);
+  }
+
+
+  async reinstall(): Promise<void> {
+    const flowSteps = [
+      {
+        func: this.initAwsCredentials
+      },
+      {
+        name: 'Allocate Elastic IP',
+        func: this.createElasticIp
+      },
+      {
+        name: 'Setup VPC Linux Instance',
+        func: this.createInstance
+      }
+    ];
+    await this.flow.run(this, flowSteps);
+  }
+
+  async uninstallOldServer(): Promise<void> {
+    const scopeKey = 'uninstall.aws';
+    const flowSteps = [
+      {
+        func: this.initAwsCredentials
+      },
+      {
+        name: 'Truncate Old EC2 instance',
+        func: this.truncateServer
+      },
+      {
+        func: () => {
+          this.conf.set(`${scopeKey}.done`, true);
+        }
+      }
+    ];
+    await this.flow.run(this, flowSteps, scopeKey);
   }
 }
