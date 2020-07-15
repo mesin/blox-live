@@ -44,7 +44,7 @@ export default class KeyVaultLib {
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
 
-    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/v0.0.10/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
+    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/$(curl http://api.stage.bloxstaking.com/key-vault/latest-tag)/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
     // await this.flow.delay(30000);
   }
 
