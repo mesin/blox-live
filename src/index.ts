@@ -48,7 +48,13 @@ const run = async () => {
         !conf.get('install.keyVault.done') && (await keyVault.install());
 
         console.log(chalk.green('+ Congratulations. Setup is done!'));
-        console.log(chalk.blue(`> Open in your browser http://${confClient.get('publicIp')}:8200 and setup Vault.`));
+        console.log(
+          chalk.blue(
+            `> Key vault ${confClient.get('keyVaultVersion')} was installed on server http://${confClient.get(
+              'publicIp',
+            )}:8200.`,
+          ),
+        );
       } catch (err) {
         console.log(chalk.red(err.message));
       }
@@ -132,13 +138,20 @@ const run = async () => {
           publicIp: confClientTmp.get('publicIp'),
           instanceId: confClientTmp.get('instanceId'),
           vaultRootToken: confClientTmp.get('vaultRootToken'),
+          keyVaultVersion: confClientTmp.get('keyVaultVersion'),
         });
 
         console.log(chalk.blue('- Clean tmp local storage'));
         confClientTmp.clear();
 
         console.log(chalk.blue('+ Reinstallation done!'));
-        console.log(chalk.blue(`> New key vault server url: http://${confClient.get('publicIp')}:8200.`));
+        console.log(
+          chalk.blue(
+            `> New key vault ${confClient.get('keyVaultVersion')} was installed on server url: http://${confClient.get(
+              'publicIp',
+            )}:8200.`,
+          ),
+        );
       } catch (err) {
         console.log(chalk.red(err.message));
       }

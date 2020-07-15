@@ -1,6 +1,6 @@
 {
   "name": "@bloxapp/blox-live",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "main": "build/index.js",
   "bin": {
     "blox-live": "build/index.js"
@@ -14,6 +14,7 @@
     "commander": "^5.1.0",
     "configstore": "^5.0.1",
     "figlet": "^1.4.0",
+    "got": "^11.5.0",
     "inquirer": "^7.2.0",
     "minimist": "^1.2.5",
     "node-ssh": "^10.0.2"
