@@ -1,5 +1,6 @@
 
 import Configstore from 'configstore';
+import got from 'got';
 import FlowLib from './flow';
 import NodeSSH from 'node-ssh';
 import chalk from 'chalk';
@@ -43,8 +44,9 @@ export default class KeyVaultLib {
     const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-
-    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/$(curl http://api.stage.bloxstaking.com/key-vault/latest-tag)/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
+    const { body: keyVaultVersion } = await got.get('http://api.stage.bloxstaking.com/key-vault/latest-tag');
+    this.conf.set('keyVaultVersion', keyVaultVersion);
+    await ssh.execCommand(`curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`, {});
     // await this.flow.delay(30000);
   }
 
