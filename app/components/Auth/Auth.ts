@@ -1,7 +1,7 @@
 import auth0 from 'auth0-js';
 import keytar from 'keytar';
 import os from 'os';
-import url from 'url';
+// import url from 'url';
 import jwtDecode from 'jwt-decode';
 import axios, { AxiosRequestConfig } from 'axios';
 
@@ -64,34 +64,34 @@ export default class Auth {
 
   getAuthenticationURL = () => true; // TODO
 
-  loadTokens = async (callbackURL) => {
-    const urlParts = url.parse(callbackURL, true);
-    const { query } = urlParts;
+  // loadTokens = async (callbackURL) => {
+  //   const urlParts = url.parse(callbackURL, true);
+  //   const { query } = urlParts;
 
-    const exchangeOptions = {
-      grant_type: 'authorization_code',
-      client_id: process.env.AUTH0_CLIENT_ID,
-      code: query.code,
-      redirect_uri: process.env.AUTH0_CALLBACK_URL,
-    };
+  //   const exchangeOptions = {
+  //     grant_type: 'authorization_code',
+  //     client_id: process.env.AUTH0_CLIENT_ID,
+  //     code: query.code,
+  //     redirect_uri: process.env.AUTH0_CALLBACK_URL,
+  //   };
 
-    const options = {
-      method: 'POST',
-      url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
-      headers: {
-        'content-type': 'application/json',
-      },
-      data: JSON.stringify(exchangeOptions),
-    };
+  //   const options = {
+  //     method: 'POST',
+  //     url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+  //     headers: {
+  //       'content-type': 'application/json',
+  //     },
+  //     data: JSON.stringify(exchangeOptions),
+  //   };
 
-    try { // TODO: write inside setSession
-      const response = await axios(options);
-      this.setSession(response);
-    } catch (error) {
-      await this.logout();
-      throw error;
-    }
-  };
+  //   try { // TODO: write inside setSession
+  //     const response = await axios(options);
+  //     this.setSession(response);
+  //   } catch (error) {
+  //     await this.logout();
+  //     throw error;
+  //   }
+  // };
 
   setSession = async (response: AuthResult) => {
     this.tokens.accessToken = response.data.access_token;
