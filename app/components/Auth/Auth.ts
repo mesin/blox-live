@@ -87,8 +87,6 @@ export default class Auth {
     try { // TODO: write inside setSession
       const response = await axios(options);
       this.setSession(response);
-
-
     } catch (error) {
       await this.logout();
       throw error;
