@@ -5,7 +5,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { ThemeProvider } from 'styled-components';
 import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
-import Test from '../components/Test';
+import App from '../components/App';
 import theme from '../theme';
 
 type Props = {
@@ -17,7 +17,7 @@ const Root = ({ store, history }: Props) => (
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <ThemeProvider theme={theme}>
-        <Test />
+        <App />
       </ThemeProvider>
     </ConnectedRouter>
   </Provider>
