@@ -28,8 +28,9 @@ function createAuthWindow() {
   };
 
   webRequest.onBeforeRequest(filter, async ({ url }) => {
-    await auth.loadTokens(url);
-    createAppWindow();
+    console.log(url);
+    // await auth.loadTokens(url);
+    // createAppWindow();
     return destroyAuthWin();
   });
 
