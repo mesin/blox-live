@@ -1,6 +1,8 @@
 import auth0 from 'auth0-js';
 import keytar from 'keytar';
 import os from 'os';
+import url from 'url';
+import jwtDecode from 'jwt-decode';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { SOCIAL_APPS } from '../../common/constants';
@@ -60,14 +62,50 @@ export default class Auth {
       });
     });
 
-  setSession = (authResult: AuthResult) => {
-    if (authResult) {
-      const expiresAt = JSON.stringify(
-        authResult.expiresIn * 1000 + new Date().getTime()
+  getAuthenticationURL = () => true; // TODO
+
+  loadTokens = async (callbackURL) => {
+    const urlParts = url.parse(callbackURL, true);
+    const { query } = urlParts;
+
+    const exchangeOptions = {
+      grant_type: 'authorization_code',
+      client_id: process.env.AUTH0_CLIENT_ID,
+      code: query.code,
+      redirect_uri: process.env.AUTH0_CALLBACK_URL,
+    };
+
+    const options = {
+      method: 'POST',
+      url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: JSON.stringify(exchangeOptions),
+    };
+
+    try { // TODO: write inside setSession
+      const response = await axios(options);
+      this.setSession(response);
+
+
+    } catch (error) {
+      await this.logout();
+      throw error;
+    }
+  };
+
+  setSession = async (response: AuthResult) => {
+    this.tokens.accessToken = response.data.access_token;
+    this.userProfile = jwtDecode(response.data.id_token);
+    this.tokens.refreshToken = response.data.refresh_token;
+
+    if (this.tokens.refreshToken) {
+      await keytar.setPassword(
+        this.keytar.service,
+        this.keytar.account,
+        this.tokens.refreshToken
       );
-      localStorage.setItem('access_token', authResult.accessToken);
-      localStorage.setItem('id_token', authResult.idToken);
-      localStorage.setItem('expires_at', expiresAt);
     }
   };
 
