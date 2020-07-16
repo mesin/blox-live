@@ -4,3 +4,4 @@ export { default as CallbackPage } from './CallbackPage';
 export { default as HomePage } from './HomePage';
 export { default as NotFoundPage } from './NotFoundPage';
 export { default as SettingsPage } from './SettingsPage';
+export { default as Test } from './Test';

@@ -38,6 +38,7 @@ module.exports = {
     'prefer-template': 2,
     'react/destructuring-assignment': 0,
     'react-hooks/rules-of-hooks': 'error',
+    'react/button-has-type': 0,
     'react/jsx-closing-tag-location': 0,
     'react/forbid-prop-types': 0,
     'react/jsx-filename-extension': 0,
