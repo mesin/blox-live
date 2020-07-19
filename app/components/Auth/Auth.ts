@@ -160,6 +160,7 @@ export default class Auth {
   };
 
   logout = async () => {
+    // TODO: handle logout
     const { clientID } = this.auth;
     const { service, account } = this.keytar;
     await keytar.deletePassword(service, account);

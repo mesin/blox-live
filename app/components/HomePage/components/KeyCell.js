@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Left = styled.div`
-  width: 86%;
+  width: 80%;
   display: flex;
   flex-direction: column;
 `;
@@ -30,7 +30,7 @@ const Date = styled.div`
 `;
 
 const Right = styled.div`
-  width: 14%;
+  width: 20%;
   padding-left: 1%;
   display: flex;
   align-items: center;
