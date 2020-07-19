@@ -1,16 +1,16 @@
 import { eventChannel, END } from 'redux-saga';
 import { call, put, select, take, takeLatest } from 'redux-saga/effects';
+import io from 'socket.io-client';
 import { notification } from 'antd';
-import WebSockets from './WebSockets';
+// import WebSockets from './WebSockets';
 
 import { CONNECT_WEB_SOCKET, SUBSCRIBE_TO_EVENT } from './actionTypes';
 import * as actions from './actions';
 import { getIdToken } from '../CallbackPage/selectors';
-import { getWebsocket } from './selectors';
+// import { getWebsocket } from './selectors';
 
-function* onSuccess(ws) {
-  yield call(ws.init);
-  yield put(actions.connectToWebSocketsSuccess(ws));
+function* onSuccess() {
+  yield put(actions.connectToWebSocketsSuccess());
 }
 
 function* onFailure(error) {
@@ -21,8 +21,12 @@ function* onFailure(error) {
 export function* connectToWebsocket() {
   const idToken = yield select(getIdToken);
   try {
-    const ws = new WebSockets(idToken);
-    yield call(onSuccess, ws);
+    yield io(process.env.API_URL, {
+      reconnection: true,
+      transports: ['websocket'],
+      query: { authorization: `Bearer ${idToken}` },
+    });
+    yield call(onSuccess);
   } catch (error) {
     yield error && call(onFailure, error);
   }
@@ -33,7 +37,7 @@ function createSocketChannel(ws, payload) {
   return eventChannel((emitter) => {
     const subscribe = (eventPayload, done) => {
       if (eventPayload[doneCondition.key] === doneCondition.value) {
-        ws.unsubscribeTo(eventName, done);
+        ws.off(eventName, done);
         emitter(eventPayload);
         emitter(END);
       }
@@ -42,11 +46,11 @@ function createSocketChannel(ws, payload) {
 
     if (ws && eventName) {
       ws.emit(eventName);
-      ws.subscribeTo(eventName, subscribe);
+      ws.on(eventName, (data, doneFunc) => subscribe(data, doneFunc));
     }
 
     const unsubscribeTo = () => {
-      ws.unsubscribeTo(eventName);
+      ws.off(eventName);
     };
 
     return unsubscribeTo;
@@ -55,7 +59,12 @@ function createSocketChannel(ws, payload) {
 
 function* connectWebSocketChannel(action) {
   const { payload } = action;
-  const ws = yield select(getWebsocket);
+  const idToken = yield select(getIdToken);
+  const ws = yield io(process.env.API_URL, {
+    reconnection: true,
+    transports: ['websocket'],
+    query: { authorization: `Bearer ${idToken}` },
+  });
   const channel = yield call(createSocketChannel, ws, payload);
   try {
     while (true) {

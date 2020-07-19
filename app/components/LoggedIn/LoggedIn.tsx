@@ -38,7 +38,7 @@ import accountsSaga from '../Accounts/saga';
 // websocket
 import { connectToWebSockets } from '../WebSockets/actions';
 import {
-  getWebsocket,
+  getIsConnected,
   getIsLoading as getIsLoadingWebsocket,
   getError as getWebSocketError,
 } from '../WebSockets/selectors';
@@ -120,11 +120,7 @@ const LoggedIn = (props: Props) => {
         exact
         path="/"
         render={(routeProps) =>
-          isFinishedWizard ? (
-            <Dashboard {...routeProps} />
-          ) : (
-            <Wizard {...routeProps} websocket={websocket} />
-          )
+          isFinishedWizard ? <Dashboard {...routeProps} /> : <Wizard />
         }
       />
       <Route
@@ -149,7 +145,7 @@ const mapStateToProps = (state: State) => ({
   accountsError: getAccountsError(state),
 
   // websocket
-  websocket: getWebsocket(state),
+  websocket: getIsConnected(state),
   isWebsocketLoading: getIsLoadingWebsocket(state),
   webSocketError: getWebSocketError(state),
 
@@ -183,7 +179,7 @@ interface Props extends RouteComponentProps {
 
   // websocket
   isWebsocketLoading: boolean;
-  websocket: Record<string, any>;
+  websocket: boolean;
   webSocketError: string;
   callConnectToWebSockets: () => void;
 }

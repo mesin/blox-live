@@ -4,9 +4,8 @@ export const connectToWebSockets = () => ({
   type: actionTypes.CONNECT_WEB_SOCKET,
 });
 
-export const connectToWebSocketsSuccess = (instance: Record<string, any>) => ({
+export const connectToWebSocketsSuccess = () => ({
   type: actionTypes.CONNECT_WEB_SOCKET_SUCCESS,
-  payload: { ...instance },
 });
 
 export const connectToWebSocketsFailure = (error: Record<string, any>) => ({

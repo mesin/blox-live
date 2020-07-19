@@ -9,12 +9,11 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.gray50};
 `;
 
-const Wizard = (props: Props) => {
-  const { websocket } = props;
+const Wizard = () => {
   const [step, setStep] = useState(1);
   const [page, setPage] = useState(0);
 
-  const contentManagerProps = { websocket, page, setPage, step, setStep };
+  const contentManagerProps = { page, setPage, step, setStep };
 
   return (
     <Wrapper>
@@ -22,10 +21,6 @@ const Wizard = (props: Props) => {
       <ContentManager {...contentManagerProps} />
     </Wrapper>
   );
-};
-
-type Props = {
-  websocket: Record<string, any>;
 };
 
 export default Wizard;
