@@ -1,11 +1,11 @@
-import auth0 from 'auth0-js';
 import keytar from 'keytar';
 import os from 'os';
-// import url from 'url';
+import url from 'url';
 import jwtDecode from 'jwt-decode';
 import axios, { AxiosRequestConfig } from 'axios';
 
 import { SOCIAL_APPS } from '../../common/constants';
+import { createAuthWindow } from './Auth-Window';
 import {
   onAxiosInterceptorSuccess,
   onAxiosInterceptorFailure,
@@ -24,85 +24,115 @@ export default class Auth {
       refreshToken: '',
     };
     this.userProfile = null;
-    this.auth = new auth0.WebAuth({
+    this.auth = {
       domain: process.env.AUTH0_DOMAIN || '',
       clientID: process.env.AUTH0_CLIENT_ID || '',
       redirectUri: process.env.AUTH0_CALLBACK_URL,
-      responseType: 'token id_token',
+      responseType: 'code', // 'token id_token',
       scope: 'openid profile email',
-    });
+    };
     this.keytar = {
       service: 'electron-openid-oauth',
       account: os.userInfo().username,
     };
   }
 
-  login = () => {
-    this.auth.authorize();
-  };
-
-  loginWithSocialApp = (name: string) => {
-    this.auth.authorize({ connection: SOCIAL_APPS[name].connection });
-  };
-
-  handleAuthentication = () =>
-    new Promise((resolve, reject) => {
-      this.auth.parseHash((error: Error, authResult: AuthResult) => {
-        if (error) {
-          reject(error);
+  loginWithSocialApp = async (name: string) => {
+    return new Promise((resolve, reject) => {
+      const callBack = (response) => {
+        if (response.status === 200) {
+          const userProfile = jwtDecode(response.data.id_token);
+          this.setSession(response.data, userProfile);
+          this.interceptIdToken(response.data.id_token);
+          resolve({
+            idToken: response.data.id_token,
+            idTokenPayload: userProfile,
+          });
         }
-        if (!authResult || !authResult.idToken) {
-          return reject(error);
-        }
-        if (authResult && authResult.accessToken && authResult.idToken) {
-          this.setSession(authResult);
-          this.interceptIdToken();
-          resolve(authResult);
-        }
-      });
+        reject(new Error('Error in login'));
+      };
+      createAuthWindow(this, name, callBack);
     });
+  };
 
-  getAuthenticationURL = () => true; // TODO
+  getAuthenticationURL = (socialAppName) => {
+    const { domain, clientID, redirectUri, responseType, scope } = this.auth;
+    const authUrl = `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}`;
+    return authUrl;
+  };
 
-  // loadTokens = async (callbackURL) => {
-  //   const urlParts = url.parse(callbackURL, true);
-  //   const { query } = urlParts;
+  refreshTokens = async () => {
+    const { domain, clientID } = this.auth;
+    const { service, account } = this.keytar;
+    const refreshToken = await keytar.getPassword(service, account);
 
-  //   const exchangeOptions = {
-  //     grant_type: 'authorization_code',
-  //     client_id: process.env.AUTH0_CLIENT_ID,
-  //     code: query.code,
-  //     redirect_uri: process.env.AUTH0_CALLBACK_URL,
-  //   };
+    if (refreshToken) {
+      const refreshUrl = `https://${domain}/oauth/token`;
+      const config: AxiosRequestConfig = {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        data: {
+          grant_type: 'refresh_token',
+          client_id: clientID,
+          refresh_token: refreshToken,
+        },
+      };
 
-  //   const options = {
-  //     method: 'POST',
-  //     url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
-  //     headers: {
-  //       'content-type': 'application/json',
-  //     },
-  //     data: JSON.stringify(exchangeOptions),
-  //   };
+      try {
+        const response = await axios(refreshUrl, config);
+        this.tokens.accessToken = response.data.access_token;
+        this.userProfile = jwtDecode(response.data.id_token);
+      } catch (error) {
+        await this.logout();
+        throw error;
+      }
+    } else {
+      throw new Error('No available refresh token.');
+    }
+  };
 
-  //   try { // TODO: write inside setSession
-  //     const response = await axios(options);
-  //     this.setSession(response);
-  //   } catch (error) {
-  //     await this.logout();
-  //     throw error;
-  //   }
-  // };
+  loadTokens = async (callbackURL) => {
+    const { domain, clientID, redirectUri } = this.auth;
+    const urlParts = url.parse(callbackURL, true);
+    const { query } = urlParts;
 
-  setSession = async (response: AuthResult) => {
-    this.tokens.accessToken = response.data.access_token;
-    this.userProfile = jwtDecode(response.data.id_token);
-    this.tokens.refreshToken = response.data.refresh_token;
+    const exchangeOptions = {
+      grant_type: 'authorization_code',
+      client_id: clientID,
+      code: query.code,
+      redirect_uri: redirectUri,
+    };
+
+    const tokenUrl = `https://${domain}/oauth/token`;
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      data: JSON.stringify(exchangeOptions),
+    };
+
+    try {
+      const response = await axios(tokenUrl, config);
+      return response;
+    } catch (error) {
+      await this.logout();
+      return Error(error);
+    }
+  };
+
+  setSession = async (authResult, userProfile) => {
+    const { access_token, id_token, refresh_token } = authResult;
+    this.tokens.accessToken = access_token;
+    this.tokens.idToken = id_token;
+    this.tokens.refreshToken = refresh_token;
+    this.userProfile = userProfile;
 
     if (this.tokens.refreshToken) {
       await keytar.setPassword(
         this.keytar.service,
         this.keytar.account,
-        this.tokens.refreshToken
+        refresh_token
       );
     }
   };
@@ -112,31 +142,16 @@ export default class Auth {
     return new Date().getTime() < Number(expiresAt);
   };
 
-  getAccessToken = () => this.tokens.accessToken;
+  getAccessToken = () => this.tokens.accessToken; // TODO: add json-storage
 
-  getIdToken = () => {
-    const idToken = localStorage.getItem('id_token');
-    if (!idToken) {
-      throw new Error('No id token found.');
-    }
-    return idToken;
-  };
+  getIdToken = () => this.tokens.idToken;
 
   getProfile = (cb: CallBack) => {
-    if (this.userProfile) {
-      return cb(this.userProfile);
-    }
-    this.auth.client.userInfo(
-      this.getAccessToken(),
-      (error: Error, profile: Profile) => {
-        if (profile) this.userProfile = profile;
-        cb(profile, error);
-      }
-    );
+    // TODO: get /userinfo in case userProfile is null
+    return cb(this.userProfile, null);
   };
 
-  interceptIdToken = () => {
-    const idToken: string = this.getIdToken();
+  interceptIdToken = (idToken: string) => {
     axios.interceptors.request.use(
       (config: AxiosRequestConfig) =>
         onAxiosInterceptorSuccess(config, idToken),
@@ -145,6 +160,7 @@ export default class Auth {
   };
 
   logout = async () => {
+    const { clientID } = this.auth;
     const { service, account } = this.keytar;
     await keytar.deletePassword(service, account);
     this.tokens = {
@@ -154,17 +170,17 @@ export default class Auth {
     };
     this.userProfile = null;
     await this.auth.logout({
-      clientID: process.env.AUTH0_CLIENT_ID,
+      clientID,
       returnTo: process.env.AUTH0_LOGOUT_URL,
     });
   };
 
   getLogOutUrl() {
-    return `https://${process.env.AUTH0_DOMAIN}/v2/logout`;
+    return `https://${this.auth.domain}/v2/logout`;
   }
 }
 
-type AuthResult = Record<string, any> | null;
+// type AuthResult = Record<string, any> | null;
 type Profile = Record<string, any> | null;
 type Error = Record<string, any> | null;
 type CallBack = (profile: Profile, error?: Error) => void;

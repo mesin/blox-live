@@ -5,7 +5,10 @@ import {
   LOGIN_FAILURE,
 } from './actionTypes';
 
-export const login = () => ({ type: LOGIN_INIT });
+export const login = (connectionName: string) => ({
+  type: LOGIN_INIT,
+  payload: connectionName,
+});
 
 export const loginSuccess = (idTokenPayload) => ({
   type: LOGIN_SUCCESS,

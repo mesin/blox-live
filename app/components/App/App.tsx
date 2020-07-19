@@ -22,7 +22,7 @@ const App = (props: Props) => {
   auth && initApp(auth);
   return (
     <AppWrapper>
-      {isLoggedIn ? <LoggedIn auth={auth} /> : <NotLoggedIn auth={auth} />}
+      {isLoggedIn ? <LoggedIn auth={auth} /> : <NotLoggedIn />}
       <GlobalStyle />
     </AppWrapper>
   );

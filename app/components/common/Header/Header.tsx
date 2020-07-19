@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { ClickAwayListener } from '@material-ui/core';
 import HeaderLink from './HeaderLink';
 import { FaqMenu, ProfileMenu } from './components';
+import { getUserData } from '../../CallbackPage/selectors';
 
 import Auth from '../../Auth';
-
-const logo = require('../../../assets/images/staking-logo.svg');
 
 const auth = new Auth();
 
@@ -53,11 +53,10 @@ const Right = styled.div`
 `;
 
 const Header = (props: Props) => {
-  const { withMenu } = props;
+  const { withMenu, profile } = props;
   const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
   const [showOrangeDot, toggleOrangeDotDisplay] = useState(true);
-  const [profile, setProfile] = useState(null);
 
   const onFaqMenuClick = (isOpen) => {
     toggleFaqMenuOpenDisplay(isOpen);
@@ -74,26 +73,11 @@ const Header = (props: Props) => {
     toggleProfileMenuOpenDisplay(false);
   };
 
-  const onLoadProfileSuccess = (results, error) => {
-    if (error) {
-      return;
-    }
-    setProfile(results);
-  };
-
-  useEffect(() => {
-    const getProfile = async () => {
-      await auth.getProfile((results, error) =>
-        onLoadProfileSuccess(results, error)
-      );
-    };
-    getProfile();
-  });
   return (
     <Wrapper>
       <Left>
         <a href="/">
-          <Logo src={logo} />
+          <Logo src={'assets/images/staking-logo.svg'} />
         </a>
       </Left>
       {withMenu && (
@@ -131,6 +115,11 @@ const Header = (props: Props) => {
 
 type Props = {
   withMenu: boolean;
+  profile: Record<string, any>;
 };
 
-export default Header;
+const mapStateToProps = (state) => ({
+  profile: getUserData(state),
+});
+
+export default connect(mapStateToProps)(Header);

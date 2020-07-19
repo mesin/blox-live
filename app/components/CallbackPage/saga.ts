@@ -21,9 +21,10 @@ function* onFailure(error: Record<string, any>) {
   yield put(push('/login'));
 }
 
-export function* startLogin() {
+export function* startLogin(action) {
+  const { payload } = action;
   try {
-    const authResult = yield call(auth.handleAuthentication);
+    const authResult = yield call(auth.loginWithSocialApp, payload);
     yield call(onSuccess, authResult);
   } catch (error) {
     yield error && call(onFailure, error);

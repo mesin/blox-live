@@ -10,15 +10,11 @@ const Wrapper = styled.div`
   background-size: contain;
 `;
 
-const Login = ({ auth }: Props) => (
-  // TODO: add saga here or under auth component
+const Login = () => (
   <Wrapper>
     <Left />
-    <Right auth={auth} />
+    <Right />
   </Wrapper>
 );
-type Props = {
-  auth: Record<string, any>;
-};
 
 export default Login;

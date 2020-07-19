@@ -91,6 +91,7 @@ module.exports = {
     '@typescript-eslint/no-inferrable-types': 0,
     '@typescript-eslint/lines-between-class-members': 0,
     '@typescript-eslint/no-unused-expressions': 0,
+    '@typescript-eslint/naming-convention': 0,
   },
   parserOptions: {
     ecmaVersion: 2020,

@@ -1,11 +1,10 @@
-import { BrowserWindow } from 'electron';
-import Auth from './Auth';
-// const createAppWindow = require('../main/app-process'); // TODO: unserstand what it means
+import electron from 'electron';
+// import { createAppWindow } from '../../main.dev';
 
-const auth = new Auth();
 let win = null;
+const { BrowserWindow } = electron.remote;
 
-function createAuthWindow() {
+export const createAuthWindow = (auth, socialAppName, callBack) => {
   destroyAuthWin();
 
   win = new BrowserWindow({
@@ -17,7 +16,7 @@ function createAuthWindow() {
     },
   });
 
-  win.loadURL(auth.getAuthenticationURL());
+  win.loadURL(auth.getAuthenticationURL(socialAppName));
 
   const {
     session: { webRequest },
@@ -28,20 +27,20 @@ function createAuthWindow() {
   };
 
   webRequest.onBeforeRequest(filter, async ({ url }) => {
-    console.log(url);
-    // await auth.loadTokens(url);
-    // createAppWindow();
+    const tokensResponse = await auth.loadTokens(url);
+    await callBack(tokensResponse);
     return destroyAuthWin();
   });
 
-  win.on('authenticated', () => {
-    destroyAuthWin();
-  });
-
-  win.on('closed', () => {
-    win = null;
-  });
-}
+  if (win) {
+    win.on('authenticated', () => {
+      destroyAuthWin();
+    });
+    win.on('closed', () => {
+      win = null;
+    });
+  }
+};
 
 function destroyAuthWin() {
   if (!win) return;
@@ -49,7 +48,7 @@ function destroyAuthWin() {
   win = null;
 }
 
-function createLogoutWindow() {
+export const createLogoutWindow = (auth) => {
   const logoutWindow = new BrowserWindow({
     show: false,
   });
@@ -60,9 +59,4 @@ function createLogoutWindow() {
     logoutWindow.close();
     await auth.logout();
   });
-}
-
-module.exports = {
-  createAuthWindow,
-  createLogoutWindow,
 };

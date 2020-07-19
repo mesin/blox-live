@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { SOCIAL_APPS } from '../../../../common/constants';
 import { BUTTONS_TEXTS } from './constants';
+
+import * as loginActions from '../../../CallbackPage/actions';
+import { getIsLoggedIn } from '../../../CallbackPage/selectors';
+import saga from '../../../CallbackPage/saga';
+import { useInjectSaga } from '../../../../utils/injectSaga';
+
+const key = 'login';
 
 const socialAppsList = Object.values(SOCIAL_APPS);
 
@@ -119,8 +128,10 @@ const AlreadyHaveLink = styled.a`
   }
 `;
 
-const Right = ({ auth }: Props) => {
+const Right = ({ actions, isLoggedIn }: Props) => {
+  useInjectSaga({ key, saga, mode: '' });
   const [isSignUp, toggleSignUp] = useState(1);
+  console.log('isLoggedIn', isLoggedIn);
   return (
     <Wrapper>
       <InnerWrapper>
@@ -134,7 +145,7 @@ const Right = ({ auth }: Props) => {
               <SocialAppButton
                 key={index}
                 type="button"
-                onClick={() => auth.loginWithSocialApp(lowerCaseLabel)}
+                onClick={() => actions.login(lowerCaseLabel)}
               >
                 <SocialButtonIcon src={currentIcon} />
                 <SocialButtonText>
@@ -161,8 +172,20 @@ const Right = ({ auth }: Props) => {
   );
 };
 
+const mapStateToProps = (state: State) => ({
+  isLoggedIn: getIsLoggedIn(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  actions: bindActionCreators(loginActions, dispatch),
+});
+
 type Props = {
-  auth: Record<string, any>;
+  actions: Record<string, any>;
+  isLoggedIn: boolean;
 };
 
-export default Right;
+type State = Record<string, any>;
+type Dispatch = (arg0: { type: string }) => any;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Right);
