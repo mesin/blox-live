@@ -41,19 +41,21 @@ To package apps for the local platform:
 yarn package
 ```
 
-## Docs
+## Docs (TBD)
 
-See our [docs and guides here](https://electron-react-boilerplate.js.org/docs/installation)
+See our [docs and guides here](https://www.bloxstaking.com/blox-blog/)
 
 ## Maintainers
 
-- [Amila Welihinda](https://github.com/amilajack)
-- [C. T. Lin](https://github.com/chentsulin)
-- [Jhen-Jie Hong](https://github.com/jhen0409)
+- [David Marciano](https://github.com/david-blox)
+- [Oleg Shmuelov](https://github.com/olegshmuelov)
+- [Vadim Chumak](https://github.com/vadiminc)
+- [Niv Muroch](https://github.com/nivBlox)
+- [Lior Rutenberg](https://github.com/lior-blox)
 
 ## License
 
-MIT © [Electron React Boilerplate](https://github.com/electron-react-boilerplate)
+GPL © [Blox Live](https://github.com/bloxapp/blox-live)
 
 [github-actions-status]: https://github.com/bloxapp/blox-live/workflows/Test/badge.svg?branch=stage
 [github-actions-url]: https://github.com/bloxapp/blox-live/actions
