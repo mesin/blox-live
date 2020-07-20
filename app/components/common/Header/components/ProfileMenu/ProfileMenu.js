@@ -55,7 +55,7 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.gray300};
 `;
 
-const ProfileMenu = ({ isOpen, toggleOpen, profile, auth }, ref) => (
+const ProfileMenu = ({ isOpen, toggleOpen, profile, logout }, ref) => (
   <Wrapper ref={ref}>
     <Button isOpen={isOpen} onClick={() => toggleOpen(!isOpen)}>
       <Image src={profile.picture} />
@@ -68,7 +68,7 @@ const ProfileMenu = ({ isOpen, toggleOpen, profile, auth }, ref) => (
         </MenuItem>
         <Separator />
         <MenuItem>
-          <LogoutButton onClick={auth.logout}>Log Out</LogoutButton>
+          <LogoutButton onClick={logout}>Log Out</LogoutButton>
         </MenuItem>
       </Menu>
     )}
@@ -79,7 +79,7 @@ ProfileMenu.propTypes = {
   isOpen: PropTypes.bool,
   toggleOpen: PropTypes.func,
   profile: PropTypes.object,
-  auth: PropTypes.object,
+  logout: PropTypes.func,
 };
 
 export default forwardRef(ProfileMenu);

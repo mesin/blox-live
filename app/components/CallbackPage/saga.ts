@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
 
-import { LOGIN_INIT, CHECK_IF_TOKEN_EXIST } from './actionTypes';
+import { LOGIN_INIT, CHECK_IF_TOKEN_EXIST, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
 import Auth from '../Auth';
 
@@ -40,7 +40,13 @@ export function* checkIfTokenExist() {
   }
 }
 
+export function* startLogOut() {
+  yield call(auth.logout);
+  yield put(push('/login'));
+}
+
 export default function* userData() {
   yield takeLatest(CHECK_IF_TOKEN_EXIST, checkIfTokenExist);
   yield takeLatest(LOGIN_INIT, startLogin);
+  yield takeLatest(LOGOUT, startLogOut);
 }

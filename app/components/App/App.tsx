@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -24,21 +24,24 @@ const key = 'login';
 const auth = new Auth();
 
 const App = (props: Props) => {
+  const [didInitApp, setAppInitialised] = useState(false);
   useInjectSaga({ key, saga, mode: '' });
   const { isLoggedIn, isLoading, isTokensExist } = props;
   useEffect(() => {
     const init = async () => {
-      if (auth) {
+      if (!didInitApp) {
         await isTokensExist();
         await initApp(isLoggedIn, auth);
+        setAppInitialised(true);
       }
     };
     init();
-  }, [!isLoggedIn]);
+  }, [didInitApp, !isLoggedIn]);
 
-  if (isLoading) {
+  if (!didInitApp || isLoading) {
     return <Loader />;
   }
+
   return (
     <AppWrapper>
       {isLoggedIn ? <LoggedIn auth={auth} /> : <NotLoggedIn />}

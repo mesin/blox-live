@@ -33,3 +33,7 @@ export const checkIfTokensExistFailure = (error: Record<string, any>) => ({
   type: actionTypes.CHECK_IF_TOKEN_EXIST_FAILURE,
   payload: error,
 });
+
+export const logout = () => ({
+  type: actionTypes.LOGOUT,
+});

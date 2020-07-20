@@ -35,6 +35,9 @@ const loginReducer = (state = initialState, action: Action) =>
         draft.isLoading = false;
         draft.error = action.payload;
         break;
+      case actionTypes.LOGOUT:
+        draft = initialState;
+        break;
     }
   });
 

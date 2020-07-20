@@ -28,7 +28,7 @@ export default class Auth {
       domain: process.env.AUTH0_DOMAIN || '',
       clientID: process.env.AUTH0_CLIENT_ID || '',
       redirectUri: process.env.AUTH0_CALLBACK_URL,
-      responseType: 'code', // 'token id_token',
+      responseType: 'code',
       scope: 'openid profile email offline_access',
     };
     this.keytar = {
@@ -83,7 +83,6 @@ export default class Auth {
     const { domain, clientID } = this.auth;
     const { service, account } = this.keytar;
     const refreshToken = await keytar.getPassword(service, account);
-
     if (refreshToken) {
       const refreshUrl = `https://${domain}/oauth/token`;
       const config: AxiosRequestConfig = {
@@ -95,7 +94,6 @@ export default class Auth {
           refresh_token: refreshToken,
         },
       };
-
       try {
         const response = await axios(refreshUrl, config);
         return callBack(response);
@@ -104,7 +102,7 @@ export default class Auth {
         return callBack(Error(error));
       }
     } else {
-      return new Error('No available refresh token.');
+      return callBack(Error('No available refresh token.'));
     }
   };
 
@@ -145,8 +143,6 @@ export default class Auth {
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
 
-    console.log('refresh_token', refresh_token);
-
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
@@ -161,7 +157,7 @@ export default class Auth {
     return new Date().getTime() < Number(expiresAt);
   };
 
-  getAccessToken = () => this.tokens.accessToken; // TODO: add json-storage
+  getAccessToken = () => this.tokens.accessToken; // TODO: add electron-storage
 
   getIdToken = () => this.tokens.idToken;
 
@@ -179,8 +175,6 @@ export default class Auth {
   };
 
   logout = async () => {
-    // TODO: handle logout
-    const { clientID } = this.auth;
     const { service, account } = this.keytar;
     await keytar.deletePassword(service, account);
     this.tokens = {
@@ -189,18 +183,9 @@ export default class Auth {
       refreshToken: null,
     };
     this.userProfile = null;
-    await this.auth.logout({
-      clientID,
-      returnTo: process.env.AUTH0_LOGOUT_URL,
-    });
   };
-
-  getLogOutUrl() {
-    return `https://${this.auth.domain}/v2/logout`;
-  }
 }
 
-// type AuthResult = Record<string, any> | null;
 type Profile = Record<string, any> | null;
 type Error = Record<string, any> | null;
 type CallBack = (profile: Profile, error?: Error) => void;
