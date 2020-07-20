@@ -20,7 +20,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-    "noEmit": true,
+
     "typeRoots": []
   },
   "exclude": [
@@ -30,6 +30,5 @@
     "app/renderer.prod.js",
     "app/dist",
     "dll"
-
   ]
 }

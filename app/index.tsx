@@ -7,7 +7,7 @@ import { history, configuredStore } from './store';
 import 'antd/dist/antd.css';
 import 'sanitize.css/sanitize.css';
 
-const store = configuredStore();
+const store = configuredStore(null);
 
 const AppContainer = process.env.PLAIN_HMR ? Fragment : ReactHotAppContainer;
 
