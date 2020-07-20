@@ -29,7 +29,7 @@ export default class Auth {
       clientID: process.env.AUTH0_CLIENT_ID || '',
       redirectUri: process.env.AUTH0_CALLBACK_URL,
       responseType: 'code', // 'token id_token',
-      scope: 'openid profile email',
+      scope: 'openid profile email offline_access',
     };
     this.keytar = {
       service: 'electron-openid-oauth',
@@ -55,13 +55,31 @@ export default class Auth {
     });
   };
 
+  checkIfTokensExist = async () => {
+    return new Promise((resolve, reject) => {
+      const callBack = (response) => {
+        if (response.status === 200) {
+          const userProfile = jwtDecode(response.data.id_token);
+          this.setSession(response.data, userProfile);
+          this.interceptIdToken(response.data.id_token);
+          resolve({
+            idToken: response.data.id_token,
+            idTokenPayload: userProfile,
+          });
+        }
+        reject(new Error('Error in login'));
+      };
+      this.refreshTokens(callBack);
+    });
+  };
+
   getAuthenticationURL = (socialAppName) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
     const authUrl = `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}`;
     return authUrl;
   };
 
-  refreshTokens = async () => {
+  refreshTokens = async (callBack) => {
     const { domain, clientID } = this.auth;
     const { service, account } = this.keytar;
     const refreshToken = await keytar.getPassword(service, account);
@@ -80,14 +98,13 @@ export default class Auth {
 
       try {
         const response = await axios(refreshUrl, config);
-        this.tokens.accessToken = response.data.access_token;
-        this.userProfile = jwtDecode(response.data.id_token);
+        return callBack(response);
       } catch (error) {
         await this.logout();
-        throw error;
+        return callBack(Error(error));
       }
     } else {
-      throw new Error('No available refresh token.');
+      return new Error('No available refresh token.');
     }
   };
 
@@ -128,7 +145,9 @@ export default class Auth {
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
 
-    if (this.tokens.refreshToken) {
+    console.log('refresh_token', refresh_token);
+
+    if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
         this.keytar.account,

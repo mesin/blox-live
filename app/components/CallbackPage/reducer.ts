@@ -1,10 +1,5 @@
 import produce from 'immer';
-import {
-  LOGIN_INIT,
-  LOGIN_SET_ID_TOKEN,
-  LOGIN_SUCCESS,
-  LOGIN_FAILURE,
-} from './actionTypes';
+import * as actionTypes from './actionTypes';
 import { State } from './types';
 
 export const initialState: State = {
@@ -19,18 +14,24 @@ export const initialState: State = {
 const loginReducer = (state = initialState, action: Action) =>
   produce(state, (draft) => {
     switch (action.type) {
-      case LOGIN_INIT:
+      case actionTypes.LOGIN_INIT:
+      case actionTypes.CHECK_IF_TOKEN_EXIST:
         draft.isLoading = true;
         break;
-      case LOGIN_SET_ID_TOKEN:
+      case actionTypes.LOGIN_SET_ID_TOKEN:
         draft.idToken = action.payload;
         break;
-      case LOGIN_SUCCESS:
+      case actionTypes.LOGIN_SUCCESS:
         draft.userData = { ...action.payload };
         draft.isLoading = false;
         draft.isLoggedIn = true;
         break;
-      case LOGIN_FAILURE:
+      case actionTypes.CHECK_IF_TOKEN_EXIST_SUCCESS:
+        draft.isLoading = false;
+        draft.isLoggedIn = true;
+        break;
+      case actionTypes.LOGIN_FAILURE:
+      case actionTypes.CHECK_IF_TOKEN_EXIST_FAILURE:
         draft.isLoading = false;
         draft.error = action.payload;
         break;

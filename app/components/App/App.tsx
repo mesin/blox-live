@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -9,17 +9,36 @@ import Auth from '../Auth';
 import GlobalStyle from '../../common/styles/global-styles';
 import { initApp } from './service';
 
-import { getIsLoggedIn } from '../CallbackPage/selectors';
+import { checkIfTokensExist } from '../CallbackPage/actions';
+import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
+import saga from '../CallbackPage/saga';
+import { Loader } from '../../common/components';
+import { useInjectSaga } from '../../utils/injectSaga';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
   height: 100%;
 `;
 
+const key = 'login';
+const auth = new Auth();
+
 const App = (props: Props) => {
-  const { isLoggedIn } = props;
-  const auth = new Auth();
-  auth && initApp(auth);
+  useInjectSaga({ key, saga, mode: '' });
+  const { isLoggedIn, isLoading, isTokensExist } = props;
+  useEffect(() => {
+    const init = async () => {
+      if (auth) {
+        await isTokensExist();
+        await initApp(isLoggedIn, auth);
+      }
+    };
+    init();
+  }, [!isLoggedIn]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <AppWrapper>
       {isLoggedIn ? <LoggedIn auth={auth} /> : <NotLoggedIn />}
@@ -30,10 +49,17 @@ const App = (props: Props) => {
 
 type Props = {
   isLoggedIn: boolean;
+  isLoading: boolean;
+  isTokensExist: () => void;
 };
 
 const mapStateToProps = (state: any) => ({
   isLoggedIn: getIsLoggedIn(state),
+  isLoading: getIsLoading(state),
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  isTokensExist: () => dispatch(checkIfTokensExist()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
