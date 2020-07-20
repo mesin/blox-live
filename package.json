@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-boilerplate",
-  "productName": "ElectronReact",
-  "version": "1.2.0",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "blox-live",
+  "productName": "BloxStaking Desktop App",
+  "version": "0.1.3",
+  "description": "Blox live, desktop app for managing staking accounts",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-dll": "cross-env NODE_ENV=development webpack --config ./configs/webpack.config.renderer.dev.dll.babel.js --colors",
@@ -52,8 +52,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "BloxStaking",
+    "appId": "org.develar.BloxStaking",
     "files": [
       "dist/",
       "node_modules/",
@@ -88,7 +88,7 @@
         "rpm",
         "AppImage"
       ],
-      "category": "Development"
+      "category": "Finance"
     },
     "directories": {
       "buildResources": "resources",
@@ -96,49 +96,53 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
+      "owner": "bloxapp",
+      "repo": "blox-live",
       "private": false
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/bloxapp/blox-live.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Blox Staking Maintainers",
+    "email": "support@bloxstaking.com",
+    "url": "https://www.bloxstaking.com/"
   },
   "contributors": [
     {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
+      "name": "Lior Rutenberg",
+      "email": "liorr@blox.io",
+      "url": "https://github.com/lior-blox"
     },
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
+      "name": "David Marciano",
+      "email": "david@blox.io",
+      "url": "https://github.com/david-blox"
+    },
+    {
+      "name": "Oleg Shmuelov",
+      "email": "oleg@blox.io",
+      "url": "https://github.com/olegshmuelov"
+    },
+    {
+      "name": "Vadim Chumak",
+      "email": "vadim@blox.io",
+      "url": "https://github.com/vadiminc"
     }
   ],
-  "license": "MIT",
+  "license": "GNU GPLv3",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/bloxapp/blox-live/issues"
   },
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "redux",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "blox",
+    "bloxstaking",
+    "ethereum 2.0",
+    "electron"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/bloxapp/blox-live#readme",
   "jest": {
     "testURL": "http://localhost/",
     "moduleNameMapper": {
@@ -303,9 +307,6 @@
     "node": ">=7.x",
     "npm": ">=4.x",
     "yarn": ">=0.21.3"
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "browserslist": [
     "extends browserslist-config-erb"
