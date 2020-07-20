@@ -46,7 +46,7 @@ export default class KeyVaultLib {
     const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const { body: keyVaultVersion } = await got.get('http://api.stage.bloxstaking.com/key-vault/latest-tag');
+    const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
     this.conf.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
@@ -83,7 +83,7 @@ export default class KeyVaultLib {
         'otp',
       )}", "url": "http://${this.conf.get(
         'publicIp',
-      )}:8200", "accessToken": "${rootToken}"}' http://api.stage.bloxstaking.com/wallets/root`,
+      )}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
       {},
     );
     if (+statusCode > 201) {
@@ -103,7 +103,7 @@ export default class KeyVaultLib {
         'otp',
       )}", "url": "http://${this.conf.get(
         'publicIp',
-      )}:8200", "accessToken": "${rootToken}"}' http://api.stage.bloxstaking.com/wallets/root`,
+      )}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
       {},
     );
     if (+statusCode > 201) {
