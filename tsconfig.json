@@ -19,7 +19,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "noEmit": true,
+    "typeRoots": []
   },
   "exclude": [
     "test",
@@ -28,5 +30,6 @@
     "app/renderer.prod.js",
     "app/dist",
     "dll"
+
   ]
 }
