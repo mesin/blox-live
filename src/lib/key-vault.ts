@@ -115,7 +115,7 @@ export default class KeyVaultLib {
     this.flow.validate('otp');
     const ssh = await this.connectToServer();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE http://api.stage.bloxstaking.com/organizations/otp/${this.conf.get(
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE https://api.stage.bloxstaking.com/organizations/otp/${this.conf.get(
         'otp',
       )}`,
       {},

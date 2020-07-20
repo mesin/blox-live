@@ -151,7 +151,7 @@ export default class AWSLib {
 
     await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
     await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }).promise();
-    await this.ec2.deleteSecurityGroup({ GroupId: this.conf.get('securityGroupId'), DryRun: false }).promise();
+    await this.ec2.deleteSecurityGroup({ GroupId: this.conf.get('securityGroupId') }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
     await this.ec2.deleteKeyPair({ KeyPairId: this.conf.get('keyPair').pairId }).promise();
   }
@@ -166,7 +166,7 @@ export default class AWSLib {
 
   async rebootInstance() {
     this.flow.validate('instanceId');
-    await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')], DryRun: true }).promise();
+    await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
   }
 
   async install(): Promise<void> {
