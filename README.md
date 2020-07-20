@@ -46,3 +46,12 @@ To generate binary files run the following command:
 ```bash
 npm run build
 ```
+
+
+## Available commands
+```bash
+"start:dev": "nodemon",
+"build": "rimraf ./build && tsc && pkg .",
+"start": "npm run build && node build/index.js",
+"lint": "eslint '*/**/*.{js,ts,tsx}' --quiet"
+```

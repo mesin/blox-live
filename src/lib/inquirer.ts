@@ -13,8 +13,8 @@ export default class InquirerLib {
           } else {
             return 'Please enter OTP.';
           }
-        }
-      }
+        },
+      },
     ];
     return inquirer.prompt(questions);
   }
@@ -31,7 +31,7 @@ export default class InquirerLib {
           } else {
             return 'Please enter AWS access key id.';
           }
-        }
+        },
       },
       {
         name: 'secretAccessKey',
@@ -43,9 +43,9 @@ export default class InquirerLib {
           } else {
             return 'Please enter AWS access secret key.';
           }
-        }
-      }
+        },
+      },
     ];
     return inquirer.prompt(questions);
   }
-};
+}
