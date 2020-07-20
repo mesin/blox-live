@@ -60,7 +60,7 @@ export default class KeyVaultLib {
       {},
     );
     if (+statusCode > 201) {
-      console.log(chalk.red(`Blox Staking api error: ${statusCode} ${stderr}`));
+      console.log(`Blox Staking api error: ${statusCode} ${stderr}`);
     }
   }
 }
