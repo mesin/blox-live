@@ -1,8 +1,8 @@
 import React from 'react';
 import Configstore from 'configstore';
 import InstallService from '../../backend/proccess-manager/install.service';
-import Observer from '../../backend/proccess-manager/observer.interface';
-import Subject from '../../backend/proccess-manager/subject.interface';
+import { Observer } from '../../backend/proccess-manager/observer.interface';
+import { Subject } from '../../backend/proccess-manager/subject.interface';
 
 class Listener implements Observer {
   public update(subject: Subject, payload: any) {
