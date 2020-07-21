@@ -5,10 +5,11 @@ import { InfoWithTooltip } from '../../../../../common/components';
 import { Title, SubTitle, Paragraph, Link, Button } from '../../common';
 import { loadDepositData } from '../../../actions';
 import * as selectors from '../../../selectors';
-import { ButtonInnerWrapper } from './components';
+import { ButtonInnerWrapper, MetaMaskButton } from './components';
 import { getTxHash } from '../../../../MetaMask/selectors';
 
-const ethImage = './assets/eth-logo.svg';
+const ethImage =
+  'components/Wizard/components/Validators/StakingDeposit/assets/eth-logo.svg';
 
 const Wrapper = styled.div``;
 
@@ -78,6 +79,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
       <SubTitle>How would you like to stake?</SubTitle>
       <ButtonsWrapper>
+        <MetaMaskButton />
         <Button width="260px" height="100px" isDisabled>
           <ButtonInnerWrapper>
             <img src={ethImage} />

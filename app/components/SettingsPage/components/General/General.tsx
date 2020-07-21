@@ -83,7 +83,7 @@ const General = (props: Props) => {
   };
 
   if (error) return <div>{error}</div>;
-  if (!profile || isLoading) return <Loader />;
+  if (isLoading) return <Loader />;
   const orgProps = {
     name: orgName,
     joinDate: orgJoinDate,

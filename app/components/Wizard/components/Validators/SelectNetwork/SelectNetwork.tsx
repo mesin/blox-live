@@ -37,7 +37,7 @@ const Validators = (props: Props) => (
     <ButtonsWrapper>
       {BUTTONS.map((button, index) => {
         const { title, label, imageName, sticker, isDisabled } = button;
-        const image = require(`../../../assets/${imageName}`);
+        const image = `components/Wizard/assets/${imageName}`;
         return (
           <CustomButton
             key={index}
