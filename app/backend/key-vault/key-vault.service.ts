@@ -2,7 +2,7 @@ import Configstore from 'configstore';
 import got from 'got';
 import ServerService from './server.service';
 
-export default class KeyVaultLib {
+export default class KeyVaultService {
   public readonly conf: Configstore;
   public readonly serverService: ServerService;
 

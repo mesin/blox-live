@@ -1,7 +1,7 @@
 import Configstore from 'configstore';
 import ServerService from './server.service';
 
-export default class KeyVaultLib {
+export default class DockerService {
   public readonly conf: Configstore;
   public readonly serverService: ServerService;
 
