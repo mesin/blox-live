@@ -8,6 +8,7 @@
     "jsx": "react",
     "strict": false,
     "pretty": true,
+    "baseUrl": "./app",
     "sourceMap": true,
     /* Additional Checks */
     "noUnusedLocals": true,
@@ -20,7 +21,6 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "allowJs": true,
-
     "typeRoots": []
   },
   "exclude": [
