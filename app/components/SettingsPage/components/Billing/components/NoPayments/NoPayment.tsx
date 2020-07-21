@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const image = require('./no-credit-emptystate.svg');
-
 const Wrapper = styled.div``;
 
 const Image = styled.img`
@@ -24,7 +22,7 @@ const Button = styled.div`
 
 const NoPayments = () => (
   <Wrapper>
-    <Image src={image} />
+    <Image src={'./no-credit-emptystate.svg'} />
     <Text>Billing information is not required for test net users</Text> <br />
     <Button>Upgrade to Main Net</Button>
   </Wrapper>

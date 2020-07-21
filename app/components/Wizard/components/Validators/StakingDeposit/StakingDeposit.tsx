@@ -8,7 +8,7 @@ import * as selectors from '../../../selectors';
 import { ButtonInnerWrapper } from './components';
 import { getTxHash } from '../../../../MetaMask/selectors';
 
-const ethImage = require('./assets/eth-logo.svg');
+const ethImage = './assets/eth-logo.svg';
 
 const Wrapper = styled.div``;
 

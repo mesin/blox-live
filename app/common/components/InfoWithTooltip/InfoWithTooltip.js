@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Tooltip from '../Tooltip';
 
-const infoImage = require('../../../assets/images/info.svg');
-
 const Image = styled.img`
   width: 13px;
   height: 13px;
@@ -13,7 +11,7 @@ const Image = styled.img`
 
 const InfoWithTooltip = ({ title, placement }) => (
   <Tooltip title={title} placement={placement}>
-    <Image src={infoImage} />
+    <Image src={'assets/images/info.svg'} />
   </Tooltip>
 );
 
