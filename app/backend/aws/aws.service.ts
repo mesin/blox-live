@@ -1,7 +1,7 @@
 import Configstore from 'configstore';
 import * as AWS from 'aws-sdk';
 
-export default class AWSLib {
+export default class AwsService {
   public ec2!: AWS.EC2;
 
   public readonly conf: Configstore;
