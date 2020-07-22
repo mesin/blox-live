@@ -140,7 +140,6 @@ const Right = ({ actions }: Props) => {
             const { label } = socialApp;
             const lowerCaseLabel = label.toLowerCase();
             const currentIcon = require(`components/Login/images/${lowerCaseLabel}-icon.png`);
-            console.log('currentIcon', currentIcon);
             return (
               <SocialAppButton
                 key={index}

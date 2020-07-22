@@ -6,6 +6,7 @@ import { history, configuredStore } from './store';
 
 import 'antd/dist/antd.css';
 import 'sanitize.css/sanitize.css';
+import './common/styles/fonts.global.css';
 
 const store = configuredStore();
 

@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-  background-image: url(${bgImage}); 
+  background-image: url(${bgImage});
   background-size: contain;
 `;
 
