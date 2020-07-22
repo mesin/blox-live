@@ -1,6 +1,6 @@
-const { exec } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+import { exec } from 'child_process'
+import fs from 'fs'
+import path from 'path'
 
 
 export default class KeyVaultCli {
@@ -10,7 +10,7 @@ export default class KeyVaultCli {
   constructor() {
     this.executableBin = 'keyvault-cli';
     // dev path
-    this.executablePath = path.resolve(`./bin/${this.executableBin}`);
+    this.executablePath = path.resolve(`${__dirname}/../bin/${this.executableBin}`);
     // prod path
     if (!fs.existsSync(this.executablePath)) {
       this.executablePath = path.resolve(`${process.resourcesPath}/../bin/${this.executableBin}`);
@@ -18,53 +18,39 @@ export default class KeyVaultCli {
   }
 
   async seedGenerate(): Promise<void> {
-    // Create a writable stream
-    // const writeStream = fs.createWriteStream('./.config');
-
     // Run binary
-    exec(`${this.executablePath} portfolio seed generate`, (
+    await exec(`${this.executablePath} portfolio seed generate`, (
       error,
       stdout,
-      stderr
-    ) => {
-      console.log('stdout:', stdout);
-      console.log('stderr:', stderr);
-      if (error !== null) {
-        console.log('exec error:', error);
-      }
-    });
-
-    // Pipe the stdout to stream
-    // child.stdout.pipe(writeStream)
+      stderr) => this.execOutput(error, stdout, stderr)
+    );
   }
 
   async mnemonicGenerate(): Promise<void> {
     // Run binary
-    exec(`${this.executablePath} portfolio seed generate --mnemonic`, (
+    await exec(`${this.executablePath} portfolio seed generate --mnemonic`, (
       error,
       stdout,
-      stderr
-    ) => {
-      console.log('stdout:', stdout);
-      console.log('stderr:', stderr);
-      if (error !== null) {
-        console.log('exec error:', error);
-      }
-    });
+      stderr) => this.execOutput(error, stdout, stderr)
+    );
   }
 
   async seedToMnemonicGenerate(): Promise<void> {
     // Run binary
-    exec(`${this.executablePath} portfolio seed generate --mnemonic --seed=a42b2d973095bb518e45ae5b372dbff9a3aec572ff74b1c8c54749d34b4479eb`, (
+    await exec(`${this.executablePath} portfolio seed generate --mnemonic --seed=a42b2d973095bb518e45ae5b372dbff9a3aec572ff74b1c8c54749d34b4479eb`, (
       error,
       stdout,
-      stderr
-    ) => {
-      console.log('stdout:', stdout);
-      console.log('stderr:', stderr);
-      if (error !== null) {
-        console.log('exec error:', error);
-      }
-    });
+      stderr) => this.execOutput(error, stdout, stderr)
+    );
+  }
+
+  execOutput( error, stdout, stderr): void {
+    if (stderr) {
+      console.error(`error: ${stderr}`);
+    }
+    if (error !== null) {
+      console.error('exec error:', error);
+    }
+    console.log(stdout);
   }
 }
