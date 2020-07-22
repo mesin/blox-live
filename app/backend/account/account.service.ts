@@ -1,7 +1,7 @@
 import Configstore from 'configstore';
 import ServerService from '../key-vault/server.service';
 
-export default class KeyVaultLib {
+export default class AccountService {
   public readonly conf: Configstore;
   public readonly serverService: ServerService;
 
