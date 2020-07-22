@@ -11,6 +11,8 @@ const Wrapper = styled.div`
   background-size: contain;
 `;
 
+console.log('env', process.env);
+
 const Login = () => (
   <Wrapper>
     <Left />
