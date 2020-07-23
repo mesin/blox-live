@@ -4,7 +4,7 @@ on: push
 
 jobs:
   release:
-    runs-on: [self-hosted, ${{ matrix.os }}]
+    runs-on: [self-hosted, '${{ matrix.os }}']
 
     strategy:
       matrix:
