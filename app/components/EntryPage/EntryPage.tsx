@@ -29,9 +29,16 @@ import { useInjectSaga } from '../../utils/injectSaga';
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 
-const Content = styled.div`
+const Wrapper = styled.div`
   width: 100%;
   padding-top: 70px;
+  background-color: #f7fcff;
+`;
+
+const Content = styled.div`
+  width: 100%;
+  max-width: 1360px;
+  margin: auto;
   display: flex;
 `;
 
@@ -73,7 +80,7 @@ const EntryPage = (props: Props) => {
   }
 
   return (
-    <>
+    <Wrapper>
       <Header withMenu />
       <Content>
         <Switch>
@@ -97,7 +104,7 @@ const EntryPage = (props: Props) => {
           />
         </Switch>
       </Content>
-    </>
+    </Wrapper>
   );
 };
 

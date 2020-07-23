@@ -10,7 +10,7 @@ class Listener implements Observer {
   }
 }
 
-const Test = async () => {
+const Test = () => {
   const storeName = 'blox';
   const conf = new Configstore(storeName);
   conf.set('otp', 'test-otp');
