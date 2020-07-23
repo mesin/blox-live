@@ -36,7 +36,6 @@ const Content = styled.div`
 `;
 
 const EntryPage = (props: Props) => {
-  // TODO: remove all unnecessary logic
   const {
     callLoadWallet,
     walletStatus,
