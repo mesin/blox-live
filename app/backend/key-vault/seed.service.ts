@@ -1,47 +1,37 @@
-import { exec } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import util from 'util';
+import Configstore from 'configstore';
+import KeyVaultCliService from '../key-vault/key-vault-cli.service';
+import { step } from '../decorators';
 
 
-export default class KeyVaultCli {
-  private readonly executableBin: string;
-  private readonly executablePath: string;
-  private readonly executor: (command: string) => Promise<any>;
+export default class SeedService extends KeyVaultCliService{
+  private readonly conf: Configstore;
 
-  constructor() {
-    this.executor = util.promisify(exec);
-    this.executableBin = 'keyvault-cli';
-    // dev path
-    this.executablePath = path.resolve(`${__dirname}/../bin/${this.executableBin}`);
-    // prod path
-    if (!fs.existsSync(this.executablePath)) {
-      this.executablePath = path.resolve(`${process.resourcesPath}/../bin/${this.executableBin}`);
-    }
+  constructor(storeName: string) {
+    super();
+    this.conf = new Configstore(storeName);
   }
 
+  @step({
+    name: 'Seed generate',
+  })
   async seedGenerate(): Promise<void> {
-    // Run binary
+    if (this.conf.get('seed'))
+      return;
+
     const { stdout, stderr } = await this.executor(`${this.executablePath} portfolio seed generate`);
-    this.execOutput(stdout, stderr);
+    if (stderr) {
+      throw new Error(stderr);
+    }
+    this.conf.set('seed', stdout.replace('\n', ''));
   }
 
   async mnemonicGenerate(): Promise<void> {
-    // Run binary
     const { stdout, stderr } = await this.executor(`${this.executablePath} portfolio seed generate --mnemonic`);
     this.execOutput(stdout, stderr);
   }
 
   async seedToMnemonicGenerate(): Promise<void> {
-    // Run binary
     const { stdout, stderr } = await this.executor(`${this.executablePath} portfolio seed generate --mnemonic --seed=a42b2d973095bb518e45ae5b372dbff9a3aec572ff74b1c8c54749d34b4479eb`);
     this.execOutput(stdout, stderr);
-  }
-
-  execOutput(stdout, stderr): void {
-    if (stderr) {
-      console.error(`error: ${stderr}`);
-    }
-    console.log(stdout);
   }
 }
