@@ -9,17 +9,18 @@ const Wrapper = styled.div`
 `;
 
 const Wallet = (props) => {
-  const { isActive } = props;
+  const { isActive, summary } = props;
   return (
     <Wrapper>
       <StatusBar isActive={isActive} />
-      <Boxes isActive={isActive} />
+      <Boxes isActive={isActive} summary={summary} />
     </Wrapper>
   );
 };
 
 Wallet.propTypes = {
   isActive: PropTypes.bool,
+  summary: PropTypes.object,
 };
 
 export default Wallet;

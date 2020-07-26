@@ -45,24 +45,24 @@ const TinyText = styled.div`
 `;
 
 const Boxes = (props) => {
-  const { isActive } = props;
+  const { isActive, summary } = props;
   return (
     <Wrapper>
       <Box width={'290px'} color={'gray800'}>
         <InnerBox>
-          <BigText>N/A</BigText>
+          <BigText>{summary.balance}</BigText>
           <TinyText>Total Balance</TinyText>
         </InnerBox>
       </Box>
       <Box width={'260px'} color={'gray800'}>
         <InnerBox>
-          <BigText>N/A</BigText>
+          <BigText>{summary.sinceStart}</BigText>
           <TinyText>Since Start</TinyText>
         </InnerBox>
       </Box>
       <Box width={'220px'} color={'gray800'}>
         <InnerBox>
-          <BigText>N/A</BigText>
+          <BigText>{summary.change}%</BigText>
           <TinyText>Change</TinyText>
         </InnerBox>
       </Box>
@@ -78,6 +78,7 @@ const Boxes = (props) => {
 
 Boxes.propTypes = {
   isActive: PropTypes.bool,
+  summary: PropTypes.object,
 };
 
 export default Boxes;
