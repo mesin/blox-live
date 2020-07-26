@@ -11,7 +11,7 @@
     "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.babel.js --colors",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
-    "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
+    "lint": "cross-env NODE_ENV=development eslint ./app --cache --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "yarn --silent lint --fix; exit 0",
     "lint-styles": "stylelint --ignore-path .eslintignore '**/*.*(css|scss)' --syntax scss",
     "lint-styles-fix": "yarn --silent lint-styles --fix; exit 0",
@@ -22,8 +22,6 @@
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
     "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps && yarn build-dll && opencollective-postinstall",
-    "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{js,jsx,json,html,css,less,scss,yml}'",
-    "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
     "prestart": "yarn build",
     "start": "cross-env NODE_ENV=production electron ./app/main.prod.js",
@@ -39,16 +37,6 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "cross-env NODE_ENV=development eslint --cache"
-    ],
-    "{*.json,.{babelrc,eslintrc,prettierrc,stylelintrc}}": [
-      "prettier --ignore-path .eslintignore --parser json --write"
-    ],
-    "*.{css,scss}": [
-      "stylelint --ignore-path .eslintignore --syntax scss --fix",
-      "prettier --ignore-path .eslintignore --single-quote --write"
-    ],
-    "*.{html,md,yml}": [
-      "prettier --ignore-path .eslintignore --single-quote --write"
     ]
   },
   "build": {
@@ -231,13 +219,11 @@
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-config-erb": "^1.0.0",
-    "eslint-config-prettier": "^6.11.0",
     "eslint-import-resolver-webpack": "^0.12.2",
     "eslint-plugin-compat": "^3.7.0",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-jest": "^23.13.2",
     "eslint-plugin-jsx-a11y": "6.2.3",
-    "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
@@ -249,14 +235,12 @@
     "mini-css-extract-plugin": "^0.9.0",
     "opencollective-postinstall": "^2.0.3",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "prettier": "^2.0.5",
     "react-test-renderer": "^16.12.0",
     "redux-logger": "^3.0.6",
     "rimraf": "^3.0.0",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
     "stylelint": "^13.6.1",
-    "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-standard": "^20.0.0",
     "terser-webpack-plugin": "^3.0.5",
     "testcafe": "^1.8.6",
@@ -317,26 +301,9 @@
   "browserslist": [
     "extends browserslist-config-erb"
   ],
-  "prettier": {
-    "overrides": [
-      {
-        "files": [
-          ".prettierrc",
-          ".babelrc",
-          ".eslintrc",
-          ".stylelintrc"
-        ],
-        "options": {
-          "parser": "json"
-        }
-      }
-    ],
-    "singleQuote": true
-  },
   "stylelint": {
     "extends": [
-      "stylelint-config-standard",
-      "stylelint-config-prettier"
+      "stylelint-config-standard"
     ]
   },
   "renovate": {
