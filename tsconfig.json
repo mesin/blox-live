@@ -7,7 +7,7 @@
     "declarationMap": true,
     "jsx": "react",
     "strict": false,
-    "pretty": true,
+    // "pretty": true,
     "baseUrl": "./app",
     "sourceMap": true,
     /* Additional Checks */
