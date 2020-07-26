@@ -44,6 +44,7 @@ export default {
       AUTH0_LOGOUT_URL: 'http://localhost',
       AUTH0_CALLBACK_URL: 'http://localhost/callback',
       API_URL: 'http://api.stage.bloxstaking.com',
+      // BACKEND: true
     }),
 
     new webpack.NamedModulesPlugin(),

@@ -15,15 +15,15 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.gray800};
 `;
 
-const Validator = ({ accounts }) => (
+const Validators = ({ accounts }) => (
   <Wrapper>
-    <Title>Validator</Title>
+    <Title>Validators</Title>
     <Table columns={tableColumns} isLoading={false} data={accounts} />
   </Wrapper>
 );
 
-Validator.propTypes = {
+Validators.propTypes = {
   accounts: PropTypes.array,
 };
 
-export default Validator;
+export default Validators;
