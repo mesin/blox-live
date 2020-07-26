@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Configstore from 'configstore';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
@@ -21,6 +21,8 @@ const setClientStorageParams = (storeName: string, params: any) => {
 };
 
 const Test = () => {
+  const [accessKeyId, setAccessKeyId] = useState('');
+  const [secretAccessKey, setSecretAccessKey] = useState('');
   return (
     <div>
       <h1>CLI commands</h1>
@@ -30,8 +32,8 @@ const Test = () => {
           const conf = new Configstore(storeName);
           conf.set('otp', 'c559dcbc-f3ab-42b7-8478-d076e600d049');
           conf.set('credentials', {
-            accessKeyId: 'test',
-            secretAccessKey: 'test',
+            accessKeyId,
+            secretAccessKey,
           });
           const installProcess = new InstallProcess(storeName);
           const listener = new Listener();
@@ -91,6 +93,8 @@ const Test = () => {
         Uninstall
       </button>
       <button onClick={() => console.log('test')}>Reboot</button>
+      <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} />
+      <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} />
     </div>
   );
 };
