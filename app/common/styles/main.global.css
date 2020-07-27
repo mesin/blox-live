@@ -204,45 +204,57 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-protection::before {
-  content: '\61';
+.icon-protection:before {
+  content: "\61";
 }
-.icon-check::before {
-  content: '\64';
+.icon-check:before {
+  content: "\64";
 }
-.icon-close::before {
-  content: '\65';
+.icon-close:before {
+  content: "\65";
 }
-.icon-edit::before {
-  content: '\66';
+.icon-edit:before {
+  content: "\66";
 }
-.icon-key::before {
-  content: '\62';
+.icon-key:before {
+  content: "\62";
 }
-.icon-plugnplay::before {
-  content: '\63';
+.icon-plugnplay:before {
+  content: "\63";
 }
-.icon-help::before {
-  content: '\67';
+.icon-help:before {
+  content: "\67";
 }
-.icon-settings::before {
-  content: '\68';
+.icon-settings:before {
+  content: "\68";
 }
-.icon-graph::before {
-  content: '\69';
+.icon-graph:before {
+  content: "\69";
 }
-.icon-arrow-forward::before {
-  content: '\6a';
+.icon-arrow-forward:before {
+  content: "\6a";
 }
-.icon-lock::before {
-  content: '\6b';
+.icon-lock:before {
+  content: "\6b";
 }
-.icon-copy::before {
-  content: '\6c';
+.icon-copy:before {
+  content: "\6c";
 }
-.icon-report::before {
-  content: '\6d';
+.icon-report:before {
+  content: "\6d";
 }
-.icon-more-vert::before {
-  content: '\6e';
+.icon-more-vert:before {
+  content: "\6e";
+}
+.icon-chevron-left:before {
+  content: "\6f";
+}
+.icon-chevron-right:before {
+  content: "\70";
+}
+.icon-expand-more:before {
+  content: "\71";
+}
+.icon-expand-less:before {
+  content: "\72";
 }

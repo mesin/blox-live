@@ -1,6 +1,7 @@
 import keyVaultImage from '../../../../Wizard/assets/img-key-vault.svg';
 import keyVaultInactiveImage from '../../../../Wizard/assets/img-key-vault-inactive.svg';
 
+
 const getNumberColor = (number: number) => {
   if (number > 0) {
     return 'accent2400';

@@ -53,7 +53,7 @@ const Image = styled.img`
   width: 100px;
 `;
 
-const Boxes = (props) => {
+const Box = (props) => {
   const { width, color, bigText, medText, tinyText, image } = props;
   return (
     <Wrapper width={width} color={color}>
@@ -69,13 +69,13 @@ const Boxes = (props) => {
   );
 };
 
-Boxes.propTypes = {
+Box.propTypes = {
   width: PropTypes.string,
   color: PropTypes.string,
-  bigText: PropTypes.string,
+  bigText: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   medText: PropTypes.string,
   tinyText: PropTypes.string,
   image: PropTypes.string,
 };
 
-export default Boxes;
+export default Box;
