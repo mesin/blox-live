@@ -6,6 +6,7 @@ import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
 import AccountRemoveProcess from '../../backend/proccess-manager/account-remove.process';
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
+import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
 
 class Listener implements Observer {
   public update(subject: Subject, payload: any) {
@@ -26,6 +27,20 @@ const Test = () => {
   return (
     <div>
       <h1>CLI commands</h1>
+      <button
+        onClick={async () => {
+          const storeName = 'blox';
+          const conf = new Configstore(storeName);
+          console.log(conf.get('seed'));
+          const accountCreateProcess = new AccountCreateProcess(storeName);
+          const listener = new Listener();
+          accountCreateProcess.subscribe(listener);
+          await accountCreateProcess.run();
+          console.log('+ Congratulations. Private Key Created');
+        }}
+      >
+        Account Create
+      </button>
       <button
         onClick={async () => {
           const storeName = 'blox';
