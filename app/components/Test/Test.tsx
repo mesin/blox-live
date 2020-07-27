@@ -27,15 +27,20 @@ const setClientStorageParams = (storeName: string, params: any) => {
   });
 };
 
+let configIsSet = false;
+
 const Test = () => {
   let [accessKeyId, setAccessKeyId] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
   let [otp, setOtp] = useState('');
-  const generalConf = new Configstore('blox');
-  if (generalConf.get('otp')) otp = generalConf.get('otp');
-  if (generalConf.get('credentials')) accessKeyId = generalConf.get('credentials').accessKeyId;
-  if (generalConf.get('credentials')) secretAccessKey = generalConf.get('credentials').secretAccessKey;
+  if (!configIsSet) {
+    configIsSet = true;
+    const generalConf = new Configstore('blox');
+    if (generalConf.get('otp')) setOtp(generalConf.get('otp'));
+    if (generalConf.get('credentials')) setAccessKeyId(generalConf.get('credentials').accessKeyId);
+    if (generalConf.get('credentials')) setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
+  }
   return (
     <div>
       <h1>CLI commands</h1>
@@ -102,12 +107,8 @@ const Test = () => {
           uninstallProcess.subscribe(listener);
           accountRemoveProcess.subscribe(listener);
           try {
-            await uninstallProcess.run();
-          } catch (e) {
-            setProcessStatus(e);
-          }
-          try {
             await accountRemoveProcess.run();
+            await uninstallProcess.run();
           } catch (e) {
             setProcessStatus(e);
           }
@@ -118,7 +119,7 @@ const Test = () => {
       </button>
       <button onClick={() => console.log('test')}>Reboot</button>
       <p/>
-      <input type={'text'} value={otp} onChange={(event) => setOtp(event.target.value)} placeholder="Otp" />
+      <input type={'text'} value={otp} onChange={(event) => { console.log(event.target.value); setOtp(event.target.value); } } placeholder="Otp" />
       <br/>
       <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
       <br/>

@@ -57,7 +57,6 @@ export default class AccountService {
     requiredConfig: ['otp'],
   })
   async deleteBloxAccount(): Promise<void> {
-    // this.flow.validate('otp');
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
       `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE https://api.stage.bloxstaking.com/organizations/otp/${this.conf.get('otp')}`,
