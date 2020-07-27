@@ -1,4 +1,7 @@
 import React, {useState} from 'react';
+import { connect } from 'react-redux';
+import { getIdToken } from '../CallbackPage/selectors';
+
 import Configstore from 'configstore';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
@@ -29,7 +32,10 @@ const setClientStorageParams = (storeName: string, params: any) => {
 
 let configIsSet = false;
 
-const Test = () => {
+const Test = (props) => {
+  const { token } = props;
+  console.log('token', token);
+
   let [accessKeyId, setAccessKeyId] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
@@ -168,4 +174,8 @@ const Test = () => {
   );
 };
 
-export default Test;
+const mapStateToProps = (state) => ({
+  token: getIdToken(state),
+});
+
+export default connect(mapStateToProps)(Test);
