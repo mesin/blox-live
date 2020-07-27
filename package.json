@@ -41,7 +41,7 @@
   },
   "build": {
     "productName": "BloxStaking",
-    "appId": "org.develar.BloxStaking",
+    "appId": "com.bloxstaking.blox-live",
     "files": [
       "dist/",
       "node_modules/",
