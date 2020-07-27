@@ -22,12 +22,9 @@ export default class AccountService {
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
+    console.log(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`)
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get(
-        'otp',
-      )}", "url": "http://${this.conf.get(
-        'publicIp',
-      )}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
       {},
     );
     if (+statusCode > 201) {
@@ -47,11 +44,7 @@ export default class AccountService {
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request PATCH --data '{"otp": "${this.conf.get(
-        'otp',
-      )}", "url": "http://${this.conf.get(
-        'publicIp',
-      )}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request PATCH --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
       {},
     );
     if (+statusCode > 201) {
@@ -67,9 +60,7 @@ export default class AccountService {
     // this.flow.validate('otp');
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE https://api.stage.bloxstaking.com/organizations/otp/${this.conf.get(
-        'otp',
-      )}`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE https://api.stage.bloxstaking.com/organizations/otp/${this.conf.get('otp')}`,
       {},
     );
     if (+statusCode > 201) {
