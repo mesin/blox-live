@@ -10,20 +10,21 @@ const StyledTooltip = styled((props) => (
   />
 ))`
   & .tooltip {
-    background-color: ${(props) => props.theme.gray800};
+    min-width:${(width) => width};
+    background-color: ${({theme, bgColor}) => bgColor ? theme[bgColor] : theme.gray800};
     color: ${(props) => props.theme.gray50};
     padding: 10px;
     font-family: Avenir;
     font-size: 12px;
     font-weight: 500;
     & > span {
-      color: ${(props) => props.theme.gray800};
+      color: ${({theme, bgColor}) => bgColor ? theme[bgColor] : theme.gray800}};
     }
   }
 `;
 
-const BloxTooltip = ({ children, title, placement }) => (
-  <StyledTooltip title={title} placement={placement} arrow>
+const BloxTooltip = ({ children, ...rest }) => (
+  <StyledTooltip {...rest} arrow>
     {children}
   </StyledTooltip>
 );
@@ -32,6 +33,7 @@ BloxTooltip.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string,
   placement: PropTypes.string,
+  bgColor: PropTypes.string,
 };
 
 export default BloxTooltip;
