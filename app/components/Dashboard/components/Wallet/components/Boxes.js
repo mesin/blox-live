@@ -13,14 +13,14 @@ const Wrapper = styled.div`
 `;
 
 const Boxes = (props) => {
-  const { isActive, summary } = props;
+  const { isActive, summary, setReactivationModalDisplay } = props;
   const boxes = getBoxes(isActive, summary);
   return (
     <Wrapper>
       {boxes.map((box, index) => {
         const { width, color, bigText, medText, tinyText } = box;
         if (index === boxes.length - 1) {
-          return (<BoxWithPopper {...box} isActive={isActive} key={index} />);
+          return (<BoxWithPopper {...box} isActive={isActive} key={index} setReactivationModalDisplay={setReactivationModalDisplay} />);
         }
         return (
           <Box
@@ -40,6 +40,7 @@ const Boxes = (props) => {
 Boxes.propTypes = {
   isActive: PropTypes.bool,
   summary: PropTypes.object,
+  setReactivationModalDisplay: PropTypes.func,
 };
 
 export default Boxes;

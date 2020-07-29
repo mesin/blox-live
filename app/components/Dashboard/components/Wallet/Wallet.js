@@ -9,11 +9,11 @@ const Wrapper = styled.div`
 `;
 
 const Wallet = (props) => {
-  const { isActive, summary } = props;
+  const { isActive, summary, setReactivationModalDisplay } = props;
   return (
     <Wrapper>
       <StatusBar isActive={isActive} />
-      <Boxes isActive={isActive} summary={summary} />
+      <Boxes isActive={isActive} summary={summary} setReactivationModalDisplay={setReactivationModalDisplay} />
     </Wrapper>
   );
 };
@@ -21,6 +21,7 @@ const Wallet = (props) => {
 Wallet.propTypes = {
   isActive: PropTypes.bool,
   summary: PropTypes.object,
+  setReactivationModalDisplay: PropTypes.func,
 };
 
 export default Wallet;
