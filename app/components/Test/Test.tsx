@@ -6,6 +6,7 @@ import Configstore from 'configstore';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
+import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import AccountRemoveProcess from '../../backend/proccess-manager/account-remove.process';
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
@@ -123,7 +124,22 @@ const Test = (props) => {
       >
         Uninstall
       </button>
-      <button onClick={() => console.log('test')}>Reboot</button>
+      <button
+        onClick={async () => {
+          const storeName = 'blox';
+          const rebootProcess = new RebootProcess(storeName);
+          const listener = new Listener(setProcessStatus);
+          rebootProcess.subscribe(listener);
+          try {
+            await rebootProcess.run();
+          } catch (e) {
+            setProcessStatus(e);
+          }
+          console.log('+ Congratulations. Reboot is done!');
+        }}
+      >
+      Reboot
+      </button>
       <p/>
       <input type={'text'} value={otp} onChange={(event) => { console.log(event.target.value); setOtp(event.target.value); } } placeholder="Otp" />
       <br/>
