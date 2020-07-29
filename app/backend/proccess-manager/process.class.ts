@@ -51,7 +51,7 @@ export default class ProcessClass implements Subject {
       // eslint-disable-next-line no-await-in-loop
       const result = await action.instance[action.method].bind(
         action.instance
-      )();
+      )({ notifier: { instance: this, func: 'notify' } });
       this.notify({ msg: result.step.name });
     }
   }

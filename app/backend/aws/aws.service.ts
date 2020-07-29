@@ -1,3 +1,4 @@
+import net  from 'net';
 import Configstore from 'configstore';
 import * as AWS from 'aws-sdk';
 import { step } from '../decorators';
@@ -137,7 +138,6 @@ export default class AwsService {
       .waitFor('instanceRunning', { InstanceIds: [instanceId] })
       .promise();
     this.conf.set('instanceId', instanceId);
-    // await this.flow.delay(60000); // need to improve
 
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
@@ -170,8 +170,6 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'addressId'],
   })
   async truncateServer() {
-    // this.flow.validate('instanceId');
-    // this.flow.validate('addressId');
     await this.ec2.terminateInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
     await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.conf.get('instanceId')] }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.conf.get('addressId') }).promise();
@@ -179,10 +177,31 @@ export default class AwsService {
 
   @step({
     name: 'Reboot instance',
-    requiredConfig: ['instanceId'],
+    requiredConfig: ['instanceId', 'publicIp'],
   })
-  async rebootInstance() {
-    // this.flow.validate('instanceId');
-    await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')], DryRun: true }).promise();
+  async rebootInstance({ notifier }) {
+    await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
+    notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server rebooting...' });
+    await new Promise((resolve) => {
+      const intervalId = setInterval(() => {
+        const socket = new net.Socket();
+        const onError = () => {
+          socket.destroy();
+        };
+        socket.setTimeout(1000);
+        socket.once('error', onError);
+        socket.once('timeout', onError);
+
+        socket.connect(22, this.conf.get('publicIp'), () => {
+          notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server is online' });
+          console.log('Server is online');
+          socket.end();
+          clearInterval(intervalId);
+          resolve();
+        });
+      }, 5000);
+    });
   }
+
+  DescribeInstanceStatus
 }
