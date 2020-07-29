@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Box from './Box';
-import PopperContent from './PopperContent';
+import Popper from './Popper';
 
 const Wrapper = styled.div`
   position:relative;
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const BoxWithTooltip = (props) => {
-  const { isActive, width, color, bigText, medText, tinyText, image } = props;
+  const { isActive, width, color, bigText, medText, tinyText, image, setReactivationModalDisplay } = props;
   const [showPopper, setPopperDisplay] = React.useState(false);
 
   const onMouseEnter = () => {
@@ -30,8 +30,8 @@ const BoxWithTooltip = (props) => {
         medText={medText}
         tinyText={tinyText}
         image={image}
-      /> 
-      {isActive && showPopper && <PopperContent onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />}
+      />
+      {isActive && showPopper && <Popper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />}
     </Wrapper>
   );
 }
@@ -44,6 +44,7 @@ BoxWithTooltip.propTypes = {
   medText: PropTypes.string,
   tinyText: PropTypes.string,
   image: PropTypes.string,
+  setReactivationModalDisplay: PropTypes.func,
 };
 
 export default BoxWithTooltip;

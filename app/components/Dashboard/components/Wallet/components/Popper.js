@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Icon } from 'common/components';
 
@@ -45,14 +46,21 @@ const Button = styled.button`
   cursor:pointer;
 `;
 
-const PopperContent = ({onMouseEnter, onMouseLeave}) => {
+const Popper = ({onMouseEnter, onMouseLeave, onClick}) => {
   return (
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Icon name={'report'} fontSize={'20px'} />
       <Text>{tooltipText}</Text>
-      <Button onClick={() => console.log('click')}>Reactive <Icon name={'chevron-right'} /></Button>
+      <Button onClick={() => onClick(true)}>Reactive <Icon name={'chevron-right'} /></Button>
     </Wrapper>
   )
 };
 
-export default PopperContent;
+Popper.propTypes = {
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
+  onClick: PropTypes.func,
+};
+
+
+export default Popper;

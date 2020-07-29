@@ -75,7 +75,7 @@ const SecondaryButton = styled(Button)`
 `;
 
 const Modal = (props) => {
-  const { title, text, buttonText, buttonColor, onClick, onCloseClick } = props;
+  const { title, text, buttonText, cancelButtonText, buttonColor, onClick, onCloseClick } = props;
   return (
     <Wrapper>
       <Content>
@@ -85,7 +85,7 @@ const Modal = (props) => {
         <Title>{title}</Title>
         <Text>{text}</Text>
         <ButtonsWrapper>
-          <SecondaryButton onClick={onCloseClick}>Cancel</SecondaryButton>
+          <SecondaryButton onClick={onCloseClick}>{cancelButtonText}</SecondaryButton>
           <PrimaryButton onClick={onClick} bgColor={buttonColor}>
             {buttonText}
           </PrimaryButton>
@@ -95,10 +95,19 @@ const Modal = (props) => {
   );
 };
 
+Modal.defaultProps = {
+  title: 'Title',
+  text: 'Some text',
+  buttonText: 'OK',
+  cancelButtonText: 'Cancel',
+  buttonColor: 'primary900',
+};
+
 Modal.propTypes = {
   title: PropTypes.string,
   text: PropTypes.string,
   buttonText: PropTypes.string,
+  cancelButtonText: PropTypes.string,
   buttonColor: PropTypes.string,
   onClick: PropTypes.func,
   onCloseClick: PropTypes.func,

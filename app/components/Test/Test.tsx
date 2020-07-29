@@ -148,7 +148,7 @@ const Test = (props) => {
       <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
       <br/>
       <button
-        onClick={async () => {
+        onClick={async () => { // TODO: check this func
           const storeName = 'blox';
           const conf = new Configstore(storeName);
           conf.set('otp', otp);

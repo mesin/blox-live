@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Wallet, Validators } from './components';
+import { Wallet, Validators, Reactivation } from './components';
 import { summarizeAccounts, normalizeAccountsData } from './service';
+import { Modal } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -15,12 +16,14 @@ const Wrapper = styled.div`
 
 const Dashboard = (props) => {
   const { walletStatus, accounts } = props;
+  const [showReactivationModal, setReactivationModalDisplay] = useState(false);
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
   return (
     <Wrapper>
-      <Wallet isActive={walletStatus === 'active'} summary={accountsSummary} />
+      <Wallet isActive={walletStatus === 'active'} summary={accountsSummary} setReactivationModalDisplay={setReactivationModalDisplay} />
       <Validators accounts={normalizedAccounts} />
+      {showReactivationModal && <Reactivation onClose={() => setReactivationModalDisplay(false)} />}
     </Wrapper>
   );
 };
