@@ -1,23 +1,20 @@
 import * as actionTypes from './actionTypes';
 
-export const keyvaultRestart = () => ({
-  type: actionTypes.KEYVAULT_RESTART,
+export const keyvaultProcessSubscribe = (name: string) => ({
+  type: actionTypes.KEYVAULT_PROCESS_SUBSCRIBE,
+  payload: name,
 });
 
-export const keyvaultRestartSubscribe = (credentials: Record<string, any>) => ({
-  type: actionTypes.KEYVAULT_RESTART_SUBSCRIBE,
-  payload: credentials
+export const keyvaultProcessObserve = (message: string) => ({
+  type: actionTypes.KEYVAULT_PROCESS_OBSERVE,
+  payload: message,
 });
 
-export const keyvaultRestartUnSubscribe = () => ({
-  type: actionTypes.KEYVAULT_RESTART_UNSUBSCRIBE,
+export const keyvaultProcessUnSubscribe = () => ({
+  type: actionTypes.KEYVAULT_PROCESS_UNSUBSCRIBE,
 });
 
-export const keyvaultRestartSuccess = () => ({
-  type: actionTypes.KEYVAULT_RESTART_SUCCESS,
-});
-
-export const keyvaultRestartFailure = (error: Record<string, any>) => ({
-  type: actionTypes.KEYVAULT_RESTART_FAILURE,
-  payload: error
+export const keyvaultProcessFailure = (error: Record<string, any>) => ({
+  type: actionTypes.KEYVAULT_PROCESS_FAILURE,
+  payload: error,
 });

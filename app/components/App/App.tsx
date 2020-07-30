@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
-// import Test from '../Test';
+import Test from '../Test';
 
 import Auth from '../Auth';
 import GlobalStyle from '../../common/styles/global-styles';
@@ -44,9 +44,9 @@ const App = (props: Props) => {
     return <Loader />;
   }
 
-  // if(isLoggedIn && process.env.BACKEND) {
-  //   return <Test />;
-  // }
+  if (isLoggedIn && process.env.BACKEND) {
+    return <Test />;
+  }
 
   return (
     <AppWrapper>

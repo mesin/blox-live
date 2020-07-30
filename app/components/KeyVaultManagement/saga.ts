@@ -1,8 +1,11 @@
-import { eventChannel } from 'redux-saga';
+import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
-import RebootProcess from '../../backend/proccess-manager/reboot.process';
-import { KEYVAULT_RESTART } from './actionTypes';
+import { KEYVAULT_PROCESS_SUBSCRIBE } from './actionTypes';
 import * as actions from './actions';
+import { processInstantiator } from './service';
+
+import { Observer } from '../../backend/proccess-manager/observer.interface';
+import { Subject } from '../../backend/proccess-manager/subject.interface';
 
 // function* onSuccess() {
 //   yield put(actions.keyvaultRestartSuccess());
@@ -13,41 +16,54 @@ import * as actions from './actions';
 //   notification.error({ message: 'Error', description: error.message });
 // }
 
-export function* startRestarting() {
-  const storeName = 'blox';
-  const rebootProcess = new RebootProcess(storeName);
-  yield rebootProcess.run();
-  const channel = yield call(createChannel, rebootProcess);
+class Listener implements Observer {
+  private logFunc: any;
+  constructor(func: any) {
+    this.logFunc = func;
+  }
+  public update(subject: Subject, payload: any) {
+    this.logFunc(subject, payload);
+  }
+}
+
+export function* startProcess(action) {
+  const { payload } = action;
+  const channel = yield call(createChannel, payload);
   try {
     while (true) {
       const results = yield take(channel);
       console.log('results', results);
-      debugger;
-      // yield put(actions.dataReceived(results));
+      yield put(actions.keyvaultProcessObserve(results));
     }
-  }
+  } // TODO: check out catch here
   finally {
-    yield put(actions.keyvaultRestartUnSubscribe());
+    yield put(actions.keyvaultProcessUnSubscribe());
     channel.close();
   }
 }
 
-function createChannel(process) {
+function createChannel(processName) {
   return eventChannel((emitter) => {
-    const observer = (message) => {
-      console.log('message', message);
-      debugger;
-      emitter(message);
+    const storeName = 'blox';
+    const process = processInstantiator(processName, storeName);
+
+    // const rebootProcess = new RebootProcess(storeName);
+
+    const callback = (subject, payload) => {
+      if (payload.status === 'completed') {
+        process.unsubscribe(listener);
+        emitter(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
+        emitter(END);
+      }
+      emitter(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
     };
 
-    if (process) {
-      debugger;
-      console.log('process', process);
-      process.subscribe(observer);
-   }
+    const listener = new Listener(callback);
+    process.run();
+    process.subscribe(listener);
 
     const unsubscribeTo = () => {
-      process.unsubscribe(observer);
+      process.unsubscribe(listener);
     };
 
     return unsubscribeTo;
@@ -55,5 +71,5 @@ function createChannel(process) {
 }
 
 export default function* keyVaultManagementSaga() {
-  yield takeLatest(KEYVAULT_RESTART, startRestarting);
+  yield takeLatest(KEYVAULT_PROCESS_SUBSCRIBE, startProcess);
 }

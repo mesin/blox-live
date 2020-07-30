@@ -5,72 +5,65 @@ import styled from 'styled-components';
 import { ProgressBar } from 'common/components';
 import ModalTemplate from './ModalTemplate';
 import { useInjectSaga } from '../../../../../utils/injectSaga';
-import { keyvaultRestart } from '../../../../KeyVaultManagement/actions';
+import { keyvaultProcessSubscribe } from '../../../../KeyVaultManagement/actions';
 import saga from '../../../../KeyVaultManagement/saga';
+import { getMessage, getIsLoading } from '../../../../KeyVaultManagement/selectors';
 
 import image from '../../../../Wizard/assets/img-key-vault-inactive.svg';
 
-const key = 'keyvaultRestart';
+const key = 'keyVaultManagement';
 
 const Title = styled.h1`
   font-size: 26px;
   font-weight: 900;
 `;
 
-const Description = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.71;
-  padding-bottom:24px;
+const RestartingMessage = styled.div`
+  color: ${({theme}) => theme.primary900};
+  font-size:12px;
+  margin-top:7px;
 `;
 
 const SmallText = styled.div`
   font-size: 12px;
   font-weight: 500;
   color: ${({theme}) => theme.gray600};
-  padding-bottom:54px;
+  padding-top:54px;
 `;
 
-const Button = styled.button`
-  width: 175px;
-  height: 32px;
-  font-size: 14px;
-  font-weight: 900;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background-color: ${({theme}) => theme.primary900};
-  border-radius: 6px;
-  color:${({theme}) => theme.gray50};
-  border:0px;
-`;
-
-const RestartingModal = ({moveForward, onClose, callKeyvaultRestart}) => {
+const RestartingModal = ({moveForward, onClose, callKeyvaultRestart, isLoading, restartMessage}) => {
   useInjectSaga({ key, saga, mode: '' });
-
   useEffect(() => {
-    callKeyvaultRestart();
-  });
+    if (!isLoading && !restartMessage) {
+      callKeyvaultRestart();
+    }
+  }, [isLoading, restartMessage]);
 
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Restarting Modal</Title>
       <ProgressBar />
+      <RestartingMessage>{restartMessage}</RestartingMessage>
       <SmallText>This process is automated and only takes a few minutes.</SmallText>
     </ModalTemplate>
-  )
+  );
 };
 
 RestartingModal.propTypes = {
   moveForward: PropTypes.func,
   onClose: PropTypes.func,
   callKeyvaultRestart: PropTypes.func,
+  restartMessage: PropTypes.string,
+  isLoading: PropTypes.bool,
 };
 
-// const mapStateToProps = (state: any) => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-  callKeyvaultRestart: () => dispatch(keyvaultRestart()),
+const mapStateToProps = (state) => ({
+  restartMessage: getMessage(state),
+  isLoading: getIsLoading(state),
 });
 
-export default connect(null, mapDispatchToProps)(RestartingModal);
+const mapDispatchToProps = (dispatch) => ({
+  callKeyvaultRestart: () => dispatch(keyvaultProcessSubscribe('restart')),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RestartingModal);
