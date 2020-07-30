@@ -181,7 +181,7 @@ export default class AwsService {
   })
   async rebootInstance({ notifier }) {
     await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
-    notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server rebooting...' });
+    notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server rebooting...', status: 'processing' });
     await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
@@ -193,7 +193,7 @@ export default class AwsService {
         socket.once('timeout', onError);
 
         socket.connect(22, this.conf.get('publicIp'), () => {
-          notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server is online' });
+          notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server is online', status: 'processing' });
           console.log('Server is online');
           socket.end();
           clearInterval(intervalId);
