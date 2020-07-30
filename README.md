@@ -9,7 +9,7 @@
 [![Dependency Status][david-image]][david-url]
 [![DevDependency Status][david-dev-image]][david-dev-url]
 [![Github Tag][github-tag-image]][github-tag-url]
-[![Discord](https://discord.com/api/guilds/723834989506068561/widget.png?style=shield)](https://discord.gg/ZjYVdER)
+[![Discord](https://discord.com/api/guilds/723834989506068561/widget.png?style=shield)](https://discord.gg/HpT2z5B)
 
 </div>
 
