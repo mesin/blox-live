@@ -52,7 +52,7 @@ export default class ProcessClass implements Subject {
       const result = await action.instance[action.method].bind(
         action.instance
       )({ notifier: { instance: this, func: 'notify' } });
-      this.notify({ msg: result.step.name });
+      this.notify({ msg: result.step.name, status: 'completed' });
     }
   }
 }
