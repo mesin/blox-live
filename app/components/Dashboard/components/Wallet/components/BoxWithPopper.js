@@ -34,7 +34,7 @@ const BoxWithTooltip = (props) => {
       {isActive && showPopper && <Popper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />}
     </Wrapper>
   );
-}
+};
 
 BoxWithTooltip.propTypes = {
   isActive: PropTypes.bool,

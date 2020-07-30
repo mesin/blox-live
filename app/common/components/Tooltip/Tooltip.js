@@ -10,7 +10,6 @@ const StyledTooltip = styled((props) => (
   />
 ))`
   & .tooltip {
-    min-width:${(width) => width};
     background-color: ${({theme, bgColor}) => bgColor ? theme[bgColor] : theme.gray800};
     color: ${(props) => props.theme.gray50};
     padding: 10px;

@@ -19,8 +19,7 @@ const Wrapper = styled.div`
 const CheckBox = styled.div`
   width: 40px;
   height: 40px;
-  border-color: ${({ theme, isActive }) =>
-    isActive ? theme.primary900 : theme.gray400};
+  border-color: ${({ theme, isActive }) => isActive ? theme.primary900 : theme.gray400};
   border-width: 2px;
   border-style: solid;
   border-radius: 50%;
@@ -28,8 +27,7 @@ const CheckBox = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 24px;
-  background-color: ${({ theme, isActive }) =>
-    isActive ? theme.primary900 : 'transparent'};
+  background-color: ${({ theme, isActive }) => isActive ? theme.primary900 : 'transparent'};
   transition: 0.25s all;
 `;
 

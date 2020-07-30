@@ -47,12 +47,9 @@ const IntroText = styled.div`
   margin-bottom: 20px;
 `;
 
-let toolTipText =
-  "Blox KeyVault is responsible for securing your private keys and signing the validators'";
-toolTipText +=
-  'activity on the beaconChain. Blox will communicate with your secured KeyVault everyime a validator';
-toolTipText +=
-  'is requested to attest/propose, and to do so, the KeyVault must be online 24/7.';
+let toolTipText = "Blox KeyVault is responsible for securing your private keys and signing the validators'";
+toolTipText += 'activity on the beaconChain. Blox will communicate with your secured KeyVault everyime a validator';
+toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must be online 24/7.';
 
 const key = 'wizard';
 

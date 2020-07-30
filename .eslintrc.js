@@ -1,5 +1,5 @@
 module.exports = {
-  extends: 'erb/typescript',
+  extends: 'airbnb-typescript',
   rules: {
     'prettier/prettier': 0,
     // A temporary hack related to IDE not resolving correct package.json
@@ -13,7 +13,6 @@ module.exports = {
     'import/no-unresolved': 2,
     'import/no-webpack-loader-syntax': 0,
     'import/prefer-default-export': 0,
-    // 'indent': [2, 2, { SwitchCase: 1 }],
     'jsx-a11y/aria-props': 2,
     'jsx-a11y/heading-has-content': 0,
     'jsx-a11y/label-has-associated-control': [
@@ -38,7 +37,7 @@ module.exports = {
     'no-use-before-define': 0,
     'prefer-template': 2,
     'react/destructuring-assignment': 0,
-    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/rules-of-hooks': 0,
     'react/button-has-type': 0,
     'react/jsx-closing-tag-location': 0,
     'react/forbid-prop-types': 0,
@@ -60,8 +59,6 @@ module.exports = {
     'react/display-name': 0,
     'react/jsx-props-no-spreading': 0,
     'react/jsx-curly-newline': 0,
-    // 'redux-saga/no-yield-in-race': 2,
-    // 'redux-saga/yield-effects': 2,
     'require-yield': 0,
     'linebreak-style': 0,
     'arrow-parens': 0,
@@ -93,6 +90,7 @@ module.exports = {
     '@typescript-eslint/lines-between-class-members': 0,
     '@typescript-eslint/no-unused-expressions': 0,
     '@typescript-eslint/naming-convention': 0,
+    '@typescript-eslint/brace-style': 0
   },
   parserOptions: {
     ecmaVersion: 2020,

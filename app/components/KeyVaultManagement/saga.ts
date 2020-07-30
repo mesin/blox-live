@@ -1,28 +1,8 @@
-import { eventChannel, END } from 'redux-saga';
-import { call, put, take, takeLatest } from 'redux-saga/effects'; // select
-import Configstore from 'configstore';
-import InstallProcess from '../../backend/proccess-manager/install.process';
-import { Observer } from '../../backend/proccess-manager/observer.interface';
-import { Subject } from '../../backend/proccess-manager/subject.interface';
-// import { notification } from 'antd';
-
+import { eventChannel } from 'redux-saga';
+import { call, put, take, takeLatest } from 'redux-saga/effects';
+import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import { KEYVAULT_RESTART } from './actionTypes';
 import * as actions from './actions';
-// import { getIdToken } from '../CallbackPage/selectors';
-
-
-class Listener implements Observer { // TODO: check where to implement it
-  private logFunc: any;
-  constructor(func: any) {
-    this.logFunc = func;
-  }
-
-  public update(subject: Subject, payload: any) {
-    debugger;
-    this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
-    console.log(`${subject.state}/${subject.actions.length}`, payload.msg);
-  }
-}
 
 // function* onSuccess() {
 //   yield put(actions.keyvaultRestartSuccess());
@@ -34,23 +14,10 @@ class Listener implements Observer { // TODO: check where to implement it
 // }
 
 export function* startRestarting() {
-  // const idToken = yield select(getIdToken);
-  debugger;
-  const setProcessStatus = '';
   const storeName = 'blox';
-  const conf = new Configstore(storeName);
-  conf.set('otp', 'otp something');
-  conf.set('credentials', {
-    accessKeyId: 'AKIARYXLX53R4KHH3PTF',
-    secretAccessKey: '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',
-  });
-
-  debugger;
-
-  const installProcess = yield new InstallProcess(storeName);
-  const listener = new Listener(setProcessStatus);
-  installProcess.subscribe(listener);
-  const channel = yield call(createChannel, installProcess, listener);
+  const rebootProcess = new RebootProcess(storeName);
+  yield rebootProcess.run();
+  const channel = yield call(createChannel, rebootProcess);
   try {
     while (true) {
       const results = yield take(channel);
@@ -65,25 +32,22 @@ export function* startRestarting() {
   }
 }
 
-function createChannel(process, listener) {
+function createChannel(process) {
   return eventChannel((emitter) => {
-    const subscribe = (eventPayload) => {
+    const observer = (message) => {
+      console.log('message', message);
       debugger;
-      if (false) {
-        process.off();
-        emitter(eventPayload);
-        emitter(END);
-      }
-      emitter(eventPayload);
+      emitter(message);
     };
 
     if (process) {
-      process.subscribe(listener);
-      // process.on(listener, (data) => subscribe(data));
-    }
+      debugger;
+      console.log('process', process);
+      process.subscribe(observer);
+   }
 
     const unsubscribeTo = () => {
-      process.unsubscribe(listener);
+      process.unsubscribe(observer);
     };
 
     return unsubscribeTo;

@@ -49,7 +49,6 @@ const RestartingModal = ({moveForward, onClose, callKeyvaultRestart}) => {
   useInjectSaga({ key, saga, mode: '' });
 
   useEffect(() => {
-    debugger;
     callKeyvaultRestart();
   });
 
