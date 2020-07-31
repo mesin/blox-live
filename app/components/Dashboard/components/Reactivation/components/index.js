@@ -1,6 +1,6 @@
-export { default as SmallModal } from './SmallModal';
-export { default as WelcomeModal } from './WelcomeModal';
-export { default as RestartingModal } from './RestartingModal';
-
-
-
+export { default as ModalTemplate } from './ModalTemplate';
+export { default as Title } from './Title';
+export { default as Description } from './Description';
+export { default as SmallText } from './SmallText';
+export { default as Button } from './Button';
+export { default as ProgressMessage } from './ProgressMessage';

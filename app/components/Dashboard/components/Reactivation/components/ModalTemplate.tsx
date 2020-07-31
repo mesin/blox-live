@@ -51,7 +51,7 @@ const ModalTemplate = ({onClose, image, children}: Props) => {
         </InnerWrapper>
       </CustomModal>
     </Wrapper>
-  )
+  );
 };
 
 type Props = {

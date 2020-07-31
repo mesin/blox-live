@@ -28,7 +28,7 @@ class Listener implements Observer {
 
 export function* startProcess(action) {
   const { payload } = action;
-  const channel = yield call(createChannel, payload);
+  const channel = yield call(createChannel, payload.name);
   try {
     while (true) {
       const results = yield take(channel);
