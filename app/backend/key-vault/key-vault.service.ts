@@ -45,4 +45,28 @@ export default class KeyVaultService {
       throw new Error(`Key Vault entrypoint scripts are failed: ${stderr}`);
     }
   }
+
+  @step({
+    name: 'Update Storage',
+    requiredConfig: ['publicIp', 'vaultRootToken', 'key-vault-storage']
+  })
+  async updateVaultStorage(): Promise<void> {
+    try {
+      const storage = this.conf.get('key-vault-storage');
+      const { body } = await got.post(`${this.conf.get('publicIp')}/v1/ethereum/storage`, {
+        headers: {
+          'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`
+        },
+        body: {
+          // @ts-ignore
+          data: storage
+        },
+        // @ts-ignore
+        json: true
+      });
+      console.log(body['data']);
+    } catch (error) {
+      throw new Error(`Vault plugin api error: ${error}`);
+    }
+  }
 }
