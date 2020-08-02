@@ -20,8 +20,10 @@ const RestartingModal = (props) => {
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
-      keyvaultProcessClearState();
-      setTimeout(() => move1StepForward(), 1000);
+      setTimeout(() => {
+        keyvaultProcessClearState();
+        move1StepForward();
+      }, 1000);
     }
     if (!isDone && !isLoading && !restartMessage && !processName) {
       keyvaultProcessSubscribe('restart', 'Checking KeyVault configuration...');

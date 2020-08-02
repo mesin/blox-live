@@ -48,11 +48,11 @@ export default class KeyVaultService {
 
   @step({
     name: 'Update Storage',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'key-vault-storage']
+    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
   async updateVaultStorage(): Promise<void> {
     try {
-      const storage = this.conf.get('key-vault-storage');
+      const storage = this.conf.get('keyVaultStorage');
       const { body } = await got.post(`${this.conf.get('publicIp')}/v1/ethereum/storage`, {
         headers: {
           'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`

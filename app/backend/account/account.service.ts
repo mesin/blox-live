@@ -12,16 +12,24 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Sync vault with blox api',
-    requiredConfig: ['publicIp', 'authToken'],
+    name: 'Get key vault root token',
+    requiredConfig: ['publicIp'],
   })
-  async syncVaultWithBlox(): Promise<void> {
+  async getKeyVaultRootToken(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
+  }
+
+  @step({
+    name: 'Sync vault with blox api',
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken'],
+  })
+  async syncVaultWithBlox(): Promise<void> {
+    const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request POST --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/sync`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request POST --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${this.conf.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
       {},
     );
     if (+statusCode > 201) {
@@ -31,15 +39,12 @@ export default class AccountService {
 
   @step({
     name: 'Resync vault with blox api',
-    requiredConfig: ['publicIp', 'authToken'],
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken'],
   })
   async resyncNewVaultWithBlox(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
-    if (!rootToken) throw new Error('root vault-plugin key not found');
-    this.conf.set('vaultRootToken', rootToken);
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request PATCH --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/sync`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request PATCH --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${this.conf.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
       {},
     );
     if (+statusCode > 201) {

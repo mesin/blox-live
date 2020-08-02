@@ -51,15 +51,15 @@ function createChannel(process) {
   return eventChannel((emitter) => {
     const callback = (subject, payload) => {
       const { state } = subject;
-      const { msg, status } = payload;
+      const { name, status } = payload.step;
       console.log('subject', subject);
       console.log('payload', payload);
       if (status === 'completed' && state === subject.actions.length) {
-        emitter(`${state}/${subject.actions.length} > ${msg}`);
         process.unsubscribe(listener);
         emitter(END);
+        return;
       }
-      emitter(`${state}/${subject.actions.length} > ${msg}`);
+      emitter(`${state}/${subject.actions.length} > ${name}`);
     };
 
     const listener = new Listener(callback);

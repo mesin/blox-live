@@ -15,30 +15,27 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     name: 'Create Wallet'
   })
   async createWallet(): Promise<void> {
-    if (this.conf.get('key-vault-storage'))
-      return;
-    const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet create`
-    );
+    if (this.conf.get('keyVaultStorage')) return;
+    const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.conf.set('key-vault-storage', stdout.replace('\n', ''));
+    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   @step({
     name: 'Create Account',
-    requiredConfig: ['seed', 'key-vault-storage']
+    requiredConfig: ['seed', 'keyVaultStorage']
   })
   async createAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account create --seed=${this.conf.get('seed')} --storage=${this.conf.get('key-vault-storage')}`
+      `${this.executablePath} wallet account create --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.conf.set('key-vault-storage', stdout.replace('\n', ''));
+    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 }
