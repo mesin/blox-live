@@ -28,34 +28,36 @@ class Listener implements Observer {
 
 export function* startProcess(action) {
   const { payload } = action;
-  const channel = yield call(createChannel, payload.name);
+  const storeName = 'blox';
+  const process = processInstantiator(payload.name, storeName);
+  const channel = yield call(createChannel, process);
   try {
     while (true) {
       const results = yield take(channel);
       console.log('results', results);
       yield put(actions.keyvaultProcessObserve(results));
     }
-  } // TODO: check out catch here
+  }
+  catch (e) {
+    yield put(actions.keyvaultProcessFailure(e));
+  }
   finally {
     yield put(actions.keyvaultProcessUnSubscribe());
     channel.close();
   }
 }
 
-function createChannel(processName) {
+function createChannel(process) {
   return eventChannel((emitter) => {
-    const storeName = 'blox';
-    const process = processInstantiator(processName, storeName);
-
-    // const rebootProcess = new RebootProcess(storeName);
-
     const callback = (subject, payload) => {
-      if (payload.status === 'completed') {
+      const { state } = subject;
+      const { msg, status } = payload;
+      if (status === 'completed' && state === subject.actions.length) {
+        emitter(`${state}/${subject.actions.length} > ${msg}`);
         process.unsubscribe(listener);
-        emitter(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
         emitter(END);
       }
-      emitter(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
+      emitter(`${state}/${subject.actions.length} > ${msg}`);
     };
 
     const listener = new Listener(callback);

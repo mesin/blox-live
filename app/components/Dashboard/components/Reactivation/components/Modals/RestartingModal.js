@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { ProgressBar } from 'common/components';
-import { Title, ProgressMessage, SmallText } from '..';
+import { Title, ProgressMessage, SmallText, Wrapper } from '..';
 import ModalTemplate from '../ModalTemplate';
 import { useInjectSaga } from '../../../../../../utils/injectSaga';
 import * as keyVaultActions from '../../../../../KeyVaultManagement/actions';
@@ -15,13 +15,13 @@ import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 const key = 'keyVaultManagement';
 
 const RestartingModal = (props) => {
-  const {moveForward, onClose, isLoading, restartMessage, isDone, processName, actions} = props;
+  const {move1StepForward, onClose, isLoading, restartMessage, isDone, processName, actions} = props;
   const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
       keyvaultProcessClearState();
-      moveForward();
+      move1StepForward();
     }
     if (!isDone && !isLoading && !restartMessage && !processName) {
       keyvaultProcessSubscribe('restart', 'Checking KeyVault configuration...');
@@ -31,8 +31,10 @@ const RestartingModal = (props) => {
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Restarting KeyVault</Title>
-      <ProgressBar />
-      <ProgressMessage>{restartMessage}</ProgressMessage>
+      <Wrapper>
+        <ProgressBar />
+        <ProgressMessage>{restartMessage}</ProgressMessage>
+      </Wrapper>
       <SmallText>This process is automated and only takes a few minutes.</SmallText>
     </ModalTemplate>
   );
@@ -40,7 +42,7 @@ const RestartingModal = (props) => {
 
 RestartingModal.propTypes = {
   processName: PropTypes.string,
-  moveForward: PropTypes.func,
+  move1StepForward: PropTypes.func,
   onClose: PropTypes.func,
   actions: PropTypes.object,
   restartMessage: PropTypes.string,

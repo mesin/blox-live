@@ -14,15 +14,15 @@ import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 
 const key = 'keyVaultManagement';
 
-const ReinstallingModal = (props) => { // TODO: check the reinstallMessage param
-  const {moveForward, onClose, isLoading, reinstallMessage, isDone, processName, actions} = props;
+const ReinstallingModal = (props) => {
+  const {move1StepForward, onClose, isLoading, reinstallMessage, isDone, processName, actions} = props;
   const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
-    // if (isDone) {
-    //   moveForward();
-    //   keyvaultProcessClearState();
-    // }
+    if (isDone) {
+      keyvaultProcessClearState();
+      move1StepForward();
+    }
     if (!isDone && !isLoading && !reinstallMessage && !processName) {
       keyvaultProcessSubscribe('reinstall', 'Checking KeyVault configuration...');
     }
@@ -41,7 +41,7 @@ const ReinstallingModal = (props) => { // TODO: check the reinstallMessage param
 
 ReinstallingModal.propTypes = {
   processName: PropTypes.string,
-  moveForward: PropTypes.func,
+  move1StepForward: PropTypes.func,
   onClose: PropTypes.func,
   actions: PropTypes.object,
   reinstallMessage: PropTypes.string,

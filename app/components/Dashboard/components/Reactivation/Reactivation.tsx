@@ -1,20 +1,28 @@
 import React, { useState } from 'react';
-import { SmallModal, WelcomeModal, RestartingModal, ReinstallingModal } from './components/Modals';
+import { SmallModal, WelcomeModal, RestartingModal,
+         ReactivatedModal, ReinstallingModal } from './components/Modals';
 
 const Reactivation = ({onClose}: Props) => {
   const [step, setStep] = useState(0);
-  const moveForward = () => setStep(step + 1);
+  const move1StepForward = () => setStep(step + 1);
+  const move2StepsForward = () => setStep(step + 2);
   switch (step) {
     case 0:
-      return <SmallModal onClick={moveForward} onClose={onClose} />;
+      return <SmallModal onClick={move1StepForward} onClose={onClose} />;
     case 1:
-      return <WelcomeModal onClick={moveForward} onClose={onClose} />;
+      return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
     case 2:
-      return <RestartingModal moveForward={moveForward} onClose={onClose} />;
+      return (
+        <RestartingModal move1StepForward={move1StepForward}
+          move2StepsForward={move2StepsForward} onClose={onClose}
+        />
+      );
     case 3:
-      return <ReinstallingModal moveForward={moveForward} onClose={onClose} />;
+      return <ReactivatedModal onClose={onClose} />;
+    case 4:
+      return <ReinstallingModal move1StepForward={move1StepForward} onClose={onClose} />;
     default:
-      return <SmallModal onClick={moveForward} onClose={onClose} />;
+      return <SmallModal onClick={move1StepForward} onClose={onClose} />;
   }
 };
 

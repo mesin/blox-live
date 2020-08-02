@@ -6,6 +6,7 @@ const Wrapper = styled.div`
   width:100%;
   height:100%;
   display:flex;
+  position:fixed;
 `;
 
 const InnerWrapper = styled.div`
@@ -16,11 +17,13 @@ const InnerWrapper = styled.div`
 
 const Left = styled.div`
   width: 500px;
-  padding:115px 32px 0px 64px;
+  height:100%;
+  padding:115px 32px 115px 64px;
   padding-top: 115px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content:space-between;
   text-align: left;
 `;
 

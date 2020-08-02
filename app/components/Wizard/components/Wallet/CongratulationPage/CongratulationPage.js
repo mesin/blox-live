@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Lottie from 'lottie-web-react';
-import { Title, Paragraph, SmallButton, SuccessIcon } from '../../common';
+import { SuccessIcon } from 'common/components';
+import { Title, Paragraph, SmallButton } from '../../common';
 
 import animationData from '../../../../../assets/animations/confetti.json';
 
