@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { connect } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 import { getIdToken } from '../CallbackPage/selectors';
 
 import Configstore from 'configstore';
@@ -19,8 +20,8 @@ class Listener implements Observer {
   }
 
   public update(subject: Subject, payload: any) {
-    this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
-    console.log(`${subject.state}/${subject.actions.length}`, payload.msg);
+    this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.step.name}`);
+    console.log(`${subject.state}/${subject.actions.length}`, payload);
   }
 }
 
@@ -40,13 +41,14 @@ const Test = (props) => {
   let [accessKeyId, setAccessKeyId] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
-  let [otp, setOtp] = useState('');
   if (!configIsSet) {
     configIsSet = true;
     const generalConf = new Configstore('blox');
-    if (generalConf.get('otp')) setOtp(generalConf.get('otp'));
-    if (generalConf.get('credentials')) setAccessKeyId(generalConf.get('credentials').accessKeyId);
-    if (generalConf.get('credentials')) setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
+    generalConf.set('authToken', token);
+    if (generalConf.get('credentials')) {
+      setAccessKeyId(generalConf.get('credentials').accessKeyId);
+      setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
+    }
   }
   return (
     <div>
@@ -76,8 +78,9 @@ const Test = (props) => {
           const confMain = new Configstore(mainStoreName);
 
           setClientStorageParams(tmpStoreName, {
+            uuid: confMain.get('uuid'),
+            authToken: confMain.get('authToken'),
             credentials: confMain.get('credentials'),
-            otp: confMain.get('otp'),
             keyPair: confMain.get('keyPair'),
             securityGroupId: confMain.get('securityGroupId'),
           });
@@ -92,6 +95,8 @@ const Test = (props) => {
           }
           const confTmpStore = new Configstore(tmpStoreName);
           setClientStorageParams(confMain, {
+            uuid: confTmpStore.get('uuid'),
+            authToken: confTmpStore.get('authToken'),
             addressId: confTmpStore.get('addressId'),
             publicIp: confTmpStore.get('publicIp'),
             instanceId: confTmpStore.get('instanceId'),
@@ -141,7 +146,6 @@ const Test = (props) => {
       Reboot
       </button>
       <p/>
-      <input type={'text'} value={otp} onChange={(event) => { console.log(event.target.value); setOtp(event.target.value); } } placeholder="Otp" />
       <br/>
       <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
       <br/>
@@ -151,7 +155,9 @@ const Test = (props) => {
         onClick={async () => { // TODO: check this func
           const storeName = 'blox';
           const conf = new Configstore(storeName);
-          conf.set('otp', otp);
+          if (!conf.get('uuid')) {
+            conf.set('uuid', uuidv4());
+          }
           conf.set('credentials', {
             accessKeyId,
             secretAccessKey,
@@ -174,12 +180,10 @@ const Test = (props) => {
           const storeName = 'blox';
           const conf = new Configstore(storeName);
           conf.clear();
-          otp = '';
           accessKeyId = '';
           secretAccessKey = '';
           setAccessKeyId('');
           setSecretAccessKey('');
-          setOtp('');
         }}
       >
         Clean config
