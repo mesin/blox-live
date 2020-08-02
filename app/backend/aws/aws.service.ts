@@ -202,13 +202,5 @@ export default class AwsService {
         });
       }, 5000);
     });
-    // check if the key vault is alive
-    try {
-      await got.get(`http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
-      return { isActive: true };
-    } catch (e) {
-      console.log(e);
-      return { isActive: false };
-    }
   }
 }

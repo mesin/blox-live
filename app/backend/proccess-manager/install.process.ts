@@ -33,7 +33,8 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.accountKeyVaultService, method: 'createWallet' },
       { instance: this.accountService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
-      { instance: this.accountService, method: 'syncVaultWithBlox' }
+      { instance: this.accountService, method: 'syncVaultWithBlox' },
+      { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
     ];
   }
 }

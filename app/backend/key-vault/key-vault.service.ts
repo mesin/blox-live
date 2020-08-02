@@ -69,4 +69,19 @@ export default class KeyVaultService {
       throw new Error(`Vault plugin api error: ${error}`);
     }
   }
+
+  @step({
+    name: 'Get key vault status',
+    requiredConfig: ['publicIp'],
+  })
+  async getKeyVaultStatus() {
+    // check if the key vault is alive
+    try {
+      await got.get(`http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
+      return { isActive: true };
+    } catch (e) {
+      console.log(e);
+      return { isActive: false };
+    }
+  }
 }
