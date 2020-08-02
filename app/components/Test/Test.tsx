@@ -20,8 +20,8 @@ class Listener implements Observer {
   }
 
   public update(subject: Subject, payload: any) {
-    this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.msg}`);
-    console.log(`${subject.state}/${subject.actions.length}`, payload.msg);
+    this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.step.name}`);
+    console.log(`${subject.state}/${subject.actions.length}`, payload);
   }
 }
 
@@ -48,9 +48,6 @@ const Test = (props) => {
     if (generalConf.get('credentials')) {
       setAccessKeyId(generalConf.get('credentials').accessKeyId);
       setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
-    }
-    if (!generalConf.get('uuid')) {
-      generalConf.set('uuid', uuidv4());
     }
   }
   return (
@@ -158,6 +155,9 @@ const Test = (props) => {
         onClick={async () => { // TODO: check this func
           const storeName = 'blox';
           const conf = new Configstore(storeName);
+          if (!conf.get('uuid')) {
+            conf.set('uuid', uuidv4());
+          }
           conf.set('credentials', {
             accessKeyId,
             secretAccessKey,

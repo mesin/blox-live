@@ -1,3 +1,4 @@
+import got from 'got';
 import net  from 'net';
 import Configstore from 'configstore';
 import * as AWS from 'aws-sdk';
@@ -181,8 +182,8 @@ export default class AwsService {
   })
   async rebootInstance({ notifier }) {
     await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
-    notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server rebooting...', status: 'processing' });
-    const result = await new Promise((resolve) => {
+    notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server rebooting...', status: 'processing' } });
+    await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
@@ -193,14 +194,21 @@ export default class AwsService {
         socket.once('timeout', onError);
 
         socket.connect(22, this.conf.get('publicIp'), () => {
-          notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server is online', status: 'processing' });
+          notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server is online', status: 'processing' } });
           console.log('Server is online');
           socket.end();
           clearInterval(intervalId);
-          resolve({ isActive: true });
+          resolve();
         });
       }, 5000);
     });
-    return result;
+    // check if the key vault is alive
+    try {
+      await got.get(`http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
+      return { isActive: true };
+    } catch (e) {
+      console.log(e);
+      return { isActive: false };
+    }
   }
 }
