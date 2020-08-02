@@ -7,3 +7,5 @@ export const getError = (state) => state.keyVaultManagement.error;
 export const getMessage = (state) => state.keyVaultManagement.message;
 
 export const getIsDone = (state) => state.keyVaultManagement.isDone;
+
+export const getIsServerActive = (state) => state.keyVaultManagement.isServerActive;

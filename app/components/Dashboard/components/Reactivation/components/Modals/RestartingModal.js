@@ -15,15 +15,14 @@ import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 const key = 'keyVaultManagement';
 
 const RestartingModal = (props) => {
-  const {move1StepForward, onClose, isLoading, restartMessage, isDone, processName, actions} = props;
+  const {move1StepForward, move2StepsForward, onClose, isLoading, restartMessage, isDone, isServerActive, processName, actions} = props;
   const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
-      setTimeout(() => {
-        keyvaultProcessClearState();
-        move1StepForward();
-      }, 1000);
+      keyvaultProcessClearState();
+      if (isServerActive) { move1StepForward(); }
+      else { move2StepsForward(); }
     }
     if (!isDone && !isLoading && !restartMessage && !processName) {
       keyvaultProcessSubscribe('restart', 'Checking KeyVault configuration...');
@@ -45,11 +44,13 @@ const RestartingModal = (props) => {
 RestartingModal.propTypes = {
   processName: PropTypes.string,
   move1StepForward: PropTypes.func,
+  move2StepsForward: PropTypes.func,
   onClose: PropTypes.func,
   actions: PropTypes.object,
   restartMessage: PropTypes.string,
   isLoading: PropTypes.bool,
   isDone: PropTypes.bool,
+  isServerActive: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -57,6 +58,7 @@ const mapStateToProps = (state) => ({
   restartMessage: selectors.getMessage(state),
   isLoading: selectors.getIsLoading(state),
   isDone: selectors.getIsDone(state),
+  isServerActive: selectors.getIsServerActive(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

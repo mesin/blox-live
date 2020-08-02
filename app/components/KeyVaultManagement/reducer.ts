@@ -4,6 +4,7 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   isLoading: false,
   isDone: false,
+  isServerActive: false,
   name: '',
   message: '',
   error: '',
@@ -18,7 +19,8 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) =>
         draft.message = action.payload.defaultMessage;
         break;
       case actionTypes.KEYVAULT_PROCESS_OBSERVE:
-        draft.message = action.payload;
+        draft.message = action.payload.message;
+        draft.isServerActive = action.payload.isActive;
         break;
       case actionTypes.KEYVAULT_PROCESS_UNSUBSCRIBE:
         draft.isLoading = initialState.isLoading;

@@ -20,10 +20,8 @@ const ReinstallingModal = (props) => {
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
-      setTimeout(() => {
-        keyvaultProcessClearState();
-        move1StepForward();
-      }, 1000);
+      keyvaultProcessClearState();
+      move1StepForward();
     }
     if (!isDone && !isLoading && !reinstallMessage && !processName) {
       keyvaultProcessSubscribe('reinstall', 'Checking KeyVault configuration...');

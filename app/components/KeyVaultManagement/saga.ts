@@ -33,9 +33,15 @@ export function* startProcess(action) {
   const channel = yield call(createChannel, process);
   try {
     while (true) {
-      const results = yield take(channel);
-      console.log('results', results);
-      yield put(actions.keyvaultProcessObserve(results));
+      const result = yield take(channel);
+      console.log('result', result);
+      console.log('state', result.subject.state);
+      console.log('allStates', result.subject.actions.length);
+      console.log('stepName', result.payload.step.name);
+      console.log('isActive', result.payload.isActive);
+
+      const message = `${result.subject.state}/${result.subject.actions.length} > ${result.payload.step.name}`;
+      yield put(actions.keyvaultProcessObserve(message, result.payload.isActive));
     }
   }
   catch (e) {
@@ -51,15 +57,14 @@ function createChannel(process) {
   return eventChannel((emitter) => {
     const callback = (subject, payload) => {
       const { state } = subject;
-      const { name, status } = payload.step;
-      console.log('subject', subject);
-      console.log('payload', payload);
+      const { status } = payload.step;
       if (status === 'completed' && state === subject.actions.length) {
         process.unsubscribe(listener);
+        emitter({subject, payload});
         emitter(END);
         return;
       }
-      emitter(`${state}/${subject.actions.length} > ${name}`);
+      emitter({subject, payload});
     };
 
     const listener = new Listener(callback);

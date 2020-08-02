@@ -5,9 +5,9 @@ export const keyvaultProcessSubscribe = (name: string, defaultMessage: string) =
   payload: { name, defaultMessage },
 });
 
-export const keyvaultProcessObserve = (message: string) => ({
+export const keyvaultProcessObserve = (message: string, isActive: boolean) => ({
   type: actionTypes.KEYVAULT_PROCESS_OBSERVE,
-  payload: message,
+  payload: {message, isActive},
 });
 
 export const keyvaultProcessUnSubscribe = () => ({
