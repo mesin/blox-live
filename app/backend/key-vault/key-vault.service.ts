@@ -53,7 +53,7 @@ export default class KeyVaultService {
   async updateVaultStorage(): Promise<void> {
     try {
       const storage = this.conf.get('keyVaultStorage');
-      const { body } = await got.post(`${this.conf.get('publicIp')}/v1/ethereum/storage`, {
+      const { body } = await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
         headers: {
           'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`
         },
