@@ -13,18 +13,15 @@ export default class AccountService {
 
   @step({
     name: 'Sync vault with blox api',
-    requiredConfig: ['publicIp', 'otp'],
+    requiredConfig: ['publicIp', 'authToken'],
   })
   async syncVaultWithBlox(): Promise<void> {
-    // this.flow.validate('otp');
-    // this.flow.validate('publicIp');
     const ssh = await this.serverService.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
-    console.log(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`)
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request POST --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request POST --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/sync`,
       {},
     );
     if (+statusCode > 201) {
@@ -34,17 +31,15 @@ export default class AccountService {
 
   @step({
     name: 'Resync vault with blox api',
-    requiredConfig: ['publicIp', 'otp'],
+    requiredConfig: ['publicIp', 'authToken'],
   })
   async resyncNewVaultWithBlox(): Promise<void> {
-    // this.flow.validate('otp');
-    // this.flow.validate('publicIp');
     const ssh = await this.serverService.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
     this.conf.set('vaultRootToken', rootToken);
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request PATCH --data '{"otp": "${this.conf.get('otp')}", "url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/root`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request PATCH --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${rootToken}"}' https://api.stage.bloxstaking.com/wallets/sync`,
       {},
     );
     if (+statusCode > 201) {
@@ -54,12 +49,12 @@ export default class AccountService {
 
   @step({
     name: 'Remove blox staking account',
-    requiredConfig: ['otp'],
+    requiredConfig: ['authToken'],
   })
   async deleteBloxAccount(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --request DELETE https://api.stage.bloxstaking.com/organizations/otp/${this.conf.get('otp')}`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations}`,
       {},
     );
     if (+statusCode > 201) {

@@ -49,7 +49,7 @@ export default class AwsService {
 
   @step({
     name: 'Create EC2 Key Pair',
-    requiredConfig: ['otp'],
+    requiredConfig: ['uuid'],
   })
   async createEc2KeyPair() {
     if (this.conf.get('keyPair')) return;
@@ -58,7 +58,7 @@ export default class AwsService {
       KeyPairId: pairId,
       KeyMaterial: privateKey,
     } = await this.ec2
-      .createKeyPair({ KeyName: `${this.keyName}-${this.conf.get('otp')}` })
+      .createKeyPair({ KeyName: `${this.keyName}-${this.conf.get('uuid')}` })
       .promise();
     this.conf.set('keyPair', { pairId, privateKey });
   }
@@ -79,7 +79,7 @@ export default class AwsService {
 
   @step({
     name: 'Create Security Group',
-    requiredConfig: ['otp'],
+    requiredConfig: ['uuid'],
   })
   async createSecurityGroup() {
     if (this.conf.get('securityGroupId')) return;
@@ -88,8 +88,8 @@ export default class AwsService {
     const vpc = vpcList?.Vpcs![0].VpcId;
     const securityData = await this.ec2
       .createSecurityGroup({
-        Description: `${this.securityGroupName}-${this.conf.get('otp')}`,
-        GroupName: `${this.securityGroupName}-${this.conf.get('otp')}`,
+        Description: `${this.securityGroupName}-${this.conf.get('uuid')}`,
+        GroupName: `${this.securityGroupName}-${this.conf.get('uuid')}`,
         VpcId: vpc,
       })
       .promise();
@@ -118,7 +118,7 @@ export default class AwsService {
 
   @step({
     name: 'Setup VPC Linux Instance',
-    requiredConfig: ['otp', 'securityGroupId', 'addressId'],
+    requiredConfig: ['uuid', 'securityGroupId', 'addressId'],
   })
   async createInstance() {
     if (this.conf.get('instanceId')) return;
@@ -128,7 +128,7 @@ export default class AwsService {
         ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1
         InstanceType: 't2.micro',
         SecurityGroupIds: [this.conf.get('securityGroupId')],
-        KeyName: `${this.keyName}-${this.conf.get('otp')}`,
+        KeyName: `${this.keyName}-${this.conf.get('uuid')}`,
         MinCount: 1,
         MaxCount: 1,
       })
@@ -182,7 +182,7 @@ export default class AwsService {
   async rebootInstance({ notifier }) {
     await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
     notifier.instance[notifier.func].bind(notifier.instance)({ msg: 'Server rebooting...', status: 'processing' });
-    await new Promise((resolve) => {
+    const result = await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
@@ -197,11 +197,10 @@ export default class AwsService {
           console.log('Server is online');
           socket.end();
           clearInterval(intervalId);
-          resolve();
+          resolve({ isActive: true });
         });
       }, 5000);
     });
+    return result;
   }
-
-  DescribeInstanceStatus
 }
