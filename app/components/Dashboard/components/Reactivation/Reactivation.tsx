@@ -20,10 +20,12 @@ const Reactivation = ({onClose}: Props) => {
     case 3:
       return <ReactivatedModal onClose={onClose} />;
     case 4:
-      return <ReinstallingModal move1StepForward={move1StepForward} onClose={onClose} />;
+      return <ReinstallingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
     case 5:
-      return <ContactModal onClick={contactSupport} onClose={onClose} />;
+      return <ReactivatedModal onClose={onClose} />;
     case 6:
+      return <ContactModal onClick={contactSupport} onClose={onClose} />;
+    case 7:
       return <ThankYouModal onClose={onClose} />;
     default:
       return <SmallModal onClick={move1StepForward} onClose={onClose} />;

@@ -21,7 +21,7 @@ const BoxWithTooltip = (props) => {
     setPopperDisplay(false);
   };
 
-  return (
+  return ( // TODO: add // !isActive && to 34 line code
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Box
         width={width}
@@ -31,7 +31,7 @@ const BoxWithTooltip = (props) => {
         tinyText={tinyText}
         image={image}
       />
-      {isActive && showPopper && <Popper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />}
+      {showPopper && <Popper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />}
     </Wrapper>
   );
 };

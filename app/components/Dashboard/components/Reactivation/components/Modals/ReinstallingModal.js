@@ -15,13 +15,14 @@ import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 const key = 'keyVaultManagement';
 
 const ReinstallingModal = (props) => {
-  const {move1StepForward, onClose, isLoading, reinstallMessage, isDone, processName, actions} = props;
+  const {move1StepForward, move2StepsForward, onClose, isLoading, reinstallMessage, isDone, isServerActive, processName, actions} = props;
   const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
       keyvaultProcessClearState();
-      move1StepForward();
+      if (isServerActive) { move1StepForward(); }
+      else { move2StepsForward(); }
     }
     if (!isDone && !isLoading && !reinstallMessage && !processName) {
       keyvaultProcessSubscribe('reinstall', 'Checking KeyVault configuration...');
@@ -44,11 +45,13 @@ const ReinstallingModal = (props) => {
 ReinstallingModal.propTypes = {
   processName: PropTypes.string,
   move1StepForward: PropTypes.func,
+  move2StepsForward: PropTypes.func,
   onClose: PropTypes.func,
   actions: PropTypes.object,
   reinstallMessage: PropTypes.string,
   isLoading: PropTypes.bool,
   isDone: PropTypes.bool,
+  isServerActive: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
@@ -56,6 +59,7 @@ const mapStateToProps = (state) => ({
   reinstallMessage: selectors.getMessage(state),
   isLoading: selectors.getIsLoading(state),
   isDone: selectors.getIsDone(state),
+  isServerActive: selectors.getIsServerActive(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
