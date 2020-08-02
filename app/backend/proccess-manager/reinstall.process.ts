@@ -23,6 +23,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.dockerService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'runScripts' },
+      { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
     ];
   }

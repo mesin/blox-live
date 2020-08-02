@@ -3,12 +3,14 @@ import AccountService from '../account/account.service';
 import KeyVaultService from '../key-vault/key-vault.service';
 import DockerService from '../key-vault/docker.service';
 import ProcessClass from './process.class';
+import AccountKeyVaultService from '../account/account-key-vault.service';
 
 export default class InstallProcess extends ProcessClass {
   public readonly awsService: AwsService;
   public readonly keyVaultService: KeyVaultService;
   public readonly dockerService: DockerService;
   public readonly accountService: AccountService;
+  public readonly accountKeyVaultService: AccountKeyVaultService
   public readonly actions: Array<any>;
 
   constructor(storeName: string) {
@@ -17,6 +19,7 @@ export default class InstallProcess extends ProcessClass {
     this.awsService = new AwsService(storeName);
     this.dockerService = new DockerService(storeName);
     this.accountService = new AccountService(storeName);
+    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
     this.actions = [
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'validateAWSPermissions' },
@@ -27,6 +30,8 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.dockerService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'runScripts' },
+      { instance: this.accountKeyVaultService, method: 'createWallet' },
+      { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'syncVaultWithBlox' },
     ];
   }

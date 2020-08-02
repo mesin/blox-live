@@ -83,6 +83,7 @@ const Test = (props) => {
             credentials: confMain.get('credentials'),
             keyPair: confMain.get('keyPair'),
             securityGroupId: confMain.get('securityGroupId'),
+            keyVaultStorage: confMain.get('keyVaultStorage')
           });
 
           const listener = new Listener(setProcessStatus);
@@ -102,6 +103,7 @@ const Test = (props) => {
             instanceId: confTmpStore.get('instanceId'),
             vaultRootToken: confTmpStore.get('vaultRootToken'),
             keyVaultVersion: confTmpStore.get('keyVaultVersion'),
+            keyVaultStorage: confTmpStore.get('keyVaultStorage')
           });
           confTmpStore.clear();
 
