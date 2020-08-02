@@ -18,8 +18,7 @@ const InnerWrapper = styled.div`
 const Left = styled.div`
   width: 500px;
   height:100%;
-  padding:115px 32px 115px 64px;
-  padding-top: 115px;
+  padding:90px 32px 90px 64px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;

@@ -1,22 +1,32 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FailureIcon } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
-import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
-import { Title, Description, Button } from '..';
+import { Title, Description, Button, Wrapper, DiscordText } from '..';
 
-const ContactModal = ({onClose}) => {
+import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
+import discordLogo from 'assets/images/discord-logo.svg';
+
+const ContactModal = ({onClick, onClose}) => {
   return (
     <ModalTemplate onClose={onClose} image={image}>
-      <Title>Contact us</Title>
+      <Wrapper>
+        <FailureIcon size={'40px'} fontSize={'30px'} />
+        <Title fontSize={'32px'} color={'warning900'}>Troubleshooting Failed</Title>
+      </Wrapper>
       <Description>
-        KeyVault is active and all validators are staking normally. We are investigating what caused the issue.
+        Please contact our support team to resolve this issue.
       </Description>
-      <Button onClick={onClose}>Return to Dashboard</Button>
+      <Wrapper>
+        <Button onClick={onClick}>Contact Blox</Button> <br />
+        <DiscordText>Or reach us on <img src={discordLogo} /></DiscordText>
+      </Wrapper>
     </ModalTemplate>
   );
 };
 
 ContactModal.propTypes = {
+  onClick: PropTypes.func,
   onClose: PropTypes.func,
 };
 

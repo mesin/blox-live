@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { ProgressBar } from 'common/components';
-import { Title, Description, ProgressMessage, SmallText } from '..';
+import { Title, Description, ProgressMessage, SmallText, Wrapper } from '..';
 import ModalTemplate from '../ModalTemplate';
 import { useInjectSaga } from '../../../../../../utils/injectSaga';
 import * as keyVaultActions from '../../../../../KeyVaultManagement/actions';
@@ -21,7 +21,7 @@ const ReinstallingModal = (props) => {
   useEffect(() => {
     if (isDone) {
       keyvaultProcessClearState();
-      move1StepForward();
+      setTimeout(() => move1StepForward(), 1000);
     }
     if (!isDone && !isLoading && !reinstallMessage && !processName) {
       keyvaultProcessSubscribe('reinstall', 'Checking KeyVault configuration...');
@@ -31,9 +31,11 @@ const ReinstallingModal = (props) => {
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Reinstalling KeyVault</Title>
-      <Description>KeyVault still inactive. Starting the reinstall process.</Description>
-      <ProgressBar />
-      <ProgressMessage>{reinstallMessage}</ProgressMessage>
+      <Wrapper>
+        <Description>KeyVault still inactive. Starting the reinstall process.</Description>
+        <ProgressBar />
+        <ProgressMessage>{reinstallMessage}</ProgressMessage>
+      </Wrapper>
       <SmallText>This process is automated and only takes a few minutes.</SmallText>
     </ModalTemplate>
   );

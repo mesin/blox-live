@@ -168,9 +168,7 @@ export default class Auth {
 
   interceptIdToken = (idToken: string) => {
     axios.interceptors.request.use(
-      (config: AxiosRequestConfig) =>
-        onAxiosInterceptorSuccess(config, idToken),
-      onAxiosInterceptorFailure
+      (config: AxiosRequestConfig) => onAxiosInterceptorSuccess(config, idToken), onAxiosInterceptorFailure,
     );
   };
 

@@ -21,7 +21,7 @@ const RestartingModal = (props) => {
   useEffect(() => {
     if (isDone) {
       keyvaultProcessClearState();
-      move1StepForward();
+      setTimeout(() => move1StepForward(), 1000);
     }
     if (!isDone && !isLoading && !restartMessage && !processName) {
       keyvaultProcessSubscribe('restart', 'Checking KeyVault configuration...');
