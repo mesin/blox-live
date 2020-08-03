@@ -1,4 +1,3 @@
-import got from 'got';
 import net  from 'net';
 import Configstore from 'configstore';
 import * as AWS from 'aws-sdk';
