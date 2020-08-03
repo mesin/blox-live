@@ -29,15 +29,16 @@ const App = (props: Props) => {
   useInjectSaga({ key, saga, mode: '' });
   const { isLoggedIn, isLoading, isTokensExist } = props;
 
+  const init = async () => {
+    await setAppInitialised(true);
+    await isTokensExist();
+    await initApp(isLoggedIn, auth);
+  };
+
   useEffect(() => {
-    const init = async () => {
-      if (!didInitApp) {
-        await setAppInitialised(true);
-        await isTokensExist();
-        await initApp(isLoggedIn, auth);
-      }
-    };
-    init();
+    if (!didInitApp) {
+      init();
+    }
   }, [didInitApp, isLoggedIn, isLoading]);
 
   if (!didInitApp || isLoading) {

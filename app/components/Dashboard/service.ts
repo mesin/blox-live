@@ -7,8 +7,8 @@ const handleChange = (currentBalance, effectiveBalance) => {
   return null;
 };
 
-export const normalizeAccountsData = (accounts) =>
-  accounts.map((account) => {
+export const normalizeAccountsData = (accounts) => {
+  return accounts.map((account) => {
     const {
       id,
       publicKey,
@@ -36,6 +36,7 @@ export const normalizeAccountsData = (accounts) =>
     };
     return newAccount;
   });
+};
 
 export const summarizeAccounts = (accounts) => {
   const initialObject = {
@@ -46,7 +47,10 @@ export const summarizeAccounts = (accounts) => {
   };
   const summary = accounts.reduce((accumulator, value, index) => {
     const { effectiveBalance, currentBalance } = value;
-    const difference = parseFloat(currentBalance) - parseFloat(effectiveBalance, 3);
+    if (Number.isNaN(effectiveBalance) || Number.isNaN(currentBalance)) {
+      return 'N/A';
+    }
+    const difference = parseFloat(currentBalance) - parseFloat(effectiveBalance);
     const precentage = (difference / parseFloat(effectiveBalance)) * 100;
     const totalChange = accumulator.totalChange + precentage;
 
@@ -66,7 +70,8 @@ const fixNumOfDigits = (summary) => {
   const newObject = {};
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(summary)) {
+    if (Number.isNaN(value)) { return null; }
     newObject[key] = value.toFixed(2);
   }
   return newObject;
-}
+};
