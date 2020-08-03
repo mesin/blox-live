@@ -17,12 +17,13 @@ export default class RestoreProcess extends ProcessClass {
     this.actions = [
       { instance: this.accountKeyVaultService, method: 'createWallet' },
       { instance: this.seedService, method: 'seedFromMnemonicGenerate' },
-      // { instance: this.accountKeyVaultService, method: 'createAccount' },
-      // { instance: this.accountKeyVaultService, method: 'createAccount' },
-      // { instance: this.accountKeyVaultService, method: 'createAccount' },
-      // { instance: this.accountKeyVaultService, method: 'createAccount' },
-      // { instance: this.accountKeyVaultService, method: 'createAccount' },
-      // { instance: this.keyVaultService, method: 'updateVaultStorage' },
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      // { instance: this.accountKeyVaultService, method: 'listAccounts' },
+      { instance: this.keyVaultService, method: 'updateVaultStorage' },
     ];
   }
 }
