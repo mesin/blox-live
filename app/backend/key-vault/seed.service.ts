@@ -38,7 +38,7 @@ export default class SeedService extends KeyVaultCliService {
     requiredConfig: ['mnemonic']
   })
   async seedFromMnemonicGenerate(): Promise<void> {
-    const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic=${this.conf.get('mnemonic')}`);
+    const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic="${this.conf.get('mnemonic')}"`);
     if (stderr) {
       throw new Error(stderr);
     }
