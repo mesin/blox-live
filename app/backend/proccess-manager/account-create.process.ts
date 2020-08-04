@@ -18,6 +18,7 @@ export default class AccountCreateProcess extends ProcessClass {
       { instance: this.accountKeyVaultService, method: 'createWallet' },
       { instance: this.accountKeyVaultService, method: 'createAccount' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
+      // { instance: this.accountKeyVaultService, method: 'listAccounts' }
     ];
   }
 }
