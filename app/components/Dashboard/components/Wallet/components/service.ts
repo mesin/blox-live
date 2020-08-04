@@ -22,7 +22,6 @@ export const trimDecimalNumber = (floatingNumber: number) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
   return (floatingNumber % 1).toFixed(2).substring(2);
 };
-
 export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
   return [
     {
