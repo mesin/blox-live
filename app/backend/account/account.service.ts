@@ -1,4 +1,5 @@
 import Configstore from 'configstore';
+import got from 'got';
 import ServerService from '../key-vault/server.service';
 import { step } from '../decorators';
 
@@ -64,6 +65,35 @@ export default class AccountService {
     );
     if (+statusCode > 201) {
       console.log(`Blox Staking api error: ${statusCode} ${stderr}`);
+    }
+  }
+
+  @step({
+    name: 'Create Blox Account',
+    requiredConfig: ['authToken', 'keyVaultAccounts'],
+  })
+  async createBloxAccount(): Promise<void> {
+    const accounts = this.conf.get('keyVaultAccounts');
+    const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
+    if (newAccountPos === -1) return;
+    try {
+      const storage = this.conf.get('keyVaultStorage');
+      const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
+        headers: {
+          'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`,
+        },
+        body: {
+          // @ts-ignore
+          data: accounts[newAccountPos],
+        },
+        // @ts-ignore
+        json: true,
+      });
+      console.log(body['data']);
+      accounts[newAccountPos].syncedWithBlox = true;
+      this.conf.set('keyVaultAccounts', accounts);
+    } catch (error) {
+      throw new Error(`Vault plugin api error: ${error}`);
     }
   }
 }
