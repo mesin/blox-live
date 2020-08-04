@@ -59,12 +59,11 @@ export default class KeyVaultService {
         },
         body: {
           // @ts-ignore
-          data: storage
+          data: storage,
         },
         // @ts-ignore
-        json: true
+        json: true,
       });
-      console.log(body['data']);
     } catch (error) {
       throw new Error(`Vault plugin api error: ${error}`);
     }
@@ -75,9 +74,23 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp'],
   })
   async getKeyVaultStatus() {
+    const MAX_RETRIES = 3;
     // check if the key vault is alive
     try {
-      await got.get(`http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
+      console.log('try', `http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
+      await got.get(
+        `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
+        {
+          retry: {
+            limit: 10,
+            statusCodes: [400],
+            calculateDelay: ({ attemptCount }) => {
+              console.log('retry:', attemptCount);
+              return +attemptCount < MAX_RETRIES ? 1 : 0;
+            },
+          },
+        },
+      );
       return { isActive: true };
     } catch (e) {
       console.log(e);
