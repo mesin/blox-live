@@ -77,10 +77,13 @@ export default class KeyVaultService {
     const MAX_RETRIES = 3;
     // check if the key vault is alive
     try {
+      console.log('try', `http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
       await got.get(
         `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
         {
           retry: {
+            limit: 10,
+            statusCodes: [400],
             calculateDelay: ({ attemptCount }) => {
               console.log('retry:', attemptCount);
               return +attemptCount < MAX_RETRIES ? 1 : 0;

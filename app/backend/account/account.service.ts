@@ -59,10 +59,12 @@ export default class AccountService {
   })
   async deleteBloxAccount(): Promise<void> {
     const ssh = await this.serverService.getConnection();
+    console.log(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations}`);
     const { stdout: statusCode, stderr } = await ssh.execCommand(
       `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations}`,
       {},
     );
+    console.log(statusCode, stderr)
     if (+statusCode > 201) {
       console.log(`Blox Staking api error: ${statusCode} ${stderr}`);
     }
@@ -74,23 +76,23 @@ export default class AccountService {
   })
   async createBloxAccount(): Promise<void> {
     const accounts = this.conf.get('keyVaultAccounts');
+    console.log(accounts);
     const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
     if (newAccountPos === -1) return;
+    console.log('trying create blox account');
     try {
       const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
           'Authorization': `Bearer ${this.conf.get('authToken')}`,
         },
-        body: {
-          // @ts-ignore
-          data: accounts[newAccountPos],
-        },
+        body: accounts[newAccountPos],
         // @ts-ignore
         json: true,
       });
       console.log('createBloxAccount', body);
       accounts[newAccountPos].syncedWithBlox = true;
       this.conf.set('keyVaultAccounts', accounts);
+      console.log('blox account created');
     } catch (error) {
       throw new Error(`Vault plugin api error: ${error}`);
     }
