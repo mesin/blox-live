@@ -15,6 +15,7 @@ export default class AccountCreateProcess extends ProcessClass {
     super();
     this.seedService = new SeedService(storeName);
     this.accountKeyVaultService = new AccountKeyVaultService(storeName);
+    this.keyVaultService = new KeyVaultService(storeName);
     this.accountService = new AccountService(storeName);
     this.actions = [
       // { instance: this.seedService, method: 'seedGenerate' },

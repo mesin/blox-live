@@ -59,12 +59,11 @@ export default class KeyVaultService {
         },
         body: {
           // @ts-ignore
-          data: storage
+          data: storage,
         },
         // @ts-ignore
-        json: true
+        json: true,
       });
-      console.log(body['data']);
     } catch (error) {
       throw new Error(`Vault plugin api error: ${error}`);
     }

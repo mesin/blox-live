@@ -77,10 +77,9 @@ export default class AccountService {
     const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
     if (newAccountPos === -1) return;
     try {
-      const storage = this.conf.get('keyVaultStorage');
       const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
-          'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`,
+          'Authorization': `Bearer ${this.conf.get('authToken')}`,
         },
         body: {
           // @ts-ignore
@@ -89,7 +88,7 @@ export default class AccountService {
         // @ts-ignore
         json: true,
       });
-      console.log(body['data']);
+      console.log('createBloxAccount', body);
       accounts[newAccountPos].syncedWithBlox = true;
       this.conf.set('keyVaultAccounts', accounts);
     } catch (error) {
