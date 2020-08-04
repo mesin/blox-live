@@ -18,8 +18,11 @@ export default class RestoreProcess extends ProcessClass {
     this.accountService = new AccountService(storeName);
     this.keyVaultService = new KeyVaultService(storeName);
     this.actions = [
-      { instance: this.accountKeyVaultService, method: 'createWallet' },
+      // { instance: this.accountKeyVaultService, method: 'createWallet' },
       { instance: this.seedService, method: 'seedFromMnemonicGenerate' },
+      /*
+      { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.accountService, method: 'createBloxAccount' },
       { instance: this.accountKeyVaultService, method: 'createAccount' },
       { instance: this.accountService, method: 'createBloxAccount' },
       { instance: this.accountKeyVaultService, method: 'createAccount' },
@@ -29,8 +32,7 @@ export default class RestoreProcess extends ProcessClass {
       { instance: this.accountKeyVaultService, method: 'createAccount' },
       { instance: this.accountService, method: 'createBloxAccount' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
-      { instance: this.accountKeyVaultService, method: 'createAccount' },
-      { instance: this.accountService, method: 'createBloxAccount' },
+      */
     ];
   }
 }

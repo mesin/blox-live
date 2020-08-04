@@ -52,19 +52,66 @@ const Test = (props) => {
       setAccessKeyId(generalConf.get('credentials').accessKeyId);
       setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
     }
-    console.log('------>', generalConf.get('keyVaultAccounts'));
   }
   return (
     <div>
       <h1>CLI commands</h1>
       <div>
         <h2>Restore Process</h2>
+        <h3>Step 1. Clean storage</h3>
+        <button
+          onClick={async () => {
+            const storeName = 'blox';
+            const conf = new Configstore(storeName);
+            conf.clear();
+            accessKeyId = '';
+            secretAccessKey = '';
+            setAccessKeyId('');
+            setSecretAccessKey('');
+          }}
+        >
+          Clean config
+        </button>
+        <h3>Step 2. Install server & key-vault</h3>
+        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
+        <br/>
+        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
+        <br/>
+        <button
+          onClick={async () => { // TODO: check this func
+            const storeName = 'blox';
+            const conf = new Configstore(storeName);
+            if (!conf.get('uuid')) {
+              conf.set('uuid', uuidv4());
+            }
+            conf.set('credentials', {
+              accessKeyId,
+              secretAccessKey,
+            });
+            const installProcess = new InstallProcess(storeName);
+            const listener = new Listener(setProcessStatus);
+            installProcess.subscribe(listener);
+            try {
+              await installProcess.run();
+            } catch (e) {
+              setProcessStatus(e);
+            }
+            console.log('+ Congratulations. Installation is done!');
+          }}
+        >
+          Install
+        </button>
+        <h3>Step 3. Save mnemonic phrase</h3>
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)} placeholder="Mnemonic phrase" />
         <button
           onClick={async () => {
             const storeName = 'blox';
             const conf = new Configstore(storeName);
             conf.set('mnemonic', mnemonic);
+            if (conf.get('seed')) {
+              console.log('Seed already exists');
+              return;
+            }
             const restoreProcess = new RestoreProcess(storeName);
             const listener = new Listener(setProcessStatus);
             restoreProcess.subscribe(listener);
@@ -73,15 +120,12 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+ Congratulations. Restore process completed');
+            console.log('+ Congratulations. Seed was saved');
           }}
         >
-          Restore KeyVault
+          Set mnemonic phrase
         </button>
-      </div>
-      <p/>
-      <div>
-        <h2>Other</h2>
+        <h3>Step 4. Account create</h3>
         <button
           onClick={async () => {
             const storeName = 'blox';
@@ -100,6 +144,10 @@ const Test = (props) => {
         >
           Account Create
         </button>
+      </div>
+      <p/>
+      <div>
+        <h2>Other</h2>
         <button
           onClick={async () => {
             const mainStoreName = `blox`;
@@ -175,49 +223,6 @@ const Test = (props) => {
           }}
         >
         Reboot
-        </button>
-        <p/>
-        <br/>
-        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
-        <br/>
-        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
-        <br/>
-        <button
-          onClick={async () => { // TODO: check this func
-            const storeName = 'blox';
-            const conf = new Configstore(storeName);
-            if (!conf.get('uuid')) {
-              conf.set('uuid', uuidv4());
-            }
-            conf.set('credentials', {
-              accessKeyId,
-              secretAccessKey,
-            });
-            const installProcess = new InstallProcess(storeName);
-            const listener = new Listener(setProcessStatus);
-            installProcess.subscribe(listener);
-            try {
-              await installProcess.run();
-            } catch (e) {
-              setProcessStatus(e);
-            }
-            console.log('+ Congratulations. Installation is done!');
-          }}
-        >
-          Install
-        </button>
-        <button
-          onClick={async () => {
-            const storeName = 'blox';
-            const conf = new Configstore(storeName);
-            conf.clear();
-            accessKeyId = '';
-            secretAccessKey = '';
-            setAccessKeyId('');
-            setSecretAccessKey('');
-          }}
-        >
-          Clean config
         </button>
       </div>
       <p/>

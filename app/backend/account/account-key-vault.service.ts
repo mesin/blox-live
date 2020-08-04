@@ -15,7 +15,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     name: 'Create Wallet'
   })
   async createWallet(): Promise<void> {
-    // if (this.conf.get('keyVaultStorage')) return;
+    if (this.conf.get('keyVaultStorage')) return;
     const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
