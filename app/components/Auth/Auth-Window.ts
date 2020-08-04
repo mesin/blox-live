@@ -16,7 +16,8 @@ export const createAuthWindow = (auth, socialAppName, callBack) => {
     },
   });
 
-  win.loadURL(auth.getAuthenticationURL(socialAppName));
+  const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) old-airport-include/1.0.0 Chrome Electron/7.1.7 Safari/537.36';
+  win.loadURL(auth.getAuthenticationURL(socialAppName), { userAgent });
 
   const {
     session: { webRequest },
@@ -26,11 +27,13 @@ export const createAuthWindow = (auth, socialAppName, callBack) => {
     urls: ['http://localhost/callback*'],
   };
 
-  webRequest.onBeforeRequest(filter, async ({ url }) => {
+  const listener = async ({ url }) => {
     const tokensResponse = await auth.loadTokens(url);
     await callBack(tokensResponse);
     return destroyAuthWin();
-  });
+  };
+
+  webRequest.onBeforeRequest(filter, listener);
 
   if (win) {
     win.on('authenticated', () => {
