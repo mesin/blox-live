@@ -74,17 +74,16 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp'],
   })
   async getKeyVaultStatus() {
-    const MAX_RETRIES = 3;
     // check if the key vault is alive
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
       await got.get(
         `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
         {
-          timeout: 4000,
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < MAX_RETRIES ? computedValue : 0;
+              return +attemptCount < 3 ? computedValue : 0;
             },
           },
         },

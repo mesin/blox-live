@@ -29,7 +29,7 @@ class Listener implements Observer {
 const setClientStorageParams = (storeName: string, params: any) => {
   const conf = new ElectronStore({ name: storeName });
   Object.keys(params).forEach((key) => {
-    conf.set(key, params[key]);
+    params[key] && conf.set(key, params[key]);
   });
 };
 
@@ -177,6 +177,7 @@ const Test = (props) => {
               setProcessStatus(e);
             }
             const confTmpStore = new ElectronStore({ name: tmpStoreName });
+            console.log('confTmpStore====', confTmpStore);
             setClientStorageParams(mainStoreName, {
               uuid: confTmpStore.get('uuid'),
               authToken: confTmpStore.get('authToken'),
@@ -188,7 +189,8 @@ const Test = (props) => {
               keyVaultStorage: confTmpStore.get('keyVaultStorage'),
             });
             confTmpStore.clear();
-
+            const testmain = new ElectronStore({ name: mainStoreName });
+            console.log('confTmpStore====', testmain);
             console.log('+ Congratulations. Reinstallation is done!');
           }}
         >
