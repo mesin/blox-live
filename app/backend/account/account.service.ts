@@ -1,14 +1,14 @@
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import got from 'got';
 import ServerService from '../key-vault/server.service';
 import { step } from '../decorators';
 
 export default class AccountService {
-  public readonly conf: Configstore;
+  public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
 
   constructor(storeName: string) {
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
   }
 
@@ -74,11 +74,9 @@ export default class AccountService {
     requiredConfig: ['authToken', 'keyVaultAccounts'],
   })
   async createBloxAccount(): Promise<void> {
-    const accounts = this.conf.get('keyVaultAccounts');
-    console.log(accounts);
+    const accounts : any = this.conf.get('keyVaultAccounts');
     const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
     if (newAccountPos === -1) return;
-    console.log('trying create blox account');
     try {
       const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {

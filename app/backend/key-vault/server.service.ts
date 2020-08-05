@@ -1,21 +1,22 @@
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import NodeSSH from 'node-ssh';
 
 export default class ServerService {
-  public readonly conf: Configstore;
+  public readonly conf: ElectronStore;
 
   constructor(storeName: string) {
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
   }
 
   async getConnection(): Promise<NodeSSH> {
     // this.flow.validate('publicIp');
     // this.flow.validate('keyPair');
     const ssh = new NodeSSH();
+    const keyPair : any = this.conf.get('keyPair');
     await ssh.connect({
       host: this.conf.get('publicIp'),
       username: 'ec2-user',
-      privateKey: this.conf.get('keyPair').privateKey,
+      privateKey: keyPair.privateKey,
     });
     return ssh;
   }

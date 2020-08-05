@@ -1,18 +1,18 @@
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import KeyVaultCliService from '../key-vault/key-vault-cli.service';
 import { step } from '../decorators';
 
 
 export default class AccountKeyVaultService extends KeyVaultCliService {
-  private readonly conf: Configstore;
+  private readonly conf: ElectronStore;
 
   constructor(storeName: string) {
     super();
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
   }
 
   @step({
-    name: 'Create Wallet'
+    name: 'Create Wallet',
   })
   async createWallet(): Promise<void> {
     if (this.conf.get('keyVaultStorage')) return;
@@ -30,7 +30,8 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     requiredConfig: ['seed', 'keyVaultStorage', 'keyVaultAccounts'],
   })
   async createAccount(): Promise<void> {
-    const newExisted = this.conf.get('keyVaultAccounts').find(item => !item.syncedWithBlox);
+    const vaultAccounts : any = this.conf.get('keyVaultAccounts')
+    const newExisted = vaultAccounts.find(item => !item.syncedWithBlox);
     if (newExisted) {
       return;
     }
@@ -44,7 +45,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
     // add new created account into store
     const newCreated = await this.getLastCreatedAccount();
-    this.conf.set('keyVaultAccounts', [...(this.conf.get('keyVaultAccounts') || []), newCreated]);
+    this.conf.set('keyVaultAccounts', [...(vaultAccounts || []), newCreated]);
   }
 
   async getLastCreatedAccount(): Promise<any> {

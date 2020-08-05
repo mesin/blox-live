@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import { getIdToken } from '../CallbackPage/selectors';
 
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -27,7 +27,7 @@ class Listener implements Observer {
 }
 
 const setClientStorageParams = (storeName: string, params: any) => {
-  const conf = new Configstore(storeName);
+  const conf = new ElectronStore({ name: storeName });
   Object.keys(params).forEach((key) => {
     conf.set(key, params[key]);
   });
@@ -46,11 +46,12 @@ const Test = (props) => {
 
   if (!configIsSet) {
     configIsSet = true;
-    const generalConf = new Configstore('blox');
+    const generalConf = new ElectronStore({ name: 'blox' });
     generalConf.set('authToken', token);
     if (generalConf.get('credentials')) {
-      setAccessKeyId(generalConf.get('credentials').accessKeyId);
-      setSecretAccessKey(generalConf.get('credentials').secretAccessKey);
+      const credentials : any = generalConf.get('credentials');
+      setAccessKeyId(credentials.accessKeyId);
+      setSecretAccessKey(credentials.secretAccessKey);
     }
   }
   return (
@@ -62,7 +63,7 @@ const Test = (props) => {
         <button
           onClick={async () => {
             const storeName = 'blox';
-            const conf = new Configstore(storeName);
+            const conf = new ElectronStore({ name: storeName });
             conf.clear();
             accessKeyId = '';
             secretAccessKey = '';
@@ -81,7 +82,7 @@ const Test = (props) => {
         <button
           onClick={async () => { // TODO: check this func
             const storeName = 'blox';
-            const conf = new Configstore(storeName);
+            const conf = new ElectronStore({ name: storeName });
             if (!conf.get('uuid')) {
               conf.set('uuid', uuidv4());
             }
@@ -107,7 +108,7 @@ const Test = (props) => {
         <button
           onClick={async () => {
             const storeName = 'blox';
-            const conf = new Configstore(storeName);
+            const conf = new ElectronStore({ name: storeName });
             conf.set('mnemonic', mnemonic);
             if (conf.get('seed')) {
               console.log('Seed already exists');
@@ -130,7 +131,7 @@ const Test = (props) => {
         <button
           onClick={async () => {
             const storeName = 'blox';
-            const conf = new Configstore(storeName);
+            const conf = new ElectronStore({ name: storeName });
             console.log(conf.get('seed'));
             const accountCreateProcess = new AccountCreateProcess(storeName);
             const listener = new Listener(setProcessStatus);
@@ -153,7 +154,7 @@ const Test = (props) => {
           onClick={async () => {
             const mainStoreName = `blox`;
             const tmpStoreName = `blox-tmp`;
-            const confMain = new Configstore(mainStoreName);
+            const confMain = new ElectronStore({ name: mainStoreName });
 
             setClientStorageParams(tmpStoreName, {
               uuid: confMain.get('uuid'),
@@ -161,12 +162,12 @@ const Test = (props) => {
               credentials: confMain.get('credentials'),
               keyPair: confMain.get('keyPair'),
               securityGroupId: confMain.get('securityGroupId'),
-              keyVaultStorage: confMain.get('keyVaultStorage')
+              keyVaultStorage: confMain.get('keyVaultStorage'),
             });
 
             const listener = new Listener(setProcessStatus);
             const reinstallProcess = new ReinstallProcess(tmpStoreName);
-            const uninstallProcess = new UninstallProcess(confMain);
+            const uninstallProcess = new UninstallProcess(mainStoreName);
             reinstallProcess.subscribe(listener);
             uninstallProcess.subscribe(listener);
             try {
@@ -175,8 +176,8 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            const confTmpStore = new Configstore(tmpStoreName);
-            setClientStorageParams(confMain, {
+            const confTmpStore = new ElectronStore({ name: tmpStoreName });
+            setClientStorageParams(mainStoreName, {
               uuid: confTmpStore.get('uuid'),
               authToken: confTmpStore.get('authToken'),
               addressId: confTmpStore.get('addressId'),

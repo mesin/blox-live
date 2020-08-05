@@ -1,14 +1,14 @@
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import got from 'got';
 import ServerService from './server.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
-  public readonly conf: Configstore;
+  public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
 
   constructor(storeName: string) {
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
   }
 
@@ -53,7 +53,7 @@ export default class KeyVaultService {
   async updateVaultStorage(): Promise<void> {
     try {
       const storage = this.conf.get('keyVaultStorage');
-      const { body } = await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
+      await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
         headers: {
           'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`
         },

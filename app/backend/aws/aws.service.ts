@@ -1,12 +1,12 @@
-import net  from 'net';
-import Configstore from 'configstore';
+import net from 'net';
+import ElectronStore from 'electron-store';
 import * as AWS from 'aws-sdk';
 import { step } from '../decorators';
 
 export default class AwsService {
   public ec2!: AWS.EC2;
 
-  public readonly conf: Configstore;
+  public readonly conf: ElectronStore;
 
   public readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   public readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
@@ -16,7 +16,7 @@ export default class AwsService {
   };
 
   constructor(storeName: string) {
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
 
     if (!this.ec2 && this.conf.get('credentials')) {
       this.setAWSCredentials();
@@ -28,9 +28,10 @@ export default class AwsService {
     requiredConfig: ['credentials'],
   })
   async setAWSCredentials(): Promise<any> {
+    const credentials : any = this.conf.get('credentials');
     this.ec2 = new AWS.EC2({
       ...this.defaultAwsOptions,
-      credentials: this.conf.get('credentials'),
+      credentials,
     });
   }
 
@@ -123,16 +124,15 @@ export default class AwsService {
   async createInstance() {
     if (this.conf.get('instanceId')) return;
 
-    const data = await this.ec2
-      .runInstances({
-        ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1
-        InstanceType: 't2.micro',
-        SecurityGroupIds: [this.conf.get('securityGroupId')],
-        KeyName: `${this.keyName}-${this.conf.get('uuid')}`,
-        MinCount: 1,
-        MaxCount: 1,
-      })
-      .promise();
+    const data = await this.ec2.runInstances({
+      ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1
+      InstanceType: 't2.micro',
+      SecurityGroupIds: [this.conf.get('securityGroupId')],
+      KeyName: `${this.keyName}-${this.conf.get('uuid')}`,
+      MinCount: 1,
+      MaxCount: 1,
+    })
+    .promise();
     const instanceId = data.Instances![0].InstanceId;
     await this.ec2
       .waitFor('instanceRunning', { InstanceIds: [instanceId] })
@@ -144,12 +144,11 @@ export default class AwsService {
       Tags: [{ Key: 'Name', Value: 'Blox-Infra-Server' }],
     };
     await this.ec2.createTags(tagsOptions).promise();
-    await this.ec2
-      .associateAddress({
-        AllocationId: this.conf.get('addressId'),
-        InstanceId: instanceId,
-      })
-      .promise();
+    await this.ec2.associateAddress({
+      AllocationId: this.conf.get('addressId'),
+      InstanceId: instanceId,
+    })
+    .promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
   }
 
@@ -186,15 +185,16 @@ export default class AwsService {
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
+          console.log('waiting', this.conf.get('publicIp'));
           socket.destroy();
         };
         socket.setTimeout(1000);
         socket.once('error', onError);
         socket.once('timeout', onError);
-
-        socket.connect(22, this.conf.get('publicIp'), () => {
-          notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server is online', status: 'processing' } });
+        const ip : any = this.conf.get('publicIp');
+        socket.connect(22, ip, () => {
           console.log('Server is online');
+          notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server is online', status: 'processing' } });
           socket.end();
           clearInterval(intervalId);
           resolve();
