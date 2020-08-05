@@ -166,9 +166,12 @@ const Test = (props) => {
 
             const listener = new Listener(setProcessStatus);
             const reinstallProcess = new ReinstallProcess(tmpStoreName);
+            const uninstallProcess = new UninstallProcess(confMain);
             reinstallProcess.subscribe(listener);
+            uninstallProcess.subscribe(listener);
             try {
               await reinstallProcess.run();
+              await uninstallProcess.run();
             } catch (e) {
               setProcessStatus(e);
             }
@@ -181,7 +184,7 @@ const Test = (props) => {
               instanceId: confTmpStore.get('instanceId'),
               vaultRootToken: confTmpStore.get('vaultRootToken'),
               keyVaultVersion: confTmpStore.get('keyVaultVersion'),
-              keyVaultStorage: confTmpStore.get('keyVaultStorage')
+              keyVaultStorage: confTmpStore.get('keyVaultStorage'),
             });
             confTmpStore.clear();
 
@@ -199,9 +202,8 @@ const Test = (props) => {
             uninstallProcess.subscribe(listener);
             accountRemoveProcess.subscribe(listener);
             try {
-              console.log('try')
               await accountRemoveProcess.run();
-              // await uninstallProcess.run();
+              await uninstallProcess.run();
             } catch (e) {
               setProcessStatus(e);
             }

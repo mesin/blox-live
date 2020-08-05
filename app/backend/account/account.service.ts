@@ -59,12 +59,11 @@ export default class AccountService {
   })
   async deleteBloxAccount(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    console.log(`curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations}`);
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations}`,
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations`,
       {},
     );
-    console.log(statusCode, stderr)
+    console.log(statusCode, stderr);
     if (+statusCode > 201) {
       console.log(`Blox Staking api error: ${statusCode} ${stderr}`);
     }
