@@ -28,7 +28,7 @@ export const createAuthWindow = (auth, socialAppName, callBack) => {
   };
 
   const listener = async ({ url }) => {
-    const tokensResponse = await auth.loadTokens(url);
+    const tokensResponse = await auth.loadAuthToken(url);
     await callBack(tokensResponse);
     return destroyAuthWin();
   };
@@ -50,16 +50,3 @@ function destroyAuthWin() {
   win.close();
   win = null;
 }
-
-export const createLogoutWindow = (auth) => {
-  const logoutWindow = new BrowserWindow({
-    show: false,
-  });
-
-  logoutWindow.loadURL(auth.getLogOutUrl());
-
-  logoutWindow.on('ready-to-show', async () => {
-    logoutWindow.close();
-    await auth.logout();
-  });
-};

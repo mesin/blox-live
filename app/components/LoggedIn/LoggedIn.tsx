@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import {
-  Switch,
-  Route,
-  Redirect,
-  withRouter,
-  RouteComponentProps,
-} from 'react-router-dom';
+import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { Loader } from '../../common/components';
+import Login from '../Login';
 import Settings from '../SettingsPage';
 import NotFoundPage from '../NotFoundPage';
 import Wizard from '../Wizard';
@@ -44,6 +39,9 @@ import {
 } from '../WebSockets/selectors';
 import webSocketSaga from '../WebSockets/saga';
 
+// auth
+import { logout } from '../CallbackPage/actions';
+
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const websocketKey = 'websocket';
@@ -55,7 +53,7 @@ const LoggedIn = (props: Props) => {
   const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
 
   const {
-    auth,
+    logoutUser,
     isFinishedWizard,
     callSetFinishedWizard,
     walletStatus,
@@ -77,11 +75,10 @@ const LoggedIn = (props: Props) => {
     const hasError = walletError || accountsError || webSocketError;
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
-    const didntLoadWebsocket =
-      !websocket && !isWebsocketLoading && !webSocketError;
+    const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
 
     if (hasError) {
-      auth.logout();
+      logoutUser();
     }
 
     if (didntLoadWallet) {
@@ -95,10 +92,7 @@ const LoggedIn = (props: Props) => {
     }
 
     if (walletStatus && accounts && websocket) {
-      if (
-        (walletStatus === 'active' || walletStatus === 'offline') &&
-        accounts.length > 0
-      ) {
+      if ((walletStatus === 'active' || walletStatus === 'offline') && accounts.length > 0) {
         callSetFinishedWizard(true);
       }
       toggleLoadingAll(true);
@@ -116,17 +110,9 @@ const LoggedIn = (props: Props) => {
 
   return (
     <Switch>
-      <Route
-        exact
-        path="/"
-        render={(routeProps) =>
-          isFinishedWizard ? <EntryPage {...routeProps} /> : <Wizard />
-        }
-      />
-      <Route
-        path="/settings/:path"
-        render={(routeProps) => <Settings {...routeProps} withMenu />}
-      />
+      <Route exact path="/" render={(routeProps) => isFinishedWizard ? <EntryPage {...routeProps} /> : <Wizard />} />
+      <Route path="/login" component={Login} />
+      <Route path="/settings/:path" render={(routeProps) => <Settings {...routeProps} withMenu />} />
       <Redirect from="/settings" to="/settings/general" />
       <Route path="" component={NotFoundPage} />
     </Switch>
@@ -156,12 +142,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
-  callSetFinishedWizard: (isFinished: boolean) =>
-    dispatch(setFinishedWizard(isFinished)),
+  callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
+  logoutUser: () => dispatch(logout()),
 });
 
 interface Props extends RouteComponentProps {
-  auth: Record<string, any>;
+  logoutUser: () => void;
   isFinishedWizard: boolean;
   callSetFinishedWizard: (arg0: boolean) => void;
 
@@ -188,7 +174,4 @@ type State = Record<string, any>;
 
 type Dispatch = (arg0: { type: string }) => any;
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(LoggedIn));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoggedIn));

@@ -37,7 +37,7 @@ const wizardReducer = (state = initialState, action: Action) =>
         break;
       case actionTypes.LOAD_WALLET_FAILURE:
         draft.isLoading = false;
-        draft.error = action.payload;
+        draft.error = action.payload.message;
         break;
 
       case actionTypes.SET_NETWORK_TYPE:

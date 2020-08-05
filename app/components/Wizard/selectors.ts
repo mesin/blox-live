@@ -11,8 +11,7 @@ export const getWallet = (state) => state.wizard.wallet;
 export const getWalletStatus = (state) =>
   state.wizard.wallet && state.wizard.wallet.status;
 
-export const getWalletError = (state) =>
-  state.wizard.wallet && state.wizard.wallet.error;
+export const getWalletError = (state) => state.wizard && state.wizard.error;
 
 export const getNetwork = (state) => state.wizard.network;
 

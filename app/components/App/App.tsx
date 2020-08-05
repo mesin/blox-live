@@ -31,7 +31,7 @@ const App = (props: Props) => {
 
   const init = async () => {
     await setAppInitialised(true);
-    await isTokensExist();
+    // await isTokensExist();
     await initApp(isLoggedIn, auth);
   };
 

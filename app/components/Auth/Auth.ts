@@ -6,10 +6,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 import { SOCIAL_APPS } from '../../common/constants';
 import { createAuthWindow } from './Auth-Window';
-import {
-  onAxiosInterceptorSuccess,
-  onAxiosInterceptorFailure,
-} from './service';
+import { createLogoutWindow } from './Logout-Window';
+
+import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
 
 export default class Auth {
   tokens: Record<string, any>;
@@ -69,7 +68,7 @@ export default class Auth {
         }
         reject(new Error(response));
       };
-      this.refreshTokens(callBack);
+      this.loadRefreshToken(callBack);
     });
   };
 
@@ -79,7 +78,7 @@ export default class Auth {
     return authUrl;
   };
 
-  refreshTokens = async (callBack) => {
+  loadRefreshToken = async (callBack) => {
     const { domain, clientID } = this.auth;
     const { service, account } = this.keytar;
     const refreshToken = await keytar.getPassword(service, account);
@@ -106,7 +105,7 @@ export default class Auth {
     }
   };
 
-  loadTokens = async (callbackURL) => {
+  loadAuthToken = async (callbackURL) => {
     const { domain, clientID, redirectUri } = this.auth;
     const urlParts = url.parse(callbackURL, true);
     const { query } = urlParts;
@@ -147,7 +146,7 @@ export default class Auth {
       await keytar.setPassword(
         this.keytar.service,
         this.keytar.account,
-        refresh_token
+        refresh_token,
       );
     }
   };
@@ -174,6 +173,7 @@ export default class Auth {
 
   logout = async () => {
     const { service, account } = this.keytar;
+    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&connection=github`);
     await keytar.deletePassword(service, account);
     this.tokens = {
       accessToken: null,

@@ -36,7 +36,10 @@ const loginReducer = (state = initialState, action: Action) =>
         draft.error = action.payload;
         break;
       case actionTypes.LOGOUT:
-        draft = initialState;
+        draft.idToken = initialState.idToken;
+        draft.isLoggedIn = initialState.isLoggedIn;
+        draft.isLoading = initialState.isLoading;
+        draft.userData = initialState.userData;
         break;
     }
   });
