@@ -11,13 +11,11 @@ const Wrapper = styled.div`
   font-weight: 900;
   border-radius: 6px;
   border-width: ${({ isDisabled }) => (isDisabled ? '1px ' : '0px')};
-  border-color: ${({ theme, isDisabled }) =>
-    isDisabled ? theme.gray400 : 'transparent'};
+  border-color: ${({ theme, isDisabled }) => isDisabled ? theme.gray400 : 'transparent'};
   border-style: solid;
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
   color: ${({ theme, isDisabled }) => (isDisabled ? theme.gray600 : '#ffffff')};
-  background-color: ${({ theme, isDisabled }) =>
-    isDisabled ? 'transparent' : theme.primary900};
+  background-color: ${({ theme, isDisabled }) => isDisabled ? 'transparent' : theme.primary900};
 `;
 
 const SmallButton = (props) => <Wrapper {...props} />;

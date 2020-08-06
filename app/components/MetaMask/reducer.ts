@@ -11,8 +11,8 @@ const initialState: State = {
   txHash: '',
 };
 
-const metaMaskReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const metaMaskReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.CHECK_IF_METAMASK_EXIST:
         draft.isExistChecked = true;

@@ -31,7 +31,7 @@ const App = (props: Props) => {
 
   const init = async () => {
     await setAppInitialised(true);
-    // await isTokensExist();
+    await isTokensExist();
     await initApp(isLoggedIn, auth);
   };
 
@@ -51,7 +51,7 @@ const App = (props: Props) => {
 
   return (
     <AppWrapper>
-      {isLoggedIn ? <LoggedIn auth={auth} /> : <NotLoggedIn />}
+      {isLoggedIn ? <LoggedIn /> : <NotLoggedIn />}
       <GlobalStyle />
     </AppWrapper>
   );

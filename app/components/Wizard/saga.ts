@@ -51,6 +51,8 @@ export function* loadWallet() {
   try {
     const url = `${process.env.API_URL}/wallets`;
     const response = yield call(axios.get, url);
+    // TODO: handle unauthorized issue
+
     yield call(onLoadWalletSuccess, response);
   } catch (error) {
     yield error && call(onLoadWalletFailure, error);

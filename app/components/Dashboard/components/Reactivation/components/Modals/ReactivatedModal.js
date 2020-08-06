@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SuccessIcon } from 'common/components';
+import { SuccessIcon, Button } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
 import image from '../../../../../Wizard/assets/img-key-vault.svg';
-import { Title, Description, Button, Wrapper } from '..';
+import { Title, Description, Wrapper } from '..';
 import { loadWallet } from '../../../../../Wizard/actions';
 
 const ReactivatedModal = ({onClose, callLoadWallet}) => {

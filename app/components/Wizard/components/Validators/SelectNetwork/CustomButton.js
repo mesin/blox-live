@@ -9,8 +9,7 @@ const Sticker = styled.div`
   font-size: 12px;
   font-weight: 500;
   color: ${({ theme }) => theme.gray50};
-  background-color: ${({ theme, isDisabled }) =>
-    isDisabled ? theme.gray400 : theme.accent2600};
+  background-color: ${({ theme, isDisabled }) => isDisabled ? theme.gray400 : theme.accent2600};
   border-top-right-radius: 7px;
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
@@ -61,7 +60,7 @@ const CustomButton = (props) => {
       onClick={onClick}
       isDisabled={isDisabled}
     >
-      <Sticker isDisabled={isDisabled}>{sticker}</Sticker>
+      {sticker && <Sticker isDisabled={isDisabled}>{sticker}</Sticker>}
       <ImageWrapper>
         <Image src={image} />
       </ImageWrapper>
@@ -80,6 +79,7 @@ CustomButton.propTypes = {
   sticker: PropTypes.string,
   onClick: PropTypes.func,
   isDisabled: PropTypes.bool,
+  direction: PropTypes.string,
 };
 
 export default CustomButton;

@@ -173,7 +173,7 @@ export default class Auth {
 
   logout = async () => {
     const { service, account } = this.keytar;
-    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&connection=github`);
+    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
     await keytar.deletePassword(service, account);
     this.tokens = {
       accessToken: null,

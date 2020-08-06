@@ -1,5 +1,10 @@
 import * as actionTypes from './actionTypes';
 
+export const keyvaultSetCouldProvider = (couldProvider: string) => ({
+  type: actionTypes.KEYVAULT_SET_COLUD_PROVIDER,
+  payload: couldProvider,
+});
+
 export const keyvaultProcessSubscribe = (name: string, defaultMessage: string) => ({
   type: actionTypes.KEYVAULT_PROCESS_SUBSCRIBE,
   payload: { name, defaultMessage },
@@ -21,4 +26,9 @@ export const keyvaultProcessFailure = (error: Record<string, any>) => ({
 
 export const keyvaultProcessClearState = () => ({
   type: actionTypes.KEYVAULT_PROCESS_CLEAR_STATE,
+});
+
+export const keyvaultSetCredentials = (accessKeyId: string, setAccessKeyId: string) => ({
+  type: actionTypes.KEYVAULT_SET_CREDENTIALS,
+  payload: {accessKeyId, setAccessKeyId},
 });

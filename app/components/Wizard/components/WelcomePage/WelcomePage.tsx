@@ -54,41 +54,26 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const {
-    setPage,
-    setStep,
-    step,
-    actions,
-    otp,
-    command,
-    wallet,
-    isLoading,
-  } = props;
+  const { setPage, setStep, step, actions, wallet, isLoading } = props;
   const { loadWallet } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
-
   const [showStep2, setStep2Status] = useState(false);
-
-  const onStep1Click = () => !showStep2 && actions.createOneTimePass();
-
-  const onStep2Click = () => {
-    setStep(step + 1);
-    setPage(4);
-  };
 
   useEffect(() => {
     if (!isLoading && !wallet) {
       loadWallet();
     }
-
-    const hasOtpAndCommand = otp && command && !isLoading;
-    hasOtpAndCommand && setPage(1);
-
-    const hasWallet =
-      wallet && (wallet.status === 'active' || wallet.status === 'offline');
+    const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     hasWallet && setStep2Status(true);
-  }, [otp, command, isLoading]);
+  }, [isLoading]);
+
+  const onStep1Click = () => !showStep2 && setPage(1);
+
+  const onStep2Click = () => {
+    setStep(step + 1);
+    setPage(4);
+  };
 
   return (
     <Wrapper>
@@ -125,8 +110,6 @@ const WelcomePage = (props: Props) => {
 
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
-  otp: selectors.getOneTimePassword(state),
-  command: selectors.getCommand(state),
   wallet: selectors.getWallet(state),
 });
 

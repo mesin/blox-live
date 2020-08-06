@@ -25,7 +25,7 @@ const switcher = (props: Props) => {
           key={1}
           bgImage={walletImage}
           {...props}
-          component={<WalletPages.PreRequirements {...props} />}
+          component={<WalletPages.CloudProvider {...props} />}
         />
       );
     case 2:
@@ -34,7 +34,7 @@ const switcher = (props: Props) => {
           key={2}
           bgImage={walletImage}
           {...props}
-          component={<WalletPages.KeyVaultPage {...props} />}
+          component={<WalletPages.CreateServer {...props} />}
         />
       );
     case 3:

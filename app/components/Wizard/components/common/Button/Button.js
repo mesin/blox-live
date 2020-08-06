@@ -10,9 +10,9 @@ const Wrapper = styled.div`
   position: relative;
   background-color: #ffffff;
   display: flex;
+  flex-direction:${({direction}) => direction || 'row'};
   cursor: ${({ isDisabled }) => (isDisabled ? 'default' : 'pointer')};
-  background-color: ${({ theme, isDisabled }) =>
-    isDisabled ? theme.gray5050 : '#ffffff'};
+  background-color: ${({ theme, isDisabled }) => isDisabled ? theme.gray5050 : '#ffffff'};
   opacity: ${({ isDisabled }) => (isDisabled ? 0.5 : 1)};
 `;
 
@@ -23,26 +23,24 @@ const BorderPlaceholder = styled.div`
   z-index: 2;
   border-radius: 7px;
   transition: all 0.5s;
-  box-shadow: ${({ theme, isDisabled }) =>
-    isDisabled
-      ? `${theme.gray600} inset 0px 0px 0px 1px`
+  box-shadow: ${({ theme, isDisabled }) => isDisabled ? `${theme.gray600} inset 0px 0px 0px 1px`
       : `${theme.primary900} inset 0px 0px 0px 2px`};
   &:hover {
-    box-shadow: ${({ theme, isDisabled }) =>
-      isDisabled
-        ? `${theme.gray600} inset 0px 0px 0px 1px`
-        : `${theme.primary900} inset 0px 0px 0px 4px`};
+    box-shadow: ${({ theme, isDisabled }) => isDisabled
+     ? `${theme.gray600} inset 0px 0px 0px 1px`
+     : `${theme.primary900} inset 0px 0px 0px 4px`};
   }
 `;
 
 const Button = (props) => {
-  const { width, height, onClick, isDisabled, children } = props;
+  const { width, height, onClick, isDisabled, children, direction } = props;
   return (
     <Wrapper
       width={width}
       height={height}
       isDisabled={isDisabled}
       onClick={onClick}
+      direction={direction}
     >
       <BorderPlaceholder isDisabled={isDisabled} />
       {children}
@@ -61,6 +59,7 @@ Button.propTypes = {
   height: PropTypes.string,
   onClick: PropTypes.func,
   isDisabled: PropTypes.bool,
+  direction: PropTypes.string,
   children: PropTypes.node,
 };
 

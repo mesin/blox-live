@@ -15,8 +15,7 @@ export const initialState: State = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const organizationReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+const organizationReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.SET_ORGANIZATION_NAME:
         draft.data.name = action.payload;

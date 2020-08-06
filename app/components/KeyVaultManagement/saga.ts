@@ -1,8 +1,8 @@
 import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
-import { KEYVAULT_PROCESS_SUBSCRIBE } from './actionTypes';
+import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS } from './actionTypes';
 import * as actions from './actions';
-import { processInstantiator } from './service';
+import { processInstantiator, saveCredentialsInConfigStore, isReadyToRunProcess } from './service';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
@@ -26,9 +26,21 @@ class Listener implements Observer {
   }
 }
 
-export function* startProcess(action) {
+const storeName = 'blox';
+
+function* startSettingCredentials(action) {
   const { payload } = action;
-  const storeName = 'blox';
+  yield call(saveCredentialsInConfigStore, storeName, payload);
+}
+
+function* startProcess(action) {
+  const { payload } = action;
+
+  if (!isReadyToRunProcess(storeName)) {
+    yield put(actions.keyvaultProcessFailure(new Error('missing credentials')));
+    return;
+  }
+
   const process = processInstantiator(payload.name, storeName);
   const channel = yield call(createChannel, process);
   try {
@@ -81,4 +93,5 @@ function createChannel(process) {
 
 export default function* keyVaultManagementSaga() {
   yield takeLatest(KEYVAULT_PROCESS_SUBSCRIBE, startProcess);
+  yield takeLatest(KEYVAULT_SET_CREDENTIALS, startSettingCredentials);
 }

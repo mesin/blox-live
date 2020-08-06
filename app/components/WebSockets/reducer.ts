@@ -11,8 +11,8 @@ const initialState: WebSocketState = {
   data: null,
 };
 
-const websocketReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const websocketReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.CONNECT_WEB_SOCKET:
         draft.idToken = action.payload;

@@ -13,8 +13,8 @@ const initialState: WizardState = {
   isFinished: false,
 };
 
-const wizardReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const wizardReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.CREATE_ONE_TIME_PASS:
         draft.isLoading = true;

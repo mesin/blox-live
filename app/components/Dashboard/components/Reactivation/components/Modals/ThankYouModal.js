@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Button } from '..';
+import { Title, Description } from '..';
 
 import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 

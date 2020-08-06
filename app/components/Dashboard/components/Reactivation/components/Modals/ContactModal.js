@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FailureIcon } from 'common/components';
+import { Button, FailureIcon } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Button, Wrapper, DiscordText } from '..';
+import { Title, Description, Wrapper, DiscordText } from '..';
 
 import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 import discordLogo from 'assets/images/discord-logo.svg';

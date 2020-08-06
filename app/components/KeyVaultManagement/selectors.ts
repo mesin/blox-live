@@ -1,3 +1,5 @@
+export const getCloudProvider = (state) => state.keyVaultManagement.cloudProvider;
+
 export const getName = (state) => state.keyVaultManagement.name;
 
 export const getIsLoading = (state) => state.keyVaultManagement.isLoading;

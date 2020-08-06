@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
 import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
-import { Title, Description, SmallText, Button } from '..';
+import { Title, Description, SmallText } from '..';
 
 const WelcomeModal = ({onClick, onClose}) => {
   return (

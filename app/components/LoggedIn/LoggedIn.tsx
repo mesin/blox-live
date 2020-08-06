@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
+import Configstore from 'configstore';
 
 import { Loader } from '../../common/components';
 import Login from '../Login';
@@ -41,6 +42,7 @@ import webSocketSaga from '../WebSockets/saga';
 
 // auth
 import { logout } from '../CallbackPage/actions';
+import { getIdToken } from '../CallbackPage/selectors';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -53,21 +55,10 @@ const LoggedIn = (props: Props) => {
   const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
 
   const {
-    logoutUser,
-    isFinishedWizard,
-    callSetFinishedWizard,
-    walletStatus,
-    isLoadingWallet,
-    walletError,
-    callLoadWallet,
-    accounts,
-    isLoadingAccounts,
-    accountsError,
-    callLoadAccounts,
-    callConnectToWebSockets,
-    isWebsocketLoading,
-    websocket,
-    webSocketError,
+    logoutUser, isFinishedWizard, callSetFinishedWizard, walletStatus,
+    isLoadingWallet, walletError, callLoadWallet, accounts, isLoadingAccounts,
+    accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
+    websocket, webSocketError, token,
   } = props;
 
   useEffect(() => {
@@ -76,7 +67,11 @@ const LoggedIn = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
+    const generalStorage = new Configstore('blox');
 
+    if (!generalStorage.get('authToken')) {
+      generalStorage.set('authToken', token);
+    }
     if (hasError) {
       logoutUser();
     }
@@ -97,12 +92,7 @@ const LoggedIn = (props: Props) => {
       }
       toggleLoadingAll(true);
     }
-  }, [
-    isLoadingWallet,
-    isLoadingAccounts,
-    isWebsocketLoading,
-    isFinishedWizard,
-  ]);
+  }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isFinishedWizard]);
 
   if (!isFinishedLoadingAll) {
     return <Loader />;
@@ -136,6 +126,7 @@ const mapStateToProps = (state: State) => ({
   webSocketError: getWebSocketError(state),
 
   isFinishedWizard: getWizardFinishedStatus(state),
+  token: getIdToken(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -168,6 +159,9 @@ interface Props extends RouteComponentProps {
   websocket: boolean;
   webSocketError: string;
   callConnectToWebSockets: () => void;
+
+  // auth
+  token: string;
 }
 
 type State = Record<string, any>;

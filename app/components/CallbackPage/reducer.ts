@@ -11,8 +11,7 @@ export const initialState: State = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const loginReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+const loginReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.LOGIN_INIT:
       case actionTypes.CHECK_IF_TOKEN_EXIST:

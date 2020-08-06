@@ -5,7 +5,6 @@ import { notification } from 'antd';
 
 import { subscribeToEvent } from '../../../../WebSockets/actions';
 import { loadWallet } from '../../../actions';
-import * as selectors from '../../../selectors';
 import * as socketSelectors from '../../../../WebSockets/selectors';
 
 import { BottomLine } from './components';
@@ -24,7 +23,7 @@ const Link = styled.a`
 `;
 
 const KeyVaultPage = (props: Props) => {
-  const { page, setPage, isLoadingWallet, otp, command, wallet } = props;
+  const { page, setPage, isLoadingWallet, wallet } = props;
   const onCopy = async () => {
     if (!isLoadingWallet) {
       const { callSubscribeToEvent } = props;
@@ -43,8 +42,6 @@ const KeyVaultPage = (props: Props) => {
     }
   }, [isLoadingWallet]);
 
-  const text = `${command} ${otp}`;
-
   return (
     <Wrapper>
       <Title>Install your staking KeyVault</Title>
@@ -57,23 +54,20 @@ const KeyVaultPage = (props: Props) => {
         To create your secured blox KeyVault on AWS follow{' '}
         <Link href="/">Step-by-Step Guide &gt;</Link>
       </Paragraph>
-      <CopyToClipboard onCopy={onCopy} text={text} />
+      <CopyToClipboard onCopy={onCopy} text={'delete this page'} />
       {isLoadingWallet && <BottomLine />}
     </Wrapper>
   );
 };
 
 const mapStateToProps = (state: State) => ({
-  otp: selectors.getOneTimePassword(state),
-  command: selectors.getCommand(state),
   isLoadingWallet: socketSelectors.getIsLoading(state),
   wallet: socketSelectors.getData(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   loadWallet: () => dispatch(loadWallet()),
-  callSubscribeToEvent: (eventName: string, doneCondition: any) =>
-    dispatch(subscribeToEvent(eventName, doneCondition)),
+  callSubscribeToEvent: (eventName: string, doneCondition: any) => dispatch(subscribeToEvent(eventName, doneCondition)),
 });
 
 type Props = {
@@ -82,8 +76,6 @@ type Props = {
   page: number;
   setPage: (page: number) => void;
   loadWallet: () => void;
-  otp: string;
-  command: string;
   callSubscribeToEvent: (
     eventName: string,
     doneCondition: Record<string, any>

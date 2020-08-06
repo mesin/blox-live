@@ -8,11 +8,19 @@ const initialState = {
   name: '',
   message: '',
   error: '',
+  cloudProvider: '',
+  credentials: {},
 };
 
-const KeyVaultManagementReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const KeyVaultManagementReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
+      case actionTypes.KEYVAULT_SET_COLUD_PROVIDER:
+        draft.cloudProvider = action.payload;
+        break;
+      case actionTypes.KEYVAULT_SET_CREDENTIALS:
+        draft.credentials = action.payload;
+        break;
       case actionTypes.KEYVAULT_PROCESS_SUBSCRIBE:
         draft.isLoading = true;
         draft.name = action.payload.name;
