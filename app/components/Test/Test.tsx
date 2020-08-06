@@ -13,6 +13,8 @@ import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
 import RestoreProcess from '../../backend/proccess-manager/restore.process';
+import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
+import SeedService from '../../backend/key-vault/seed.service'
 
 class Listener implements Observer {
   private logFunc: any;
@@ -37,6 +39,7 @@ let configIsSet = false;
 
 const Test = (props) => {
   const { token } = props;
+  const seedService = new SeedService('blox');
 
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -241,6 +244,23 @@ const Test = (props) => {
         >
         Reboot
         </button>
+        <button
+          onClick={async () => {
+            const storeName = 'blox';
+            const cleanStorageProcess = new CleanStorageProcess(storeName);
+            const listener = new Listener(setProcessStatus);
+            cleanStorageProcess.subscribe(listener);
+            try {
+              await cleanStorageProcess.run();
+            } catch (e) {
+              setProcessStatus(e);
+            }
+            console.log('+Clean Accounts from storage is done!');
+          }}
+        >
+          Clean Accounts from Storage
+        </button>
+        <button onClick={async () => { await seedService.mnemonicGenerate()}}>Mnemonic</button>
       </div>
       <p/>
       <textarea value={processStatus} cols={100} rows={10}></textarea>

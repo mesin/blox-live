@@ -70,6 +70,24 @@ export default class AccountService {
   }
 
   @step({
+    name: 'Remove Organization Accounts',
+    requiredConfig: ['authToken'],
+  })
+  async deleteBloxAccounts(): Promise<void> {
+    try {
+      await got.delete('https://api.stage.bloxstaking.com/accounts', {
+        headers: {
+          'Authorization': `Bearer ${this.conf.get('authToken')}`,
+        }
+      });
+      this.conf.delete('keyVaultStorage');
+      console.log('blox accounts deleted');
+    } catch (error) {
+      throw new Error(`Blox Staking api error: ${error}`);
+    }
+  }
+
+  @step({
     name: 'Create Blox Account',
     requiredConfig: ['authToken', 'keyVaultAccounts'],
   })
