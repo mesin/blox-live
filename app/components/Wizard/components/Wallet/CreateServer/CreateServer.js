@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { ProgressBar, ProgressMessage, Button } from 'common/components';
-import { Title, Paragraph, Link } from '../../common';
+import { Title, Paragraph, Link, TextInput } from '../../common';
 import { useInjectSaga } from '../../../../../utils/injectSaga';
 import * as keyVaultActions from '../../../../KeyVaultManagement/actions';
 import * as selectors from '../../../../KeyVaultManagement/selectors';
@@ -22,34 +22,13 @@ const Wrapper = styled.div`
   font-weight: 500;
 `;
 
-const TextFieldsWrapper = styled.div`
+const TextInputsWrapper = styled.div`
   width:55%;
   height: 100px;
   display: flex;
   justify-content:space-between;
   font-size: 16px;
   font-weight: 500;
-`;
-
-const TextFieldWrapper = styled.div`
-  width:200px;
-  height:70px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-`;
-
-const Label = styled.label``;
-
-const TextField = styled.input`
-  width: 230px;
-  height: 36px;
-  color:${({theme}) => theme.gray600};
-  font-size: 12px;
-  font-weight: 500;
-  border-radius: 4px;
-  border: solid 1px ${({theme}) => theme.gray300};
-  padding:8px 12px;
 `;
 
 const ProgressWrapper = styled.div`
@@ -62,13 +41,13 @@ const CreateServer = (props) => {
   const { keyvaultSetCredentials, keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('AKIARYXLX53R4KHH3PTF');
   const [secretAccessKey, setSecretAccessKey] = React.useState('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');
-  const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading;
+  const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
+  const isTextInputDisabled = isLoading || isDone;
 
   useInjectSaga({ key, saga, mode: '' });
 
   React.useEffect(() => {
     if (!isLoading && isDone) {
-      debugger;
       keyvaultProcessClearState();
       setPage(page + 1);
     }
@@ -88,26 +67,19 @@ const CreateServer = (props) => {
         We will now create your KeyVault on your selected server. <br />
         Blox needs to have access to your AWS access/secret tokens. <br /> <br />
 
-        To create a suitable sever and access tokens follow this&nbsp;
+        To create a suitable server and access tokens follow this&nbsp;
         <Link href="https://www.bloxstaking.com/blox-guide-why-blox-need-access-to-my-server" target="_blank">
           step-by-step guide
         </Link>
       </Paragraph>
-      <TextFieldsWrapper>
-        <TextFieldWrapper>
-          <Label htmlFor={'accessKeyId'}>Access Key ID</Label>
-          <TextField id={'accessKeyId'} type={'text'} value={accessKeyId}
-            onChange={(e) => setAccessKeyId(e.target.value)}
-          />
-        </TextFieldWrapper>
-        <TextFieldWrapper>
-          <Label htmlFor={'secretAccessKey'}>Secret Access Key</Label>
-          <TextField id={'secretAccessKey'} type={'text'} value={secretAccessKey}
-            onChange={(e) => setSecretAccessKey(e.target.value)}
-          >
-          </TextField>
-        </TextFieldWrapper>
-      </TextFieldsWrapper>
+      <TextInputsWrapper>
+        <TextInput name={'accessKeyId'} title={'Access Key ID'} type={'text'}
+          onChange={setAccessKeyId} value={accessKeyId} isDisabled={isTextInputDisabled}
+        />
+        <TextInput name={'secretAccessKey'} title={'Secret Access Key'} type={'text'}
+          onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isTextInputDisabled}
+        />
+      </TextInputsWrapper>
       <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
       {isLoading && installMessage && (
         <ProgressWrapper>

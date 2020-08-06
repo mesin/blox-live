@@ -3,7 +3,7 @@ import InstallProcess from '../../backend/proccess-manager/install.process';
 import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import { v4 as uuidv4 } from 'uuid';
 
 export const processInstantiator = (processName: string, storeName: string) => {
@@ -19,8 +19,8 @@ export const processInstantiator = (processName: string, storeName: string) => {
   return null;
 };
 
-export const saveCredentialsInConfigStore = (storeName, credentials) => {
-  const conf = new Configstore(storeName);
+export const saveCredentialsInElectronStore = (storeName, credentials) => {
+  const conf = new ElectronStore({name: storeName});
   if (!conf.get('uuid')) {
     conf.set('uuid', uuidv4());
   }
@@ -28,7 +28,7 @@ export const saveCredentialsInConfigStore = (storeName, credentials) => {
 };
 
 export const isReadyToRunProcess = (storeName) => { // TODO: check with vadim why it's not running (try to pull first)
-  const conf = new Configstore(storeName);
+  const conf = new ElectronStore({name: storeName});
   console.log('uuid', conf.get('uuid'));
   console.log('credentials', conf.get('credentials'));
   console.log('authToken', conf.get('authToken'));

@@ -10,7 +10,7 @@ export default class InstallProcess extends ProcessClass {
   public readonly keyVaultService: KeyVaultService;
   public readonly dockerService: DockerService;
   public readonly accountService: AccountService;
-  public readonly accountKeyVaultService: AccountKeyVaultService
+  public readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
   constructor(storeName: string) {

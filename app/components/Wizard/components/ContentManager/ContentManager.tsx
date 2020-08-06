@@ -21,73 +21,55 @@ const switcher = (props: Props) => {
       return <WelcomePage key={0} {...props} />;
     case 1:
       return (
-        <Template
-          key={1}
-          bgImage={walletImage}
-          {...props}
+        <Template key={1} bgImage={walletImage} {...props}
           component={<WalletPages.CloudProvider {...props} />}
         />
       );
     case 2:
       return (
-        <Template
-          key={2}
-          bgImage={walletImage}
-          {...props}
+        <Template key={2} bgImage={walletImage} {...props}
           component={<WalletPages.CreateServer {...props} />}
         />
       );
     case 3:
       return (
-        <Template
-          key={3}
-          bgImage={walletImage}
-          {...props}
-          component={<WalletPages.CongratulationPage {...props} />}
+        <Template key={3} bgImage={walletImage} {...props}
+          component={<WalletPages.CreateServer {...props} />}
         />
       );
     case 4:
       return (
-        <Template
-          key={4}
-          bgImage=""
-          {...props}
-          component={<ValidatorPages.SelectNetwork {...props} />}
+        <Template key={4} bgImage={walletImage} {...props}
+          component={<WalletPages.CongratulationPage {...props} />}
         />
       );
     case 5:
       return (
-        <Template
-          key={5}
-          bgImage={validatorImage}
-          {...props}
-          component={<ValidatorPages.CreateValidator {...props} />}
+        <Template key={5} bgImage="" {...props}
+          component={<ValidatorPages.SelectNetwork {...props} />}
         />
       );
     case 6:
       return (
-        <Template
-          key={6}
-          bgImage={validatorImage}
-          {...props}
-          component={<ValidatorPages.ValidatorCreated {...props} />}
+        <Template key={6} bgImage={validatorImage} {...props}
+          component={<ValidatorPages.CreateValidator {...props} />}
         />
       );
     case 7:
       return (
-        <Template
-          key={7}
-          bgImage={validatorImage}
-          {...props}
-          component={<ValidatorPages.StakingDeposit {...props} />}
+        <Template key={7} bgImage={validatorImage} {...props}
+          component={<ValidatorPages.ValidatorCreated {...props} />}
         />
       );
     case 8:
       return (
-        <Template
-          key={8}
-          bgImage={validatorImage}
-          {...props}
+        <Template key={8} bgImage={validatorImage} {...props}
+          component={<ValidatorPages.StakingDeposit {...props} />}
+        />
+      );
+    case 9:
+      return (
+        <Template key={9} bgImage={validatorImage} {...props}
           component={<ValidatorPages.AlmostDone {...props} />}
         />
       );

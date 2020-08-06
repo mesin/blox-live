@@ -28,7 +28,7 @@ export const keyvaultProcessClearState = () => ({
   type: actionTypes.KEYVAULT_PROCESS_CLEAR_STATE,
 });
 
-export const keyvaultSetCredentials = (accessKeyId: string, setAccessKeyId: string) => ({
+export const keyvaultSetCredentials = (accessKeyId: string, secretAccessKey: string) => ({
   type: actionTypes.KEYVAULT_SET_CREDENTIALS,
-  payload: {accessKeyId, setAccessKeyId},
+  payload: {accessKeyId, secretAccessKey},
 });

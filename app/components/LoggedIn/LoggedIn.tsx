@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 
 import { Loader } from '../../common/components';
 import Login from '../Login';
@@ -67,7 +67,7 @@ const LoggedIn = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
-    const generalStorage = new Configstore('blox');
+    const generalStorage = new ElectronStore({name: 'blox'});
 
     if (!generalStorage.get('authToken')) {
       generalStorage.set('authToken', token);

@@ -2,7 +2,7 @@ import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
 import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS } from './actionTypes';
 import * as actions from './actions';
-import { processInstantiator, saveCredentialsInConfigStore, isReadyToRunProcess } from './service';
+import { processInstantiator, saveCredentialsInElectronStore, isReadyToRunProcess } from './service';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
@@ -30,7 +30,7 @@ const storeName = 'blox';
 
 function* startSettingCredentials(action) {
   const { payload } = action;
-  yield call(saveCredentialsInConfigStore, storeName, payload);
+  yield call(saveCredentialsInElectronStore, storeName, payload);
 }
 
 function* startProcess(action) {

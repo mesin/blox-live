@@ -1,14 +1,14 @@
-import Configstore from 'configstore';
+import ElectronStore from 'electron-store';
 import got from 'got';
 import ServerService from './server.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
-  public readonly conf: Configstore;
+  public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
 
   constructor(storeName: string) {
-    this.conf = new Configstore(storeName);
+    this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
   }
 
@@ -53,7 +53,7 @@ export default class KeyVaultService {
   async updateVaultStorage(): Promise<void> {
     try {
       const storage = this.conf.get('keyVaultStorage');
-      const { body } = await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
+      await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
         headers: {
           'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`
         },
@@ -74,19 +74,16 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp'],
   })
   async getKeyVaultStatus() {
-    const MAX_RETRIES = 3;
     // check if the key vault is alive
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
-      console.log('try', `http://${this.conf.get('publicIp')}:8200/v1/sys/health`);
       await got.get(
         `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
         {
           retry: {
-            limit: 10,
-            statusCodes: [400],
-            calculateDelay: ({ attemptCount }) => {
-              console.log('retry:', attemptCount);
-              return +attemptCount < MAX_RETRIES ? 1 : 0;
+            limit: 2,
+            calculateDelay: ({ attemptCount, computedValue }) => {
+              return +attemptCount < 3 ? computedValue : 0;
             },
           },
         },
