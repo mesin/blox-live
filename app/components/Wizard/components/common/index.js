@@ -9,4 +9,5 @@ export { default as Connection } from './Connection';
 export { default as CopyToClipboard } from './CopyToClipboard';
 export { default as SuccessIcon } from './SuccessIcon';
 export { default as TextInput } from './TextInput';
+export { default as Warning } from './Warning';
 export { default as contentAnimation } from './contentAnimation';
