@@ -13,7 +13,7 @@ export default class RebootProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService(storeName);
     this.actions = [
       { instance: this.awsService, method: 'rebootInstance' },
-      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+      { instance: this.keyVaultService, method: 'getKeyVaultStatusFail' },
     ];
   }
 }

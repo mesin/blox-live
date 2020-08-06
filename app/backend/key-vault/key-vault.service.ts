@@ -94,4 +94,30 @@ export default class KeyVaultService {
       return { isActive: false };
     }
   }
+
+  @step({
+    name: 'Get key vault status fail',
+    requiredConfig: ['publicIp'],
+  })
+  async getKeyVaultStatusFail() {
+    // check if the key vault is alive
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    try {
+      await got.get(
+        `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
+        {
+          retry: {
+            limit: 2,
+            calculateDelay: ({ attemptCount, computedValue }) => {
+              return +attemptCount < 3 ? computedValue : 0;
+            },
+          },
+        },
+      );
+      return { isActive: false };
+    } catch (e) {
+      console.log(e);
+      return { isActive: false };
+    }
+  }
 }
