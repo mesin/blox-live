@@ -260,7 +260,7 @@ const Test = (props) => {
         >
           Clean Accounts from Storage
         </button>
-        <button onClick={async () => { await seedService.mnemonicGenerate()}}>Mnemonic</button>
+        <button onClick={async () => { await seedService.mnemonicGenerate()}}>Generate Mnemonic</button>
       </div>
       <p/>
       <textarea value={processStatus} cols={100} rows={10}></textarea>
