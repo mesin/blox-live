@@ -37,7 +37,6 @@ let configIsSet = false;
 
 const Test = (props) => {
   const { token } = props;
-  console.log('token', token);
 
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -67,8 +66,10 @@ const Test = (props) => {
             conf.clear();
             accessKeyId = '';
             secretAccessKey = '';
+            mnemonic = '';
             setAccessKeyId('');
             setSecretAccessKey('');
+            setMnemonic('');
             conf.set('authToken', token);
           }}
         >
@@ -207,6 +208,15 @@ const Test = (props) => {
             try {
               await accountRemoveProcess.run();
               await uninstallProcess.run();
+              const conf = new ElectronStore({ name: storeName });
+              conf.clear();
+              accessKeyId = '';
+              secretAccessKey = '';
+              mnemonic = '';
+              setAccessKeyId('');
+              setSecretAccessKey('');
+              setMnemonic('');
+              conf.set('authToken', token);
             } catch (e) {
               setProcessStatus(e);
             }

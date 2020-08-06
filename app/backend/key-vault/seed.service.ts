@@ -43,5 +43,6 @@ export default class SeedService extends KeyVaultCliService {
     }
     console.log(stdout);
     this.conf.set('seed', stdout.replace('\n', ''));
+    this.conf.delete("mnemonic")
   }
 }
