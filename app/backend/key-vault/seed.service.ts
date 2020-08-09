@@ -23,6 +23,9 @@ export default class SeedService extends KeyVaultCliService {
     this.conf.set('seed', stdout.replace('\n', ''));
   }
 
+  @step({
+    name: 'Mnemonic generate',
+  })
   async mnemonicGenerate(): Promise<void> {
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
     if (stderr) {

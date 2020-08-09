@@ -32,7 +32,7 @@ const Box = styled.div`
   color: ${({theme}) => theme.primary900};
 `;
 
-const Passphrase = (props) => {
+const Passphrase = (props: Props) => {
   const { page, setPage } = props;
   const isButtonDisabled = true;
 
