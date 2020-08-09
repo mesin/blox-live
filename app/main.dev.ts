@@ -30,10 +30,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-if (
-  process.env.NODE_ENV === 'development' ||
-  process.env.DEBUG_PROD === 'true'
-) {
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
   require('electron-debug')();
 }
 
@@ -47,11 +44,8 @@ const installExtensions = async () => {
   ).catch(console.log);
 };
 
-const createWindow = async () => {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    process.env.DEBUG_PROD === 'true'
-  ) {
+const createWindow = async (downloadsDir) => {
+  if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
@@ -77,8 +71,7 @@ const createWindow = async () => {
 
   mainWindow.webContents.openDevTools();
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
-  // mainWindow.loadURL(`http://app.bloxstaking.com`);
+  mainWindow.loadURL(`file://${__dirname}/app.html?dwldir=${downloadsDir}`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
@@ -118,10 +111,12 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  createWindow(app.getPath('downloads'));
+});
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow();
+  if (mainWindow === null) createWindow(app.getPath('downloads'));
 });

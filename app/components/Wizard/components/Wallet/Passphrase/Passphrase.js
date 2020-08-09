@@ -9,6 +9,7 @@ import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/select
 import saga from '../../../../KeyVaultManagement/saga';
 import { useInjectSaga } from '../../../../../utils/injectSaga';
 import bgImage from './passphrase-bg-image.svg';
+import { writeToTxtFile } from './service';
 
 const key = 'keyVaultManagement';
 
@@ -82,6 +83,11 @@ const Passphrase = (props) => {
 
   const onButtonClick = () => !isButtonDisabled && setPage(page + 1);
 
+  const onDownloadClick = () => {
+    if (!mnemonic) { return null; }
+    writeToTxtFile('passphrase', mnemonic);
+  };
+
   return (
     <Wrapper>
       <Title>Select your Cloud Provider</Title>
@@ -95,7 +101,7 @@ const Passphrase = (props) => {
         {isLoading && !mnemonic && <Spinner />}
         {mnemonic !== '' ? mnemonic : 'Click to reveal passphrase'}
       </Box>
-      <DownloadButton isDisabled={!mnemonic}>Download backup passphrase</DownloadButton>
+      <DownloadButton onClick={onDownloadClick} isDisabled={!mnemonic}>Download backup passphrase</DownloadButton>
       <ButtonWrapper>
         <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Next</Button>
       </ButtonWrapper>
