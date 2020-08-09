@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom'; // TODO: remove later
 import styled from 'styled-components';
 import Button from './Button';
 import LogoutButton from './LogoutButton';
@@ -69,12 +70,15 @@ const ProfileMenu = forwardRef(
           </MenuItem>
           <Separator />
           <MenuItem>
+            <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
+          </MenuItem>
+          <MenuItem>
             <LogoutButton onClick={logout}>Log Out</LogoutButton>
           </MenuItem>
         </Menu>
       )}
     </Wrapper>
-  )
+  ),
 );
 
 ProfileMenu.propTypes = {

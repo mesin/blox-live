@@ -9,6 +9,7 @@ import Settings from '../SettingsPage';
 import NotFoundPage from '../NotFoundPage';
 import Wizard from '../Wizard';
 import EntryPage from '../EntryPage';
+import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 
@@ -102,6 +103,7 @@ const LoggedIn = (props: Props) => {
     <Switch>
       <Route exact path="/" render={(routeProps) => isFinishedWizard ? <EntryPage {...routeProps} /> : <Wizard />} />
       <Route path="/login" component={Login} />
+      <Route path="/test" component={TestPage} />
       <Route path="/settings/:path" render={(routeProps) => <Settings {...routeProps} withMenu />} />
       <Redirect from="/settings" to="/settings/general" />
       <Route path="" component={NotFoundPage} />

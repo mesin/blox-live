@@ -13,12 +13,10 @@ const Wrapper = styled(Link)`
   outline: 0;
   font-size: 14px;
   font-weight: 900;
-  color: ${({ theme, active }) =>
-    active ? theme.accent2400 : theme.accent250};
+  color: ${({ theme, active }) => active ? theme.accent2400 : theme.accent250};
   margin: 0px 20px;
   &:hover {
-    color: ${({ theme, active }) =>
-      active ? theme.accent2400 : theme.accent2200};
+    color: ${({ theme, active }) => active ? theme.accent2400 : theme.accent2200};
   }
 `;
 
