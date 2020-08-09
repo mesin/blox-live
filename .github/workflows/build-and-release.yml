@@ -7,10 +7,10 @@ jobs:
     #runs-on: ${{ matrix.os }}
     runs-on: [self-hosted]
 
-#    strategy:
-#      matrix:
-#        #        os: [macos-latest, ubuntu-latest, windows-latest]
-#        os: [macos-latest]
+    strategy:
+      matrix:
+        #        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest]
 
     steps:
       - name: Check out Git repository
