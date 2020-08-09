@@ -8,6 +8,6 @@ export default class UninstallProcess extends ProcessClass {
   constructor(storeName: string) {
     super();
     this.awsService = new AwsService(storeName);
-    this.actions = [{ instance: this.awsService, method: 'truncateServer' }];
+    this.actions = [{ instance: this.awsService, method: 'uninstallItems' }];
   }
 }

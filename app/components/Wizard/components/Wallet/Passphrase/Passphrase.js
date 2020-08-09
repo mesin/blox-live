@@ -92,7 +92,7 @@ const Passphrase = (props) => {
       </Paragraph>
       <Warning text={'Do not share your backup passphrase with anyone.'} />
       <Box onClick={onPassphraseClick} clickable={mnemonic === ''}>
-        {isLoading && <Spinner />}
+        {isLoading && !mnemonic && <Spinner />}
         {mnemonic !== '' ? mnemonic : 'Click to reveal passphrase'}
       </Box>
       <DownloadButton isDisabled={!mnemonic}>Download backup passphrase</DownloadButton>
