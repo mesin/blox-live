@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { Icon } from 'common/components';
 
 const Wrapper = styled.div`
-  width:100%;
-  padding:20px 16px;
-  margin-top:37px;
+  width:auto;
+  max-width:560px;
+  padding:8px 16px;
   color:${({theme}) => theme.warning900};
   border:2px solid ${({theme}) => theme.warning900};
   border-radius:4px;

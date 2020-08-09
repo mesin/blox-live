@@ -11,3 +11,5 @@ export const getMessage = (state) => state.keyVaultManagement.message;
 export const getIsDone = (state) => state.keyVaultManagement.isDone;
 
 export const getIsServerActive = (state) => state.keyVaultManagement.isServerActive;
+
+export const getMnemonic = (state) => state.keyVaultManagement.mnemonic;

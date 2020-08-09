@@ -2,11 +2,14 @@ import { PROCESSES } from './constants';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
+import RestoreProcess from '../../backend/proccess-manager/restore.process';
 
 import ElectronStore from 'electron-store';
 import { v4 as uuidv4 } from 'uuid';
 
-export const processInstantiator = (processName: string, storeName: string) => {
+const storeName: string = 'blox';
+
+export const processInstantiator = (processName: string) => {
   if (processName === PROCESSES.INSTALL) {
     return new InstallProcess(storeName);
   }
@@ -16,10 +19,13 @@ export const processInstantiator = (processName: string, storeName: string) => {
   if (processName === PROCESSES.REINSTALL) {
     return new ReinstallProcess(storeName);
   }
+  if (processName === PROCESSES.RESTORE) {
+    return new RestoreProcess(storeName);
+  }
   return null;
 };
 
-export const saveCredentialsInElectronStore = (storeName, credentials) => {
+export const saveCredentialsInElectronStore = (credentials) => {
   const conf = new ElectronStore({name: storeName});
   if (!conf.get('uuid')) {
     conf.set('uuid', uuidv4());
@@ -27,7 +33,14 @@ export const saveCredentialsInElectronStore = (storeName, credentials) => {
   conf.set('credentials', credentials);
 };
 
-export const isReadyToRunProcess = (storeName) => { // TODO: check with vadim why it's not running (try to pull first)
+export const saveMnemonicInElectronStore = (mnemonic) => {
+  const conf = new ElectronStore({name: storeName});
+  if (!conf.get('mnemonic')) {
+    conf.set('mnemonic', mnemonic);
+  }
+};
+
+export const isReadyToRunProcess = () => {
   const conf = new ElectronStore({name: storeName});
   console.log('uuid', conf.get('uuid'));
   console.log('credentials', conf.get('credentials'));

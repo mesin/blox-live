@@ -1,20 +1,13 @@
 import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
-import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS } from './actionTypes';
+import { notification } from 'antd';
+import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS, KEYVAULT_LOAD_MNEMONIC } from './actionTypes';
 import * as actions from './actions';
 import { processInstantiator, saveCredentialsInElectronStore, isReadyToRunProcess } from './service';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
-
-// function* onSuccess() {
-//   yield put(actions.keyvaultRestartSuccess());
-// }
-
-// function* onFailure(error) {
-//   yield put(actions.keyvaultRestartFailure(error));
-//   notification.error({ message: 'Error', description: error.message });
-// }
+import SeedService from '../../backend/key-vault/seed.service';
 
 class Listener implements Observer {
   private logFunc: any;
@@ -26,22 +19,15 @@ class Listener implements Observer {
   }
 }
 
-const storeName = 'blox';
-
-function* startSettingCredentials(action) {
-  const { payload } = action;
-  yield call(saveCredentialsInElectronStore, storeName, payload);
-}
-
 function* startProcess(action) {
   const { payload } = action;
 
-  if (!isReadyToRunProcess(storeName)) {
+  if (!isReadyToRunProcess()) {
     yield put(actions.keyvaultProcessFailure(new Error('missing credentials')));
     return;
   }
 
-  const process = processInstantiator(payload.name, storeName);
+  const process = processInstantiator(payload.name);
   const channel = yield call(createChannel, process);
   try {
     while (true) {
@@ -91,7 +77,25 @@ function createChannel(process) {
   });
 }
 
+function* startSettingCredentials(action) {
+  const { payload } = action;
+  yield call(saveCredentialsInElectronStore, payload);
+}
+
+function* startLoadingMnemonic() {
+  try {
+    const seedService = new SeedService('blox');
+    const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
+    yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
+  }
+  catch (error) {
+    yield put(actions.keyvaultLoadMnemonicFailure(error));
+    notification.error({ message: 'Error', description: error.message });
+  }
+}
+
 export default function* keyVaultManagementSaga() {
   yield takeLatest(KEYVAULT_PROCESS_SUBSCRIBE, startProcess);
   yield takeLatest(KEYVAULT_SET_CREDENTIALS, startSettingCredentials);
+  yield takeLatest(KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
 }

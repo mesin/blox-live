@@ -32,3 +32,17 @@ export const keyvaultSetCredentials = (accessKeyId: string, secretAccessKey: str
   type: actionTypes.KEYVAULT_SET_CREDENTIALS,
   payload: {accessKeyId, secretAccessKey},
 });
+
+export const keyvaultLoadMnemonic = () => ({
+  type: actionTypes.KEYVAULT_LOAD_MNEMONIC,
+});
+
+export const keyvaultLoadMnemonicSuccess = (mnemonic: string) => ({
+  type: actionTypes.KEYVAULT_LOAD_MNEMONIC_SUCCESS,
+  payload: mnemonic,
+});
+
+export const keyvaultLoadMnemonicFailure = (error: Record<string, any>) => ({
+  type: actionTypes.KEYVAULT_LOAD_MNEMONIC_FAILURE,
+  payload: error,
+});
