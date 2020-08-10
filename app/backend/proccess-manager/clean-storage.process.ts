@@ -9,11 +9,11 @@ export default class CleanStorageProcess extends ProcessClass {
   public readonly keyVaultService: KeyVaultService;
   public readonly actions: Array<any>;
 
-  constructor(storeName: string) {
+  constructor() {
     super();
-    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
-    this.keyVaultService = new KeyVaultService(storeName);
-    this.accountService = new AccountService(storeName);
+    this.accountKeyVaultService = new AccountKeyVaultService(this.storeName);
+    this.keyVaultService = new KeyVaultService(this.storeName);
+    this.accountService = new AccountService(this.storeName);
     this.actions = [
       { instance: this.accountService, method: 'deleteBloxAccounts' },
       { instance: this.accountKeyVaultService, method: 'createWallet' },

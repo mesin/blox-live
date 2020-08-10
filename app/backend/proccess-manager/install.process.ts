@@ -1,3 +1,5 @@
+import ElectronStore from 'electron-store';
+import { v4 as uuidv4 } from 'uuid';
 import AwsService from '../aws/aws.service';
 import AccountService from '../account/account.service';
 import KeyVaultService from '../key-vault/key-vault.service';
@@ -13,13 +15,23 @@ export default class InstallProcess extends ProcessClass {
   public readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
-  constructor(storeName: string) {
+  constructor({ accessKeyId, secretAccessKey, authToken }) {
     super();
-    this.keyVaultService = new KeyVaultService(storeName);
-    this.awsService = new AwsService(storeName);
-    this.dockerService = new DockerService(storeName);
-    this.accountService = new AccountService(storeName);
-    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
+    const conf = new ElectronStore({ name: this.storeName });
+    if (!conf.get('uuid')) {
+      conf.set('uuid', uuidv4());
+    }
+    conf.set('authToken', authToken);
+    conf.set('credentials', {
+      accessKeyId,
+      secretAccessKey,
+    });
+
+    this.keyVaultService = new KeyVaultService(this.storeName);
+    this.awsService = new AwsService(this.storeName);
+    this.dockerService = new DockerService(this.storeName);
+    this.accountService = new AccountService(this.storeName);
+    this.accountKeyVaultService = new AccountKeyVaultService(this.storeName);
     this.actions = [
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'validateAWSPermissions' },

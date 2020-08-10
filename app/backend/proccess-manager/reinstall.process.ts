@@ -6,6 +6,7 @@ import ProcessClass from './process.class';
 
 export default class ReinstallProcess extends ProcessClass {
   public readonly awsService: AwsService;
+  public readonly awsServiceTmp: AwsService;
   public readonly keyVaultService: KeyVaultService;
   public readonly dockerService: DockerService;
   public readonly accountService: AccountService;
@@ -15,9 +16,11 @@ export default class ReinstallProcess extends ProcessClass {
     super();
     this.keyVaultService = new KeyVaultService(storeName);
     this.awsService = new AwsService(storeName);
+    this.awsServiceTmp = new AwsService(`${storeName}-tmp`);
     this.dockerService = new DockerService(storeName);
     this.accountService = new AccountService(storeName);
     this.actions = [
+      { instance: this.accountService, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'createElasticIp' },
       { instance: this.awsService, method: 'createInstance' },
       { instance: this.dockerService, method: 'installDockerScope' },
@@ -27,6 +30,8 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+      { instance: this.awsServiceTmp, method: 'truncateServer' },
+      { instance: this.accountService, method: 'saveTmpConfigIntoMain' },
     ];
   }
 }

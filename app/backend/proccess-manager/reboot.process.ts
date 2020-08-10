@@ -7,10 +7,10 @@ export default class RebootProcess extends ProcessClass {
   public readonly keyVaultService: KeyVaultService;
   public readonly actions: Array<any>;
 
-  constructor(storeName: string) {
+  constructor() {
     super();
-    this.awsService = new AwsService(storeName);
-    this.keyVaultService = new KeyVaultService(storeName);
+    this.awsService = new AwsService(this.storeName);
+    this.keyVaultService = new KeyVaultService(this.storeName);
     this.actions = [
       { instance: this.awsService, method: 'rebootInstance' },
       { instance: this.keyVaultService, method: 'getKeyVaultStatusFail' },
