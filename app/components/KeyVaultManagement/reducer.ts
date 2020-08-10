@@ -15,6 +15,7 @@ const initialState = {
 
 /* eslint-disable default-case, no-param-reassign */
 const KeyVaultManagementReducer = (state = initialState, action: Action) => produce(state, (draft) => {
+    // TODO: split to multiple reducers
     switch (action.type) {
       case actionTypes.KEYVAULT_SET_COLUD_PROVIDER:
         draft.cloudProvider = action.payload;
@@ -23,13 +24,18 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
         draft.credentials = action.payload;
         break;
       case actionTypes.KEYVAULT_LOAD_MNEMONIC:
+      case actionTypes.KEYVAULT_SAVE_MNEMONIC:
         draft.isLoading = true;
         break;
       case actionTypes.KEYVAULT_LOAD_MNEMONIC_SUCCESS:
         draft.mnemonic = action.payload;
         draft.isLoading = initialState.isLoading;
         break;
+      case actionTypes.KEYVAULT_SAVE_MNEMONIC_SUCCESS:
+        draft.isLoading = initialState.isLoading;
+        break;
       case actionTypes.KEYVAULT_LOAD_MNEMONIC_FAILURE:
+      case actionTypes.KEYVAULT_SAVE_MNEMONIC_FAILURE:
         draft.error = action.payload.message;
         draft.isLoading = initialState.isLoading;
         break;

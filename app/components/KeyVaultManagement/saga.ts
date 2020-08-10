@@ -1,13 +1,17 @@
 import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
-import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS, KEYVAULT_LOAD_MNEMONIC } from './actionTypes';
+import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS,
+         KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC,
+       } from './actionTypes';
 import * as actions from './actions';
 import { processInstantiator, saveCredentialsInElectronStore, isReadyToRunProcess } from './service';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import SeedService from '../../backend/key-vault/seed.service';
+
+const seedService = new SeedService('blox');
 
 class Listener implements Observer {
   private logFunc: any;
@@ -27,7 +31,7 @@ function* startProcess(action) {
     return;
   }
 
-  const process = processInstantiator(payload.name);
+  const process = processInstantiator(payload.name, {});
   const channel = yield call(createChannel, process);
   try {
     while (true) {
@@ -84,7 +88,6 @@ function* startSettingCredentials(action) {
 
 function* startLoadingMnemonic() {
   try {
-    const seedService = new SeedService('blox');
     const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
   }
@@ -94,8 +97,22 @@ function* startLoadingMnemonic() {
   }
 }
 
+function* startSavingMnemonic(action) {
+  const { payload } = action;
+  const { mnemonic, password } = payload;
+  try {
+    yield call(seedService.storeMnemonic, mnemonic, password);
+    yield put(actions.keyvaultSaveMnemonicSuccess());
+  }
+  catch (error) {
+    yield put(actions.keyvaultSaveMnemonicFailure(error));
+    notification.error({ message: 'Error', description: error.message });
+  }
+}
+
 export default function* keyVaultManagementSaga() {
   yield takeLatest(KEYVAULT_PROCESS_SUBSCRIBE, startProcess);
   yield takeLatest(KEYVAULT_SET_CREDENTIALS, startSettingCredentials);
   yield takeLatest(KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
+  yield takeLatest(KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
 }

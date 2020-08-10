@@ -2,29 +2,25 @@ import { PROCESSES } from './constants';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
-import RestoreProcess from '../../backend/proccess-manager/restore.process';
 
 import ElectronStore from 'electron-store';
 import { v4 as uuidv4 } from 'uuid';
 
-const storeName: string = 'blox';
-
-export const processInstantiator = (processName: string) => {
+export const processInstantiator = (processName: string, payload) => {
+  const { accessKeyId, secretAccessKey, token, mnemonic } = payload;
   if (processName === PROCESSES.INSTALL) {
-    return new InstallProcess(storeName);
+    return new InstallProcess({accessKeyId, secretAccessKey, authToken: token});
   }
   if (processName === PROCESSES.RESTART) {
-    return new RebootProcess(storeName);
+    return new RebootProcess();
   }
   if (processName === PROCESSES.REINSTALL) {
-    return new ReinstallProcess(storeName);
-  }
-  if (processName === PROCESSES.RESTORE) {
-    return new RestoreProcess(storeName);
+    return new ReinstallProcess();
   }
   return null;
 };
 
+// TODO: remove those function and pass the params to processInstantiator
 export const saveCredentialsInElectronStore = (credentials) => {
   const conf = new ElectronStore({name: storeName});
   if (!conf.get('uuid')) {
