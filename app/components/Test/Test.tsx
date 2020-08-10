@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { getIdToken } from '../CallbackPage/selectors';
 
@@ -10,12 +10,13 @@ import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
-import RestoreProcess from '../../backend/proccess-manager/restore.process';
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
-import SeedService from '../../backend/key-vault/seed.service'
+import SeedService from '../../backend/key-vault/seed.service';
+import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
 
 class Listener implements Observer {
-  private logFunc: any;
+  private readonly logFunc: any;
+
   constructor(func: any) {
     this.logFunc = func;
   }
@@ -31,6 +32,7 @@ let configIsSet = false;
 const Test = (props) => {
   const { token } = props;
   const seedService = new SeedService('blox');
+  const accountKeyVaultService = new AccountKeyVaultService('blox');
 
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -42,7 +44,7 @@ const Test = (props) => {
     const generalConf = new ElectronStore({ name: 'blox' });
     generalConf.set('authToken', token);
     if (generalConf.get('credentials')) {
-      const credentials : any = generalConf.get('credentials');
+      const credentials: any = generalConf.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
       setSecretAccessKey(credentials.secretAccessKey);
     }
@@ -70,9 +72,11 @@ const Test = (props) => {
           Clean config
         </button>
         <h3>Step 2. Install server & key-vault</h3>
-        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
+        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)}
+               placeholder="Access Key"/>
         <br/>
-        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
+        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)}
+               placeholder="Access Key Secret"/>
         <br/>
         <button
           onClick={async () => { // TODO: check this func
@@ -90,20 +94,11 @@ const Test = (props) => {
           Install
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
-        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)} placeholder="Mnemonic phrase" />
-        <button
-          onClick={async () => {
-            const restoreProcess = new RestoreProcess({ mnemonic });
-            const listener = new Listener(setProcessStatus);
-            restoreProcess.subscribe(listener);
-            try {
-              await restoreProcess.run();
-            } catch (e) {
-              setProcessStatus(e);
-            }
-            console.log('+ Congratulations. Seed was saved');
-          }}
-        >
+        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
+               placeholder="Mnemonic phrase"/>
+        <button onClick={async () => {
+          await seedService.seedFromMnemonicGenerate(mnemonic);
+        }}>
           Set mnemonic phrase
         </button>
         <h3>Step 4. Account create</h3>
@@ -191,7 +186,16 @@ const Test = (props) => {
         >
           Clean Accounts from Storage
         </button>
-        <button onClick={async () => { await seedService.mnemonicGenerate()}}>Generate Mnemonic</button>
+        <button onClick={async () => {
+          await seedService.mnemonicGenerate();
+        }}>
+          Generate Mnemonic
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.getDepositData("");
+        }}>
+          Get Account Deposit Data
+        </button>
       </div>
       <p/>
       <textarea value={processStatus} cols={100} rows={10}></textarea>
@@ -200,7 +204,7 @@ const Test = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  token: getIdToken(state),
+  token: getIdToken(state)
 });
 
 export default connect(mapStateToProps)(Test);

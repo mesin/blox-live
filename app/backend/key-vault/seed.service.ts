@@ -12,7 +12,7 @@ export default class SeedService extends KeyVaultCliService {
   }
 
   @step({
-    name: 'Seed generate',
+    name: 'Seed generate'
   })
   async seedGenerate(): Promise<void> {
     if (this.conf.get('seed')) return;
@@ -33,18 +33,24 @@ export default class SeedService extends KeyVaultCliService {
     return stdout.replace('\n', '');
   }
 
-  @step({
-    name: 'Mnemonic to Seed generate',
-    requiredConfig: ['mnemonic'],
-  })
-  async seedFromMnemonicGenerate(): Promise<void> {
-    if (this.conf.get('seed')) return;
-    const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic="${this.conf.get('mnemonic')}"`);
+  async storeMnemonic(mnemonic: string, password: string): Promise<void> {
+    // TODO validate password & handle password
+    console.log(password);
+    // generate seed from mnemonic
+    const seed = this.seedFromMnemonicGenerate(mnemonic);
+    console.log(seed);
+    this.conf.set('seed', seed);
+  }
+
+  async seedFromMnemonicGenerate(mnemonic): Promise<string> {
+    console.log('seedFromMnemonicGenerate - mnemonic: ', mnemonic);
+    if (!mnemonic || mnemonic.length === 0) {
+      throw new Error('mnemonic phrase is empty');
+    }
+    const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic="${mnemonic}"`);
     if (stderr) {
       throw new Error(stderr);
     }
-    console.log(stdout);
-    this.conf.set('seed', stdout.replace('\n', ''));
-    this.conf.delete("mnemonic")
+    return stdout.replace('\n', '');
   }
 }
