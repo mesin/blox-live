@@ -12,13 +12,13 @@ export default class ReinstallProcess extends ProcessClass {
   public readonly accountService: AccountService;
   public readonly actions: Array<any>;
 
-  constructor(storeName: string) {
+  constructor() {
     super();
-    this.keyVaultService = new KeyVaultService(storeName);
-    this.awsService = new AwsService(storeName);
-    this.awsServiceTmp = new AwsService(`${storeName}-tmp`);
-    this.dockerService = new DockerService(storeName);
-    this.accountService = new AccountService(storeName);
+    this.keyVaultService = new KeyVaultService(this.storeName);
+    this.awsService = new AwsService(this.storeName);
+    this.awsServiceTmp = new AwsService(`${this.storeName}-tmp`);
+    this.dockerService = new DockerService(this.storeName);
+    this.accountService = new AccountService(this.storeName);
     this.actions = [
       { instance: this.accountService, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'createElasticIp' },
