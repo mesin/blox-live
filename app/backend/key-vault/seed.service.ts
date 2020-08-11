@@ -8,7 +8,6 @@ export default class SeedService extends KeyVaultCliService {
   constructor(storeName: string) {
     super();
     this.conf = new ElectronStore({ name: storeName });
-    this.mnemonicGenerate = this.mnemonicGenerate.bind(this);
   }
 
   @step({
@@ -24,25 +23,25 @@ export default class SeedService extends KeyVaultCliService {
     this.conf.set('seed', stdout.replace('\n', ''));
   }
 
-  async mnemonicGenerate(): Promise<void> {
+   mnemonicGenerate = async (): Promise<void> => {
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
     if (stderr) {
       throw new Error(stderr);
     }
     console.log(stdout);
     return stdout.replace('\n', '');
-  }
+  };
 
-  async storeMnemonic(mnemonic: string, password: string): Promise<void> {
+  storeMnemonic = async (mnemonic: string, password: string): Promise<void> => {
     // TODO validate password & handle password
     console.log("storeMnemonic - password: ", password);
     // generate seed from mnemonic
     const seed = await this.seedFromMnemonicGenerate(mnemonic);
     console.log(seed);
     this.conf.set('seed', seed);
-  }
+  };
 
-  async seedFromMnemonicGenerate(mnemonic): Promise<string> {
+  seedFromMnemonicGenerate = async (mnemonic): Promise<string> => {
     console.log('seedFromMnemonicGenerate - mnemonic: ', mnemonic);
     if (!mnemonic || mnemonic.length === 0) {
       throw new Error('mnemonic phrase is empty');
