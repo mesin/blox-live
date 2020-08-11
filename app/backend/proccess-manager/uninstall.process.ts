@@ -12,8 +12,8 @@ export default class UninstallProcess extends ProcessClass {
     this.awsService = new AwsService(this.storeName);
     this.accountService = new AccountService(this.storeName);
     this.actions = [
-      { instance: this.awsService, method: 'uninstallItems' },
       { instance: this.accountService, method: 'deleteBloxAccount' },
+      { instance: this.awsService, method: 'uninstallItems' },
       { instance: this.accountService, method: 'cleanLocalStorage' },
     ];
   }
