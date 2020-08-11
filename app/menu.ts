@@ -20,14 +20,13 @@ export default class MenuBuilder {
 
   buildMenu(): Menu {
     if (
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
+      process.env.NODE_ENV === 'development'
+      || process.env.DEBUG_PROD === 'true'
     ) {
       this.setupDevelopmentEnvironment();
     }
 
-    const template =
-      process.platform === 'darwin'
+    const template = process.platform === 'darwin'
         ? this.buildDarwinTemplate()
         : this.buildDefaultTemplate();
 
@@ -54,17 +53,17 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'Electron',
+      label: 'BloxStaking',
       submenu: [
         {
-          label: 'About ElectronReact',
+          label: 'About BloxStaking',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide ElectronReact',
+          label: 'Hide BloxStaking',
           accelerator: 'Command+H',
           selector: 'hide:',
         },
@@ -157,35 +156,34 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
+            shell.openExternal('https://bloxstaking.com');
           },
         },
         {
           label: 'Documentation',
           click() {
             shell.openExternal(
-              'https://github.com/electron/electron/tree/master/docs#readme'
+              'https://github.com/bloxapp/blox-live/blob/master/README.md',
             );
           },
         },
         {
           label: 'Community Discussions',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
+            shell.openExternal('https://discord.gg/HpT2z5B');
           },
         },
         {
           label: 'Search Issues',
           click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://github.com/bloxapp/blox-live/issues');
           },
         },
       ],
     };
 
-    const subMenuView =
-      process.env.NODE_ENV === 'development' ||
-      process.env.DEBUG_PROD === 'true'
+    const subMenuView = process.env.NODE_ENV === 'development'
+      || process.env.DEBUG_PROD === 'true'
         ? subMenuViewDev
         : subMenuViewProd;
 
@@ -213,8 +211,7 @@ export default class MenuBuilder {
       {
         label: '&View',
         submenu:
-          process.env.NODE_ENV === 'development' ||
-          process.env.DEBUG_PROD === 'true'
+          process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
             ? [
                 {
                   label: '&Reload',
@@ -228,7 +225,7 @@ export default class MenuBuilder {
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
+                      !this.mainWindow.isFullScreen(),
                     );
                   },
                 },
@@ -246,7 +243,7 @@ export default class MenuBuilder {
                   accelerator: 'F11',
                   click: () => {
                     this.mainWindow.setFullScreen(
-                      !this.mainWindow.isFullScreen()
+                      !this.mainWindow.isFullScreen(),
                     );
                   },
                 },
@@ -258,27 +255,27 @@ export default class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://electronjs.org');
+              shell.openExternal('https://bloxstaking.com');
             },
           },
           {
             label: 'Documentation',
             click() {
               shell.openExternal(
-                'https://github.com/electron/electron/tree/master/docs#readme'
+                'https://github.com/bloxapp/blox-live/blob/master/README.md',
               );
             },
           },
           {
             label: 'Community Discussions',
             click() {
-              shell.openExternal('https://www.electronjs.org/community');
+              shell.openExternal('https://discord.gg/HpT2z5B');
             },
           },
           {
             label: 'Search Issues',
             click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
+              shell.openExternal('https://github.com/bloxapp/blox-live/issues');
             },
           },
         ],
