@@ -72,7 +72,7 @@ const WelcomePage = (props: Props) => {
 
   const onStep2Click = () => {
     setStep(step + 1);
-    setPage(4);
+    setPage(5);
   };
 
   return (
@@ -88,20 +88,11 @@ const WelcomePage = (props: Props) => {
           Your KeyVault securely manages private keys and must <br />
           maintain online connectivity.
         </IntroText>
-        <ButtonWithIcon
-          title="Step 1"
-          subTitle="KeyVault Setup"
-          image={keyVaultImg}
-          isDisabled={showStep2}
-          onClick={onStep1Click}
-          isLoading={isLoading}
+        <ButtonWithIcon title="Step 1" subTitle="KeyVault Setup" image={keyVaultImg}
+          isDisabled={showStep2} onClick={onStep1Click} isLoading={isLoading}
         />
-        <ButtonWithIcon
-          title="Step 2"
-          subTitle="Create A Validator"
-          image={mainNetImg}
-          isDisabled={!showStep2}
-          onClick={onStep2Click}
+        <ButtonWithIcon title="Step 2" subTitle="Create A Validator" image={mainNetImg}
+          isDisabled={!showStep2} onClick={onStep2Click}
         />
       </Right>
     </Wrapper>

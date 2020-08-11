@@ -95,7 +95,7 @@ const Test = (props) => {
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
-               placeholder="Mnemonic phrase"/>
+          placeholder="Mnemonic phrase" />
         <button onClick={async () => {
           await seedService.storeMnemonic(mnemonic, '');
         }}>

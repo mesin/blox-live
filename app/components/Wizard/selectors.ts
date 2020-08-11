@@ -12,8 +12,6 @@ export const getAccountId = (state) => state.wizard && state.wizard.account && s
 
 export const getAccountStatus = (state) => state.wizard.account && state.wizard.account.status;
 
-export const getPublicKey = (state) => state.wizard.account && state.wizard.account.publicKey;
-
 export const getDepositData = (state) => state.wizard && state.wizard.depositData;
 
 export const getWizardFinishedStatus = (state) => state.wizard.isFinished;

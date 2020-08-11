@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
-import * as currentActions from '../../../actions';
-import * as selectors from '../../../selectors';
+import * as currentActions from '../../../../ProcessRunner/actions';
+import * as selectors from '../../../../ProcessRunner/selectors';
 import { Title, Paragraph, SmallButton, Link, Connection } from '../../common';
 
 const Wrapper = styled.div``;
@@ -14,7 +14,7 @@ const ButtonWrapper = styled.div`
 
 const CreateValidator = (props: Props) => {
   const { page, setPage, actions, isLoading, publicKey } = props;
-  const { generateValidatorKey } = actions;
+  const { processSubscribe } = actions;
 
   useEffect(() => {
     if (!isLoading && publicKey) {
@@ -33,7 +33,7 @@ const CreateValidator = (props: Props) => {
         <Link href="/">What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
-        <SmallButton onClick={() => generateValidatorKey()}>
+        <SmallButton onClick={() => processSubscribe('createAccount')}>
           Generate Validator Keys
         </SmallButton>
       </ButtonWrapper>
