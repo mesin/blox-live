@@ -63,7 +63,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     return lastCreatedAccount;
   }
 
-  async getDepositData(publicKey: string): Promise<any> {
+  getDepositData = async (publicKey: string): Promise<any> => {
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
     );
