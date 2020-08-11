@@ -97,7 +97,7 @@ const Test = (props) => {
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
                placeholder="Mnemonic phrase"/>
         <button onClick={async () => {
-          await seedService.seedFromMnemonicGenerate(mnemonic);
+          await seedService.storeMnemonic(mnemonic, '');
         }}>
           Set mnemonic phrase
         </button>
@@ -192,7 +192,7 @@ const Test = (props) => {
           Generate Mnemonic
         </button>
         <button onClick={async () => {
-          await accountKeyVaultService.getDepositData("");
+          await accountKeyVaultService.getDepositData('');
         }}>
           Get Account Deposit Data
         </button>

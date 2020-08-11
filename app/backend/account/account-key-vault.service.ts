@@ -65,7 +65,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   async getDepositData(publicKey: string): Promise<any> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key==${publicKey}`
+      `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
