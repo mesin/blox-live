@@ -124,8 +124,6 @@ type Props = {
   actions: Record<string, any>;
   wallet: Record<string, any>;
   isLoading: boolean;
-  otp: string;
-  command: string;
 };
 
 type State = Record<string, any>;

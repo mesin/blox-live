@@ -18,11 +18,7 @@ const switcher = (props: Props) => {
   const { page } = props;
   switch (page) {
     case 0:
-      return (
-        <Template key={3} bgImage={walletImage} {...props}
-          component={<WalletPages.Passphrase {...props} />}
-        />
-      );
+      return <WelcomePage {...props} />;
     case 1:
       return (
         <Template key={1} bgImage={walletImage} {...props}

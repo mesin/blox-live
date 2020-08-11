@@ -1,11 +1,9 @@
 import { eventChannel, END } from 'redux-saga';
 import { call, put, take, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
-import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_SET_CREDENTIALS,
-         KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC,
-       } from './actionTypes';
+import { KEYVAULT_PROCESS_SUBSCRIBE, KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC } from './actionTypes';
 import * as actions from './actions';
-import { processInstantiator, saveCredentialsInElectronStore, isReadyToRunProcess } from './service';
+import { processInstantiator } from './service';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
@@ -25,13 +23,9 @@ class Listener implements Observer {
 
 function* startProcess(action) {
   const { payload } = action;
+  const { name, credentials } = payload;
 
-  if (!isReadyToRunProcess()) {
-    yield put(actions.keyvaultProcessFailure(new Error('missing credentials')));
-    return;
-  }
-
-  const process = processInstantiator(payload.name, {});
+  const process = processInstantiator(name, credentials);
   const channel = yield call(createChannel, process);
   try {
     while (true) {
@@ -81,11 +75,6 @@ function createChannel(process) {
   });
 }
 
-function* startSettingCredentials(action) {
-  const { payload } = action;
-  yield call(saveCredentialsInElectronStore, payload);
-}
-
 function* startLoadingMnemonic() {
   try {
     const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
@@ -112,7 +101,6 @@ function* startSavingMnemonic(action) {
 
 export default function* keyVaultManagementSaga() {
   yield takeLatest(KEYVAULT_PROCESS_SUBSCRIBE, startProcess);
-  yield takeLatest(KEYVAULT_SET_CREDENTIALS, startSettingCredentials);
   yield takeLatest(KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
   yield takeLatest(KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
 }

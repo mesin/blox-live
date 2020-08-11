@@ -20,9 +20,6 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       case actionTypes.KEYVAULT_SET_COLUD_PROVIDER:
         draft.cloudProvider = action.payload;
         break;
-      case actionTypes.KEYVAULT_SET_CREDENTIALS:
-        draft.credentials = action.payload;
-        break;
       case actionTypes.KEYVAULT_LOAD_MNEMONIC:
       case actionTypes.KEYVAULT_SAVE_MNEMONIC:
         draft.isLoading = true;

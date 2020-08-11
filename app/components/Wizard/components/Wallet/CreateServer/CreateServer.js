@@ -9,6 +9,7 @@ import { useInjectSaga } from '../../../../../utils/injectSaga';
 import * as keyVaultActions from '../../../../KeyVaultManagement/actions';
 import * as selectors from '../../../../KeyVaultManagement/selectors';
 import saga from '../../../../KeyVaultManagement/saga';
+import { getIdToken } from '../../../../CallbackPage/selectors';
 
 const key = 'keyVaultManagement';
 
@@ -37,8 +38,8 @@ const ProgressWrapper = styled.div`
 `;
 
 const CreateServer = (props) => {
-  const { page, setPage, isLoading, isDone, processName, installMessage, actions } = props;
-  const { keyvaultSetCredentials, keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
+  const { page, setPage, isLoading, isDone, processName, installMessage, actions, authToken } = props;
+  const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('AKIARYXLX53R4KHH3PTF');
   const [secretAccessKey, setSecretAccessKey] = React.useState('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');
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
@@ -55,8 +56,8 @@ const CreateServer = (props) => {
 
   const onClick = async () => {
     if (!isButtonDisabled && !installMessage && !processName) {
-      await keyvaultSetCredentials(accessKeyId, secretAccessKey);
-      await keyvaultProcessSubscribe('install', 'Checking KeyVault configuration...');
+      const credentials = { accessKeyId, secretAccessKey, authToken };
+      await keyvaultProcessSubscribe('install', 'Checking KeyVault configuration...', credentials);
     }
   };
 
@@ -96,6 +97,7 @@ const mapStateToProps = (state) => ({
   installMessage: selectors.getMessage(state),
   isLoading: selectors.getIsLoading(state),
   isDone: selectors.getIsDone(state),
+  authToken: getIdToken(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -110,6 +112,7 @@ CreateServer.propTypes = {
   isDone: PropTypes.bool,
   processName: PropTypes.string,
   installMessage: PropTypes.string,
+  authToken: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServer);

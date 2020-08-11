@@ -1,5 +1,4 @@
 export const KEYVAULT_SET_COLUD_PROVIDER = 'KEYVAULT/setCloudProvider';
-export const KEYVAULT_SET_CREDENTIALS = 'KEYVAULT/setCredentials';
 
 export const KEYVAULT_PROCESS_SUBSCRIBE = 'KEYVAULT_PROCESS/subscribe';
 export const KEYVAULT_PROCESS_OBSERVE = 'KEYVAULT_PROCESS/observe';
