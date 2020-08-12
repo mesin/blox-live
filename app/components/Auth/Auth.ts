@@ -35,7 +35,7 @@ export default class Auth {
       scope: 'openid profile email offline_access',
     };
     this.keytar = {
-      service: 'electron-openid-oauth',
+      service: 'bloxstaking-openid-oauth',
       account: os.userInfo().username,
     };
   }

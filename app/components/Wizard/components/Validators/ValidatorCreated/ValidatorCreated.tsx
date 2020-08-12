@@ -17,11 +17,12 @@ const KeyWrapper = styled.div`
   display:flex;
   align-items:center;
   padding:24px 16px;
+  margin-bottom:16px;
 `;
 
 const SmallText = styled.div`
   margin:16px 0px 24px 0px;
-  font-size:11px;
+  font-size:12px;
 `;
 
 const ValidatorCreated = (props: Props) => {

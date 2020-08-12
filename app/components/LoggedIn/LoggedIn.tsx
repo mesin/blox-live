@@ -154,9 +154,6 @@ interface Props extends RouteComponentProps {
   websocket: boolean;
   webSocketError: string;
   callConnectToWebSockets: () => void;
-
-  // auth
-  token: string;
 }
 
 type State = Record<string, any>;

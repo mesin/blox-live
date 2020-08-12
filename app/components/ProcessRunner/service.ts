@@ -9,8 +9,8 @@ import { Subject } from '../../backend/proccess-manager/subject.interface';
 
 export const processInstantiator = (processName: string, payload: Record<string, any> | undefined) => {
   if (processName === PROCESSES.INSTALL && payload) {
-    const { accessKeyId, secretAccessKey, authToken } = payload;
-    return new InstallProcess({accessKeyId, secretAccessKey, authToken});
+    const { accessKeyId, secretAccessKey } = payload;
+    return new InstallProcess({accessKeyId, secretAccessKey});
   }
   if (processName === PROCESSES.RESTART) {
     return new RebootProcess();
