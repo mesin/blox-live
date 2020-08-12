@@ -22,7 +22,7 @@ export default class ReinstallProcess extends ProcessClass {
     this.accountService = new AccountService(`${this.storeName}-tmp`);
     this.accountServiceOld = new AccountService(this.storeName);
     this.actions = [
-      { instance: this.accountService, method: 'prepareTmpStorageConfig' },
+      { instance: this.accountServiceOld, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'createElasticIp' },
       { instance: this.awsService, method: 'createInstance' },
       { instance: this.dockerService, method: 'installDockerScope' },
