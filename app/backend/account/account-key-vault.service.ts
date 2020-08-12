@@ -72,7 +72,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    return stdout;
+    return stdout ? JSON.parse(stdout) : {};
   };
 
   deleteLastIndexedAccount = async (): Promise<void> => {
