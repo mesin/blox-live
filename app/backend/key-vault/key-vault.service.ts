@@ -114,7 +114,7 @@ export default class KeyVaultService {
           },
         },
       );
-      return { isActive: false };
+      return { isActive: true };
     } catch (e) {
       console.log(e);
       return { isActive: false };
