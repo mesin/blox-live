@@ -17,6 +17,20 @@ export const setNetworkType = (networkType: string) => ({
   payload: networkType,
 });
 
+export const generateValidatorKey = () => ({
+  type: actionTypes.GENERATE_VALIDATOR_KEY,
+});
+
+export const generateValidatorKeySuccess = (payload: Record<string, any>) => ({
+  type: actionTypes.GENERATE_VALIDATOR_KEY_SUCCESS,
+  payload,
+});
+
+export const generateValidatorKeyFailure = (error: Record<string, any>) => ({
+  type: actionTypes.GENERATE_VALIDATOR_KEY_FAILURE,
+  payload: error,
+});
+
 export const loadDepositData = () => ({ type: actionTypes.LOAD_DEPOSIT_DATA });
 
 export const loadDepositDataSuccess = (payload: Record<string, any>) => ({

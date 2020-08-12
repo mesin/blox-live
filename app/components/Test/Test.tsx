@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { getIdToken } from '../CallbackPage/selectors';
 
 import ElectronStore from 'electron-store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
@@ -30,7 +28,6 @@ class Listener implements Observer {
 let configIsSet = false;
 
 const Test = (props) => {
-  const { token } = props;
   const seedService = new SeedService('blox');
   const accountKeyVaultService = new AccountKeyVaultService('blox');
 
@@ -42,7 +39,6 @@ const Test = (props) => {
   if (!configIsSet) {
     configIsSet = true;
     const generalConf = new ElectronStore({ name: 'blox' });
-    generalConf.set('authToken', token);
     if (generalConf.get('credentials')) {
       const credentials: any = generalConf.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
@@ -66,7 +62,6 @@ const Test = (props) => {
             setAccessKeyId('');
             setSecretAccessKey('');
             setMnemonic('');
-            conf.set('authToken', token);
           }}
         >
           Clean config
@@ -80,7 +75,7 @@ const Test = (props) => {
         <br/>
         <button
           onClick={async () => { // TODO: check this func
-            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey, authToken: token });
+            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey });
             const listener = new Listener(setProcessStatus);
             installProcess.subscribe(listener);
             try {
@@ -203,8 +198,4 @@ const Test = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  token: getIdToken(state)
-});
-
-export default connect(mapStateToProps)(Test);
+export default Test;

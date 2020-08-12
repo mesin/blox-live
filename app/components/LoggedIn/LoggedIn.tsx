@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
-import ElectronStore from 'electron-store';
 
 import { Loader } from '../../common/components';
 import Login from '../Login';
@@ -43,7 +42,6 @@ import webSocketSaga from '../WebSockets/saga';
 
 // auth
 import { logout } from '../CallbackPage/actions';
-import { getIdToken } from '../CallbackPage/selectors';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -59,7 +57,7 @@ const LoggedIn = (props: Props) => {
     logoutUser, isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet, accounts, isLoadingAccounts,
     accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
-    websocket, webSocketError, token,
+    websocket, webSocketError,
   } = props;
 
   useEffect(() => {
@@ -68,11 +66,7 @@ const LoggedIn = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
-    const generalStorage = new ElectronStore({name: 'blox'});
 
-    if (!generalStorage.get('authToken')) {
-      generalStorage.set('authToken', token);
-    }
     if (hasError) {
       logoutUser();
     }
@@ -128,7 +122,6 @@ const mapStateToProps = (state: State) => ({
   webSocketError: getWebSocketError(state),
 
   isFinishedWizard: getWizardFinishedStatus(state),
-  token: getIdToken(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

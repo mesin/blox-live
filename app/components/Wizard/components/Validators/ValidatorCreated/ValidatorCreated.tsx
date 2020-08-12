@@ -1,39 +1,46 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { notification } from 'antd';
-import {
-  Title,
-  SubTitle,
-  Paragraph,
-  CopyToClipboard,
-  SmallButton,
-  SuccessIcon,
-} from '../../common';
-import * as selectors from '../../../selectors';
+import { Title, SubTitle, Paragraph, SmallButton, SuccessIcon } from '../../common';
+import * as selectors from '../../../../ProcessRunner/selectors';
 
 const Wrapper = styled.div``;
 
-const CopyToClipboardWrapper = styled.div`
-  margin: 10px 0px 15px 0px;
+const KeyWrapper = styled.div`
+  width: 546px;
+  border-radius: 8px;
+  color: ${({theme}) => theme.gray600};
+  font-size: 11px;
+  font-weight: 500;
+  border: solid 1px ${({theme}) => theme.gray300};
+  background-color: ${({theme}) => theme.gray100};
+  display:flex;
+  align-items:center;
+  padding:24px 16px;
 `;
 
-const onCopy = () => notification.success({ message: 'Copied to clipboard!' });
+const SmallText = styled.div`
+  margin:16px 0px 24px 0px;
+  font-size:11px;
+`;
 
 const ValidatorCreated = (props: Props) => {
-  const { setPage, page, publicKey } = props;
+  const { setPage, page, validatorData } = props;
   return (
     <Wrapper>
       <SuccessIcon />
       <Title color="accent2400">Your Keys Were Created!</Title>
       <Paragraph>
-        Your new Testnet validator keys were created and are now secured inside
-        your KeyVault.
+        Your new Testnet validator keys were created and are now secured inside <br />
+        your KeyVault. Validator will be visible on Etherscan only after deposit.
       </Paragraph>
       <SubTitle>Public Key</SubTitle>
-      <CopyToClipboardWrapper>
-        <CopyToClipboard onCopy={onCopy} text={publicKey} />
-      </CopyToClipboardWrapper>
+      <KeyWrapper>{validatorData.publicKey}</KeyWrapper>
+      <SubTitle>Withdrawal Key</SubTitle>
+      <KeyWrapper>{validatorData.withdrawalKey}</KeyWrapper>
+      <SmallText>
+        You can later export your validator keys.
+      </SmallText>
       <SmallButton onClick={() => setPage(page + 1)}>
         Continue to Staking Deposit
       </SmallButton>
@@ -46,13 +53,11 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  isLoading: boolean;
-  publicKey: string;
+  validatorData: Record<string, any>;
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
-  publicKey: selectors.getPublicKey(state),
+  validatorData: selectors.getData(state),
 });
 
 type State = Record<string, any>;

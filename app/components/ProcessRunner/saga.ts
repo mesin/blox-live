@@ -19,7 +19,7 @@ function* startProcess(action) {
       console.log('isActive', result.payload.isActive);
 
       const message = `${result.subject.state}/${result.subject.actions.length} > ${result.payload.step.name}`;
-      yield put(actions.processObserve(message, result.payload.isActive));
+      yield put(actions.processObserve(message, result.payload.isActive, result.payload.data));
     }
   }
   catch (e) {

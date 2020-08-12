@@ -93,7 +93,7 @@ export default class AccountService {
     name: 'Create Blox Account',
     requiredConfig: ['authToken', 'keyVaultAccounts'],
   })
-  async createBloxAccount(): Promise<void> {
+  async createBloxAccount(): Promise<any> {
     const accounts : any = this.conf.get('keyVaultAccounts');
     const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
     if (newAccountPos === -1) return;
@@ -106,11 +106,14 @@ export default class AccountService {
         // @ts-ignore
         json: true,
       });
+      console.log('authToken', this.conf.get('authToken'));
       console.log('createBloxAccount', body);
       accounts[newAccountPos].syncedWithBlox = true;
       this.conf.set('keyVaultAccounts', accounts);
       console.log('blox account created');
+      return { data: body };
     } catch (error) {
+      console.log('authToken', this.conf.get('authToken'));
       throw new Error(`Vault plugin api error: ${error}`);
     }
   }

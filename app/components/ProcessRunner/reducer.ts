@@ -22,6 +22,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
     case actionTypes.PROCESS_OBSERVE:
       draft.message = action.payload.message;
       draft.isServerActive = action.payload.isActive;
+      draft.data = action.payload.data;
       break;
     case actionTypes.PROCESS_UNSUBSCRIBE:
       draft.isLoading = initialState.isLoading;

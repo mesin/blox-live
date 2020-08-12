@@ -10,6 +10,10 @@ import { createLogoutWindow } from './Logout-Window';
 
 import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
 
+import ElectronStore from 'electron-store';
+
+const electronStore = new ElectronStore({ name: 'blox' });
+
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
@@ -141,7 +145,7 @@ export default class Auth {
     this.tokens.idToken = id_token;
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
-
+    electronStore.set('authToken', authResult.id_token);
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
@@ -175,6 +179,7 @@ export default class Auth {
     const { service, account } = this.keytar;
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
     await keytar.deletePassword(service, account);
+    electronStore.delete('authToken');
     this.tokens = {
       accessToken: null,
       profile: null,
