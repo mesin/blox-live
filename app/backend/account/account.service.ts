@@ -1,17 +1,20 @@
-import ElectronStore from 'electron-store';
 import got from 'got';
+import ElectronStore from 'electron-store';
 import ServerService from '../key-vault/server.service';
+import AccountKeyVaultService from '../account/account-key-vault.service';
 import { step } from '../decorators';
 
 export default class AccountService {
   public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
   public readonly storeName: string;
+  private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storeName: string) {
     this.storeName = storeName;
     this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
+    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
   }
 
   @step({
@@ -91,27 +94,27 @@ export default class AccountService {
 
   @step({
     name: 'Create Blox Account',
-    requiredConfig: ['authToken', 'keyVaultAccounts'],
+    requiredConfig: ['authToken'],
   })
   async createBloxAccount(): Promise<void> {
-    const accounts : any = this.conf.get('keyVaultAccounts');
-    const newAccountPos = accounts.findIndex(item => !item.syncedWithBlox);
-    if (newAccountPos === -1) return;
+    const lastIndexedAccount = this.accountKeyVaultService.getLastCreatedAccount();
+    if (!lastIndexedAccount) {
+      throw new Error(`No account to create`);
+    }
     try {
       const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
           'Authorization': `Bearer ${this.conf.get('authToken')}`,
         },
-        body: accounts[newAccountPos],
+        // @ts-ignore
+        body: lastIndexedAccount,
         // @ts-ignore
         json: true,
       });
-      console.log('createBloxAccount', body);
-      accounts[newAccountPos].syncedWithBlox = true;
-      this.conf.set('keyVaultAccounts', accounts);
-      console.log('blox account created');
+      console.log('Blox account created', body);
     } catch (error) {
-      throw new Error(`Vault plugin api error: ${error}`);
+      await this.accountKeyVaultService.deleteLastIndexedAccount();
+      throw new Error(`Create Blox account error: ${error}`);
     }
   }
 

@@ -12,7 +12,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
   }
 
   @step({
-    name: 'Create Wallet',
+    name: 'Create Wallet'
   })
   async createWallet(): Promise<void> {
     if (this.conf.get('keyVaultStorage')) return;
@@ -22,55 +22,67 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     }
     console.log(stdout);
     this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
-    this.conf.set('keyVaultAccounts', []);
   }
 
   @step({
     name: 'Create Account',
-    requiredConfig: ['seed', 'keyVaultStorage', 'keyVaultAccounts'],
+    requiredConfig: ['seed', 'keyVaultStorage']
   })
   async createAccount(): Promise<void> {
-    const vaultAccounts : any = this.conf.get('keyVaultAccounts')
-    const newExisted = vaultAccounts.find(item => !item.syncedWithBlox);
-    if (newExisted) {
-      return;
-    }
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account create --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')}`
     );
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error(`Create account error: ${stderr}`);
     }
     console.log(stdout);
     this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
-    // add new created account into store
-    const newCreated = await this.getLastCreatedAccount();
-    this.conf.set('keyVaultAccounts', [...(vaultAccounts || []), newCreated]);
   }
 
-  async getLastCreatedAccount(): Promise<any> {
+  listAccounts = async (): Promise<any> => {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account list --storage=${this.conf.get('keyVaultStorage')}`,
+      `${this.executablePath} wallet account list --storage=${this.conf.get('keyVaultStorage')}`
     );
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error(`Get last created account error: ${stderr}`);
     }
+    const accounts = stdout ? JSON.parse(stdout) : [];
+    console.log(accounts);
+    return accounts;
+  };
 
-    const existedAccounts = stdout ? JSON.parse(stdout) : [];
-    console.log('existedAccounts', existedAccounts);
-    const lastCreatedAccount = existedAccounts.sort((a, b) => b.name.localeCompare(a.name))[0];
-    console.log('lastCreatedAccount', lastCreatedAccount);
-    return lastCreatedAccount;
-  }
+  getLastCreatedAccount = async (): Promise<any> => {
+    const accounts = await this.listAccounts();
+    if (accounts.length) {
+      console.log('account', accounts[0]);
+      return accounts[0];
+    }
+    return;
+  };
 
   getDepositData = async (publicKey: string): Promise<any> => {
+    if (!publicKey) {
+      throw new Error(`publicKey is empty`);
+    }
+    publicKey = publicKey.replace(/^(0x)/, '');
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
+      `${this.executablePath} wallet account deposit-data --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
     return stdout;
-  }
+  };
+
+  deleteLastIndexedAccount = async (): Promise<void> => {
+    const { stdout, stderr } = await this.executor(
+      `${this.executablePath} wallet account delete --storage=${this.conf.get('keyVaultStorage')}`
+    );
+    if (stderr) {
+      throw new Error(`Cli error: ${stderr}`);
+    }
+    console.log(stdout);
+    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
+  };
 }

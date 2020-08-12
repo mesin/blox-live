@@ -197,6 +197,21 @@ const Test = (props) => {
         }}>
           Get Account Deposit Data
         </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.listAccounts();
+        }}>
+          List Accounts
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.getLastCreatedAccount();
+        }}>
+          Get Last Created Account
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.deleteLastIndexedAccount();
+        }}>
+          Delete Last Indexed Account
+        </button>
       </div>
       <p/>
       <textarea value={processStatus} cols={100} rows={10}></textarea>
