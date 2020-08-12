@@ -30,7 +30,8 @@ let configIsSet = false;
 const Test = (props) => {
   const seedService = new SeedService('blox');
   const accountKeyVaultService = new AccountKeyVaultService('blox');
-
+  const cf = new ElectronStore({ name: 'blox' });
+  console.log('---->generalConf', cf);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
