@@ -5,29 +5,6 @@ export const keyvaultSetCouldProvider = (couldProvider: string) => ({
   payload: couldProvider,
 });
 
-export const keyvaultProcessSubscribe = (name: string, defaultMessage: string, credentials: Record<string, any>) => ({
-  type: actionTypes.KEYVAULT_PROCESS_SUBSCRIBE,
-  payload: { name, defaultMessage, credentials },
-});
-
-export const keyvaultProcessObserve = (message: string, isActive: boolean) => ({
-  type: actionTypes.KEYVAULT_PROCESS_OBSERVE,
-  payload: {message, isActive},
-});
-
-export const keyvaultProcessUnSubscribe = () => ({
-  type: actionTypes.KEYVAULT_PROCESS_UNSUBSCRIBE,
-});
-
-export const keyvaultProcessFailure = (error: Record<string, any>) => ({
-  type: actionTypes.KEYVAULT_PROCESS_FAILURE,
-  payload: error,
-});
-
-export const keyvaultProcessClearState = () => ({
-  type: actionTypes.KEYVAULT_PROCESS_CLEAR_STATE,
-});
-
 export const keyvaultLoadMnemonic = () => ({
   type: actionTypes.KEYVAULT_LOAD_MNEMONIC,
 });

@@ -3,15 +3,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
+
 import { ProgressBar, ProgressMessage, Button } from 'common/components';
+import { useInjectSaga } from 'utils/injectSaga';
+
 import { Title, Paragraph, Link, TextInput } from '../../common';
-import { useInjectSaga } from '../../../../../utils/injectSaga';
-import * as keyVaultActions from '../../../../KeyVaultManagement/actions';
-import * as selectors from '../../../../KeyVaultManagement/selectors';
-import saga from '../../../../KeyVaultManagement/saga';
+import * as keyVaultActions from '../../../../ProcessRunner/actions';
+import * as selectors from '../../../../ProcessRunner/selectors';
+import saga from '../../../../ProcessRunner/saga';
 import { getIdToken } from '../../../../CallbackPage/selectors';
 
-const key = 'keyVaultManagement';
+const key = 'processRunner';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -39,9 +41,9 @@ const ProgressWrapper = styled.div`
 
 const CreateServer = (props) => {
   const { page, setPage, isLoading, isDone, processName, installMessage, actions, authToken } = props;
-  const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
-  const [accessKeyId, setAccessKeyId] = React.useState('AKIARYXLX53R4KHH3PTF');
-  const [secretAccessKey, setSecretAccessKey] = React.useState('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');
+  const { processSubscribe, processClearState } = actions;
+  const [accessKeyId, setAccessKeyId] = React.useState('');
+  const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
   const isTextInputDisabled = isLoading || isDone;
 
@@ -49,7 +51,7 @@ const CreateServer = (props) => {
 
   React.useEffect(() => {
     if (!isLoading && isDone) {
-      keyvaultProcessClearState();
+      processClearState();
       setPage(page + 1);
     }
   }, [isLoading, isDone]);
@@ -57,7 +59,7 @@ const CreateServer = (props) => {
   const onClick = async () => {
     if (!isButtonDisabled && !installMessage && !processName) {
       const credentials = { accessKeyId, secretAccessKey, authToken };
-      await keyvaultProcessSubscribe('install', 'Checking KeyVault configuration...', credentials);
+      await processSubscribe('install', 'Checking KeyVault configuration...', credentials);
     }
   };
 

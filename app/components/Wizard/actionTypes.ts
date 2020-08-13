@@ -1,7 +1,3 @@
-export const CREATE_ONE_TIME_PASS = 'CREATE_ONE_TIME_PASS/init';
-export const CREATE_ONE_TIME_PASS_SUCCESS = 'CREATE_ONE_TIME_PASS/success';
-export const CREATE_ONE_TIME_PASS_FAILURE = 'CREATE_ONE_TIME_PASS/failure';
-
 export const LOAD_WALLET = 'LOAD_WALLET/init';
 export const LOAD_WALLET_SUCCESS = 'LOAD_WALLET/success';
 export const LOAD_WALLET_FAILURE = 'LOAD_WALLET/failure';

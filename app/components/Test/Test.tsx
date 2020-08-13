@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { getIdToken } from '../CallbackPage/selectors';
 
 import ElectronStore from 'electron-store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
@@ -30,7 +28,6 @@ class Listener implements Observer {
 let configIsSet = false;
 
 const Test = (props) => {
-  const { token } = props;
   const seedService = new SeedService('blox');
   const accountKeyVaultService = new AccountKeyVaultService('blox');
   const cf = new ElectronStore({ name: 'blox' });
@@ -44,7 +41,6 @@ const Test = (props) => {
   if (!configIsSet) {
     configIsSet = true;
     const generalConf = new ElectronStore({ name: 'blox' });
-    generalConf.set('authToken', token);
     if (generalConf.get('credentials')) {
       const credentials: any = generalConf.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
@@ -68,7 +64,6 @@ const Test = (props) => {
             setAccessKeyId('');
             setSecretAccessKey('');
             setMnemonic('');
-            conf.set('authToken', token);
           }}
         >
           Clean config
@@ -82,7 +77,7 @@ const Test = (props) => {
         <br/>
         <button
           onClick={async () => { // TODO: check this func
-            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey, authToken: token });
+            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey });
             const listener = new Listener(setProcessStatus);
             installProcess.subscribe(listener);
             try {
@@ -97,7 +92,7 @@ const Test = (props) => {
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
-               placeholder="Mnemonic phrase"/>
+          placeholder="Mnemonic phrase" />
         <button onClick={async () => {
           await seedService.storeMnemonic(mnemonic, '');
         }}>
@@ -231,8 +226,4 @@ const Test = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  token: getIdToken(state)
-});
-
-export default connect(mapStateToProps)(Test);
+export default Test;

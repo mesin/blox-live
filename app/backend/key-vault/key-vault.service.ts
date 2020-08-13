@@ -23,7 +23,7 @@ export default class KeyVaultService {
     const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const { body: keyVaultVersion } = await got.get('http://api.stage.bloxstaking.com/key-vault/latest-tag');
+    const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
     this.conf.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
@@ -118,7 +118,7 @@ export default class KeyVaultService {
           },
         },
       );
-      return { isActive: false };
+      return { isActive: true };
     } catch (e) {
       console.log(e);
       return { isActive: false };

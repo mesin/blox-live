@@ -15,13 +15,12 @@ export default class InstallProcess extends ProcessClass {
   public readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
-  constructor({ accessKeyId, secretAccessKey, authToken }) {
+  constructor({ accessKeyId, secretAccessKey }) {
     super();
     const conf = new ElectronStore({ name: this.storeName });
     if (!conf.get('uuid')) {
       conf.set('uuid', uuidv4());
     }
-    conf.set('authToken', authToken);
     conf.set('credentials', {
       accessKeyId,
       secretAccessKey,

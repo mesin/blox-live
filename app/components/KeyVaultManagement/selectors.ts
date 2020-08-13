@@ -1,15 +1,7 @@
-export const getCloudProvider = (state) => state.keyVaultManagement.cloudProvider;
-
-export const getName = (state) => state.keyVaultManagement.name;
-
 export const getIsLoading = (state) => state.keyVaultManagement.isLoading;
 
 export const getError = (state) => state.keyVaultManagement.error;
 
-export const getMessage = (state) => state.keyVaultManagement.message;
-
-export const getIsDone = (state) => state.keyVaultManagement.isDone;
-
-export const getIsServerActive = (state) => state.keyVaultManagement.isServerActive;
+export const getCloudProvider = (state) => state.keyVaultManagement.cloudProvider;
 
 export const getMnemonic = (state) => state.keyVaultManagement.mnemonic;
