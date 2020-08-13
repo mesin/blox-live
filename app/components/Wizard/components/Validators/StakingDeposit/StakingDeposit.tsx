@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { InfoWithTooltip, Button } from 'common/components';
-import { Title, Paragraph, Link } from '../../common';
-import { loadDepositData, updateAccountStatus } from '../../../actions';
+import { InfoWithTooltip } from 'common/components';
+import { Title, Paragraph, Link, BigButton } from '../../common';
+import { updateAccountStatus } from '../../../actions';
 import * as selectors from '../../../selectors';
 import { getData } from '../../../../ProcessRunner/selectors';
 import { DepositData } from './components';
@@ -28,23 +28,23 @@ const GoEthButton = styled.a`
 `;
 
 const ButtonsWrapper = styled.div`
-  width:65%;
+  width:100%;
   margin-top:36px;
   display:flex;
   justify-content:space-between;
+`;
+
+const CancelButton = styled(BigButton)`
+  color:${({theme}) => theme.gray600};
+  background-color:transparent;
+  border:1px solid ${({theme}) => theme.gray400};
 `;
 
 let toolTipText = 'GoETH are test tokens needed in order to participate in the Goerli Test Network.';
 toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, isLoading, callLoadDepositData, accountData, callUpdateAccountStatus } = props;
-
-  useEffect(() => {
-    if (!depositData && !isLoading) {
-      callLoadDepositData();
-    }
-  }, [isLoading, depositData]);
+  const { setPage, page, depositData, accountData, callUpdateAccountStatus } = props;
 
   const onMadeDepositButtonClick = async () => {
     await callUpdateAccountStatus(accountData.id);
@@ -69,12 +69,12 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} />}
-      <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
+      <Link target={'_blank'} href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
         Need help?
       </Link>
       <ButtonsWrapper>
-        <Button onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</Button>
-        <Button onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</Button>
+        <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
+        <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
       </ButtonsWrapper>
     </Wrapper>
   );
@@ -87,7 +87,6 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callLoadDepositData: () => dispatch(loadDepositData()),
   callUpdateAccountStatus: (accountId: string) => dispatch(updateAccountStatus(accountId)),
 });
 
@@ -98,7 +97,6 @@ type Props = {
   setStep: (page: number) => void;
   isLoading: boolean;
   depositData: Record<string, any> | null;
-  callLoadDepositData: () => void;
   accountData: Record<string, any> | null;
   callUpdateAccountStatus: (accountId: string) => void;
 };

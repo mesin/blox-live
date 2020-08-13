@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ProgressBar, ProgressMessage } from 'common/components';
 import { Title, Description, SmallText, Wrapper } from '..';
 import ModalTemplate from '../ModalTemplate';
-import { useInjectSaga } from '../../../../../../utils/injectSaga';
+import { useInjectSaga } from 'utils/injectSaga';
 import * as keyVaultActions from '../../../../../ProcessRunner/actions';
 import * as selectors from '../../../../../ProcessRunner/selectors';
 import saga from '../../../../../ProcessRunner/saga';

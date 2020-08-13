@@ -6,7 +6,9 @@ import { useInjectSaga } from 'utils/injectSaga';
 import * as currentActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
-import { Title, Paragraph, SmallButton, Link, Connection } from '../../common';
+import { loadDepositData } from '../../../actions';
+
+import { Title, Paragraph, BigButton, Link, Connection } from '../../common';
 
 const key = 'processRunner';
 
@@ -17,16 +19,21 @@ const ButtonWrapper = styled.div`
 `;
 
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, message, validatorData } = props;
+  const { page, setPage, actions, isLoading, message, validatorData, callLoadDepositData } = props;
   const { processSubscribe } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
 
   useEffect(() => {
     if (!isLoading && validatorData) {
+      callLoadDepositData();
       setPage(page + 1);
     }
   }, [isLoading, validatorData]);
+
+  const onButtonClick = () => {
+    processSubscribe('createAccount', 'Generating Validator Keys...');
+  };
 
   return (
     <Wrapper>
@@ -39,9 +46,9 @@ const CreateValidator = (props: Props) => {
         <Link href="/">What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
-        <SmallButton onClick={() => processSubscribe('createAccount', 'Generating Validator Keys...')}>
+        <BigButton onClick={onButtonClick}>
           Generate Validator Keys
-        </SmallButton>
+        </BigButton>
       </ButtonWrapper>
       {isLoading && <Connection text={message} />}
     </Wrapper>
@@ -56,6 +63,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(currentActions, dispatch),
+  callLoadDepositData: () => dispatch(loadDepositData()),
 });
 
 type Props = {
@@ -67,6 +75,7 @@ type Props = {
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
   message: string;
+  callLoadDepositData: () => void;
 };
 
 type State = Record<string, any>;
