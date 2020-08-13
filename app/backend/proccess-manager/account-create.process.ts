@@ -8,6 +8,7 @@ export default class AccountCreateProcess extends ProcessClass {
   public readonly accountService: AccountService;
   public readonly keyVaultService: KeyVaultService;
   public readonly actions: Array<any>;
+  public readonly fallbackActions: Array<any>;
 
   constructor() {
     super();
@@ -17,7 +18,21 @@ export default class AccountCreateProcess extends ProcessClass {
     this.actions = [
       { instance: this.accountKeyVaultService, method: 'createAccount' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
-      { instance: this.accountService, method: 'createBloxAccount' },
+      { instance: this.accountService, method: 'createBloxAccount' }
+    ];
+
+    this.fallbackActions = [
+      {
+        method: 'updateVaultStorage',
+        actions: [{ instance: this.accountKeyVaultService, method: 'deleteLastIndexedAccount' }]
+      },
+      {
+        method: 'createBloxAccount',
+        actions: [
+          { instance: this.accountKeyVaultService, method: 'deleteLastIndexedAccount' },
+          { instance: this.keyVaultService, method: 'updateVaultStorage' }
+        ]
+      }
     ];
   }
 }

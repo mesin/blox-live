@@ -1,18 +1,15 @@
 import got from 'got';
 import ElectronStore from 'electron-store';
 import ServerService from './server.service';
-import AccountKeyVaultService from '../account/account-key-vault.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
   public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
-  private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storeName: string) {
     this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
-    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
   }
 
   @step({
@@ -68,7 +65,6 @@ export default class KeyVaultService {
         json: true,
       });
     } catch (error) {
-      await this.accountKeyVaultService.deleteLastIndexedAccount();
       throw new Error(`Vault plugin api error: ${error}`);
     }
   }
@@ -87,35 +83,10 @@ export default class KeyVaultService {
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 3 ? computedValue : 0;
+              return +attemptCount < 2 ? computedValue : 0;
             },
           },
-        },
-      );
-      return { isActive: true };
-    } catch (e) {
-      console.log(e);
-      return { isActive: false };
-    }
-  }
-
-  @step({
-    name: 'Get key vault status fail',
-    requiredConfig: ['publicIp'],
-  })
-  async getKeyVaultStatusFail() {
-    // check if the key vault is alive
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    try {
-      await got.get(
-        `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
-        {
-          retry: {
-            limit: 2,
-            calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 3 ? computedValue : 0;
-            },
-          },
+          timeout: 5,
         },
       );
       return { isActive: true };
