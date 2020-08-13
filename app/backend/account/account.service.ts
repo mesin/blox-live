@@ -97,7 +97,7 @@ export default class AccountService {
     requiredConfig: ['authToken'],
   })
   async createBloxAccount(): Promise<void> {
-    const lastIndexedAccount = this.accountKeyVaultService.getLastCreatedAccount();
+    const lastIndexedAccount = this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
       throw new Error(`No account to create`);
     }

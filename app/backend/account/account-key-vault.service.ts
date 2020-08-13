@@ -51,7 +51,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     return accounts;
   };
 
-  getLastCreatedAccount = async (): Promise<any> => {
+  getLastIndexedAccount = async (): Promise<any> => {
     const accounts = await this.listAccounts();
     if (accounts.length) {
       console.log('account', accounts[0]);
