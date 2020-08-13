@@ -208,17 +208,19 @@ export default class AwsService {
     notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server rebooting...', status: 'processing' } });
     await new Promise((resolve) => {
       let totalSeconds = 0;
-      const DELAY = 5000;
+      const DELAY = 5000; // 5 sec
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
-          if (totalSeconds >= 140) {
+          socket.destroy();
+          console.log('waiting', this.conf.get('publicIp'), totalSeconds);
+          if (totalSeconds >= 80000) { // 80 sec
+            console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
             resolve();
+            return;
           }
           totalSeconds += DELAY;
-          console.log('waiting', this.conf.get('publicIp'));
-          socket.destroy();
         };
         socket.setTimeout(1000);
         socket.once('error', onError);
@@ -227,7 +229,7 @@ export default class AwsService {
         socket.connect(22, ip, () => {
           console.log('Server is online');
           notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server is online', status: 'processing' } });
-          socket.end();
+          socket.destroy();
           clearInterval(intervalId);
           resolve();
         });

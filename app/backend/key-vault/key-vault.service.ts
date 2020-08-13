@@ -83,9 +83,10 @@ export default class KeyVaultService {
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 3 ? computedValue : 0;
+              return +attemptCount < 2 ? computedValue : 0;
             },
           },
+          timeout: 5,
         },
       );
       return { isActive: true };
