@@ -6,26 +6,26 @@ import { ProgressBar, ProgressMessage } from 'common/components';
 import { Title, Description, SmallText, Wrapper } from '..';
 import ModalTemplate from '../ModalTemplate';
 import { useInjectSaga } from '../../../../../../utils/injectSaga';
-import * as keyVaultActions from '../../../../../KeyVaultManagement/actions';
-import * as selectors from '../../../../../KeyVaultManagement/selectors';
-import saga from '../../../../../KeyVaultManagement/saga';
+import * as keyVaultActions from '../../../../../ProcessRunner/actions';
+import * as selectors from '../../../../../ProcessRunner/selectors';
+import saga from '../../../../../ProcessRunner/saga';
 
 import image from '../../../../../Wizard/assets/img-key-vault-inactive.svg';
 
-const key = 'keyVaultManagement';
+const key = 'processRunner';
 
 const ReinstallingModal = (props) => {
   const {move1StepForward, move2StepsForward, onClose, isLoading, reinstallMessage, isDone, isServerActive, processName, actions} = props;
-  const { keyvaultProcessSubscribe, keyvaultProcessClearState } = actions;
+  const { processSubscribe, processClearState } = actions;
   useInjectSaga({ key, saga, mode: '' });
   useEffect(() => {
     if (isDone) {
-      keyvaultProcessClearState();
+      processClearState();
       if (isServerActive) { move1StepForward(); }
       else { move2StepsForward(); }
     }
     if (!isDone && !isLoading && !reinstallMessage && !processName) {
-      keyvaultProcessSubscribe('reinstall', 'Checking KeyVault configuration...');
+      processSubscribe('reinstall', 'Checking KeyVault configuration...');
     }
   }, [isLoading, isDone, reinstallMessage]);
 

@@ -9,7 +9,7 @@ import animationData from '../../../../../assets/animations/pulsar.json';
 
 const Wrapper = styled.div`
   width: 566px;
-  height: 130px;
+  min-height:90px;
   position: relative;
 `;
 
