@@ -31,7 +31,9 @@ export const generateValidatorKeyFailure = (error: Record<string, any>) => ({
   payload: error,
 });
 
-export const loadDepositData = () => ({ type: actionTypes.LOAD_DEPOSIT_DATA });
+export const loadDepositData = () => (
+  { type: actionTypes.LOAD_DEPOSIT_DATA }
+);
 
 export const loadDepositDataSuccess = (payload: Record<string, any>) => ({
   type: actionTypes.LOAD_DEPOSIT_DATA_SUCCESS,
@@ -40,6 +42,20 @@ export const loadDepositDataSuccess = (payload: Record<string, any>) => ({
 
 export const loadDepositDataFailure = (error: Record<string, any>) => ({
   type: actionTypes.LOAD_DEPOSIT_DATA_FAILURE,
+  payload: error,
+});
+
+export const updateAccountStatus = (accountId: string) => ({
+  type: actionTypes.UPDATE_ACCOUNT_STATUS,
+  payload: accountId,
+});
+
+export const updateAccountStatusSuccess = () => ({
+  type: actionTypes.UPDATE_ACCOUNT_STATUS_SUCCESS,
+});
+
+export const updateAccountStatusFailure = (error: Record<string, any>) => ({
+  type: actionTypes.UPDATE_ACCOUNT_STATUS_FAILURE,
   payload: error,
 });
 

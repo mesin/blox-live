@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Lottie from 'lottie-web-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Icon } from '../../../../../common/components';
+import { CopyToClipboardIcon } from '..';
 
 import animationData from '../../../../../assets/animations/pulsar.json';
 
@@ -42,18 +42,6 @@ const Paragraph = styled.p`
   cursor: text;
 `;
 
-const IconWrapper = styled.div`
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  z-index: 2;
-  top: 8px;
-  right: 6px;
-`;
-
 const AnimationWrapper = styled.div`
   width: 40px;
   height: 40px;
@@ -61,6 +49,13 @@ const AnimationWrapper = styled.div`
   z-index: 2;
   top: -3px;
   right: -4px;
+`;
+
+const IconWrapper = styled.div`
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  right: 6px;
 `;
 
 const defaultOptions = {
@@ -78,16 +73,9 @@ const CopyToBox = (props) => {
       <AnimationWrapper>
         <Lottie options={defaultOptions} playingState="play" speed={2} />
       </AnimationWrapper>
-      <CopyToClipboard text={text} onCopy={onCopy}>
-        <IconWrapper>
-          <Icon
-            name="copy"
-            color="primary900"
-            fontSize="20px"
-            onClick={() => false}
-          />
-        </IconWrapper>
-      </CopyToClipboard>
+      <IconWrapper>
+        <CopyToClipboardIcon onCopy={onCopy} text={text} />
+      </IconWrapper>
       <CopyToClipboard text={text} onCopy={onCopy}>
         <Textarea defaultValue={text} />
       </CopyToClipboard>

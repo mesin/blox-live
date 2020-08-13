@@ -2,7 +2,6 @@ import ElectronStore from 'electron-store';
 import KeyVaultCliService from '../key-vault/key-vault-cli.service';
 import { step } from '../decorators';
 
-
 export default class AccountKeyVaultService extends KeyVaultCliService {
   private readonly conf: ElectronStore;
 
@@ -65,12 +64,10 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   getDepositData = async (publicKey: string): Promise<any> => {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
-    );
+      `${this.executablePath} wallet account deposit-data --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
-    console.log(stdout);
-    return stdout;
-  }
+    return JSON.parse(stdout);
+  };
 }
