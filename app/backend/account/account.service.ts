@@ -102,7 +102,7 @@ export default class AccountService {
       throw new Error(`No account to create`);
     }
     try {
-      const { body } = await got.post('https://api.stage.bloxstaking.com/accountss', {
+      const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
           'Authorization': `Bearer ${this.conf.get('authToken')}`,
         },
