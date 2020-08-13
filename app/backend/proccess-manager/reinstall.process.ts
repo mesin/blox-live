@@ -8,6 +8,7 @@ export default class ReinstallProcess extends ProcessClass {
   public readonly awsService: AwsService;
   public readonly awsServiceOld: AwsService;
   public readonly keyVaultService: KeyVaultService;
+  public readonly keyVaultServiceOld: KeyVaultService;
   public readonly dockerService: DockerService;
   public readonly accountService: AccountService;
   public readonly accountServiceOld: AccountService;
@@ -16,6 +17,7 @@ export default class ReinstallProcess extends ProcessClass {
   constructor() {
     super();
     this.keyVaultService = new KeyVaultService(`${this.storeName}-tmp`);
+    this.keyVaultServiceOld = new KeyVaultService(this.storeName);
     this.awsService = new AwsService(`${this.storeName}-tmp`);
     this.awsServiceOld = new AwsService(this.storeName);
     this.dockerService = new DockerService(`${this.storeName}-tmp`);
@@ -32,9 +34,9 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.accountService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
-      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' },
+      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
     ];
   }
 }
