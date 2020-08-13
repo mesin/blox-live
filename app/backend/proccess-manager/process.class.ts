@@ -4,6 +4,7 @@ import { Observer } from './observer.interface';
 export default class ProcessClass implements Subject {
   public readonly storeName = 'blox';
   public readonly actions: Array<any>;
+  public readonly fallbackActions: Array<any>;
   public state: number;
   /**
    * @type {Observer[]} List of subscribers. In real life, the list of
@@ -49,11 +50,28 @@ export default class ProcessClass implements Subject {
     // eslint-disable-next-line no-restricted-syntax
     for (const [index, action] of this.actions.entries()) {
       this.state = index + 1;
-      // eslint-disable-next-line no-await-in-loop
-      const result = await action.instance[action.method].bind(action.instance)({ notifier: { instance: this, func: 'notify' } });
-      const stepInfo = { ...result.step };
-      delete result.step;
-      this.notify({ step: { name: stepInfo.name, status: 'completed' }, ...result });
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await action.instance[action.method].bind(action.instance)({
+          notifier: {
+            instance: this,
+            func: 'notify'
+          }
+        });
+        const stepInfo = { ...result.step };
+        delete result.step;
+        this.notify({ step: { name: stepInfo.name, status: 'completed' }, ...result });
+      } catch (e) {
+        if (Array.isArray(this.fallbackActions)) {
+          const found = this.fallbackActions.find(step => step.method === action.method);
+          if (found) {
+            for (const fallbackAction of found.actions) {
+              await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
+            }
+          }
+        }
+        throw e
+      }
     }
   }
 }

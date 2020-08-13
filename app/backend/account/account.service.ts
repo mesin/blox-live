@@ -113,7 +113,6 @@ export default class AccountService {
       });
       console.log('Blox account created', body);
     } catch (error) {
-      await this.accountKeyVaultService.deleteLastIndexedAccount();
       throw new Error(`Create Blox account error: ${error}`);
     }
   }

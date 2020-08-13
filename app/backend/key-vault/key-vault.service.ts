@@ -1,18 +1,15 @@
 import got from 'got';
 import ElectronStore from 'electron-store';
 import ServerService from './server.service';
-import AccountKeyVaultService from '../account/account-key-vault.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
   public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
-  private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storeName: string) {
     this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
-    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
   }
 
   @step({
@@ -68,7 +65,6 @@ export default class KeyVaultService {
         json: true,
       });
     } catch (error) {
-      await this.accountKeyVaultService.deleteLastIndexedAccount();
       throw new Error(`Vault plugin api error: ${error}`);
     }
   }
