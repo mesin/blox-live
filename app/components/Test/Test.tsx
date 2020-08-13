@@ -34,6 +34,7 @@ const Test = (props) => {
   console.log('---->generalConf', cf);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
+  let [publicKey, setPublicKey] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
 
@@ -182,13 +183,39 @@ const Test = (props) => {
         >
           Clean Accounts from Storage
         </button>
+      </div>
+      <p/>
+      <h2>Local Storage Only</h2>
+      <div>
         <button onClick={async () => {
           await seedService.mnemonicGenerate();
         }}>
           Generate Mnemonic
         </button>
         <button onClick={async () => {
-          await accountKeyVaultService.getDepositData('');
+          await accountKeyVaultService.createAccount();
+        }}>
+          Create Account
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.listAccounts();
+        }}>
+          List Accounts
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.getLastIndexedAccount();
+        }}>
+          Get Last Indexed Account
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.deleteLastIndexedAccount();
+        }}>
+          Delete Last Indexed Account
+        </button>
+        <br/>
+        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key"/>
+        <button onClick={async () => {
+          await accountKeyVaultService.getDepositData(publicKey);
         }}>
           Get Account Deposit Data
         </button>
