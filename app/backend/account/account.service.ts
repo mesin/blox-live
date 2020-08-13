@@ -102,7 +102,7 @@ export default class AccountService {
       throw new Error(`No account to create`);
     }
     try {
-      const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
+      const { body } = await got.post('https://api.stage.bloxstaking.com/accountss', {
         headers: {
           'Authorization': `Bearer ${this.conf.get('authToken')}`,
         },
@@ -113,7 +113,6 @@ export default class AccountService {
       });
       console.log('Blox account created', body);
     } catch (error) {
-      await this.accountKeyVaultService.deleteLastIndexedAccount();
       throw new Error(`Create Blox account error: ${error}`);
     }
   }
