@@ -70,7 +70,7 @@ export default class ProcessClass implements Subject {
             }
           }
         }
-        throw e
+        throw e;
       }
     }
   }
