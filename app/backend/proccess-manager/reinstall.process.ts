@@ -36,7 +36,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' },
-      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+      { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' },
     ];
   }
 }
