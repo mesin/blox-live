@@ -1,15 +1,18 @@
-import ElectronStore from 'electron-store';
 import got from 'got';
+import ElectronStore from 'electron-store';
 import ServerService from './server.service';
+import AccountKeyVaultService from '../account/account-key-vault.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
   public readonly conf: ElectronStore;
   public readonly serverService: ServerService;
+  private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storeName: string) {
     this.conf = new ElectronStore({ name: storeName });
     this.serverService = new ServerService(storeName);
+    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
   }
 
   @step({
@@ -20,7 +23,7 @@ export default class KeyVaultService {
     const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const { body: keyVaultVersion } = await got.get('http://api.stage.bloxstaking.com/key-vault/latest-tag');
+    const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
     this.conf.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
@@ -65,6 +68,7 @@ export default class KeyVaultService {
         json: true,
       });
     } catch (error) {
+      await this.accountKeyVaultService.deleteLastIndexedAccount();
       throw new Error(`Vault plugin api error: ${error}`);
     }
   }
@@ -114,7 +118,7 @@ export default class KeyVaultService {
           },
         },
       );
-      return { isActive: false };
+      return { isActive: true };
     } catch (e) {
       console.log(e);
       return { isActive: false };
