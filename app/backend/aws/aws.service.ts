@@ -207,9 +207,16 @@ export default class AwsService {
     await this.ec2.rebootInstances({ InstanceIds: [this.conf.get('instanceId')] }).promise();
     notifier.instance[notifier.func].bind(notifier.instance)({ step: { name: 'Server rebooting...', status: 'processing' } });
     await new Promise((resolve) => {
+      let totalSeconds = 0;
+      const DELAY = 5000;
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
+          if (totalSeconds >= 140) {
+            clearInterval(intervalId);
+            resolve();
+          }
+          totalSeconds += DELAY;
           console.log('waiting', this.conf.get('publicIp'));
           socket.destroy();
         };
@@ -224,7 +231,7 @@ export default class AwsService {
           clearInterval(intervalId);
           resolve();
         });
-      }, 5000);
+      }, DELAY);
     });
   }
 }
