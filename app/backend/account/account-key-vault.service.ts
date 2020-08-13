@@ -71,8 +71,9 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
-    console.log(stdout);
-    return stdout ? JSON.parse(stdout) : {};
+    const depositData = stdout ? JSON.parse(stdout) : {};
+    console.log(depositData);
+    return depositData;
   };
 
   deleteLastIndexedAccount = async (): Promise<void> => {

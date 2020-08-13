@@ -198,6 +198,11 @@ const Test = (props) => {
           Generate Mnemonic
         </button>
         <button onClick={async () => {
+          await accountKeyVaultService.createAccount();
+        }}>
+          Create Account
+        </button>
+        <button onClick={async () => {
           await accountKeyVaultService.listAccounts();
         }}>
           List Accounts
