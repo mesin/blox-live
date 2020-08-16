@@ -1,29 +1,29 @@
-import ElectronStore from 'electron-store';
+import StoreService from '../store-manager/store.service';
 import KeyVaultCliService from './key-vault-cli.service';
 import { step } from '../decorators';
 
 export default class SeedService extends KeyVaultCliService {
-  private readonly conf: ElectronStore;
+  private readonly storeService: StoreService;
 
-  constructor(storeName: string) {
+  constructor() {
     super();
-    this.conf = new ElectronStore({ name: storeName });
+    this.storeService = new StoreService();
   }
 
   @step({
     name: 'Seed generate'
   })
   async seedGenerate(): Promise<void> {
-    if (this.conf.get('seed')) return;
+    if (this.storeService.get('seed')) return;
 
     const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate`);
     if (stderr) {
       throw new Error(stderr);
     }
-    this.conf.set('seed', stdout.replace('\n', ''));
+    this.storeService.set('seed', stdout.replace('\n', ''));
   }
 
-   mnemonicGenerate = async (): Promise<void> => {
+  mnemonicGenerate = async (): Promise<void> => {
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
     if (stderr) {
       throw new Error(stderr);
@@ -34,11 +34,11 @@ export default class SeedService extends KeyVaultCliService {
 
   storeMnemonic = async (mnemonic: string, password: string): Promise<void> => {
     // TODO validate password & handle password
-    console.log("storeMnemonic - password: ", password);
+    console.log('storeMnemonic - password: ', password);
     // generate seed from mnemonic
     const seed = await this.seedFromMnemonicGenerate(mnemonic);
     console.log(seed);
-    this.conf.set('seed', seed);
+    this.storeService.set('seed', seed);
   };
 
   seedFromMnemonicGenerate = async (mnemonic): Promise<string> => {
@@ -51,5 +51,5 @@ export default class SeedService extends KeyVaultCliService {
       throw new Error(stderr);
     }
     return stdout.replace('\n', '');
-  }
+  };
 }

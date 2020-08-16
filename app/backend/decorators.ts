@@ -19,7 +19,7 @@ export function step(metadata: any) {
       // validate config properties
       if (Array.isArray(metadata.requiredConfig)) {
         metadata.requiredConfig.forEach((prop) => {
-          if (!this.conf.get(prop)) {
+          if (!this.storeService.get(prop)) {
             throw new Error(`Configuration settings ${prop} not found`);
           }
         });

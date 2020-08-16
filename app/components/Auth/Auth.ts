@@ -9,22 +9,21 @@ import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
 
 import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
+import BaseStoreService from '../../backend/store-manager/base-store.service';
 
-import ElectronStore from 'electron-store';
-
-const electronStore = new ElectronStore({ name: 'blox' });
 
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
   keytar: Record<string, any>;
+  private readonly baseStoreService: BaseStoreService;
 
   constructor() {
     this.tokens = {
       accessToken: '',
       idToken: '',
-      refreshToken: '',
+      refreshToken: ''
     };
     this.userProfile = null;
     this.auth = {
@@ -32,12 +31,13 @@ export default class Auth {
       clientID: process.env.AUTH0_CLIENT_ID || '',
       redirectUri: process.env.AUTH0_CALLBACK_URL,
       responseType: 'code',
-      scope: 'openid profile email offline_access',
+      scope: 'openid profile email offline_access'
     };
     this.keytar = {
       service: 'bloxstaking-openid-oauth',
-      account: os.userInfo().username,
+      account: os.userInfo().username
     };
+    this.baseStoreService = new BaseStoreService();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -49,7 +49,7 @@ export default class Auth {
           this.interceptIdToken(response.data.id_token);
           resolve({
             idToken: response.data.id_token,
-            idTokenPayload: userProfile,
+            idTokenPayload: userProfile
           });
         }
         reject(new Error('Error in login'));
@@ -67,7 +67,7 @@ export default class Auth {
           this.interceptIdToken(response.data.id_token);
           resolve({
             idToken: response.data.id_token,
-            idTokenPayload: userProfile,
+            idTokenPayload: userProfile
           });
         }
         reject(new Error(response));
@@ -94,8 +94,8 @@ export default class Auth {
         data: {
           grant_type: 'refresh_token',
           client_id: clientID,
-          refresh_token: refreshToken,
-        },
+          refresh_token: refreshToken
+        }
       };
       try {
         const response = await axios(refreshUrl, config);
@@ -118,16 +118,16 @@ export default class Auth {
       grant_type: 'authorization_code',
       client_id: clientID,
       code: query.code,
-      redirect_uri: redirectUri,
+      redirect_uri: redirectUri
     };
 
     const tokenUrl = `https://${domain}/oauth/token`;
     const config: AxiosRequestConfig = {
       method: 'POST',
       headers: {
-        'content-type': 'application/json',
+        'content-type': 'application/json'
       },
-      data: JSON.stringify(exchangeOptions),
+      data: JSON.stringify(exchangeOptions)
     };
 
     try {
@@ -145,12 +145,15 @@ export default class Auth {
     this.tokens.idToken = id_token;
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
-    electronStore.set('authToken', authResult.id_token);
+    this.baseStoreService.set('currentUserId', userProfile.sub);
+    this.baseStoreService.set('authToken', authResult.id_token);
+    console.log('SET SESSION', authResult, userProfile);
+    console.log('electronStore===>', this.baseStoreService);
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
         this.keytar.account,
-        refresh_token,
+        refresh_token
       );
     }
   };
@@ -171,7 +174,7 @@ export default class Auth {
 
   interceptIdToken = (idToken: string) => {
     axios.interceptors.request.use(
-      (config: AxiosRequestConfig) => onAxiosInterceptorSuccess(config, idToken), onAxiosInterceptorFailure,
+      (config: AxiosRequestConfig) => onAxiosInterceptorSuccess(config, idToken), onAxiosInterceptorFailure
     );
   };
 
@@ -179,11 +182,10 @@ export default class Auth {
     const { service, account } = this.keytar;
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
     await keytar.deletePassword(service, account);
-    electronStore.delete('authToken');
     this.tokens = {
       accessToken: null,
       profile: null,
-      refreshToken: null,
+      refreshToken: null
     };
     this.userProfile = null;
   };

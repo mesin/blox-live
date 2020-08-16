@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import ElectronStore from 'electron-store';
+import StoreService from '../../backend/store-manager/store.service';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -26,11 +26,12 @@ class Listener implements Observer {
 }
 
 let configIsSet = false;
-
 const Test = (props) => {
+  const { token } = props;
+  console.log('token', token);
   const seedService = new SeedService('blox');
   const accountKeyVaultService = new AccountKeyVaultService('blox');
-  const cf = new ElectronStore({ name: 'blox' });
+  const storeService = new StoreService();
   console.log('---->generalConf', cf);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -40,9 +41,8 @@ const Test = (props) => {
 
   if (!configIsSet) {
     configIsSet = true;
-    const generalConf = new ElectronStore({ name: 'blox' });
-    if (generalConf.get('credentials')) {
-      const credentials: any = generalConf.get('credentials');
+    if (storeService.get('credentials')) {
+      const credentials: any = storeService.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
       setSecretAccessKey(credentials.secretAccessKey);
     }
@@ -55,9 +55,7 @@ const Test = (props) => {
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
-            const storeName = 'blox';
-            const conf = new ElectronStore({ name: storeName });
-            conf.clear();
+            storeService.clear();
             accessKeyId = '';
             secretAccessKey = '';
             mnemonic = '';
