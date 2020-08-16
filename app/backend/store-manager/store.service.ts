@@ -1,21 +1,22 @@
 import ElectronStore from 'electron-store';
 import { step } from '../decorators';
+import BaseStoreService from './base-store.service';
 
-// TODO import from .env
-const baseStoreName = 'blox';
-
-export default class StoreService {
+export default class StoreService extends BaseStoreService {
   private readonly store: ElectronStore;
 
   constructor(prefix: string = '') {
-    const baseStore = new ElectronStore({ name: baseStoreName });
-    const userId = baseStore.get('userId');
-    const storeName = `${baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
+    super();
+    const userId = this.baseStore.get('currentUserId');
+    const storeName = `${this.baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
     this.store = new ElectronStore({ name: storeName });
   }
 
   get = (key: string): any => {
-    return this.store.get(key);
+    let value = this.store.get(key);
+    if (!value) {
+      return this.baseStore.get(key);
+    }
   };
 
   set = (key: string, value: any): void => {

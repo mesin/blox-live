@@ -9,14 +9,15 @@ import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
 
 import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
-import StoreService from '../../backend/store-manager/store.service';
+import BaseStoreService from '../../backend/store-manager/base-store.service';
+
 
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
   keytar: Record<string, any>;
-  private readonly baseStoreService: StoreService;
+  private readonly baseStoreService: BaseStoreService;
 
   constructor() {
     this.tokens = {
@@ -36,7 +37,7 @@ export default class Auth {
       service: 'bloxstaking-openid-oauth',
       account: os.userInfo().username
     };
-    this.baseStoreService = new StoreService();
+    this.baseStoreService = new BaseStoreService();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -144,9 +145,8 @@ export default class Auth {
     this.tokens.idToken = id_token;
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
-    this.baseStoreService.set('userId', userProfile.sub);
-    const userStoreService = new StoreService();
-    userStoreService.set('authToken', authResult.id_token);
+    this.baseStoreService.set('currentUserId', userProfile.sub);
+    this.baseStoreService.set('authToken', authResult.id_token);
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
