@@ -1,5 +1,4 @@
 import ElectronStore from 'electron-store';
-import { step } from '../decorators';
 import BaseStoreService from './base-store.service';
 
 export default class StoreService extends BaseStoreService {
