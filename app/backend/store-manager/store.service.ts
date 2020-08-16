@@ -16,6 +16,7 @@ export default class StoreService extends BaseStoreService {
     if (!value) {
       return this.baseStore.get(key);
     }
+    return value;
   };
 
   set = (key: string, value: any): void => {
