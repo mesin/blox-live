@@ -31,10 +31,7 @@ export default class StoreService extends BaseStoreService {
     this.store.delete(key);
   };
 
-  @step({
-    name: 'Delete all items'
-  })
-  clear(): void {
+  clear = (): void => {
     this.store.clear();
   };
 }
