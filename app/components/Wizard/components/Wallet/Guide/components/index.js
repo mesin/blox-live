@@ -1,5 +1,6 @@
 export { default as CloseButton } from './CloseButton';
 export { default as Title } from './Title';
+export { default as SubTitle } from './SubTitle';
 export { default as StepsCounter } from './StepsCounter';
 export { default as Text } from './Text';
 export { default as Image } from './Image';

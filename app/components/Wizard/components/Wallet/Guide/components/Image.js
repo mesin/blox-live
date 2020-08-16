@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const Image = styled.image`
+const Image = styled.img`
   width:100%;
 `;
 

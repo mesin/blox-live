@@ -4,7 +4,7 @@ import { CloseButton, Title, StepsCounter, ContentManager, NavigationButtonsWrap
 
 const Wrapper = styled.div`
   width:350px;
-  height:100%;
+  height:calc(100% - 70px);
   display:flex;
   position:fixed;
   right:0px;

@@ -5,6 +5,7 @@ const NavigationButton = styled.div`
   font-weight: 900;
   line-height: 1.71;
   color: ${({theme}) => theme.primary900};
+  cursor:pointer;
 `;
 
 export default NavigationButton;
