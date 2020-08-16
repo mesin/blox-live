@@ -3,18 +3,17 @@ import AccountService from '../account/account.service';
 import ProcessClass from './process.class';
 
 export default class UninstallProcess extends ProcessClass {
-  public readonly awsService: AwsService;
-  public readonly accountService: AccountService;
+  private readonly awsService: AwsService;
+  private readonly accountService: AccountService;
   public readonly actions: Array<any>;
 
   constructor() {
     super();
-    this.awsService = new AwsService(this.storeName);
-    this.accountService = new AccountService(this.storeName);
+    this.awsService = new AwsService();
+    this.accountService = new AccountService();
     this.actions = [
       { instance: this.accountService, method: 'deleteBloxAccount' },
-      { instance: this.awsService, method: 'uninstallItems' },
-      { instance: this.accountService, method: 'cleanLocalStorage' },
+      { instance: this.awsService, method: 'uninstallItems' }
     ];
   }
 }

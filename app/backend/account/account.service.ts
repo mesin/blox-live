@@ -1,42 +1,43 @@
 import got from 'got';
-import ElectronStore from 'electron-store';
+import StoreService from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
 import AccountKeyVaultService from '../account/account-key-vault.service';
 import { step } from '../decorators';
 
+// TODO import from .env
+const tempStorePrefix = '-tmp';
+
 export default class AccountService {
-  public readonly conf: ElectronStore;
-  public readonly serverService: ServerService;
-  public readonly storeName: string;
+  private readonly storeService: StoreService;
+  private readonly serverService: ServerService;
   private readonly accountKeyVaultService: AccountKeyVaultService;
 
-  constructor(storeName: string) {
-    this.storeName = storeName;
-    this.conf = new ElectronStore({ name: storeName });
-    this.serverService = new ServerService(storeName);
-    this.accountKeyVaultService = new AccountKeyVaultService(storeName);
+  constructor(storePrefix: string = '') {
+    this.storeService = new StoreService(storePrefix);
+    this.serverService = new ServerService();
+    this.accountKeyVaultService = new AccountKeyVaultService();
   }
 
   @step({
     name: 'Get key vault root token',
-    requiredConfig: ['publicIp'],
+    requiredConfig: ['publicIp']
   })
   async getKeyVaultRootToken(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('root vault-plugin key not found');
-    this.conf.set('vaultRootToken', rootToken);
+    this.storeService.set('vaultRootToken', rootToken);
   }
 
   @step({
     name: 'Sync vault with blox api',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken'],
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async syncVaultWithBlox(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request POST --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${this.conf.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
-      {},
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.storeService.get('authToken')}" --request POST --data '{"url": "http://${this.storeService.get('publicIp')}:8200", "accessToken": "${this.storeService.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
+      {}
     );
     if (+statusCode > 201) {
       throw new Error(`Blox Staking api error: ${statusCode} ${stderr}`);
@@ -45,13 +46,13 @@ export default class AccountService {
 
   @step({
     name: 'Resync vault with blox api',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken'],
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async resyncNewVaultWithBlox(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request PATCH --data '{"url": "http://${this.conf.get('publicIp')}:8200", "accessToken": "${this.conf.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
-      {},
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.storeService.get('authToken')}" --request PATCH --data '{"url": "http://${this.storeService.get('publicIp')}:8200", "accessToken": "${this.storeService.get('vaultRootToken')}"}' https://api.stage.bloxstaking.com/wallets/sync`,
+      {}
     );
     if (+statusCode > 201) {
       throw new Error(`Blox Staking api error: ${statusCode} ${stderr}`);
@@ -60,13 +61,13 @@ export default class AccountService {
 
   @step({
     name: 'Remove blox staking account',
-    requiredConfig: ['authToken'],
+    requiredConfig: ['authToken']
   })
   async deleteBloxAccount(): Promise<void> {
     const ssh = await this.serverService.getConnection();
     const { stdout: statusCode, stderr } = await ssh.execCommand(
-      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.conf.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations`,
-      {},
+      `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.storeService.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations`,
+      {}
     );
     console.log(statusCode, stderr);
     if (+statusCode > 201) {
@@ -76,16 +77,16 @@ export default class AccountService {
 
   @step({
     name: 'Remove Organization Accounts',
-    requiredConfig: ['authToken'],
+    requiredConfig: ['authToken']
   })
   async deleteBloxAccounts(): Promise<void> {
     try {
       await got.delete('https://api.stage.bloxstaking.com/accounts', {
         headers: {
-          'Authorization': `Bearer ${this.conf.get('authToken')}`,
+          'Authorization': `Bearer ${this.storeService.get('authToken')}`
         }
       });
-      this.conf.delete('keyVaultStorage');
+      this.storeService.delete('keyVaultStorage');
       console.log('blox accounts deleted');
     } catch (error) {
       throw new Error(`Blox Staking api error: ${error}`);
@@ -94,7 +95,7 @@ export default class AccountService {
 
   @step({
     name: 'Create Blox Account',
-    requiredConfig: ['authToken'],
+    requiredConfig: ['authToken']
   })
   async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
@@ -104,12 +105,12 @@ export default class AccountService {
     try {
       const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
-          'Authorization': `Bearer ${this.conf.get('authToken')}`,
+          'Authorization': `Bearer ${this.storeService.get('authToken')}`
         },
         // @ts-ignore
         body: lastIndexedAccount,
         // @ts-ignore
-        json: true,
+        json: true
       });
       console.log('Blox account created', body);
       return { data: body };
@@ -119,50 +120,35 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Clean local storage',
+    name: 'Prepare tmp storage'
   })
-  public cleanLocalStorage(): void {
-    this.conf.clear();
-  }
-
-  @step({
-    name: 'Prepare tmp storage',
-  })
-  public prepareTmpStorageConfig(): void {
-    const tmpConf = new ElectronStore({ name: `${this.storeName}-tmp` });
-    tmpConf.clear();
-    this.setClientStorageParams(`${this.storeName}-tmp`, {
-      uuid: this.conf.get('uuid'),
-      authToken: this.conf.get('authToken'),
-      credentials: this.conf.get('credentials'),
-      keyPair: this.conf.get('keyPair'),
-      securityGroupId: this.conf.get('securityGroupId'),
-      keyVaultStorage: this.conf.get('keyVaultStorage'),
+  prepareTmpStorageConfig(): void {
+    const tmpStoreService = new StoreService(tempStorePrefix);
+    tmpStoreService.setMultiple({
+      uuid: this.storeService.get('uuid'),
+      authToken: this.storeService.get('authToken'),
+      credentials: this.storeService.get('credentials'),
+      keyPair: this.storeService.get('keyPair'),
+      securityGroupId: this.storeService.get('securityGroupId'),
+      keyVaultStorage: this.storeService.get('keyVaultStorage')
     });
   }
 
   @step({
-    name: 'Store tmp config into main',
+    name: 'Store tmp config into main'
   })
-  public saveTmpConfigIntoMain(): void {
-    const confTmpStore = new ElectronStore({ name: `${this.storeName}-tmp` });
-    this.setClientStorageParams(this.storeName, {
-      uuid: confTmpStore.get('uuid'),
-      authToken: confTmpStore.get('authToken'),
-      addressId: confTmpStore.get('addressId'),
-      publicIp: confTmpStore.get('publicIp'),
-      instanceId: confTmpStore.get('instanceId'),
-      vaultRootToken: confTmpStore.get('vaultRootToken'),
-      keyVaultVersion: confTmpStore.get('keyVaultVersion'),
-      keyVaultStorage: confTmpStore.get('keyVaultStorage'),
+  saveTmpConfigIntoMain(): void {
+    const tmpStoreService = new StoreService(tempStorePrefix);
+    tmpStoreService.setMultiple({
+      uuid: tmpStoreService.get('uuid'),
+      authToken: tmpStoreService.get('authToken'),
+      addressId: tmpStoreService.get('addressId'),
+      publicIp: tmpStoreService.get('publicIp'),
+      instanceId: tmpStoreService.get('instanceId'),
+      vaultRootToken: tmpStoreService.get('vaultRootToken'),
+      keyVaultVersion: tmpStoreService.get('keyVaultVersion'),
+      keyVaultStorage: tmpStoreService.get('keyVaultStorage')
     });
-    confTmpStore.clear();
-  }
-
-  private setClientStorageParams(storeName: string, params: any): void {
-    const conf = new ElectronStore({ name: storeName });
-    Object.keys(params).forEach((key) => {
-      params[key] && conf.set(key, params[key]);
-    });
+    tmpStoreService.clear();
   }
 }

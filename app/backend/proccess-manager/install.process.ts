@@ -1,4 +1,3 @@
-import ElectronStore from 'electron-store';
 import { v4 as uuidv4 } from 'uuid';
 import AwsService from '../aws/aws.service';
 import AccountService from '../account/account.service';
@@ -6,31 +5,32 @@ import KeyVaultService from '../key-vault/key-vault.service';
 import DockerService from '../key-vault/docker.service';
 import ProcessClass from './process.class';
 import AccountKeyVaultService from '../account/account-key-vault.service';
+import StoreService from '../store-manager/store.service';
 
 export default class InstallProcess extends ProcessClass {
-  public readonly awsService: AwsService;
-  public readonly keyVaultService: KeyVaultService;
-  public readonly dockerService: DockerService;
-  public readonly accountService: AccountService;
-  public readonly accountKeyVaultService: AccountKeyVaultService;
+  private readonly awsService: AwsService;
+  private readonly keyVaultService: KeyVaultService;
+  private readonly dockerService: DockerService;
+  private readonly accountService: AccountService;
+  private readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
   constructor({ accessKeyId, secretAccessKey }) {
     super();
-    const conf = new ElectronStore({ name: this.storeName });
-    if (!conf.get('uuid')) {
-      conf.set('uuid', uuidv4());
+    const storeService = new StoreService();
+    if (!storeService.get('uuid')) {
+      storeService.set('uuid', uuidv4());
     }
-    conf.set('credentials', {
+    storeService.set('credentials', {
       accessKeyId,
-      secretAccessKey,
+      secretAccessKey
     });
 
-    this.keyVaultService = new KeyVaultService(this.storeName);
-    this.awsService = new AwsService(this.storeName);
-    this.dockerService = new DockerService(this.storeName);
-    this.accountService = new AccountService(this.storeName);
-    this.accountKeyVaultService = new AccountKeyVaultService(this.storeName);
+    this.keyVaultService = new KeyVaultService();
+    this.awsService = new AwsService();
+    this.dockerService = new DockerService();
+    this.accountService = new AccountService();
+    this.accountKeyVaultService = new AccountKeyVaultService();
     this.actions = [
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'validateAWSPermissions' },
@@ -45,7 +45,7 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.accountService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'syncVaultWithBlox' },
-      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+      { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
     ];
   }
 }
