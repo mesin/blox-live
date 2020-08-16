@@ -1,6 +1,7 @@
+import React from 'react';
 import styled from 'styled-components';
 
-const Link = styled.a`
+const Wrapper = styled.a`
   font-size: 12px;
   font-weight: 500;
   color: ${({ theme }) => theme.primary900};
@@ -9,5 +10,7 @@ const Link = styled.a`
     color: ${({ theme }) => theme.primary700};
   }
 `;
+
+const Link = (props) => <Wrapper {...props} target={'_blank'} />;
 
 export default Link;

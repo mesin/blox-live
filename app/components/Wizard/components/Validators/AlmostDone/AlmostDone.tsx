@@ -8,7 +8,7 @@ import { Title, Paragraph, BigButton } from '../../common';
 
 const Wrapper = styled.div``;
 
-const AlmostDone = (props: Props) => {
+const AlmostDone = (props: Props) => { // TODO: remove this page
   const { callSetFinishedWizard, callLoadWallet, callLoadAccounts } = props;
 
   const onClick = () => {

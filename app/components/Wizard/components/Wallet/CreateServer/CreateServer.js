@@ -12,6 +12,7 @@ import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 import { getIdToken } from '../../../../CallbackPage/selectors';
+import Guide from '../Guide';
 
 const key = 'processRunner';
 
@@ -90,6 +91,7 @@ const CreateServer = (props) => {
           <ProgressMessage>{installMessage}</ProgressMessage>
         </ProgressWrapper>
       )}
+      <Guide />
     </Wrapper>
   );
 };

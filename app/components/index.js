@@ -4,4 +4,5 @@ export { default as CallbackPage } from './CallbackPage';
 export { default as Dashboard } from './Dashboard';
 export { default as NotFoundPage } from './NotFoundPage';
 export { default as SettingsPage } from './SettingsPage';
+export { default as Reactivation } from './Reactivation';
 export { default as Test } from './Test';

@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { InfoWithTooltip } from 'common/components';
 import { Title, Paragraph, Link, BigButton } from '../../common';
-import { updateAccountStatus } from '../../../actions';
+import { updateAccountStatus, setFinishedWizard, loadWallet } from '../../../actions';
+import { loadAccounts } from '../../../../Accounts/actions';
 import * as selectors from '../../../selectors';
 import { getData } from '../../../../ProcessRunner/selectors';
 import { DepositData } from './components';
@@ -44,15 +45,24 @@ let toolTipText = 'GoETH are test tokens needed in order to participate in the G
 toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountData, callUpdateAccountStatus } = props;
+  const { setPage, page, depositData, accountData,
+          callUpdateAccountStatus, callLoadWallet, callLoadAccounts, callSetFinishedWizard,
+        } = props;
 
-  const onMadeDepositButtonClick = async () => {
-    await callUpdateAccountStatus(accountData.id);
+  const onButtonClick = async () => {
+    await callLoadWallet();
+    await callLoadAccounts();
+    await callSetFinishedWizard(true);
     await setPage(page + 1);
   };
 
-  const onDepositLaterButtonClick = () => {
-    setPage(page + 1);
+  const onMadeDepositButtonClick = async () => {
+    await callUpdateAccountStatus(accountData.id);
+    await onButtonClick();
+  };
+
+  const onDepositLaterButtonClick = async () => {
+    await onButtonClick();
   };
 
   return (
@@ -69,7 +79,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} />}
-      <Link target={'_blank'} href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
+      <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
         Need help?
       </Link>
       <ButtonsWrapper>
@@ -88,6 +98,9 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callUpdateAccountStatus: (accountId: string) => dispatch(updateAccountStatus(accountId)),
+  callSetFinishedWizard: (status) => dispatch(setFinishedWizard(status)),
+  callLoadWallet: () => dispatch(loadWallet()),
+  callLoadAccounts: () => dispatch(loadAccounts()),
 });
 
 type Props = {
@@ -99,6 +112,9 @@ type Props = {
   depositData: Record<string, any> | null;
   accountData: Record<string, any> | null;
   callUpdateAccountStatus: (accountId: string) => void;
+  callSetFinishedWizard: (status: boolean) => void;
+  callLoadWallet: () => void;
+  callLoadAccounts: () => void;
 };
 
 type State = Record<string, any>;

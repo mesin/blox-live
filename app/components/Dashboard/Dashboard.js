@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Wallet, Validators, Reactivation } from './components';
+import { Reactivation } from '..';
+import { Wallet, Validators } from './components';
 import { summarizeAccounts, normalizeAccountsData } from './service';
-import { Modal } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;

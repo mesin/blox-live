@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { InfoWithTooltip } from '../../../../common/components';
+import { InfoWithTooltip } from 'common/components';
+import { Reactivation } from '../../..';
 import { useInjectSaga } from '../../../../utils/injectSaga';
 import * as wizardActions from '../../actions';
 import * as selectors from '../../selectors';
@@ -59,6 +60,7 @@ const WelcomePage = (props: Props) => {
 
   useInjectSaga({ key, saga, mode: '' });
   const [showStep2, setStep2Status] = useState(false);
+  const [showReactivationModal, setReactivationModalDisplay] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !wallet) {
@@ -71,8 +73,13 @@ const WelcomePage = (props: Props) => {
   const onStep1Click = () => !showStep2 && setPage(1);
 
   const onStep2Click = () => {
-    setStep(step + 1);
-    setPage(5);
+    if (wallet.status === 'offline') {
+      setReactivationModalDisplay(true);
+    }
+    else if (wallet.status === 'active') {
+      setStep(step + 1);
+      setPage(5);
+    }
   };
 
   return (
@@ -95,6 +102,7 @@ const WelcomePage = (props: Props) => {
           isDisabled={!showStep2} onClick={onStep2Click}
         />
       </Right>
+      {showReactivationModal && <Reactivation onClose={() => setReactivationModalDisplay(false)} />}
     </Wrapper>
   );
 };
