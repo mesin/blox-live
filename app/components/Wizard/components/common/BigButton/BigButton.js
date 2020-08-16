@@ -18,6 +18,6 @@ const Wrapper = styled.div`
   background-color: ${({ theme, isDisabled }) => isDisabled ? 'transparent' : theme.primary900};
 `;
 
-const SmallButton = (props) => <Wrapper {...props} />;
+const BigButton = (props) => <Wrapper {...props} />;
 
-export default SmallButton;
+export default BigButton;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Lottie from 'lottie-web-react';
 import { SuccessIcon } from 'common/components';
-import { Title, Paragraph, SmallButton } from '../../common';
+import { Title, Paragraph, BigButton } from '../../common';
 
 import animationData from '../../../../../assets/animations/confetti.json';
 
@@ -53,7 +53,7 @@ const CongratulationPage = (props) => {
           Your private keys have been secured in your vault. <br />
           Now, let’s create your validator.
         </Paragraph>
-        <SmallButton onClick={onClick}>Create a Validator</SmallButton>
+        <BigButton onClick={onClick}>Create a Validator</BigButton>
       </Wrapper>
     </>
   );

@@ -208,11 +208,20 @@ export default class AwsService {
       }
     });
     await new Promise((resolve) => {
+      let totalSeconds = 0;
+      const DELAY = 5000; // 5 sec
       const intervalId = setInterval(() => {
         const socket = new net.Socket();
         const onError = () => {
-          console.log('waiting', this.storeService.get('publicIp'));
           socket.destroy();
+          console.log('waiting', this.storeService.get('publicIp'), totalSeconds);
+          if (totalSeconds >= 80000) { // 80 sec
+            console.log('Reached max timeout, exiting...', intervalId);
+            clearInterval(intervalId);
+            resolve();
+            return;
+          }
+          totalSeconds += DELAY;
         };
         socket.setTimeout(1000);
         socket.once('error', onError);
@@ -226,11 +235,11 @@ export default class AwsService {
               status: 'processing'
             }
           });
-          socket.end();
+          socket.destroy();
           clearInterval(intervalId);
           resolve();
         });
-      }, 5000);
+      }, DELAY);
     });
   }
 }

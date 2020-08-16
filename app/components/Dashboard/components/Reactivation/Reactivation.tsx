@@ -6,10 +6,7 @@ const Reactivation = ({onClose}: Props) => {
   const [step, setStep] = useState(0);
   const move1StepForward = () => setStep(step + 1);
   const move2StepsForward = () => setStep(step + 2);
-  const contactSupport = () => {
-    console.log('contact support');
-    move1StepForward();
-  };
+  const contactSupport = () => { move1StepForward(); };
   switch (step) {
     case 0:
       return <SmallModal onClick={move1StepForward} onClose={onClose} />;

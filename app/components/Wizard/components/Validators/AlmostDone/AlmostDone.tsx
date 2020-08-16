@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { setFinishedWizard, loadWallet } from '../../../actions';
 
 import { loadAccounts } from '../../../../Accounts/actions';
-import { Title, Paragraph, SmallButton } from '../../common';
+import { Title, Paragraph, BigButton } from '../../common';
 
 const Wrapper = styled.div``;
 
@@ -32,7 +32,7 @@ const AlmostDone = (props: Props) => {
         The moment of approval will activate your validator to start staking.
       </Paragraph>
       <br /> <br />
-      <SmallButton onClick={onClick}>Continue to Dashboard</SmallButton>
+      <BigButton onClick={onClick}>Continue to Dashboard</BigButton>
     </Wrapper>
   );
 };

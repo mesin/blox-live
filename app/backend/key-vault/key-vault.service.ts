@@ -83,36 +83,11 @@ export default class KeyVaultService {
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 3 ? computedValue : 0;
-            }
-          }
-        }
-      );
-      return { isActive: true };
-    } catch (e) {
-      console.log(e);
-      return { isActive: false };
-    }
-  }
-
-  @step({
-    name: 'Get key vault status fail',
-    requiredConfig: ['publicIp']
-  })
-  async getKeyVaultStatusFail() {
-    // check if the key vault is alive
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    try {
-      await got.get(
-        `http://${this.storeService.get('publicIp')}:8200/v1/sys/health`,
-        {
-          retry: {
-            limit: 2,
-            calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 3 ? computedValue : 0;
-            }
-          }
-        }
+              return +attemptCount < 2 ? computedValue : 0;
+            },
+          },
+          timeout: 5000,
+        },
       );
       return { isActive: true };
     } catch (e) {
