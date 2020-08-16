@@ -36,7 +36,7 @@ export default class Auth {
       service: 'bloxstaking-openid-oauth',
       account: os.userInfo().username
     };
-    this.baseStoreService = new StoreService('', true);
+    this.baseStoreService = new StoreService();
   }
 
   loginWithSocialApp = async (name: string) => {

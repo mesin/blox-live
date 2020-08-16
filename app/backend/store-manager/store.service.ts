@@ -6,16 +6,11 @@ const baseStoreName = 'blox';
 
 export default class StoreService {
   private readonly store: ElectronStore;
-  private readonly baseStore: ElectronStore;
 
-  constructor(prefix: string = '', isBase: boolean = false) {
-    let storeName: string;
-    if (isBase) {
-      storeName = baseStoreName;
-    } else {
-      this.baseStore = new ElectronStore({ name: baseStoreName });
-      storeName = `${baseStoreName}-${this.baseStore.get('userId')}${prefix}`;
-    }
+  constructor(prefix: string = '') {
+    const baseStore = new ElectronStore({ name: baseStoreName });
+    const userId = baseStore.get('userId');
+    const storeName = `${baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
     this.store = new ElectronStore({ name: storeName });
   }
 
@@ -38,7 +33,7 @@ export default class StoreService {
   @step({
     name: 'Delete all items'
   })
-  clear(): void{
+  clear(): void {
     this.store.clear();
   };
 }
