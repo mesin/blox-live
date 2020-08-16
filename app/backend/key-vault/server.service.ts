@@ -1,23 +1,23 @@
-import ElectronStore from 'electron-store';
+import StoreService from '../store-manager/store.service';
 import NodeSSH from 'node-ssh';
 
 export default class ServerService {
-  public readonly conf: ElectronStore;
+  private readonly storeService: StoreService;
 
-  constructor(storeName: string) {
-    this.conf = new ElectronStore({ name: storeName });
+  constructor() {
+    this.storeService = new StoreService();
   }
 
-  async getConnection(): Promise<NodeSSH> {
+  getConnection = async (): Promise<NodeSSH> => {
     // this.flow.validate('publicIp');
     // this.flow.validate('keyPair');
     const ssh = new NodeSSH();
-    const keyPair : any = this.conf.get('keyPair');
+    const keyPair: any = this.storeService.get('keyPair');
     await ssh.connect({
-      host: this.conf.get('publicIp'),
+      host: this.storeService.get('publicIp'),
       username: 'ec2-user',
-      privateKey: keyPair.privateKey,
+      privateKey: keyPair.privateKey
     });
     return ssh;
-  }
+  };
 }

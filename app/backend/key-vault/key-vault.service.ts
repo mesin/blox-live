@@ -1,19 +1,19 @@
 import got from 'got';
-import ElectronStore from 'electron-store';
+import StoreService from '../store-manager/store.service';
 import ServerService from './server.service';
 import { step } from '../decorators';
 
 export default class KeyVaultService {
-  public readonly conf: ElectronStore;
-  public readonly serverService: ServerService;
+  private readonly storeService: StoreService;
+  private readonly serverService: ServerService;
 
-  constructor(storeName: string) {
-    this.conf = new ElectronStore({ name: storeName });
-    this.serverService = new ServerService(storeName);
+  constructor(storePrefix: string = '') {
+    this.storeService = new StoreService(storePrefix);
+    this.serverService = new ServerService();
   }
 
   @step({
-    name: 'Run docker container',
+    name: 'Run docker container'
   })
   async runDockerContainer(): Promise<void> {
     const ssh = await this.serverService.getConnection();
@@ -21,15 +21,15 @@ export default class KeyVaultService {
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
     const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
-    this.conf.set('keyVaultVersion', keyVaultVersion);
+    this.storeService.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
-      {},
+      {}
     );
   }
 
   @step({
-    name: 'Run key vault scripts',
+    name: 'Run key vault scripts'
   })
   async runScripts(): Promise<void> {
     const ssh = await this.serverService.getConnection();
@@ -39,7 +39,7 @@ export default class KeyVaultService {
     }
     const { stderr } = await ssh.execCommand(
       `docker exec -t ${containerId} sh -c "/bin/sh /vault/config/vault-init.sh; /bin/sh /vault/config/vault-unseal.sh; /bin/sh /vault/config/vault-plugin.sh"`,
-      {},
+      {}
     );
     if (stderr) {
       throw new Error(`Key Vault entrypoint scripts are failed: ${stderr}`);
@@ -52,17 +52,17 @@ export default class KeyVaultService {
   })
   async updateVaultStorage(): Promise<void> {
     try {
-      const storage = this.conf.get('keyVaultStorage');
-      await got.post(`http://${this.conf.get('publicIp')}:8200/v1/ethereum/storage`, {
+      const storage = this.storeService.get('keyVaultStorage');
+      await got.post(`http://${this.storeService.get('publicIp')}:8200/v1/ethereum/storage`, {
         headers: {
-          'Authorization': `Bearer ${this.conf.get('vaultRootToken')}`
+          'Authorization': `Bearer ${this.storeService.get('vaultRootToken')}`
         },
         body: {
           // @ts-ignore
-          data: storage,
+          data: storage
         },
         // @ts-ignore
-        json: true,
+        json: true
       });
     } catch (error) {
       throw new Error(`Vault plugin api error: ${error}`);
@@ -71,22 +71,22 @@ export default class KeyVaultService {
 
   @step({
     name: 'Get key vault status',
-    requiredConfig: ['publicIp'],
+    requiredConfig: ['publicIp']
   })
   async getKeyVaultStatus() {
     // check if the key vault is alive
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
       await got.get(
-        `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
+        `http://${this.storeService.get('publicIp')}:8200/v1/sys/health`,
         {
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
               return +attemptCount < 3 ? computedValue : 0;
-            },
-          },
-        },
+            }
+          }
+        }
       );
       return { isActive: true };
     } catch (e) {
@@ -97,22 +97,22 @@ export default class KeyVaultService {
 
   @step({
     name: 'Get key vault status fail',
-    requiredConfig: ['publicIp'],
+    requiredConfig: ['publicIp']
   })
   async getKeyVaultStatusFail() {
     // check if the key vault is alive
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
       await got.get(
-        `http://${this.conf.get('publicIp')}:8200/v1/sys/health`,
+        `http://${this.storeService.get('publicIp')}:8200/v1/sys/health`,
         {
           retry: {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
               return +attemptCount < 3 ? computedValue : 0;
-            },
-          },
-        },
+            }
+          }
+        }
       );
       return { isActive: true };
     } catch (e) {

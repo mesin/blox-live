@@ -1,27 +1,27 @@
-import ElectronStore from 'electron-store';
+import StoreService from '../store-manager/store.service';
 import KeyVaultCliService from '../key-vault/key-vault-cli.service';
 import { step } from '../decorators';
 
 
 export default class AccountKeyVaultService extends KeyVaultCliService {
-  private readonly conf: ElectronStore;
+  private readonly storeService: StoreService;
 
-  constructor(storeName: string) {
+  constructor() {
     super();
-    this.conf = new ElectronStore({ name: storeName });
+    this.storeService = new StoreService();
   }
 
   @step({
     name: 'Create Wallet'
   })
   async createWallet(): Promise<void> {
-    if (this.conf.get('keyVaultStorage')) return;
+    if (this.storeService.get('keyVaultStorage')) return;
     const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   @step({
@@ -30,18 +30,18 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
   })
   async createAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account create --seed=${this.conf.get('seed')} --storage=${this.conf.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account create --seed=${this.storeService.get('seed')} --storage=${this.storeService.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Create account error: ${stderr}`);
     }
     console.log(stdout);
-    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   listAccounts = async (): Promise<any> => {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account list --storage=${this.conf.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account list --storage=${this.storeService.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Get last created account error: ${stderr}`);
@@ -66,7 +66,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     }
     publicKey = publicKey.replace(/^(0x)/, '');
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --storage=${this.conf.get('keyVaultStorage')} --public-key=${publicKey}`
+      `${this.executablePath} wallet account deposit-data --storage=${this.storeService.get('keyVaultStorage')} --public-key=${publicKey}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
@@ -78,12 +78,12 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   deleteLastIndexedAccount = async (): Promise<void> => {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account delete --storage=${this.conf.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account delete --storage=${this.storeService.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.conf.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
   };
 }

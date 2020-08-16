@@ -4,23 +4,26 @@ import KeyVaultService from '../key-vault/key-vault.service';
 import DockerService from '../key-vault/docker.service';
 import ProcessClass from './process.class';
 
+// TODO import from .env
+const tempStorePrefix = '-tmp';
+
 export default class ReinstallProcess extends ProcessClass {
-  public readonly awsService: AwsService;
-  public readonly awsServiceOld: AwsService;
-  public readonly keyVaultService: KeyVaultService;
-  public readonly dockerService: DockerService;
-  public readonly accountService: AccountService;
-  public readonly accountServiceOld: AccountService;
+  private readonly awsService: AwsService;
+  private readonly awsServiceOld: AwsService;
+  private readonly keyVaultService: KeyVaultService;
+  private readonly dockerService: DockerService;
+  private readonly accountService: AccountService;
+  private readonly accountServiceOld: AccountService;
   public readonly actions: Array<any>;
 
   constructor() {
     super();
-    this.keyVaultService = new KeyVaultService(`${this.storeName}-tmp`);
-    this.awsService = new AwsService(`${this.storeName}-tmp`);
-    this.awsServiceOld = new AwsService(this.storeName);
-    this.dockerService = new DockerService(`${this.storeName}-tmp`);
-    this.accountService = new AccountService(`${this.storeName}-tmp`);
-    this.accountServiceOld = new AccountService(this.storeName);
+    this.keyVaultService = new KeyVaultService(tempStorePrefix);
+    this.awsService = new AwsService(tempStorePrefix);
+    this.awsServiceOld = new AwsService();
+    this.dockerService = new DockerService();
+    this.accountService = new AccountService(tempStorePrefix);
+    this.accountServiceOld = new AccountService();
     this.actions = [
       { instance: this.accountServiceOld, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
@@ -34,7 +37,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
-      { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' },
+      { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' }
     ];
   }
 }

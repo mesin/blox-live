@@ -4,12 +4,12 @@ import { step } from '../decorators';
 export default class DockerService {
   public readonly serverService: ServerService;
 
-  constructor(storeName: string) {
-    this.serverService = new ServerService(storeName);
+  constructor() {
+    this.serverService = new ServerService();
   }
 
   @step({
-    name: 'Install docker on a server',
+    name: 'Install docker on a server'
   })
   async installDockerScope(): Promise<void> {
     const ssh = await this.serverService.getConnection();
@@ -23,7 +23,7 @@ export default class DockerService {
     await ssh.execCommand('sudo usermod -a -G docker ec2-user', {});
     await ssh.execCommand(
       'sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose',
-      {},
+      {}
     );
   }
 }
