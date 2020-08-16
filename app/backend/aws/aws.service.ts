@@ -235,5 +235,6 @@ export default class AwsService {
         });
       }, DELAY);
     });
+    return result;
   }
 }

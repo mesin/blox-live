@@ -129,6 +129,8 @@ export default class AccountService {
     name: 'Prepare tmp storage',
   })
   public prepareTmpStorageConfig(): void {
+    const tmpConf = new ElectronStore({ name: `${this.storeName}-tmp` });
+    tmpConf.clear();
     this.setClientStorageParams(`${this.storeName}-tmp`, {
       uuid: this.conf.get('uuid'),
       authToken: this.conf.get('authToken'),

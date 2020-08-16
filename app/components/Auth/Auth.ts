@@ -145,6 +145,8 @@ export default class Auth {
     this.tokens.idToken = id_token;
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
+    console.log('SET SESSION', authResult, userProfile);
+    console.log('electronStore===>', electronStore);
     electronStore.set('authToken', authResult.id_token);
     if (refresh_token) {
       await keytar.setPassword(

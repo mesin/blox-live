@@ -86,7 +86,7 @@ export default class KeyVaultService {
               return +attemptCount < 2 ? computedValue : 0;
             },
           },
-          timeout: 5,
+          timeout: 5000,
         },
       );
       return { isActive: true };
