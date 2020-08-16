@@ -29,10 +29,10 @@ let configIsSet = false;
 const Test = (props) => {
   const { token } = props;
   console.log('token', token);
-  const seedService = new SeedService('blox');
-  const accountKeyVaultService = new AccountKeyVaultService('blox');
+  const seedService = new SeedService();
+  const accountKeyVaultService = new AccountKeyVaultService();
   const storeService = new StoreService();
-  console.log('---->generalConf', cf);
+  console.log('---->generalConf', storeService);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
