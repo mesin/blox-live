@@ -97,13 +97,13 @@ export default class AccountService {
     name: 'Create Blox Account',
     requiredConfig: ['authToken']
   })
-  async createBloxAccount(): Promise<void> {
+  async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
       throw new Error(`No account to create`);
     }
     try {
-      const { body } = await got.post('https://api.stage.bloxstaking.com/accountss', {
+      const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
         headers: {
           'Authorization': `Bearer ${this.storeService.get('authToken')}`
         },
@@ -113,6 +113,7 @@ export default class AccountService {
         json: true
       });
       console.log('Blox account created', body);
+      return { data: body };
     } catch (error) {
       throw new Error(`Create Blox account error: ${error}`);
     }

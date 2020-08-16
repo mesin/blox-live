@@ -1,69 +1,59 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { InfoWithTooltip } from '../../../../../common/components';
-import { Title, SubTitle, Paragraph, Link, Button } from '../../common';
-import { loadDepositData } from '../../../actions';
+import { InfoWithTooltip } from 'common/components';
+import { Title, Paragraph, Link, BigButton } from '../../common';
+import { updateAccountStatus } from '../../../actions';
 import * as selectors from '../../../selectors';
-import { ButtonInnerWrapper, MetaMaskButton } from './components';
-import { getTxHash } from '../../../../MetaMask/selectors';
+import { getData } from '../../../../ProcessRunner/selectors';
+import { DepositData } from './components';
 
-import ethImage from 'components/Wizard/components/Validators/StakingDeposit/assets/eth-logo.svg';
+const Wrapper = styled.div`
+  width:580px;
+`;
 
-const Wrapper = styled.div``;
+const GoEthButton = styled.a`
+  width:113px;
+  height:28px;
+  border-radius:6px;
+  border:solid 1px ${({theme}) => theme.gray400};
+  font-size: 11px;
+  font-weight: 500;
+  color:${({theme}) => theme.primary900};
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:12px;
+  cursor:pointer;
+`;
 
 const ButtonsWrapper = styled.div`
-  width: 33vw;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
+  width:100%;
+  margin-top:36px;
+  display:flex;
+  justify-content:space-between;
 `;
 
-const ButtonText = styled.div`
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 1.75;
+const CancelButton = styled(BigButton)`
+  color:${({theme}) => theme.gray600};
+  background-color:transparent;
+  border:1px solid ${({theme}) => theme.gray400};
 `;
 
-const StatusContainer = styled.div`
-  width: 560px;
-  height: 44px;
-  padding: 0px 16px;
-  margin-top: 66px;
-  display: flex;
-  align-items: center;
-  border-radius: 8px;
-  color: ${({ theme }) => theme.primary900};
-  background-color: ${({ theme }) => theme.primary100};
-`;
-
-const StatusContainerSuccess = styled(StatusContainer)`
-  background-color: ${({ theme }) => theme.accent2300};
-`;
-
-let toolTipText =
-  'GoETH are test tokens needed in order to participate in the Goerli Test Network.';
-toolTipText +=
-  'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
+let toolTipText = 'GoETH are test tokens needed in order to participate in the Goerli Test Network.';
+toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
 
 const StakingDeposit = (props: Props) => {
-  const {
-    setPage,
-    page,
-    depositData,
-    isLoading,
-    callLoadDepositData,
-    metaMaskTxHash,
-  } = props;
+  const { setPage, page, depositData, accountData, callUpdateAccountStatus } = props;
 
-  useEffect(() => {
-    if (!depositData && !isLoading) {
-      callLoadDepositData();
-    }
-    if (metaMaskTxHash) {
-      setTimeout(() => setPage(page + 1), 2000);
-    }
-  }, [isLoading, depositData, metaMaskTxHash]);
+  const onMadeDepositButtonClick = async () => {
+    await callUpdateAccountStatus(accountData.id);
+    await setPage(page + 1);
+  };
+
+  const onDepositLaterButtonClick = () => {
+    setPage(page + 1);
+  };
 
   return (
     <Wrapper>
@@ -75,25 +65,17 @@ const StakingDeposit = (props: Props) => {
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
         simulate validator deposits on the proof-of-work enabled Beacon-chain.
+        <GoEthButton href={'https://discord.gg/Kw5eFh'} target={'_blank'}>Need GoETH?</GoEthButton>
       </Paragraph>
-      <SubTitle>How would you like to stake?</SubTitle>
+
+      {depositData && <DepositData depositData={depositData} />}
+      <Link target={'_blank'} href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
+        Need help?
+      </Link>
       <ButtonsWrapper>
-        <MetaMaskButton />
-        <Button width="260px" height="100px" isDisabled>
-          <ButtonInnerWrapper>
-            <img src={ethImage} />
-            <ButtonText>Other ETH Wallets</ButtonText>
-          </ButtonInnerWrapper>
-        </Button>
+        <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
+        <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
       </ButtonsWrapper>
-      <Link href={'/'}>Need help?</Link>
-      {metaMaskTxHash ? (
-        <StatusContainerSuccess>
-          Status: Validator Deposit Received!
-        </StatusContainerSuccess>
-      ) : (
-        <StatusContainer>Status: Waiting for deposit</StatusContainer>
-      )}
     </Wrapper>
   );
 };
@@ -101,12 +83,11 @@ const StakingDeposit = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
-  publicKey: selectors.getPublicKey(state),
-  metaMaskTxHash: getTxHash(state.metaMask),
+  accountData: getData(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callLoadDepositData: () => dispatch(loadDepositData()),
+  callUpdateAccountStatus: (accountId: string) => dispatch(updateAccountStatus(accountId)),
 });
 
 type Props = {
@@ -116,9 +97,8 @@ type Props = {
   setStep: (page: number) => void;
   isLoading: boolean;
   depositData: Record<string, any> | null;
-  callLoadDepositData: () => void;
-  publicKey: string;
-  metaMaskTxHash: string;
+  accountData: Record<string, any> | null;
+  callUpdateAccountStatus: (accountId: string) => void;
 };
 
 type State = Record<string, any>;

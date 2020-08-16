@@ -2,7 +2,6 @@ import StoreService from '../store-manager/store.service';
 import KeyVaultCliService from '../key-vault/key-vault-cli.service';
 import { step } from '../decorators';
 
-
 export default class AccountKeyVaultService extends KeyVaultCliService {
   private readonly storeService: StoreService;
 
@@ -62,9 +61,9 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   getDepositData = async (publicKey: string): Promise<any> => {
     if (!publicKey) {
-      throw new Error(`publicKey is empty`);
+      throw new Error('publicKey is empty');
     }
-    publicKey = publicKey.replace(/^(0x)/, '');
+    const publicKeyWithoutPrefix = publicKey.replace(/^(0x)/, '');
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account deposit-data --storage=${this.storeService.get('keyVaultStorage')} --public-key=${publicKey}`
     );

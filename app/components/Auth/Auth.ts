@@ -147,6 +147,8 @@ export default class Auth {
     this.userProfile = userProfile;
     this.baseStoreService.set('currentUserId', userProfile.sub);
     this.baseStoreService.set('authToken', authResult.id_token);
+    console.log('SET SESSION', authResult, userProfile);
+    console.log('electronStore===>', this.baseStoreService);
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,

@@ -26,12 +26,13 @@ class Listener implements Observer {
 }
 
 let configIsSet = false;
-
-const Test = () => {
-  const seedService = new SeedService();
-  const accountKeyVaultService = new AccountKeyVaultService();
+const Test = (props) => {
+  const { token } = props;
+  console.log('token', token);
+  const seedService = new SeedService('blox');
+  const accountKeyVaultService = new AccountKeyVaultService('blox');
   const storeService = new StoreService();
-  console.log('---->generalConf', storeService);
+  console.log('---->generalConf', cf);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');

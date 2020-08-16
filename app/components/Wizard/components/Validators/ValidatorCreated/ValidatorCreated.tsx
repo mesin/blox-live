@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import { Title, SubTitle, Paragraph, SmallButton, SuccessIcon } from '../../common';
+import { Title, SubTitle, Paragraph, BigButton, SuccessIcon } from '../../common';
 import * as selectors from '../../../../ProcessRunner/selectors';
 
 const Wrapper = styled.div``;
@@ -42,9 +42,9 @@ const ValidatorCreated = (props: Props) => {
       <SmallText>
         You can later export your validator keys.
       </SmallText>
-      <SmallButton onClick={() => setPage(page + 1)}>
+      <BigButton onClick={() => setPage(page + 1)}>
         Continue to Staking Deposit
-      </SmallButton>
+      </BigButton>
     </Wrapper>
   );
 };
