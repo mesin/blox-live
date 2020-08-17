@@ -1,22 +1,14 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import styled from 'styled-components';
 import { useInjectSaga } from 'utils/injectSaga';
 import * as currentActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 import { loadDepositData } from '../../../actions';
-
-import { Title, Paragraph, BigButton, Link, Connection } from '../../common';
+import { GenerateKeys, KeysGenerated } from './components';
 
 const key = 'processRunner';
-
-const Wrapper = styled.div``;
-
-const ButtonWrapper = styled.div`
-  margin-bottom: 12px;
-`;
 
 const CreateValidator = (props: Props) => {
   const { page, setPage, actions, isLoading, message, validatorData, callLoadDepositData } = props;
@@ -27,31 +19,25 @@ const CreateValidator = (props: Props) => {
   useEffect(() => {
     if (!isLoading && validatorData) {
       callLoadDepositData();
-      setPage(page + 1);
     }
   }, [isLoading, validatorData]);
 
-  const onButtonClick = () => {
+  const onGenerateKeysClick = () => {
     processSubscribe('createAccount', 'Generating Validator Keys...');
   };
 
+  const onContinueClick = () => {
+    setPage(page + 1);
+  };
+
   return (
-    <Wrapper>
-      <Title>Create TestNet Validator</Title>
-      <Paragraph>
-        Now we must generate your secure validator keys to begin creating your{' '}
-        <br />
-        Testnet validator. These keys will be generated securely using KeyVault.{' '}
-        <br />
-        <Link href="/">What is a validator key?</Link>
-      </Paragraph>
-      <ButtonWrapper>
-        <BigButton onClick={onButtonClick}>
-          Generate Validator Keys
-        </BigButton>
-      </ButtonWrapper>
-      {isLoading && <Connection text={message} />}
-    </Wrapper>
+    <>
+      {validatorData ? (
+        <KeysGenerated onClick={onContinueClick} validatorData={validatorData} />
+      ) : (
+        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} message={message} />
+      )}
+    </>
   );
 };
 

@@ -66,7 +66,7 @@ const Regular = (props) => {
   const isButtonDisabled = !mnemonic;
   return (
     <Wrapper>
-      <Title>Select your Cloud Provider</Title>
+      <Title>Backup Passphrase</Title>
       <Paragraph>
         Validator keys can be retrieved only with your unique mnemonic backup passphrase.
         This 24-word passphrase <BoldText>must be stored safely</BoldText> to withdrawal

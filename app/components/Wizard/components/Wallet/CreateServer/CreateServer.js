@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { ProgressBar, ProgressMessage, Button } from 'common/components';
 import { useInjectSaga } from 'utils/injectSaga';
 
-import { Title, Paragraph, Link, TextInput } from '../../common';
+import { Title, Paragraph, TextInput } from '../../common';
 import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
@@ -24,6 +24,11 @@ const Wrapper = styled.div`
   font-family: Avenir;
   font-size: 16px;
   font-weight: 500;
+`;
+
+const GuideButton = styled.span`
+  color:${({theme}) => theme.primary900};
+  cursor:pointer;
 `;
 
 const TextInputsWrapper = styled.div`
@@ -45,6 +50,7 @@ const CreateServer = (props) => {
   const { processSubscribe, processClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
+  const [showGuide, setGuideDisplay] = React.useState(false);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
   const isTextInputDisabled = isLoading || isDone;
 
@@ -72,9 +78,7 @@ const CreateServer = (props) => {
         Blox needs to have access to your AWS access/secret tokens. <br /> <br />
 
         To create a suitable server and access tokens follow this&nbsp;
-        <Link href="https://www.bloxstaking.com/blox-guide-why-blox-need-access-to-my-server" target="_blank">
-          step-by-step guide
-        </Link>
+        <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
       <TextInputsWrapper>
         <TextInput name={'accessKeyId'} title={'Access Key ID'} type={'text'}
@@ -91,7 +95,7 @@ const CreateServer = (props) => {
           <ProgressMessage>{installMessage}</ProgressMessage>
         </ProgressWrapper>
       )}
-      <Guide />
+      {showGuide && <Guide onClose={() => setGuideDisplay(false)} />}
     </Wrapper>
   );
 };

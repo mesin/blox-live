@@ -24,16 +24,22 @@ const Navigation = (props: Props) => {
   return (
     <Wrapper>
       <MenuItem text="KeyVault Setup" number={1} step={step} />
-      <SubMenuItem text="Create a server" page={page} number={1} />
-      <SubMenuItem text="Install KeyVault" page={page} number={2} />
-      <SubMenuItem text="KeyVault created" page={page} number={3} />
+      {step === 1 && (
+        <>
+          <SubMenuItem text="Select Cloud Provider" page={page} number={1} />
+          <SubMenuItem text="Create Server" page={page} number={2} />
+          <SubMenuItem text="Save Passphrase" page={page} number={3} />
+        </>
+      )}
       <Separator />
-      <MenuItem text="Create a Validator" number={2} step={step} />
-      <SubMenuItem text="Select Staking Network" page={page} number={4} />
-      <SubMenuItem text="Generate Keys" page={page} number={5} />
-      <SubMenuItem text="Keys Created" page={page} number={6} />
-      <SubMenuItem text="Staking Deposit" page={page} number={7} />
-      <SubMenuItem text="Wait for Approval" page={page} number={8} />
+      <MenuItem text="Validator Creation" number={2} step={step} />
+      {step === 2 && (
+        <>
+          <SubMenuItem text="Select Staking Network" page={page} number={5} />
+          <SubMenuItem text="Generate Keys" page={page} number={6} />
+          <SubMenuItem text="Staking Deposit" page={page} number={7} />
+        </>
+      )}
     </Wrapper>
   );
 };
