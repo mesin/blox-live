@@ -54,8 +54,8 @@ const DepositData = (props) => { // TODO: check if depositDataRoot is the tx dat
           To Address:
           <InfoWithTooltip title={moreInfoTexts.to} placement="right" />
         </KeyText>
-        <ValueText>0x0F0F0fc0530007361933EaB5DB97d09aCDD6C1c8</ValueText>
-        <CopyToClipboardIcon text={'0x0F0F0fc0530007361933EaB5DB97d09aCDD6C1c8'} onCopy={onCopy} />
+        <ValueText>0x07b39f4fde4a38bace212b546dac87c58dfe3fdc</ValueText>
+        <CopyToClipboardIcon text={'0x07b39f4fde4a38bace212b546dac87c58dfe3fdc'} onCopy={onCopy} />
       </Row>
       <Row>
         <KeyText>
