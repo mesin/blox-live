@@ -11,9 +11,13 @@ import * as selectors from '../../selectors';
 import saga from '../../saga';
 import ButtonWithIcon from './ButtonWithIcon';
 
+import SeedService from 'backend/key-vault/seed.service';
+
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
 import mainNetImg from 'components/Wizard/assets/img-validator-main-net.svg';
+
+const seedService = new SeedService();
 
 const Wrapper = styled.div`
   width: 100%;
@@ -67,7 +71,16 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
-    hasWallet && setStep2Status(true);
+    const hasSeed = !!seedService.getSeed();
+
+    if (hasWallet) {
+      if (hasSeed) {
+        setStep2Status(true);
+      }
+      else {
+        jumpToPassPhrasePage();
+      }
+    }
   }, [isLoading]);
 
   const onStep1Click = () => !showStep2 && setPage(1);
@@ -81,6 +94,8 @@ const WelcomePage = (props: Props) => {
       setPage(5);
     }
   };
+
+  const jumpToPassPhrasePage = () => setPage(3);
 
   return (
     <Wrapper>
