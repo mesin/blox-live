@@ -5,9 +5,9 @@ export const processSubscribe = (name: string, defaultMessage: string, credentia
   payload: { name, defaultMessage, credentials },
 });
 
-export const processObserve = (message: string, isActive: boolean, data: Record<string, any>) => ({
+export const processObserve = (payload: Record<string, any>) => ({
   type: actionTypes.PROCESS_OBSERVE,
-  payload: {message, isActive, data},
+  payload,
 });
 
 export const processUnSubscribe = () => ({

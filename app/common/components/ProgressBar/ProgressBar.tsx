@@ -4,7 +4,8 @@ import { LinearProgress } from '@material-ui/core';
 
 const ProgressBar = styled((props) => (
   <LinearProgress
-    classes={{ loader: props.classes, indeterminate: 'progressbar' }}
+    variant={'determinate'}
+    classes={{ loader: props.classes, determinate: 'progressbar' }}
     {...props}
   />
 ))`

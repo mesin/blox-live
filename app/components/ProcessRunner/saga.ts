@@ -17,9 +17,14 @@ function* startProcess(action) {
       console.log('allStates', result.subject.actions.length);
       console.log('stepName', result.payload.step.name);
       console.log('isActive', result.payload.isActive);
-
-      const message = `${result.subject.state}/${result.subject.actions.length} > ${result.payload.step.name}`;
-      yield put(actions.processObserve(message, result.payload.isActive, result.payload.data));
+      const observePayload = {
+        overallSteps: result.subject.actions.length,
+        currentStep: result.subject.state,
+        message: result.payload.step.name,
+        isActive: result.payload.isActive,
+        data: result.payload.data
+      };
+      yield put(actions.processObserve(observePayload));
     }
   }
   catch (e) {

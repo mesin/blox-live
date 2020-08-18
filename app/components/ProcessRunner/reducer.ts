@@ -4,6 +4,8 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   name: '',
   message: '',
+  overallSteps: 0,
+  currentStep: 0,
   isServerActive: false,
   data: null,
   isLoading: false,
@@ -13,16 +15,19 @@ const initialState = {
 
 /* eslint-disable default-case, no-param-reassign */
 const processRunnerReducer = (state = initialState, action: Action) => produce(state, (draft) => {
+  const { payload } = action;
   switch (action.type) {
     case actionTypes.PROCESS_SUBSCRIBE:
       draft.isLoading = true;
-      draft.name = action.payload.name;
-      draft.message = action.payload.defaultMessage;
+      draft.name = payload.name;
+      draft.message = payload.defaultMessage;
       break;
     case actionTypes.PROCESS_OBSERVE:
-      draft.message = action.payload.message;
-      draft.isServerActive = action.payload.isActive;
-      draft.data = action.payload.data;
+      draft.message = payload.message;
+      draft.isServerActive = payload.isActive;
+      draft.data = payload.data;
+      draft.overallSteps = payload.overallSteps;
+      draft.currentStep = payload.currentStep;
       break;
     case actionTypes.PROCESS_UNSUBSCRIBE:
       draft.isLoading = initialState.isLoading;
@@ -31,7 +36,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isDone = true;
       break;
     case actionTypes.PROCESS_FAILURE:
-      draft.error = action.payload.message;
+      draft.error = payload.message;
       draft.isLoading = initialState.isLoading;
       draft.name = initialState.name;
       draft.message = initialState.message;
@@ -39,6 +44,8 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       break;
     case actionTypes.PROCESS_CLEAR_STATE:
       draft.isDone = initialState.isDone;
+      draft.overallSteps = initialState.overallSteps;
+      draft.currentStep = initialState.currentStep;
       break;
   }
 });

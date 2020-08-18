@@ -5,7 +5,6 @@ export { default as Paragraph } from './Paragraph';
 export { default as Link } from './Link';
 export { default as Button } from './Button';
 export { default as BigButton } from './BigButton';
-export { default as Connection } from './Connection';
 export { default as CopyToClipboard } from './CopyToClipboard';
 export { default as CopyToClipboardIcon } from './CopyToClipboardIcon';
 export { default as SuccessIcon } from './SuccessIcon';

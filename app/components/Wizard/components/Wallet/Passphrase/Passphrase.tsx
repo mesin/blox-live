@@ -42,7 +42,7 @@ const Passphrase = (props: Props) => {
     writeToTxtFile('passphrase', mnemonic);
   };
 
-  const showBackupScreen = () => toggleBackupDisplay(true);
+  const showBackupScreen = () => mnemonic && toggleBackupDisplay(true);
 
   const hideBackupScreen = () => toggleBackupDisplay(false);
 

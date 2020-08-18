@@ -4,14 +4,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { ProgressBar, ProgressMessage, Button } from 'common/components';
+import { ProcessLoader, Button } from 'common/components';
 import { useInjectSaga } from 'utils/injectSaga';
+import { precentageCalculator } from 'utils/service';
 
-import { Title, Paragraph, TextInput } from '../../common';
 import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
-import { getIdToken } from '../../../../CallbackPage/selectors';
+
+import { Title, Paragraph, TextInput } from '../../common';
 import Guide from '../Guide';
 
 const key = 'processRunner';
@@ -46,13 +47,14 @@ const ProgressWrapper = styled.div`
 `;
 
 const CreateServer = (props) => {
-  const { page, setPage, isLoading, isDone, processName, installMessage, actions, authToken } = props;
+  const { page, setPage, isLoading, isDone, processName, installMessage, actions, overallSteps, currentStep } = props;
   const { processSubscribe, processClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(false);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
   const isTextInputDisabled = isLoading || isDone;
+  const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
 
   useInjectSaga({ key, saga, mode: '' });
 
@@ -65,7 +67,7 @@ const CreateServer = (props) => {
 
   const onClick = async () => {
     if (!isButtonDisabled && !installMessage && !processName) {
-      const credentials = { accessKeyId, secretAccessKey, authToken };
+      const credentials = { accessKeyId, secretAccessKey };
       await processSubscribe('install', 'Checking KeyVault configuration...', credentials);
     }
   };
@@ -76,7 +78,6 @@ const CreateServer = (props) => {
       <Paragraph>
         We will now create your KeyVault on your selected server. <br />
         Blox needs to have access to your AWS access/secret tokens. <br /> <br />
-
         To create a suitable server and access tokens follow this&nbsp;
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
@@ -91,8 +92,7 @@ const CreateServer = (props) => {
       <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
       {isLoading && installMessage && (
         <ProgressWrapper>
-          <ProgressBar />
-          <ProgressMessage>{installMessage}</ProgressMessage>
+          <ProcessLoader text={installMessage} precentage={loaderPrecentage} />
         </ProgressWrapper>
       )}
       {showGuide && <Guide onClose={() => setGuideDisplay(false)} />}
@@ -105,7 +105,8 @@ const mapStateToProps = (state) => ({
   installMessage: selectors.getMessage(state),
   isLoading: selectors.getIsLoading(state),
   isDone: selectors.getIsDone(state),
-  authToken: getIdToken(state),
+  overallSteps: selectors.getOverallSteps(state),
+  currentStep: selectors.getCurrentStep(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -120,7 +121,8 @@ CreateServer.propTypes = {
   isDone: PropTypes.bool,
   processName: PropTypes.string,
   installMessage: PropTypes.string,
-  authToken: PropTypes.string,
+  overallSteps: PropTypes.number,
+  currentStep: PropTypes.number,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServer);
