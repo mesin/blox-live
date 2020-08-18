@@ -43,7 +43,6 @@ const moreInfoTexts = {
 
 const DepositData = (props) => { // TODO: check if depositDataRoot is the tx data
   const { depositData } = props;
-  const { depositDataRoot } = depositData;
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
@@ -62,8 +61,8 @@ const DepositData = (props) => { // TODO: check if depositDataRoot is the tx dat
           Tx Data:
           <InfoWithTooltip title={moreInfoTexts.txData} placement="right" />
         </KeyText>
-        <ValueText>{depositDataRoot}</ValueText>
-        <CopyToClipboardIcon text={depositDataRoot} onCopy={onCopy} />
+        <ValueText>{depositData}</ValueText>
+        <CopyToClipboardIcon text={depositData} onCopy={onCopy} />
       </Row>
       <Row>
         <KeyText>
