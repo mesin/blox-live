@@ -5,6 +5,7 @@ import Spinner from '../Spinner';
 import ProgressBar from '../ProgressBar';
 
 const Wrapper = styled.div`
+  width:100%;
   display: flex;
   flex-direction: column;
   font-weight: 900;
