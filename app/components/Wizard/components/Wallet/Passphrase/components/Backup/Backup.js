@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Icon, Spinner } from 'common/components';
-import { Title, Paragraph, Warning, TextInput } from '../../../../common';
+import { Title, Paragraph, Warning, TextInput, TextArea } from '../../../../common';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -29,18 +29,6 @@ const IconWrapper = styled.div`
   transform:rotate(180deg);
 `;
 
-const Textarea = styled.textarea`
-  width: 484px;
-  height: 90px;
-  padding:8px 10px;
-  border-radius: 4px;
-  border: solid 1px ${({theme}) => theme.gray300};
-  background-color: #ffffff;
-  ::placeholder {
-    color:${({theme}) => theme.gray400};
-  }
-`;
-
 const TextInputsWrapper = styled.div`
   width: 454px;
   margin-top:41px;
@@ -58,7 +46,8 @@ const ButtonWrapper = styled.div`
 const Backup = (props) => {
   const { onNextButtonClick, onBackButtonClick, password, setPassword, confirmPassword,
           setConfirmPassword, isSaveAndConfirmEnabled, duplicatedMnemonic, setDuplicatedMnemonic,
-          isLoading,
+          isLoading, showDuplicatedMnemonicError, onDuplicateMnemonicBlur,
+          showPasswordError, onPasswordBlur, showConfirmPasswordError, onConfirmPasswordBlur
         } = props;
   return (
     <Wrapper>
@@ -75,16 +64,18 @@ const Backup = (props) => {
         creating/removing a validator.
       </Paragraph>
 
-      <Textarea value={duplicatedMnemonic} onChange={(e) => setDuplicatedMnemonic(e.target.value)}
-        placeholder={'Separate each word with a space'}
+      <TextArea value={duplicatedMnemonic} onChange={setDuplicatedMnemonic} onBlur={onDuplicateMnemonicBlur}
+        placeholder={'Separate each word with a space'} error={showDuplicatedMnemonicError ? 'Passphrase not correct' : ''}
       />
 
       <TextInputsWrapper>
         <TextInput name={'password'} title={'Password (min 8 chars)'} type={'text'}
-          onChange={setPassword} value={password}
+          onChange={setPassword} value={password} onBlur={onPasswordBlur}
+          error={showPasswordError ? 'The password is too short' : ''}
         />
         <TextInput name={'confirmPassword'} title={'Confirm Password'} type={'text'}
-          onChange={setConfirmPassword} value={confirmPassword}
+          onChange={setConfirmPassword} value={confirmPassword} onBlur={onConfirmPasswordBlur}
+          error={showConfirmPasswordError ? 'Passwords don\'t match' : ''}
         />
       </TextInputsWrapper>
 
@@ -109,6 +100,12 @@ Backup.propTypes = {
   duplicatedMnemonic: PropTypes.string,
   setDuplicatedMnemonic: PropTypes.func,
   isLoading: PropTypes.bool,
+  showDuplicatedMnemonicError: PropTypes.bool,
+  showPasswordError: PropTypes.bool,
+  showConfirmPasswordError: PropTypes.bool,
+  onDuplicateMnemonicBlur: PropTypes.func,
+  onPasswordBlur: PropTypes.func,
+  onConfirmPasswordBlur: PropTypes.func,
 };
 
 export default Backup;

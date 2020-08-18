@@ -35,8 +35,14 @@ const Guide = ({onClose}) => {
       <StepsCounter>{page} of {lastPage}</StepsCounter>
       <ContentManager page={page} />
       <NavigationButtonsWrapper>
-        <NavigationButton onClick={onPrevClick} show={page > 1}>Previous</NavigationButton>
-        <NavigationButton onClick={onNextClick} show={page < lastPage}>Next</NavigationButton>
+        <NavigationButton onClick={onPrevClick} show={page > 1}>
+          <Icon onClick={onPrevClick} name={'chevron-left'} color={'primary900'} fontSize={'20px'} />
+          Previous
+        </NavigationButton>
+        <NavigationButton onClick={onNextClick} show={page < lastPage}>
+          Next
+          <Icon onClick={onNextClick} name={'chevron-right'} color={'primary900'} fontSize={'20px'} />
+        </NavigationButton>
       </NavigationButtonsWrapper>
     </Wrapper>
   );

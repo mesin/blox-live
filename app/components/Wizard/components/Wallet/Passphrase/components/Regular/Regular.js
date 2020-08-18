@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button, Spinner } from 'common/components';
+import { Button, Spinner, Icon } from 'common/components';
 import { Title, Paragraph, Warning } from '../../../../common';
 import bgImage from './passphrase-bg-image.svg';
 
@@ -40,6 +40,13 @@ const Box = styled.div`
   cursor:${({clickable}) => clickable ? 'pointer' : 'default'};
 `;
 
+const InnerBoxWrapper = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+`;
+
 const DownloadButton = styled.button`
   width:200px;
   height: 16px;
@@ -75,7 +82,12 @@ const Regular = (props) => {
       <Warning text={'Do not share your backup passphrase with anyone.'} />
       <Box onClick={onPassphraseClick} clickable={mnemonic === ''}>
         {isLoading && !mnemonic && <Spinner />}
-        {mnemonic !== '' ? mnemonic : 'Click to reveal passphrase'}
+        {mnemonic !== '' ? mnemonic : (
+          <InnerBoxWrapper>
+            <Icon name={'lock'} color={'primary900'} fontSize={'34px'} />
+            Click to reveal passphrase
+          </InnerBoxWrapper>
+        )}
       </Box>
       <DownloadButton onClick={onDownloadClick} isDisabled={!mnemonic}>Download backup passphrase</DownloadButton>
       <ButtonWrapper>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useInjectSaga } from 'utils/injectSaga';
 
@@ -16,6 +16,9 @@ const Passphrase = (props: Props) => {
   const [duplicatedMnemonic, setDuplicatedMnemonic] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showDuplicatedMnemonicError, setDuplicatedMnemonicErrorDisplay] = useState(false);
+  const [showPasswordError, setPasswordErrorDisplay] = useState(false);
+  const [showConfirmPasswordError, setConfirmPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !mnemonic;
 
   useInjectSaga({ key, saga, mode: '' });
@@ -28,7 +31,7 @@ const Passphrase = (props: Props) => {
 
   const onSaveAndConfirmClick = async () => {
     const { saveMnemonic } = props;
-    if (mnemonic === duplicatedMnemonic) {
+    if (canGenerateMnemonic()) {
       await saveMnemonic(duplicatedMnemonic, password);
       await !isButtonDisabled && setPage(page + 1);
     }
@@ -43,9 +46,38 @@ const Passphrase = (props: Props) => {
 
   const hideBackupScreen = () => toggleBackupDisplay(false);
 
-  const isSaveAndConfirmEnabled = () => {
-    if (password === '' || confirmPassword === '') { return false; }
-    return password.length > 8 && confirmPassword.length > 8 && password === confirmPassword;
+  const canGenerateMnemonic = () => {
+    const mnemonicsAreEqual = mnemonic === duplicatedMnemonic;
+    const passwordsAreEqual = password === confirmPassword;
+    const passwordshaveMoreThan8Char = password.length >= 8 && confirmPassword.length >= 8;
+    return mnemonicsAreEqual && passwordsAreEqual && passwordshaveMoreThan8Char;
+  };
+
+  const onDuplicateMnemonicBlur = () => {
+    if (mnemonic !== duplicatedMnemonic) {
+      setDuplicatedMnemonicErrorDisplay(true);
+    }
+    else {
+      setDuplicatedMnemonicErrorDisplay(false);
+    }
+  };
+
+  const onPasswordBlur = () => {
+    if (password.length < 8) {
+      setPasswordErrorDisplay(true);
+    }
+    else {
+      setPasswordErrorDisplay(false);
+    }
+  };
+
+  const onConfirmPasswordBlur = () => {
+    if (password !== confirmPassword && !showConfirmPasswordError) {
+      setConfirmPasswordErrorDisplay(true);
+    }
+    if (password === confirmPassword && showConfirmPasswordError) {
+      setConfirmPasswordErrorDisplay(false);
+    }
   };
 
   return (
@@ -53,13 +85,16 @@ const Passphrase = (props: Props) => {
       {showBackup ? (
         <Backup onNextButtonClick={onSaveAndConfirmClick} onBackButtonClick={hideBackupScreen}
           password={password} setPassword={setPassword} confirmPassword={confirmPassword}
-          setConfirmPassword={setConfirmPassword} isSaveAndConfirmEnabled={isSaveAndConfirmEnabled}
+          setConfirmPassword={setConfirmPassword} isSaveAndConfirmEnabled={canGenerateMnemonic}
           duplicatedMnemonic={duplicatedMnemonic} setDuplicatedMnemonic={setDuplicatedMnemonic}
-          isLoading={isLoading}
+          showDuplicatedMnemonicError={showDuplicatedMnemonicError} onDuplicateMnemonicBlur={onDuplicateMnemonicBlur}
+          isLoading={isLoading} showPasswordError={showPasswordError} showConfirmPasswordError={showConfirmPasswordError}
+          onPasswordBlur={onPasswordBlur} onConfirmPasswordBlur={onConfirmPasswordBlur}
         />
       ) : (
         <Regular mnemonic={mnemonic} isLoading={isLoading} onPassphraseClick={onPassphraseClick}
-          onNextButtonClick={showBackupScreen} onDownloadClick={onDownloadClick} />
+          onNextButtonClick={showBackupScreen} onDownloadClick={onDownloadClick}
+        />
       )}
     </>
   );
