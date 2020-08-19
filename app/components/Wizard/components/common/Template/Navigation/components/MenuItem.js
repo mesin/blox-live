@@ -17,10 +17,8 @@ const Circle = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ isActive, theme }) => (isActive ? '#ffffff' : theme.gray80015)};
-  background-color: ${({ theme, isActive }) =>
-    isActive ? theme.primary900 : 'transparent'};
-  border-color: ${({ isActive, theme }) =>
-    isActive ? 'transparent' : theme.gray80015};
+  background-color: ${({ theme, isActive }) => isActive ? theme.primary900 : 'transparent'};
+  border-color: ${({ isActive, theme }) => isActive ? 'transparent' : theme.gray80015};
   border: 2px solid;
   border-radius: 50%;
   font-size: 12px;
@@ -28,18 +26,17 @@ const Circle = styled.div`
 `;
 
 const Text = styled.div`
-  color: ${({ isActive, theme }) =>
-    isActive ? theme.primary900 : theme.gray80015};
+  color: ${({ isActive, theme }) => isActive ? theme.primary900 : theme.gray80015};
 `;
 
-const MenuItem = ({ text, number, step }) => {
+const MenuItem = ({ text, number, step, page, finalPage }) => {
   const isActive = step === number;
-  const isDone = step > number;
+  const isDone = page === finalPage || step > number;
   return (
     <Wrapper>
       <Circle isActive={isActive} isDone={isDone}>
         {isDone ? (
-          <Icon name="check" color="gray80015" fontSize="18px" />
+          <Icon name="check" color={isActive && isDone ? 'white' : 'gray80015'} fontSize="18px" />
         ) : (
           <span>{number}</span>
         )}
@@ -52,6 +49,8 @@ const MenuItem = ({ text, number, step }) => {
 };
 
 MenuItem.propTypes = {
+  page: PropTypes.number,
+  finalPage: PropTypes.number,
   step: PropTypes.number,
   text: PropTypes.string,
   number: PropTypes.number,
