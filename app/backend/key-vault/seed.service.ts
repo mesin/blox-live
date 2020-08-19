@@ -1,5 +1,5 @@
 import StoreService from '../store-manager/store.service';
-import KeyVaultCliService from './key-vault-cli.service';
+import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
 import { step } from '../decorators';
 
 export default class SeedService extends KeyVaultCliService {

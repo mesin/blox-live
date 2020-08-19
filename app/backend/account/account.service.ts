@@ -1,22 +1,39 @@
-import got from 'got';
 import StoreService from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
 import AccountKeyVaultService from '../account/account-key-vault.service';
+import BloxApiService from '../communication-manager/blox-api.service';
 import { step } from '../decorators';
 
 // TODO import from .env
-const tempStorePrefix = '-tmp';
+const tempStorePrefix = 'tmp';
 
 export default class AccountService {
   private readonly storeService: StoreService;
   private readonly serverService: ServerService;
   private readonly accountKeyVaultService: AccountKeyVaultService;
+  private readonly bloxApiService: BloxApiService;
 
   constructor(storePrefix: string = '') {
     this.storeService = new StoreService(storePrefix);
     this.serverService = new ServerService();
     this.accountKeyVaultService = new AccountKeyVaultService();
+    this.bloxApiService = new BloxApiService();
   }
+
+  get = async () => {
+    return await this.bloxApiService.request('GET', 'accounts');
+  };
+
+  delete = async () => {
+    return await this.bloxApiService.request('DELETE', 'accounts');
+  };
+
+  updateStatus = async (route: string, payload: any) => {
+    if (!route) {
+      throw new Error('route')
+    }
+    return await this.bloxApiService.request('PATCH', `accounts/${route}`, payload);
+  };
 
   @step({
     name: 'Get key vault root token',
@@ -76,20 +93,15 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Remove Organization Accounts',
+    name: 'Remove Blox Accounts',
     requiredConfig: ['authToken']
   })
   async deleteBloxAccounts(): Promise<void> {
     try {
-      await got.delete('https://api.stage.bloxstaking.com/accounts', {
-        headers: {
-          'Authorization': `Bearer ${this.storeService.get('authToken')}`
-        }
-      });
+      await this.delete();
       this.storeService.delete('keyVaultStorage');
-      console.log('blox accounts deleted');
     } catch (error) {
-      throw new Error(`Blox Staking api error: ${error}`);
+      throw new Error(`STEP: Remove Blox Accounts step error: ${error}`);
     }
   }
 
@@ -103,19 +115,10 @@ export default class AccountService {
       throw new Error(`No account to create`);
     }
     try {
-      const { body } = await got.post('https://api.stage.bloxstaking.com/accounts', {
-        headers: {
-          'Authorization': `Bearer ${this.storeService.get('authToken')}`
-        },
-        // @ts-ignore
-        body: lastIndexedAccount,
-        // @ts-ignore
-        json: true
-      });
-      console.log('Blox account created', body);
-      return { data: body };
+      const response = await this.bloxApiService.request('POST', 'accounts', lastIndexedAccount);
+      return { data: response };
     } catch (error) {
-      throw new Error(`Create Blox account error: ${error}`);
+      throw new Error(`STEP: Create Blox Account error: ${error}`);
     }
   }
 

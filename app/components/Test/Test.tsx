@@ -11,6 +11,7 @@ import AccountCreateProcess from '../../backend/proccess-manager/account-create.
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
 import SeedService from '../../backend/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
+import BloxApiService from '../../backend/communication-manager/blox-api.service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -31,6 +32,7 @@ const Test = (props) => {
   console.log('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
+  const bloxApiService = new BloxApiService();
   const storeService = new StoreService();
   console.log('---->generalConf', storeService);
   let [accessKeyId, setAccessKeyId] = useState('');
@@ -216,6 +218,15 @@ const Test = (props) => {
           await accountKeyVaultService.getDepositData(publicKey);
         }}>
           Get Account Deposit Data
+        </button>
+      </div>
+      <p/>
+      <h2>Blox API</h2>
+      <div>
+        <button onClick={async () => {
+          await bloxApiService.request('GET', 'accounts');
+        }}>
+          Get Accounts
         </button>
       </div>
       <p/>
