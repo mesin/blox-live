@@ -12,7 +12,7 @@ import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 
-import { Title, Paragraph, TextInput } from '../../common';
+import { Title, Paragraph, PasswordInput } from '../../common';
 import Guide from '../Guide';
 
 const key = 'processRunner';
@@ -32,7 +32,7 @@ const GuideButton = styled.span`
   cursor:pointer;
 `;
 
-const TextInputsWrapper = styled.div`
+const PasswordInputsWrapper = styled.div`
   width:55%;
   height: 100px;
   display: flex;
@@ -53,7 +53,7 @@ const CreateServer = (props) => {
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(false);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
-  const isTextInputDisabled = isLoading || isDone;
+  const isPasswordInputDisabled = isLoading || isDone;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
 
   useInjectSaga({ key, saga, mode: '' });
@@ -81,14 +81,14 @@ const CreateServer = (props) => {
         To create a suitable server and access tokens follow this&nbsp;
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
-      <TextInputsWrapper>
-        <TextInput name={'accessKeyId'} title={'Access Key ID'} type={'password'}
-          onChange={setAccessKeyId} value={accessKeyId} isDisabled={isTextInputDisabled}
+      <PasswordInputsWrapper>
+        <PasswordInput name={'accessKeyId'} title={'Access Key ID'}
+          onChange={setAccessKeyId} value={accessKeyId} isDisabled={isPasswordInputDisabled}
         />
-        <TextInput name={'secretAccessKey'} title={'Secret Access Key'} type={'password'}
-          onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isTextInputDisabled}
+        <PasswordInput name={'secretAccessKey'} title={'Secret Access Key'}
+          onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isPasswordInputDisabled}
         />
-      </TextInputsWrapper>
+      </PasswordInputsWrapper>
       <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
       {isLoading && installMessage && (
         <ProgressWrapper>
