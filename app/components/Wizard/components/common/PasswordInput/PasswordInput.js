@@ -21,7 +21,7 @@ const TextField = styled.input`
   font-weight: 500;
   border-radius: 4px;
   border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.gray300};
-  padding:8px 12px;
+  padding:8px 32px 8px 12px;
 `;
 
 const ErrorMessage = styled.span`

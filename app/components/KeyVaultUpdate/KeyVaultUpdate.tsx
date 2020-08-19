@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from './components/Modals';
+import { SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals/Modals';
 
 const KeyVaultUpdate = ({onClose}: Props) => {
   const [step, setStep] = useState(0);
