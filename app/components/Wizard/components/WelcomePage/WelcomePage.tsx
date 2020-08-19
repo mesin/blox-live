@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
 import { InfoWithTooltip } from 'common/components';
-import { Reactivation } from '../../..';
+import { KeyVaultReactivation } from '../../..';
 import { useInjectSaga } from '../../../../utils/injectSaga';
 import * as wizardActions from '../../actions';
 import * as selectors from '../../selectors';
@@ -117,7 +117,7 @@ const WelcomePage = (props: Props) => {
           isDisabled={!showStep2} onClick={onStep2Click}
         />
       </Right>
-      {showReactivationModal && <Reactivation onClose={() => setReactivationModalDisplay(false)} />}
+      {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
     </Wrapper>
   );
 };

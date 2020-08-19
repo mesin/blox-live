@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Reactivation } from '..';
+import { KeyVaultReactivation } from '..';
 import { Wallet, Validators } from './components';
 import { summarizeAccounts, normalizeAccountsData } from './service';
 
@@ -23,7 +23,7 @@ const Dashboard = (props) => {
     <Wrapper>
       <Wallet isActive={walletStatus === 'active'} summary={accountsSummary} setReactivationModalDisplay={setReactivationModalDisplay} />
       <Validators accounts={normalizedAccounts} />
-      {showReactivationModal && <Reactivation onClose={() => setReactivationModalDisplay(false)} />}
+      {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
     </Wrapper>
   );
 };

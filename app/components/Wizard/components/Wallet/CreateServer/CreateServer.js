@@ -82,10 +82,10 @@ const CreateServer = (props) => {
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
       <TextInputsWrapper>
-        <TextInput name={'accessKeyId'} title={'Access Key ID'} type={'text'}
+        <TextInput name={'accessKeyId'} title={'Access Key ID'} type={'password'}
           onChange={setAccessKeyId} value={accessKeyId} isDisabled={isTextInputDisabled}
         />
-        <TextInput name={'secretAccessKey'} title={'Secret Access Key'} type={'text'}
+        <TextInput name={'secretAccessKey'} title={'Secret Access Key'} type={'password'}
           onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isTextInputDisabled}
         />
       </TextInputsWrapper>

@@ -5,7 +5,7 @@ import * as actions from './actions';
 
 import SeedService from '../../backend/key-vault/seed.service';
 
-const seedService = new SeedService('blox');
+const seedService = new SeedService();
 
 function* startLoadingMnemonic() {
   try {

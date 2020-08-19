@@ -69,11 +69,11 @@ const Backup = (props) => {
       />
 
       <TextInputsWrapper>
-        <TextInput name={'password'} title={'Password (min 8 chars)'} type={'text'}
+        <TextInput name={'password'} title={'Password (min 8 chars)'} type={'password'}
           onChange={setPassword} value={password} onBlur={onPasswordBlur}
           error={showPasswordError ? 'The password is too short' : ''}
         />
-        <TextInput name={'confirmPassword'} title={'Confirm Password'} type={'text'}
+        <TextInput name={'confirmPassword'} title={'Confirm Password'} type={'password'}
           onChange={setConfirmPassword} value={confirmPassword} onBlur={onConfirmPasswordBlur}
           error={showConfirmPasswordError ? 'Passwords don\'t match' : ''}
         />

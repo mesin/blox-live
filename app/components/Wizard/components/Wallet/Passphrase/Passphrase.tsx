@@ -4,11 +4,11 @@ import { useInjectSaga } from 'utils/injectSaga';
 
 import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
-import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyVaultManagement/actions';
-import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
-import saga from '../../../../KeyVaultManagement/saga';
+import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyvaultManagement/actions';
+import { getMnemonic, getIsLoading } from '../../../../KeyvaultManagement/selectors';
+import saga from '../../../../KeyvaultManagement/saga';
 
-const key = 'keyVaultManagement';
+const key = 'KeyvaultManagement';
 
 const Passphrase = (props: Props) => {
   const { page, setPage, mnemonic, isLoading } = props;

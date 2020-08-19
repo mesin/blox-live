@@ -11,7 +11,7 @@ module.exports = {
     'import/newline-after-import': 0,
     'import/no-dynamic-require': 0,
     'import/no-named-as-default': 0,
-    'import/no-unresolved': 2,
+    'import/no-unresolved': 0,
     'import/no-webpack-loader-syntax': 0,
     'import/prefer-default-export': 0,
     'jsx-a11y/aria-props': 2,
