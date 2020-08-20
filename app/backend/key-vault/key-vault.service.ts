@@ -13,7 +13,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Run docker container'
+    name: 'Running docker container...'
   })
   async runDockerContainer(): Promise<void> {
     const ssh = await this.serverService.getConnection();
@@ -29,7 +29,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Run key vault scripts'
+    name: 'Running KeyVault...'
   })
   async runScripts(): Promise<void> {
     const ssh = await this.serverService.getConnection();
@@ -47,7 +47,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Update Storage',
+    name: 'Updating server storage...',
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
   async updateVaultStorage(): Promise<void> {
@@ -70,7 +70,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Get key vault status',
+    name: 'Validating KeyVault final configuration...',
     requiredConfig: ['publicIp']
   })
   async getKeyVaultStatus() {

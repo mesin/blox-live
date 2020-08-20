@@ -13,7 +13,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
   }
 
   @step({
-    name: 'Create Wallet'
+    name: 'Creating wallet...'
   })
   async createWallet(): Promise<void> {
     if (this.storeService.get('keyVaultStorage')) return;
