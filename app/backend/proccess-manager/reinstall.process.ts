@@ -5,7 +5,7 @@ import DockerService from '../key-vault/docker.service';
 import ProcessClass from './process.class';
 
 // TODO import from .env
-const tempStorePrefix = '-tmp';
+const tempStorePrefix = 'tmp';
 
 export default class ReinstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
@@ -39,7 +39,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' },
-      { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' },
+      { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' }
     ];
   }
 }
