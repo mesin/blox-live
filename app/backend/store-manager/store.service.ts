@@ -7,12 +7,12 @@ export default class StoreService extends BaseStoreService {
   constructor(prefix: string = '') {
     super();
     const userId = this.baseStore.get('currentUserId');
-    const storeName = `${this.baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
+    const storeName = `${this.baseStoreName}${userId ? `-${userId}` : ''}${prefix ? `-${prefix}` : ''}`;
     this.store = new ElectronStore({ name: storeName });
   }
 
   get = (key: string): any => {
-    let value = this.store.get(key);
+    const value = this.store.get(key);
     if (!value) {
       return this.baseStore.get(key);
     }

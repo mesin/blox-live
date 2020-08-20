@@ -1,7 +1,7 @@
 import got from 'got';
 import StoreService from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
-import AccountKeyVaultService from '../account/account-key-vault.service';
+import AccountKeyVaultService from './account-key-vault.service';
 import { step } from '../decorators';
 
 // TODO import from .env

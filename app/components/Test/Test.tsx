@@ -11,28 +11,32 @@ import AccountCreateProcess from '../../backend/proccess-manager/account-create.
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
 import SeedService from '../../backend/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
+import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
+  private readonly logger: LoggerService;
 
   constructor(func: any) {
     this.logFunc = func;
+    this.logger = new LoggerService();
   }
 
   public update(subject: Subject, payload: any) {
     this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.step.name}`);
-    console.log(`${subject.state}/${subject.actions.length}`, payload);
+    this.logger.error(`${subject.state}/${subject.actions.length}`, payload);
   }
 }
 
 let configIsSet = false;
 const Test = (props) => {
   const { token } = props;
-  console.log('token', token);
+  const logger = new LoggerService();
+  logger.debug('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
   const storeService = new StoreService();
-  console.log('---->generalConf', storeService);
+  logger.debug('---->generalConf', storeService);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -83,7 +87,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+ Congratulations. Installation is done!');
+            logger.debug('+ Congratulations. Installation is done!');
           }}
         >
           Install
@@ -107,7 +111,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+ Congratulations. Account Created');
+            logger.debug('+ Congratulations. Account Created');
           }}
         >
           Account Create
@@ -146,7 +150,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+ Uninstallation is done!');
+            logger.debug('+ Uninstallation is done!');
           }}
         >
           Uninstall
@@ -161,7 +165,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+ Congratulations. Reboot is done!');
+            logger.debug('+ Congratulations. Reboot is done!');
           }}
         >
           Reboot
@@ -176,7 +180,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
-            console.log('+Clean Accounts from storage is done!');
+            logger.debug('+Clean Accounts from storage is done!');
           }}
         >
           Clean Accounts from Storage
