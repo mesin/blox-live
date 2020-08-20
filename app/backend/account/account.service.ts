@@ -1,7 +1,7 @@
 import got from 'got';
 import StoreService from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
-import AccountKeyVaultService from '../account/account-key-vault.service';
+import AccountKeyVaultService from './account-key-vault.service';
 import { step } from '../decorators';
 
 // TODO import from .env
@@ -19,7 +19,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Get key vault root token',
+    name: 'Getting KeyVault authentication token...',
     requiredConfig: ['publicIp']
   })
   async getKeyVaultRootToken(): Promise<void> {
@@ -30,7 +30,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Sync vault with blox api',
+    name: 'Syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async syncVaultWithBlox(): Promise<void> {
