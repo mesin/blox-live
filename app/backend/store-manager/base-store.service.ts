@@ -15,4 +15,8 @@ export default class BaseStoreService {
   set = (key: string, value: any): void => {
     this.baseStore.set(key, value);
   };
+
+  clear = (): void => {
+    this.baseStore.clear();
+  };
 }

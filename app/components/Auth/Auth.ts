@@ -182,6 +182,7 @@ export default class Auth {
     const { service, account } = this.keytar;
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
     await keytar.deletePassword(service, account);
+    this.baseStoreService.clear();
     this.tokens = {
       accessToken: null,
       profile: null,
