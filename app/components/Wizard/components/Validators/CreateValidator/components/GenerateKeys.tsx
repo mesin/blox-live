@@ -1,11 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Title, Paragraph, BigButton, Link, Connection } from '../../../common';
+import { ProcessLoader } from 'common/components';
+import { Title, Paragraph, BigButton, Link } from '../../../common';
 
 const Wrapper = styled.div``;
 
 const ButtonWrapper = styled.div`
   margin-bottom: 12px;
+`;
+
+const LoaderWrapper = styled.div`
+  max-width:500px;
 `;
 
 const GenerateKeys = (props: Props) => {
@@ -25,7 +30,11 @@ const GenerateKeys = (props: Props) => {
           Generate Validator Keys
         </BigButton>
       </ButtonWrapper>
-      {isLoading && <Connection text={message} />}
+      {isLoading && (
+        <LoaderWrapper>
+          <ProcessLoader text={message} />
+        </LoaderWrapper>
+      )}
     </Wrapper>
   );
 };

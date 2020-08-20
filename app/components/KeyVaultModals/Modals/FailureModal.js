@@ -4,15 +4,15 @@ import { Button, FailureIcon } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
 import { Title, Description, Wrapper, DiscordText } from '..';
 
-import image from '../../../Wizard/assets/img-key-vault-inactive.svg';
+import image from '../../Wizard/assets/img-key-vault-inactive.svg';
 import discordLogo from 'assets/images/discord-logo.svg';
 
-const ContactModal = ({onClick, onClose}) => {
+const FailureModal = ({title, onClick, onClose}) => {
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Wrapper>
         <FailureIcon size={'40px'} fontSize={'30px'} />
-        <Title fontSize={'32px'} color={'warning900'}>Troubleshooting Failed</Title>
+        <Title fontSize={'32px'} color={'warning900'}>{title}</Title>
       </Wrapper>
       <Description>
         Please contact our support team to resolve this issue.
@@ -25,9 +25,10 @@ const ContactModal = ({onClick, onClose}) => {
   );
 };
 
-ContactModal.propTypes = {
+FailureModal.propTypes = {
+  title: PropTypes.string,
   onClick: PropTypes.func,
   onClose: PropTypes.func,
 };
 
-export default ContactModal;
+export default FailureModal;

@@ -12,5 +12,6 @@ export const isActive = (to, pathname) => {
   return isExact;
 };
 
-export const isEmptyObject = (obj) =>
-  Object.entries(obj).length === 0 && obj.constructor === Object;
+export const isEmptyObject = (obj) => Object.entries(obj).length === 0 && obj.constructor === Object;
+
+export const precentageCalculator = (current, overall) => ((current / overall) * 100).toFixed(0);

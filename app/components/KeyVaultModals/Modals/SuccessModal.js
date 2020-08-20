@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { SuccessIcon, Button } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
 import { Title, Description, Wrapper } from '..';
-import { loadWallet } from '../../../Wizard/actions';
+import { loadWallet } from '../../Wizard/actions';
 
-import image from '../../../Wizard/assets/img-key-vault.svg';
+import image from '../../Wizard/assets/img-key-vault.svg';
 
-const ReactivatedModal = ({onClose, callLoadWallet}) => {
+const SuccessModal = ({onClose, callLoadWallet, title}) => {
   const loadWalletAndClose = () => {
     callLoadWallet();
     onClose();
@@ -17,7 +17,7 @@ const ReactivatedModal = ({onClose, callLoadWallet}) => {
     <ModalTemplate onClose={onClose} image={image}>
       <Wrapper>
         <SuccessIcon size={'40px'} fontSize={'30px'} />
-        <Title fontSize={'32px'} color={'accent2400'}>Reactivating your KeyVault</Title>
+        <Title fontSize={'32px'} color={'accent2400'}>{title}</Title>
       </Wrapper>
       <Description>
         KeyVault is active and all validators are staking normally. We are investigating what caused the issue.
@@ -27,7 +27,8 @@ const ReactivatedModal = ({onClose, callLoadWallet}) => {
   );
 };
 
-ReactivatedModal.propTypes = {
+SuccessModal.propTypes = {
+  title: PropTypes.string,
   onClose: PropTypes.func,
   callLoadWallet: PropTypes.func,
 };
@@ -36,4 +37,4 @@ const mapDispatchToProps = (dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
 });
 
-export default connect(null, mapDispatchToProps)(ReactivatedModal);
+export default connect(null, mapDispatchToProps)(SuccessModal);

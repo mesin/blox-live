@@ -23,8 +23,8 @@ const Navigation = (props: Props) => {
   const { page, step } = props;
   return (
     <Wrapper>
-      <MenuItem text="KeyVault Setup" number={1} step={step} />
-      {step === 1 && (
+      <MenuItem text="KeyVault Setup" number={1} step={step} page={page} finalPage={4} />
+      {(step === 1 && page !== 4) && (
         <>
           <SubMenuItem text="Select Cloud Provider" page={page} number={1} />
           <SubMenuItem text="Create Server" page={page} number={2} />
@@ -32,7 +32,7 @@ const Navigation = (props: Props) => {
         </>
       )}
       <Separator />
-      <MenuItem text="Validator Creation" number={2} step={step} />
+      <MenuItem text="Validator Creation" number={2} step={step} page={page} finalPage={8} />
       {step === 2 && (
         <>
           <SubMenuItem text="Select Staking Network" page={page} number={5} />

@@ -13,3 +13,4 @@ export { default as ProgressBar } from './ProgressBar';
 export { default as ProgressMessage } from './ProgressMessage';
 export { default as SuccessIcon } from './SuccessIcon';
 export { default as FailureIcon } from './FailureIcon';
+export { default as ProcessLoader } from './ProcessLoader';

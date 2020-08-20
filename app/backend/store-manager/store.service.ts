@@ -7,6 +7,9 @@ export default class StoreService extends BaseStoreService {
   constructor(prefix: string = '') {
     super();
     const userId = this.baseStore.get('currentUserId');
+    if (!userId) {
+      throw new Error('Store service not ready to be initialised, currentUserId is missing');
+    }
     const storeName = `${this.baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
     this.store = new ElectronStore({ name: storeName });
   }
