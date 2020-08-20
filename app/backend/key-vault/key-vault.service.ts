@@ -1,25 +1,21 @@
 import StoreService from '../store-manager/store.service';
 import ServerService from './server.service';
-import BloxApiService from '../communication-manager/blox-api.service';
 import KeyVaultApiService from '../communication-manager/key-vault-api.service';
 import { step } from '../decorators';
+import AccountService from '../account/account.service';
 
 export default class KeyVaultService {
   private readonly storeService: StoreService;
   private readonly serverService: ServerService;
-  private readonly bloxApiService: BloxApiService;
+  private readonly accountService: AccountService;
   private readonly keyVaultApiService: KeyVaultApiService;
 
   constructor(storePrefix: string = '') {
     this.storeService = new StoreService(storePrefix);
     this.serverService = new ServerService();
-    this.bloxApiService = new BloxApiService();
+    this.accountService = new AccountService();
     this.keyVaultApiService = new KeyVaultApiService();
   }
-
-  getLatestTag = async () => {
-    return await this.bloxApiService.request('GET', 'key-vault/latest-tag');
-  };
 
   updateStorage = async (payload: any) => {
     return await this.keyVaultApiService.request('POST', 'ethereum/storage', payload);
@@ -37,7 +33,7 @@ export default class KeyVaultService {
     const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const { body: keyVaultVersion } = await this.getLatestTag();
+    const keyVaultVersion = await this.accountService.getLatestTag();
     this.storeService.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,

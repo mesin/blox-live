@@ -16,7 +16,8 @@ export default class HttpService {
       if (payload) {
         options['json'] = payload;
       }
-      return await this.instance(route, options).json();
+      const { body } = await this.instance(route, options);
+      return body;
     } catch (error) {
       throw new Error(`HTTP ${method} request error: ${error}`);
     }

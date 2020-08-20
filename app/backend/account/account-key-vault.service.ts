@@ -2,7 +2,6 @@ import StoreService from '../store-manager/store.service';
 import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
 import { step } from '../decorators';
 import Web3 from 'web3';
-import depositContractABI from '../../components/MetaMask/deposit_tx2.json';
 
 export default class AccountKeyVaultService extends KeyVaultCliService {
   private readonly storeService: StoreService;

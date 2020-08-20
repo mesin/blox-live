@@ -21,7 +21,8 @@ export default class AccountService {
   }
 
   get = async () => {
-    return await this.bloxApiService.request('GET', 'accounts');
+    const accounts = await this.bloxApiService.request('GET', 'accounts');
+    return JSON.parse(accounts);
   };
 
   delete = async () => {
@@ -30,9 +31,13 @@ export default class AccountService {
 
   updateStatus = async (route: string, payload: any) => {
     if (!route) {
-      throw new Error('route')
+      throw new Error('route');
     }
     return await this.bloxApiService.request('PATCH', `accounts/${route}`, payload);
+  };
+
+  getLatestTag = async () => {
+    return await this.bloxApiService.request('GET', 'key-vault/latest-tag');
   };
 
   @step({

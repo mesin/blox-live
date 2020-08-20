@@ -35,7 +35,7 @@ export default class Auth {
       account: os.userInfo().username
     };
     this.baseStoreService = new BaseStoreService();
-    this.authApiService = new AuthApiService(this.auth.domain);
+    this.authApiService = new AuthApiService();
   }
 
   loginWithSocialApp = async (name: string) => {

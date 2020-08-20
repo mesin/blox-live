@@ -2,10 +2,10 @@ import HttpService from './http.service';
 import got from 'got';
 
 export default class AuthApiService extends HttpService {
-  constructor(domain: string) {
+  constructor() {
     super();
     this.instance = got.extend({
-      prefixUrl: `https://${domain}/oauth`,
+      prefixUrl: `https://${process.env.AUTH0_DOMAIN}/oauth`,
       headers: {
         'content-type': 'application/json'
       }
