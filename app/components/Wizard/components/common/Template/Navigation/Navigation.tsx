@@ -33,7 +33,7 @@ const Navigation = (props: Props) => {
       )}
       <Separator />
       <MenuItem text="Validator Creation" number={2} step={step} page={page} finalPage={8} />
-      {step === 2 && (
+      {(step === 2 || page === 4) && (
         <>
           <SubMenuItem text="Select Staking Network" page={page} number={5} />
           <SubMenuItem text="Generate Keys" page={page} number={6} />

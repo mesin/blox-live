@@ -23,7 +23,9 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link href="/">What is a validator key?</Link>
+        <Link href={'https://www.bloxstaking.com/blox-guide-what-is-a-validator-key'} target={'_blank'}>
+          What is a validator key?
+        </Link>
       </Paragraph>
       <ButtonWrapper>
         <BigButton onClick={onClick}>

@@ -6,10 +6,12 @@ import { Title, SubTitle, Paragraph } from '../../common';
 import CustomButton from './CustomButton';
 import { BUTTONS } from './constants';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  width:650px;
+`;
 
 const ButtonsWrapper = styled.div`
-  width: 39vw;
+  width:100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,21 +31,19 @@ const Validators = (props: Props) => (
       staking services. Currently, only our Testnet is available.
     </Paragraph>
     <Paragraph>
-      We are here for your next steps. Please select your staking network and
-      our <br />
-      wizard will guide you through the validator creation process.
+      Please select your staking network and our wizard will guide you through the <br />
+      validator creation process.
     </Paragraph>
     <SubTitle>How would you like to start?</SubTitle>
     <ButtonsWrapper>
       {BUTTONS.map((button, index) => {
-        const { title, label, imageName, sticker, isDisabled } = button;
-        const image = require(`components/Wizard/assets/${imageName}`);
+        const { title, label, image, sticker, isDisabled } = button;
         return (
           <CustomButton
             key={index}
             sticker={sticker}
             title={title}
-            image={image.default}
+            image={image}
             isDisabled={isDisabled}
             onClick={() => !isDisabled && onClick({ ...props }, label)}
           />

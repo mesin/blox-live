@@ -9,11 +9,11 @@ const Wrapper = styled.div`
 `;
 
 const Wallet = (props) => {
-  const { isActive, summary, setReactivationModalDisplay } = props;
+  const { isActive, ...rest } = props;
   return (
     <Wrapper>
       <StatusBar isActive={isActive} />
-      <Boxes isActive={isActive} summary={summary} setReactivationModalDisplay={setReactivationModalDisplay} />
+      <Boxes isActive={isActive} {...rest} />
     </Wrapper>
   );
 };
