@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import StoreService from '../../backend/store-manager/store.service';
+import { storeService } from '../../backend/store-manager/store.service';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -31,7 +31,6 @@ const Test = (props) => {
   console.log('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
-  const storeService = new StoreService();
   console.log('---->generalConf', storeService);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');

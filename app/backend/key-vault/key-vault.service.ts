@@ -1,5 +1,5 @@
 import got from 'got';
-import StoreService from '../store-manager/store.service';
+import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import ServerService from './server.service';
 import { step } from '../decorators';
 
@@ -8,7 +8,7 @@ export default class KeyVaultService {
   private readonly serverService: ServerService;
 
   constructor(storePrefix: string = '') {
-    this.storeService = new StoreService(storePrefix);
+    this.storeService = resolveStoreService(storePrefix);
     this.serverService = new ServerService();
   }
 
@@ -84,10 +84,10 @@ export default class KeyVaultService {
             limit: 2,
             calculateDelay: ({ attemptCount, computedValue }) => {
               return +attemptCount < 2 ? computedValue : 0;
-            },
+            }
           },
-          timeout: 5000,
-        },
+          timeout: 5000
+        }
       );
       return { isActive: true };
     } catch (e) {

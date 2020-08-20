@@ -1,18 +1,24 @@
 import ElectronStore from 'electron-store';
 import BaseStoreService from './base-store.service';
 
-export default class StoreService extends BaseStoreService {
-  private readonly store: ElectronStore;
+class StoreService extends BaseStoreService {
+  private store: ElectronStore;
+  private readonly prefix: string;
 
   constructor(prefix: string = '') {
     super();
-    const userId = this.baseStore.get('currentUserId');
+    this.prefix = prefix;
+  }
+
+  init = (userId: string, authToken: string): any => {
     if (!userId) {
       throw new Error('Store service not ready to be initialised, currentUserId is missing');
     }
-    const storeName = `${this.baseStoreName}${userId ? '-' + userId : ''}${prefix ? '-' + prefix : ''}`;
+    this.baseStore.set('currentUserId', userId);
+    this.baseStore.set('authToken', authToken);
+    const storeName = `${this.baseStoreName}${userId ? '-' + userId : ''}${this.prefix ? '-' + this.prefix : ''}`;
     this.store = new ElectronStore({ name: storeName });
-  }
+  };
 
   get = (key: string): any => {
     let value = this.store.get(key);
@@ -37,4 +43,25 @@ export default class StoreService extends BaseStoreService {
   clear = (): void => {
     this.store.clear();
   };
+
+  logout = (): void => {
+    this.baseStore.clear();
+  };
 }
+
+const storeService = new StoreService();
+const resolveStoreService = (storePrefix: string): StoreService => {
+  if (storePrefix) {
+    const prefixStoreService = new StoreService(storePrefix);
+    prefixStoreService.init(storeService.get('currentUserId'), storeService.get('authToken'));
+    return prefixStoreService;
+  } else {
+    return storeService;
+  }
+};
+
+export {
+  storeService,
+  StoreService,
+  resolveStoreService
+};

@@ -1,5 +1,5 @@
 import net from 'net';
-import StoreService from '../store-manager/store.service';
+import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import * as AWS from 'aws-sdk';
 import { step } from '../decorators';
 
@@ -14,7 +14,7 @@ export default class AwsService {
   };
 
   constructor(storePrefix: string = '') {
-    this.storeService = new StoreService(storePrefix);
+    this.storeService = resolveStoreService(storePrefix);
 
     if (!this.ec2 && this.storeService.get('credentials')) {
       this.setAWSCredentials();
