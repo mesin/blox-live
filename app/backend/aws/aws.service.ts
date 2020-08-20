@@ -22,7 +22,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Set AWS Credentials',
+    name: 'Securely connecting to AWS...',
     requiredConfig: ['credentials']
   })
   async setAWSCredentials(): Promise<any> {
@@ -34,7 +34,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Check AWS keys permissions'
+    name: 'Checking AWS keys permissions...'
   })
   async validateAWSPermissions() {
     try {
@@ -47,7 +47,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Create EC2 Key Pair',
+    name: 'Creating secure EC2 key pair...',
     requiredConfig: ['uuid']
   })
   async createEc2KeyPair() {
@@ -63,7 +63,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Allocate Elastic IP'
+    name: 'Enabling connection using Elastic IP...'
   })
   async createElasticIp() {
     if (this.storeService.get('addressId')) return;
@@ -77,7 +77,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Create Security Group',
+    name: 'Setting security group permissions...',
     requiredConfig: ['uuid']
   })
   async createSecurityGroup() {
@@ -115,7 +115,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Setup VPC Linux Instance',
+    name: 'Establishing KeyVault server...',
     requiredConfig: ['uuid', 'securityGroupId', 'addressId']
   })
   async createInstance() {

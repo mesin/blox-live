@@ -9,7 +9,7 @@ export default class DockerService {
   }
 
   @step({
-    name: 'Install docker on a server'
+    name: 'Installing docker...'
   })
   async installDockerScope(): Promise<void> {
     const ssh = await this.serverService.getConnection();

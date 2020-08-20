@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Icon } from 'common/components';
 
 const Wrapper = styled.div`
-  width:200px;
+  width:220px;
   height:70px;
   display:flex;
   flex-direction:column;
@@ -14,14 +15,13 @@ const Wrapper = styled.div`
 const Label = styled.label``;
 
 const TextField = styled.input`
-  width: 230px;
   height: 36px;
   color:${({theme, disabled}) => disabled ? theme.gray400 : theme.gray600};
   font-size: 12px;
   font-weight: 500;
   border-radius: 4px;
   border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.gray300};
-  padding:8px 12px;
+  padding:8px 32px 8px 12px;
 `;
 
 const ErrorMessage = styled.span`
@@ -33,19 +33,45 @@ const ErrorMessage = styled.span`
   bottom:-25px;
 `;
 
-const TextInput = (props) => {
-  const { name, title, onChange, type, value, isDisabled, error, ...rest } = props;
+const IconWrapper = styled.div`
+  width:25px;
+  height:35px;
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+`;
+
+const PasswordInput = (props) => {
+  const { name, title, onChange, value, isDisabled, error, ...rest } = props;
+  const [type, setType] = React.useState('password');
+
+  const toggleType = () => {
+    if (type === 'password') {
+      setType('text');
+    }
+    else {
+      setType('password');
+    }
+  };
+
   return (
     <Wrapper>
       <Label htmlFor={name}>{title}</Label>
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         disabled={isDisabled} {...rest} error={error} />
+      <IconWrapper onClick={toggleType}>
+        <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
+      </IconWrapper>
+
       {error && (<ErrorMessage>{error}</ErrorMessage>)}
     </Wrapper>
   );
 };
 
-TextInput.propTypes = {
+PasswordInput.propTypes = {
   name: PropTypes.string,
   title: PropTypes.string,
   onChange: PropTypes.func,
@@ -55,4 +81,4 @@ TextInput.propTypes = {
   error: PropTypes.string,
 };
 
-export default TextInput;
+export default PasswordInput;

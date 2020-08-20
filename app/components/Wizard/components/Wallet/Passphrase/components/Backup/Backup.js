@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Button, Icon, Spinner } from 'common/components';
-import { Title, Paragraph, Warning, TextInput, TextArea } from '../../../../common';
+import { Title, Paragraph, Warning, PasswordInput, TextArea } from '../../../../common';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -29,7 +29,7 @@ const IconWrapper = styled.div`
   transform:rotate(180deg);
 `;
 
-const TextInputsWrapper = styled.div`
+const PasswordInputsWrapper = styled.div`
   width: 454px;
   margin-top:41px;
   display: flex;
@@ -68,16 +68,16 @@ const Backup = (props) => {
         placeholder={'Separate each word with a space'} error={showDuplicatedMnemonicError ? 'Passphrase not correct' : ''}
       />
 
-      <TextInputsWrapper>
-        <TextInput name={'password'} title={'Password (min 8 chars)'} type={'password'}
+      <PasswordInputsWrapper>
+        <PasswordInput name={'password'} title={'Password (min 8 chars)'}
           onChange={setPassword} value={password} onBlur={onPasswordBlur}
           error={showPasswordError ? 'The password is too short' : ''}
         />
-        <TextInput name={'confirmPassword'} title={'Confirm Password'} type={'password'}
+        <PasswordInput name={'confirmPassword'} title={'Confirm Password'}
           onChange={setConfirmPassword} value={confirmPassword} onBlur={onConfirmPasswordBlur}
           error={showConfirmPasswordError ? 'Passwords don\'t match' : ''}
         />
-      </TextInputsWrapper>
+      </PasswordInputsWrapper>
 
       <ButtonWrapper>
         <Button isDisabled={!isSaveAndConfirmEnabled()} onClick={onNextButtonClick}>Save &amp; Confirm</Button>
