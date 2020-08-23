@@ -3,9 +3,9 @@ import { notification } from 'antd';
 import { KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC } from './actionTypes';
 import * as actions from './actions';
 import SeedService from '../../backend/key-vault/seed.service';
+const seedService = new SeedService();
 
 function* startLoadingMnemonic() {
-  const seedService = new SeedService();
   try {
     const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
@@ -19,7 +19,6 @@ function* startLoadingMnemonic() {
 function* startSavingMnemonic(action) {
   const { payload } = action;
   const { mnemonic, password } = payload;
-  const seedService = new SeedService();
   try {
     yield call(seedService.storeMnemonic, mnemonic, password);
     yield put(actions.keyvaultSaveMnemonicSuccess());

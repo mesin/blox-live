@@ -1,11 +1,11 @@
 import got from 'got';
-import StoreService from '../store-manager/store.service';
+import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
 import AccountKeyVaultService from './account-key-vault.service';
 import { step } from '../decorators';
 
 // TODO import from .env
-const tempStorePrefix = '-tmp';
+const tempStorePrefix = 'tmp';
 
 export default class AccountService {
   private readonly storeService: StoreService;
@@ -13,7 +13,7 @@ export default class AccountService {
   private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storePrefix: string = '') {
-    this.storeService = new StoreService(storePrefix);
+    this.storeService = resolveStoreService(storePrefix);
     this.serverService = new ServerService();
     this.accountKeyVaultService = new AccountKeyVaultService();
   }
@@ -123,7 +123,7 @@ export default class AccountService {
     name: 'Prepare tmp storage'
   })
   prepareTmpStorageConfig(): void {
-    const tmpStoreService = new StoreService(tempStorePrefix);
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
     tmpStoreService.setMultiple({
       uuid: this.storeService.get('uuid'),
       authToken: this.storeService.get('authToken'),
@@ -138,7 +138,7 @@ export default class AccountService {
     name: 'Store tmp config into main'
   })
   saveTmpConfigIntoMain(): void {
-    const tmpStoreService = new StoreService(tempStorePrefix);
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
     tmpStoreService.setMultiple({
       uuid: tmpStoreService.get('uuid'),
       authToken: tmpStoreService.get('authToken'),
