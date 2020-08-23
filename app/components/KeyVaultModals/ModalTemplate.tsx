@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   height:100%;
   display:flex;
   position:fixed;
-  z-index:5;
+  z-index:51;
 `;
 
 const InnerWrapper = styled.div`

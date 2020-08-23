@@ -52,7 +52,7 @@ const createWindow = async (downloadsDir) => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 1366,
-    height: 768,
+    height: 790,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
