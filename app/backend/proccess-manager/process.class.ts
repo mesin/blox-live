@@ -1,11 +1,11 @@
 import { Subject } from './subject.interface';
 import { Observer } from './observer.interface';
-import LoggerService from '../logger/logger.service';
+// import LoggerService from '../logger/logger.service';
 
 export default class ProcessClass implements Subject {
   public readonly actions: Array<any>;
   public readonly fallbackActions: Array<any>;
-  private readonly logger: LoggerService;
+  // private readonly logger: LoggerService;
   public state: number;
   /**
    * @type {Observer[]} List of subscribers. In real life, the list of
@@ -15,7 +15,7 @@ export default class ProcessClass implements Subject {
   public observers: Observer[] = [];
 
   constructor() {
-    this.logger = new LoggerService();
+    // this.logger = new LoggerService();
   }
 
   /**
@@ -24,20 +24,24 @@ export default class ProcessClass implements Subject {
   public subscribe(observer: any): void { // Observer
     const isExist = this.observers.includes(observer);
     if (isExist) {
-      return this.logger.debug('Subject: Observer has been attached already.');
+      return console.log('Subject: Observer has been attached already.');
+      // return this.logger.debug('Subject: Observer has been attached already.');
     }
-    this.logger.debug('Subject: Attached an observer.');
+    console.log('Subject: Attached an observer.');
+    // this.logger.debug('Subject: Attached an observer.');
     this.observers.push(observer);
   }
 
   public unsubscribe(observer: any): void { // Observer
     const observerIndex = this.observers.indexOf(observer);
     if (observerIndex === -1) {
-      return this.logger.debug('Subject: Nonexistent observer.');
+      return console.log('Subject: Nonexistent observer.');
+      // return this.logger.debug('Subject: Nonexistent observer.');
     }
 
     this.observers.splice(observerIndex, 1);
-    this.logger.debug('Subject: Detached an observer.');
+    console.log('Subject: Detached an observer.');
+    // this.logger.debug('Subject: Detached an observer.');
   }
 
   /**
@@ -66,7 +70,8 @@ export default class ProcessClass implements Subject {
         delete result.step;
         this.notify({ step: { name: stepInfo.name, status: 'completed' }, ...result });
       } catch (e) {
-        this.logger.error(e);
+        console.log(e);
+        // this.logger.error(e);
         if (Array.isArray(this.fallbackActions)) {
           const found = this.fallbackActions.find(step => step.method === action.method);
           if (found) {
