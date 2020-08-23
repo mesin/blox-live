@@ -18,5 +18,5 @@ export const precentageCalculator = (current, overall) => {
   if (current === 0 || overall === 0) {
     return 0;
   }
-  return ((current / overall) * 100).toFixed(0);
+  return Number(((current / overall) * 100).toFixed(0), 2);
 };

@@ -160,7 +160,7 @@ export default merge.smart(baseConfig, {
         use: {
           loader: 'url-loader',
           options: {
-            limit: 10000,
+            limit: 20000,
             mimetype: 'image/svg+xml',
           },
         },
