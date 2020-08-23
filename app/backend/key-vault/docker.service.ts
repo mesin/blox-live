@@ -4,8 +4,8 @@ import { step } from '../decorators';
 export default class DockerService {
   public readonly serverService: ServerService;
 
-  constructor() {
-    this.serverService = new ServerService();
+  constructor(storePrefix: string = '') {
+    this.serverService = new ServerService(storePrefix);
   }
 
   @step({
