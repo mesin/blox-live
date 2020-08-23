@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Icon } from 'common/components';
 
-const tooltipText = "Your KeyVault is inactive. Validators can't operate until this issue is resolved.";
+const tooltipText = 'Your KeyVault is inactive. Validators can\'t operate until this issue is resolved.';
 const height = '80px';
 
 const Wrapper = styled.div`
@@ -46,21 +46,20 @@ const Button = styled.button`
   cursor:pointer;
 `;
 
-const Popper = ({onMouseEnter, onMouseLeave, onClick}) => {
+const ReactivatePopper = ({onMouseEnter, onMouseLeave, onClick}) => {
   return (
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Icon name={'report'} fontSize={'20px'} />
       <Text>{tooltipText}</Text>
-      <Button onClick={() => onClick(true)}>Reactive <Icon name={'chevron-right'} /></Button>
+      <Button onClick={() => onClick(true)}>Reactivate <Icon name={'chevron-right'} /></Button>
     </Wrapper>
-  )
+  );
 };
 
-Popper.propTypes = {
+ReactivatePopper.propTypes = {
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
   onClick: PropTypes.func,
 };
 
-
-export default Popper;
+export default ReactivatePopper;

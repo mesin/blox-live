@@ -14,4 +14,9 @@ export const isActive = (to, pathname) => {
 
 export const isEmptyObject = (obj) => Object.entries(obj).length === 0 && obj.constructor === Object;
 
-export const precentageCalculator = (current, overall) => ((current / overall) * 100).toFixed(0);
+export const precentageCalculator = (current, overall) => {
+  if (current === 0 || overall === 0) {
+    return 0;
+  }
+  return Number(((current / overall) * 100).toFixed(0), 2);
+};

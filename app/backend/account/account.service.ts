@@ -1,6 +1,6 @@
-import StoreService from '../store-manager/store.service';
+import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import ServerService from '../key-vault/server.service';
-import AccountKeyVaultService from '../account/account-key-vault.service';
+import AccountKeyVaultService from './account-key-vault.service';
 import BloxApiService from '../communication-manager/blox-api.service';
 import { step } from '../decorators';
 
@@ -14,8 +14,8 @@ export default class AccountService {
   private readonly bloxApiService: BloxApiService;
 
   constructor(storePrefix: string = '') {
-    this.storeService = new StoreService(storePrefix);
-    this.serverService = new ServerService();
+    this.storeService = resolveStoreService(storePrefix);
+    this.serverService = new ServerService(storePrefix);
     this.accountKeyVaultService = new AccountKeyVaultService();
     this.bloxApiService = new BloxApiService();
   }
@@ -41,7 +41,7 @@ export default class AccountService {
   };
 
   @step({
-    name: 'Get key vault root token',
+    name: 'Getting KeyVault authentication token...',
     requiredConfig: ['publicIp']
   })
   async getKeyVaultRootToken(): Promise<void> {
@@ -52,7 +52,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Sync vault with blox api',
+    name: 'Syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async syncVaultWithBlox(): Promise<void> {
@@ -131,7 +131,7 @@ export default class AccountService {
     name: 'Prepare tmp storage'
   })
   prepareTmpStorageConfig(): void {
-    const tmpStoreService = new StoreService(tempStorePrefix);
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
     tmpStoreService.setMultiple({
       uuid: this.storeService.get('uuid'),
       authToken: this.storeService.get('authToken'),
@@ -146,8 +146,8 @@ export default class AccountService {
     name: 'Store tmp config into main'
   })
   saveTmpConfigIntoMain(): void {
-    const tmpStoreService = new StoreService(tempStorePrefix);
-    tmpStoreService.setMultiple({
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
+    this.storeService.setMultiple({
       uuid: tmpStoreService.get('uuid'),
       authToken: tmpStoreService.get('authToken'),
       addressId: tmpStoreService.get('addressId'),

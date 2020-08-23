@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useInjectSaga } from 'utils/injectSaga';
 
@@ -39,7 +39,7 @@ const Passphrase = (props: Props) => {
 
   const onDownloadClick = () => {
     if (!mnemonic) { return null; }
-    writeToTxtFile('passphrase', mnemonic);
+    writeToTxtFile('Blox Secret Backup Passphrase', mnemonic);
   };
 
   const showBackupScreen = () => mnemonic && toggleBackupDisplay(true);

@@ -1,4 +1,4 @@
-import StoreService from '../store-manager/store.service';
+import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import ServerService from './server.service';
 import KeyVaultApiService from '../communication-manager/key-vault-api.service';
 import { step } from '../decorators';
@@ -11,8 +11,8 @@ export default class KeyVaultService {
   private readonly keyVaultApiService: KeyVaultApiService;
 
   constructor(storePrefix: string = '') {
-    this.storeService = new StoreService(storePrefix);
-    this.serverService = new ServerService();
+    this.storeService = resolveStoreService(storePrefix);
+    this.serverService = new ServerService(storePrefix);
     this.accountService = new AccountService();
     this.keyVaultApiService = new KeyVaultApiService();
   }
@@ -26,11 +26,14 @@ export default class KeyVaultService {
   };
 
   @step({
-    name: 'Run docker container'
+    name: 'Running docker container...'
   })
   async runDockerContainer(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
+    const { stdout, stderr } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
+    if (stderr) {
+      console.log(stderr);
+    }
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
     const keyVaultVersion = await this.accountService.getLatestTag();
@@ -42,11 +45,14 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Run key vault scripts'
+    name: 'Running KeyVault...'
   })
   async runScripts(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    const { stdout: containerId } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
+    const { stdout: containerId, stderr: error } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
+    if (error) {
+      console.log(error);
+    }
     if (!containerId) {
       throw new Error('Key Vault docker container not found');
     }
@@ -60,7 +66,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Update Storage',
+    name: 'Updating server storage...',
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
   async updateVaultStorage(): Promise<void> {
@@ -73,7 +79,7 @@ export default class KeyVaultService {
   }
 
   @step({
-    name: 'Get key vault status',
+    name: 'Validating KeyVault final configuration...',
     requiredConfig: ['publicIp']
   })
   async getKeyVaultStatus() {

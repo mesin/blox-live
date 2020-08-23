@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { InfoWithTooltip } from 'common/components';
 import { Title, SubTitle, Paragraph, BigButton, SuccessIcon } from '../../../common';
 
 const Wrapper = styled.div``;
@@ -23,6 +24,11 @@ const SmallText = styled.div`
   font-size:12px;
 `;
 
+let publicKeyTooltip = 'The public (signing) key is used for signing the validator’s on-chain duties,';
+publicKeyTooltip += 'including proposing blocks and attesting to others. The validator public key must be online for signing 24/7.';
+let withdrawalKeyTooltip = 'The withdrawal public key is used to incorporate data into an Ethereum staking deposit,';
+withdrawalKeyTooltip += 'which will later be used for identifying the entity that is allowed to withdraw Ether using the Withdrawal Private Key.';
+
 const KeysGenerated = (props: Props) => {
   const { onClick, validatorData } = props;
   return (
@@ -33,9 +39,15 @@ const KeysGenerated = (props: Props) => {
         Your new Testnet validator keys were created and are now secured inside <br />
         your KeyVault. Validator will be visible on Etherscan only after deposit.
       </Paragraph>
-      <SubTitle>Public Key</SubTitle>
+      <SubTitle>
+        Public Key
+        <InfoWithTooltip title={publicKeyTooltip} placement="top" />
+      </SubTitle>
       <KeyWrapper>{validatorData.publicKey}</KeyWrapper>
-      <SubTitle>Withdrawal Key</SubTitle>
+      <SubTitle>
+        Withdrawal Key
+        <InfoWithTooltip title={withdrawalKeyTooltip} placement="top" />
+      </SubTitle>
       <KeyWrapper>{validatorData.withdrawalKey}</KeyWrapper>
       <SmallText>
         You can later export your validator keys.

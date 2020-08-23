@@ -1,5 +1,5 @@
-import StoreService from '../store-manager/store.service';
 import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
+import { storeService, StoreService } from '../store-manager/store.service';
 import { step } from '../decorators';
 import Web3 from 'web3';
 
@@ -8,11 +8,11 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   constructor() {
     super();
-    this.storeService = new StoreService();
+    this.storeService = storeService;
   }
 
   @step({
-    name: 'Create Wallet'
+    name: 'Creating wallet...'
   })
   async createWallet(): Promise<void> {
     if (this.storeService.get('keyVaultStorage')) return;

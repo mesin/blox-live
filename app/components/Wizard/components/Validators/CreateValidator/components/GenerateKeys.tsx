@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ProcessLoader } from 'common/components';
+import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link } from '../../../common';
 
 const Wrapper = styled.div``;
@@ -11,10 +11,17 @@ const ButtonWrapper = styled.div`
 
 const LoaderWrapper = styled.div`
   max-width:500px;
+  display:flex;
+`;
+
+const LoaderText = styled.span`
+  margin-left: 11px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.primary900};
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, message, onClick } = props;
+  const { isLoading, onClick } = props;
   return (
     <Wrapper>
       <Title>Create TestNet Validator</Title>
@@ -23,7 +30,9 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link href="/">What is a validator key?</Link>
+        <Link href={'https://www.bloxstaking.com/blox-guide-what-is-a-validator-key'} target={'_blank'}>
+          What is a validator key?
+        </Link>
       </Paragraph>
       <ButtonWrapper>
         <BigButton onClick={onClick}>
@@ -32,7 +41,8 @@ const GenerateKeys = (props: Props) => {
       </ButtonWrapper>
       {isLoading && (
         <LoaderWrapper>
-          <ProcessLoader text={message} />
+          <Spinner width="17px" />
+          <LoaderText>Generating Validator Keys...</LoaderText>
         </LoaderWrapper>
       )}
     </Wrapper>
@@ -41,7 +51,6 @@ const GenerateKeys = (props: Props) => {
 
 type Props = {
   isLoading: boolean;
-  message: string;
   onClick: () => void;
 };
 

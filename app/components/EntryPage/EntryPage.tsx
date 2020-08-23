@@ -13,6 +13,7 @@ import {
   getWalletStatus,
   getIsLoading,
   getWalletError,
+  getWalletVersion
 } from '../Wizard/selectors';
 import wizardSaga from '../Wizard/saga';
 
@@ -46,6 +47,7 @@ const EntryPage = (props: Props) => {
   const {
     callLoadWallet,
     walletStatus,
+    walletVersion,
     isLoadingWallet,
     walletErorr,
     callLoadAllAccounts,
@@ -69,6 +71,7 @@ const EntryPage = (props: Props) => {
   }, [isLoadingWallet, isLoadingAccounts]);
 
   const otherProps = {
+    walletVersion,
     walletStatus,
     isLoadingWallet,
     accounts,
@@ -84,20 +87,15 @@ const EntryPage = (props: Props) => {
       <Header withMenu />
       <Content>
         <Switch>
-          <Route
-            exact
-            path="/"
+          <Route exact path="/"
             render={(renderProps) => (
               <Dashboard
-                walletStatus={walletStatus}
-                accounts={accounts}
                 {...renderProps}
                 {...otherProps}
               />
             )}
           />
-          <Route
-            path="/settings"
+          <Route path="/settings"
             render={(renderProps) => (
               <SettingsPage withMenu {...renderProps} {...otherProps} />
             )}
@@ -124,6 +122,7 @@ const mapStateToProps = (state: State) => ({
   walletStatus: getWalletStatus(state),
   isLoadingWallet: getIsLoading(state),
   walletErorr: getWalletError(state),
+  walletVersion: getWalletVersion(state),
 
   accounts: getAccounts(state),
   isLoadingAccounts: getAccountsLoadingStatus(state),

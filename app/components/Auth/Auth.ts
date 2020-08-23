@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from '../../common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import BaseStoreService from '../../backend/store-manager/base-store.service';
+import { storeService } from '../../backend/store-manager/store.service';
 import AuthApiService from '../../backend/communication-manager/auth-api.service';
 
 export default class Auth {
@@ -13,7 +13,6 @@ export default class Auth {
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
   keytar: Record<string, any>;
-  private readonly baseStoreService: BaseStoreService;
   private readonly authApiService: AuthApiService;
 
   constructor() {
@@ -34,7 +33,6 @@ export default class Auth {
       service: 'bloxstaking-openid-oauth',
       account: os.userInfo().username
     };
-    this.baseStoreService = new BaseStoreService();
     this.authApiService = new AuthApiService();
   }
 
@@ -124,10 +122,9 @@ export default class Auth {
     this.tokens.idToken = id_token;
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
-    this.baseStoreService.set('currentUserId', userProfile.sub);
-    this.baseStoreService.set('authToken', authResult.id_token);
+    storeService.init(userProfile.sub, authResult.id_token);
     console.log('SET SESSION', authResult, userProfile);
-    console.log('electronStore===>', this.baseStoreService);
+    console.log('electronStore===>', storeService);
     if (refresh_token) {
       await keytar.setPassword(
         this.keytar.service,
@@ -155,7 +152,7 @@ export default class Auth {
     const { service, account } = this.keytar;
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
     await keytar.deletePassword(service, account);
-    this.baseStoreService.clear();
+    storeService.logout();
     this.tokens = {
       accessToken: null,
       profile: null,

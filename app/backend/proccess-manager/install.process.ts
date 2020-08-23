@@ -5,7 +5,7 @@ import KeyVaultService from '../key-vault/key-vault.service';
 import DockerService from '../key-vault/docker.service';
 import ProcessClass from './process.class';
 import AccountKeyVaultService from '../account/account-key-vault.service';
-import StoreService from '../store-manager/store.service';
+import { storeService } from '../store-manager/store.service';
 
 export default class InstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
@@ -17,7 +17,6 @@ export default class InstallProcess extends ProcessClass {
 
   constructor({ accessKeyId, secretAccessKey }) {
     super();
-    const storeService = new StoreService();
     if (!storeService.get('uuid')) {
       storeService.set('uuid', uuidv4());
     }

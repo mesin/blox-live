@@ -15,9 +15,13 @@ const KeyVaultReactivation = ({onClose}: Props) => {
     case 2:
       return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
     case 3:
-      return <SuccessModal onClose={onClose} />;
+      return <SuccessModal title={'KeyVault Reactivated!'} onClose={onClose} />;
     case 4:
-      return <ReinstallingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
+      return (
+        <ReinstallingModal title={'Reinstalling KeyVault'} description={'KeyVault still inactive. Starting the reinstall process.'}
+          move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose}
+        />
+      );
     case 5:
       return <SuccessModal title={'Reactivating your KeyVault'} onClose={onClose} />;
     case 6:

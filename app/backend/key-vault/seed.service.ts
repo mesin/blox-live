@@ -1,4 +1,4 @@
-import StoreService from '../store-manager/store.service';
+import { storeService, StoreService } from '../store-manager/store.service';
 import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
 import { step } from '../decorators';
 
@@ -7,7 +7,7 @@ export default class SeedService extends KeyVaultCliService {
 
   constructor() {
     super();
-    this.storeService = new StoreService();
+    this.storeService = storeService;
   }
 
   @step({

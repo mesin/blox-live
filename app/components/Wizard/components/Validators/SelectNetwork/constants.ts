@@ -1,14 +1,17 @@
+import testNetImage from '../../../assets/img-validator-test-net.svg';
+import mainNetImage from '../../../assets/img-validator-main-net.svg';
+
 export const BUTTONS = [
   {
     title: 'Test on TestNet',
-    imageName: 'img-validator-test-net.svg',
+    image: testNetImage,
     sticker: 'Free',
     label: 'testNet',
     isDisabled: false,
   },
   {
     title: 'Stake on MainNet',
-    imageName: 'img-validator-main-net.svg',
+    image: mainNetImage,
     sticker: 'Coming Soon',
     label: 'mainNet',
     isDisabled: true,

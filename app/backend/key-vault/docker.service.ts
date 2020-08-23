@@ -4,12 +4,12 @@ import { step } from '../decorators';
 export default class DockerService {
   public readonly serverService: ServerService;
 
-  constructor() {
-    this.serverService = new ServerService();
+  constructor(storePrefix: string = '') {
+    this.serverService = new ServerService(storePrefix);
   }
 
   @step({
-    name: 'Install docker on a server'
+    name: 'Installing docker...'
   })
   async installDockerScope(): Promise<void> {
     const ssh = await this.serverService.getConnection();

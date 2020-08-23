@@ -8,7 +8,11 @@ const KeyVaultUpdate = ({onClose}: Props) => {
   const contactSupport = () => { move1StepForward(); };
   switch (step) {
     case 0:
-      return <ReinstallingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
+      return (
+        <ReinstallingModal title={'Updating KeyVault'} move1StepForward={move1StepForward}
+          move2StepsForward={move2StepsForward} onClose={onClose}
+        />
+      );
     case 1:
       return <SuccessModal title={'Reactivating your KeyVault'} onClose={onClose} />;
     case 2:
@@ -16,7 +20,11 @@ const KeyVaultUpdate = ({onClose}: Props) => {
     case 3:
       return <ThankYouModal onClose={onClose} />;
     default:
-      return <ReinstallingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
+      return (
+        <ReinstallingModal title={'Updating KeyVault'} move1StepForward={move1StepForward}
+          move2StepsForward={move2StepsForward} onClose={onClose}
+        />
+      );
   }
 };
 
