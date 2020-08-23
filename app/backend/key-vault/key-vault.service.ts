@@ -1,6 +1,6 @@
 import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import ServerService from './server.service';
-import KeyVaultApiService from '../communication-manager/key-vault-api.service';
+import { resolveKeyVaultApiService, KeyVaultApiService } from '../communication-manager/key-vault-api.service';
 import { step } from '../decorators';
 import AccountService from '../account/account.service';
 
@@ -14,15 +14,27 @@ export default class KeyVaultService {
     this.storeService = resolveStoreService(storePrefix);
     this.serverService = new ServerService(storePrefix);
     this.accountService = new AccountService(storePrefix);
-    this.keyVaultApiService = new KeyVaultApiService(storePrefix);
+    this.keyVaultApiService = resolveKeyVaultApiService(storePrefix);
   }
 
   updateStorage = async (payload: any) => {
     return await this.keyVaultApiService.request('POST', 'ethereum/storage', payload);
   };
 
+  listAccounts = async () => {
+    return await this.keyVaultApiService.request('LIST', 'ethereum/accounts');
+  };
+
   healthCheck = async () => {
     return await this.keyVaultApiService.request('GET', 'sys/health');
+  };
+
+  @step({
+    name: 'Init KeyVault Api ...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  initKeyVaultApi(): void {
+    this.keyVaultApiService.init();
   };
 
   @step({

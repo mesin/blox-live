@@ -6,6 +6,7 @@ import { SOCIAL_APPS } from '../../common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
 import { storeService } from '../../backend/store-manager/store.service';
+import BloxApiService from '../../backend/communication-manager/blox-api.service';
 import AuthApiService from '../../backend/communication-manager/auth-api.service';
 
 export default class Auth {
@@ -123,6 +124,7 @@ export default class Auth {
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
     storeService.init(userProfile.sub, authResult.id_token);
+    BloxApiService.init();
     console.log('SET SESSION', authResult, userProfile);
     console.log('electronStore===>', storeService);
     if (refresh_token) {

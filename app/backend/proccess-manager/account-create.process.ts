@@ -17,6 +17,7 @@ export default class AccountCreateProcess extends ProcessClass {
     this.accountService = new AccountService();
     this.actions = [
       { instance: this.accountKeyVaultService, method: 'createAccount' },
+      { instance: this.keyVaultService, method: 'initKeyVaultApi' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'createBloxAccount' }
     ];

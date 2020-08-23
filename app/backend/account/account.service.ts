@@ -11,33 +11,31 @@ export default class AccountService {
   private readonly storeService: StoreService;
   private readonly serverService: ServerService;
   private readonly accountKeyVaultService: AccountKeyVaultService;
-  private readonly bloxApiService: BloxApiService;
 
   constructor(storePrefix: string = '') {
     this.storeService = resolveStoreService(storePrefix);
     this.serverService = new ServerService(storePrefix);
     this.accountKeyVaultService = new AccountKeyVaultService();
-    this.bloxApiService = new BloxApiService();
   }
 
   get = async () => {
-    const accounts = await this.bloxApiService.request('GET', 'accounts');
+    const accounts = await BloxApiService.request('GET', 'accounts');
     return JSON.parse(accounts);
   };
 
   delete = async () => {
-    return await this.bloxApiService.request('DELETE', 'accounts');
+    return await BloxApiService.request('DELETE', 'accounts');
   };
 
   updateStatus = async (route: string, payload: any) => {
     if (!route) {
       throw new Error('route');
     }
-    return await this.bloxApiService.request('PATCH', `accounts/${route}`, payload);
+    return await BloxApiService.request('PATCH', `accounts/${route}`, payload);
   };
 
   getLatestTag = async () => {
-    return await this.bloxApiService.request('GET', 'key-vault/latest-tag');
+    return await BloxApiService.request('GET', 'key-vault/latest-tag');
   };
 
   @step({
@@ -120,7 +118,7 @@ export default class AccountService {
       throw new Error(`No account to create`);
     }
     try {
-      const response = await this.bloxApiService.request('POST', 'accounts', lastIndexedAccount);
+      const response = await BloxApiService.request('POST', 'accounts', lastIndexedAccount);
       return { data: response };
     } catch (error) {
       throw new Error(`STEP: Create Blox Account error: ${error}`);
