@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.gray80060};
+  z-index:50;
 `;
 
 const Content = styled.div`
