@@ -1,11 +1,11 @@
-import { storeService, StoreService } from '../store-manager/store.service';
+import { resolveStoreService, StoreService } from '../store-manager/store.service';
 import NodeSSH from 'node-ssh';
 
 export default class ServerService {
   private readonly storeService: StoreService;
 
-  constructor() {
-    this.storeService = storeService;
+  constructor(storePrefix: string = '') {
+    this.storeService = resolveStoreService(storePrefix);
   }
 
   getConnection = async (): Promise<NodeSSH> => {

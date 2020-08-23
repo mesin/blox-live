@@ -9,7 +9,7 @@ export default class KeyVaultService {
 
   constructor(storePrefix: string = '') {
     this.storeService = resolveStoreService(storePrefix);
-    this.serverService = new ServerService();
+    this.serverService = new ServerService(storePrefix);
   }
 
   @step({
@@ -17,7 +17,10 @@ export default class KeyVaultService {
   })
   async runDockerContainer(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    const { stdout } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
+    const { stdout, stderr } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
+    if (stderr) {
+      console.log(stderr);
+    }
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
     const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
@@ -33,7 +36,10 @@ export default class KeyVaultService {
   })
   async runScripts(): Promise<void> {
     const ssh = await this.serverService.getConnection();
-    const { stdout: containerId } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
+    const { stdout: containerId, stderr: error } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
+    if (error) {
+      console.log(error);
+    }
     if (!containerId) {
       throw new Error('Key Vault docker container not found');
     }

@@ -14,7 +14,7 @@ export default class AccountService {
 
   constructor(storePrefix: string = '') {
     this.storeService = resolveStoreService(storePrefix);
-    this.serverService = new ServerService();
+    this.serverService = new ServerService(storePrefix);
     this.accountKeyVaultService = new AccountKeyVaultService();
   }
 
@@ -139,7 +139,7 @@ export default class AccountService {
   })
   saveTmpConfigIntoMain(): void {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
-    tmpStoreService.setMultiple({
+    this.storeService.setMultiple({
       uuid: tmpStoreService.get('uuid'),
       authToken: tmpStoreService.get('authToken'),
       addressId: tmpStoreService.get('addressId'),

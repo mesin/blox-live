@@ -182,7 +182,7 @@ export default class AwsService {
     await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
     await this.ec2.deleteKeyPair({ KeyPairId: this.storeService.get('keyPair.pairId') }).promise();
     await this.ec2.deleteSecurityGroup({ GroupId: this.storeService.get('securityGroupId'), DryRun: false }).promise();
-    this.storeService.clear()
+    this.storeService.clear();
   }
 
   @step({
