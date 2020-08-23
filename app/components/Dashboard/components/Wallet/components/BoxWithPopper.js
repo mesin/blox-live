@@ -11,7 +11,7 @@ const Wrapper = styled.div`
 `;
 
 const BoxWithTooltip = (props) => {
-  const { isActive, width, color, bigText, medText, tinyText, image,
+  const { isActive, walletVersion, width, color, bigText, medText, tinyText, image,
           setReactivationModalDisplay, setUpdateModalDisplay
         } = props;
   const [showReactivationPopper, setReactivationPopperDisplay] = React.useState(false);
@@ -27,7 +27,7 @@ const BoxWithTooltip = (props) => {
     setUpdatePopperDisplay(false);
   };
 
-  return ( // TODO: add !isActive to line no 35
+  return ( // TODO: add !isActive to line no 35 and compare the walletVersion
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Box width={width} color={color} bigText={bigText}
         medText={medText} tinyText={tinyText} image={image}
@@ -44,6 +44,7 @@ const BoxWithTooltip = (props) => {
 
 BoxWithTooltip.propTypes = {
   isActive: PropTypes.bool,
+  walletVersion: PropTypes.string,
   width: PropTypes.string,
   color: PropTypes.string,
   bigText: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

@@ -16,14 +16,14 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
-  const { walletStatus, accounts } = props;
+  const { walletStatus, accounts, walletVersion } = props;
   const [showReactivationModal, setReactivationModalDisplay] = useState(false);
   const [showUpdateModal, setUpdateModalDisplay] = useState(false);
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
   return (
     <Wrapper>
-      <Wallet isActive={walletStatus === 'active'} summary={accountsSummary}
+      <Wallet isActive={walletStatus === 'active'} walletVersion={walletVersion} summary={accountsSummary}
         setReactivationModalDisplay={setReactivationModalDisplay}
         setUpdateModalDisplay={setUpdateModalDisplay}
       />
@@ -35,6 +35,7 @@ const Dashboard = (props) => {
 };
 
 Dashboard.propTypes = {
+  walletVersion: PropTypes.string,
   walletStatus: PropTypes.string,
   accounts: PropTypes.array,
 };
