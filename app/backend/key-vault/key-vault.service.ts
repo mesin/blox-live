@@ -13,8 +13,8 @@ export default class KeyVaultService {
   constructor(storePrefix: string = '') {
     this.storeService = resolveStoreService(storePrefix);
     this.serverService = new ServerService(storePrefix);
-    this.accountService = new AccountService();
-    this.keyVaultApiService = new KeyVaultApiService();
+    this.accountService = new AccountService(storePrefix);
+    this.keyVaultApiService = new KeyVaultApiService(storePrefix);
   }
 
   updateStorage = async (payload: any) => {

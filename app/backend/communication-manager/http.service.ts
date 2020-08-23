@@ -1,11 +1,11 @@
-import StoreService from '../store-manager/store.service';
+import { resolveStoreService, StoreService } from '../store-manager/store.service';
 
 export default class HttpService {
   protected readonly storeService: StoreService;
   protected instance: any;
 
-  constructor() {
-    this.storeService = new StoreService();
+  constructor(storePrefix: string = '') {
+    this.storeService = resolveStoreService(storePrefix);
   }
 
   request = async (method: string, route: string, payload: any = null): Promise<any> => {

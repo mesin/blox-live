@@ -134,7 +134,6 @@ export default class AccountService {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
     tmpStoreService.setMultiple({
       uuid: this.storeService.get('uuid'),
-      authToken: this.storeService.get('authToken'),
       credentials: this.storeService.get('credentials'),
       keyPair: this.storeService.get('keyPair'),
       securityGroupId: this.storeService.get('securityGroupId'),
@@ -149,7 +148,6 @@ export default class AccountService {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
     this.storeService.setMultiple({
       uuid: tmpStoreService.get('uuid'),
-      authToken: tmpStoreService.get('authToken'),
       addressId: tmpStoreService.get('addressId'),
       publicIp: tmpStoreService.get('publicIp'),
       instanceId: tmpStoreService.get('instanceId'),
