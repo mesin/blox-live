@@ -2,38 +2,35 @@ import got from 'got';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
-import StoreService from '../store-manager/store.service';
+import { storeService } from '../store-manager/store.service';
 
 export default class LoggerService {
-  private readonly storeService: StoreService;
   private readonly logger: winston.Logger;
 
   constructor() {
-    this.storeService = new StoreService();
-
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.json(),
       defaultMeta: {
-          service: 'user-service'
+        service: 'user-service'
       },
       transports: [
-          new winston.transports.DailyRotateFile({
-            filename: 'logs/error.log',
-            datePattern: 'YYYY-MM-DD-HH',
-            maxSize: '1k',
-            maxFiles: 1,
-            // zippedArchive: true,
-            level: 'error'
-          }),
-          new winston.transports.DailyRotateFile({
-            filename: 'logs/debug.log',
-            datePattern: 'YYYY-MM-DD-HH',
-            maxSize: '1k',
-            maxFiles: 1,
-            // zippedArchive: true,
-            level: 'debug'
-          })
+        new winston.transports.DailyRotateFile({
+          filename: 'logs/error.log',
+          datePattern: 'YYYY-MM-DD-HH',
+          maxSize: '1k',
+          maxFiles: 1,
+          // zippedArchive: true,
+          level: 'error'
+        }),
+        new winston.transports.DailyRotateFile({
+          filename: 'logs/debug.log',
+          datePattern: 'YYYY-MM-DD-HH',
+          maxSize: '1k',
+          maxFiles: 1,
+          // zippedArchive: true,
+          level: 'debug'
+        })
       ]
     });
   }
@@ -49,7 +46,7 @@ export default class LoggerService {
   async sendCrashReport(): Promise<void> {
     await got.post('https://api.stage.bloxstaking.com/users/crash-report', {
       headers: {
-        'Authorization': `Bearer ${this.storeService.get('authToken')}`
+        'Authorization': `Bearer ${storeService.get('authToken')}`
       }
     });
   }
