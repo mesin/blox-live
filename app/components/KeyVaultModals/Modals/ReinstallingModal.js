@@ -11,6 +11,8 @@ import * as selectors from '../../ProcessRunner/selectors';
 import saga from '../../ProcessRunner/saga';
 import { precentageCalculator } from 'utils/service';
 
+import image from '../../Wizard/assets/img-key-vault-inactive.svg';
+
 const key = 'processRunner';
 
 const ReinstallingModal = (props) => {
@@ -35,7 +37,7 @@ const ReinstallingModal = (props) => {
   }, [isLoading, isDone, reinstallMessage]);
 
   return (
-    <ModalTemplate onClose={onClose}>
+    <ModalTemplate onClose={onClose} image={image}>
       <Title>{title}</Title>
       <Wrapper>
         {description && <Description>{description}</Description>}
