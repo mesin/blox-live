@@ -17,7 +17,6 @@ export default class CleanStorageProcess extends ProcessClass {
     this.actions = [
       { instance: this.accountService, method: 'deleteBloxAccounts' },
       { instance: this.accountKeyVaultService, method: 'createWallet' },
-      { instance: this.keyVaultService, method: 'initKeyVaultApi' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' }
     ];
   }
