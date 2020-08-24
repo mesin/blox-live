@@ -4,7 +4,7 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   isLoading: false,
   error: null,
-  data: null,
+  data: null
 };
 
 const accountsReducer = (state = initialState, action: Action) =>
@@ -19,16 +19,6 @@ const accountsReducer = (state = initialState, action: Action) =>
         break;
       case actionTypes.LOAD_ACCOUNTS_FAILURE:
         draft.error = action.payload;
-        draft.isLoading = false;
-        break;
-
-      case actionTypes.DELETE_ACCOUNT:
-        draft.isLoading = true;
-        break;
-      case actionTypes.DELETE_ACCOUNT_SUCCESS:
-        draft.isLoading = false;
-        break;
-      case actionTypes.DELETE_ACCOUNT_FAILURE:
         draft.isLoading = false;
         break;
     }

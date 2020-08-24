@@ -1,5 +1,5 @@
+import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
 import { storeService, StoreService } from '../store-manager/store.service';
-import KeyVaultCliService from '../key-vault/key-vault-cli.service';
 import { step } from '../decorators';
 import Web3 from 'web3';
 

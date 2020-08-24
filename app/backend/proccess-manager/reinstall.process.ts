@@ -35,10 +35,12 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'runScripts' },
       { instance: this.accountService, method: 'getKeyVaultRootToken' },
+      { instance: this.keyVaultService, method: 'initKeyVaultApi' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'resyncNewVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: this.accountServiceOld, method: 'saveTmpConfigIntoMain' },
+      { instance: this.keyVaultServiceOld, method: 'initKeyVaultApi' },
       { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' }
     ];
   }
