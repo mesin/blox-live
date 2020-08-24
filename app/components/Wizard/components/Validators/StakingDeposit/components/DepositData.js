@@ -33,7 +33,7 @@ const ValueText = styled.div`
   white-space:nowrap;
   font-size: 13px;
   font-weight: 500;
-  color: ${({theme}) => theme.gray400};
+  color: ${({theme}) => theme.gray800};
   margin-right:8px;
 `;
 

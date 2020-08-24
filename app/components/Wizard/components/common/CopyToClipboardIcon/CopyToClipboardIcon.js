@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -14,12 +14,19 @@ const IconWrapper = styled.div`
 
 const CopyToClipboardIcon = (props) => {
   const { onCopy, text } = props;
+  const [clicked, setClicked] = useState(false);
+
+  const onCopyClick = () => {
+    onCopy();
+    setClicked(true);
+  };
+
   return (
-    <CopyToClipboard text={text} onCopy={onCopy}>
+    <CopyToClipboard text={text} onCopy={onCopyClick}>
       <IconWrapper>
         <Icon
           name="copy"
-          color="primary900"
+          color={clicked ? 'gray400' : 'primary900'}
           fontSize="20px"
           onClick={() => false}
         />
