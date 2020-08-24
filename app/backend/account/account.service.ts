@@ -24,18 +24,21 @@ export default class AccountService {
   };
 
   delete = async () => {
-    return await BloxApiService.request('DELETE', 'accounts');
+    const deleted = BloxApiService.request('DELETE', 'accounts');
+    return deleted;
   };
 
   updateStatus = async (route: string, payload: any) => {
     if (!route) {
       throw new Error('route');
     }
-    return await BloxApiService.request('PATCH', `accounts/${route}`, payload);
+    const result = await BloxApiService.request('PATCH', `accounts/${route}`, payload);
+    return result;
   };
 
   getLatestTag = async () => {
-    return await BloxApiService.request('GET', 'key-vault/latest-tag');
+    const tag = BloxApiService.request('GET', 'key-vault/latest-tag');
+    return tag;
   };
 
   @step({
@@ -65,7 +68,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Resync vault with blox api',
+    name: 'Re-syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async resyncNewVaultWithBlox(): Promise<void> {
@@ -89,9 +92,8 @@ export default class AccountService {
       `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${this.storeService.get('authToken')}" --request DELETE https://api.stage.bloxstaking.com/organizations`,
       {}
     );
-    console.log(statusCode, stderr);
     if (+statusCode > 201) {
-      console.log(`Blox Staking api error: ${statusCode} ${stderr}`);
+      console.log(`Blox Staking api error: ${statusCode} ${stderr}`); // eslint-disable-line no-console
     }
   }
 
@@ -115,7 +117,7 @@ export default class AccountService {
   async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
-      throw new Error(`No account to create`);
+      throw new Error('No account to create');
     }
     try {
       const response = await BloxApiService.request('POST', 'accounts', lastIndexedAccount);
@@ -126,7 +128,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Prepare tmp storage'
+    name: 'Creating local backup...'
   })
   prepareTmpStorageConfig(): void {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
@@ -140,7 +142,7 @@ export default class AccountService {
   }
 
   @step({
-    name: 'Store tmp config into main'
+    name: 'Configuring local storage...'
   })
   saveTmpConfigIntoMain(): void {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
