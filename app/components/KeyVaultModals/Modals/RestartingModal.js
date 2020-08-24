@@ -39,7 +39,7 @@ const RestartingModal = (props) => {
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Restarting KeyVault</Title>
       <ProcessLoader text={restartMessage} precentage={loaderPrecentage} />
-      <SmallText>This process is automated and only takes a few minutes.</SmallText>
+      <SmallText withWarning />
     </ModalTemplate>
   );
 };

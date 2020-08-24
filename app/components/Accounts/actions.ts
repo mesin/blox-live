@@ -25,3 +25,5 @@ export const deleteAccountFailure = (error: Record<string, any>) => ({
   type: actionTypes.DELETE_ACCOUNT_FAILURE,
   payload: { ...error },
 });
+
+export const clearAccountsData = () => ({ type: actionTypes.CLEAR_DATA });

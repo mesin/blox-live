@@ -58,6 +58,15 @@ const wizardReducer = (state = initialState, action: Action) => produce(state, (
     case actionTypes.SET_FINISHED_WIZARD:
       draft.isFinished = action.payload;
       break;
+
+    case actionTypes.CLEAR_DATA:
+      draft.isLoading = initialState.isLoading;
+      draft.error = initialState.error;
+      draft.wallet = initialState.wallet;
+      draft.network = initialState.network;
+      draft.account = initialState.account;
+      draft.depositData = initialState.depositData;
+      break;
   }
 });
 

@@ -43,7 +43,7 @@ const ReinstallingModal = (props) => {
         {description && <Description>{description}</Description>}
         <ProcessLoader text={reinstallMessage} precentage={loaderPrecentage} />
       </Wrapper>
-      <SmallText>This process is automated and only takes a few minutes.</SmallText>
+      <SmallText withWarning />
     </ModalTemplate>
   );
 };

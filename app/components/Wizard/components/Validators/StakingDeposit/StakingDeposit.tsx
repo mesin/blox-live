@@ -1,10 +1,11 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { InfoWithTooltip } from 'common/components';
 import { Title, Paragraph, Link, BigButton } from '../../common';
-import { updateAccountStatus, setFinishedWizard, loadWallet } from '../../../actions';
-import { loadAccounts } from '../../../../Accounts/actions';
+import * as wizardActions from '../../../actions';
+import { clearAccountsData } from '../../../../Accounts/actions';
 import * as selectors from '../../../selectors';
 import { getData } from '../../../../ProcessRunner/selectors';
 import { DepositData } from './components';
@@ -45,19 +46,17 @@ let toolTipText = 'GoETH are test tokens needed in order to participate in the G
 toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountData,
-          callUpdateAccountStatus, callLoadWallet, callLoadAccounts, callSetFinishedWizard,
-        } = props;
+  const { setPage, page, depositData, accountData, actions, callClearAccountsData } = props;
+  const { updateAccountStatus, clearWizardData } = actions;
 
   const onButtonClick = async () => {
-    await callLoadWallet();
-    await callLoadAccounts();
-    await callSetFinishedWizard(true);
+    await clearWizardData();
+    await callClearAccountsData();
     await setPage(page + 1);
   };
 
   const onMadeDepositButtonClick = async () => {
-    await callUpdateAccountStatus(accountData.id);
+    await updateAccountStatus(accountData.id);
     await onButtonClick();
   };
 
@@ -97,10 +96,8 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callUpdateAccountStatus: (accountId: string) => dispatch(updateAccountStatus(accountId)),
-  callSetFinishedWizard: (status) => dispatch(setFinishedWizard(status)),
-  callLoadWallet: () => dispatch(loadWallet()),
-  callLoadAccounts: () => dispatch(loadAccounts()),
+  actions: bindActionCreators(wizardActions, dispatch),
+  callClearAccountsData: () => dispatch(clearAccountsData())
 });
 
 type Props = {
@@ -111,10 +108,8 @@ type Props = {
   isLoading: boolean;
   depositData: Record<string, any> | null;
   accountData: Record<string, any> | null;
-  callUpdateAccountStatus: (accountId: string) => void;
-  callSetFinishedWizard: (status: boolean) => void;
-  callLoadWallet: () => void;
-  callLoadAccounts: () => void;
+  actions: Record<string, any> | null;
+  callClearAccountsData: () => void;
 };
 
 type State = Record<string, any>;

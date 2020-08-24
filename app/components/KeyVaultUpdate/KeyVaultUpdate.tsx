@@ -10,7 +10,7 @@ const KeyVaultUpdate = ({onClose}: Props) => {
     case 0:
       return (
         <ReinstallingModal title={'Updating KeyVault'} move1StepForward={move1StepForward}
-          move2StepsForward={move2StepsForward} onClose={onClose}
+          move2StepsForward={move2StepsForward}
         />
       );
     case 1:
@@ -22,7 +22,7 @@ const KeyVaultUpdate = ({onClose}: Props) => {
     default:
       return (
         <ReinstallingModal title={'Updating KeyVault'} move1StepForward={move1StepForward}
-          move2StepsForward={move2StepsForward} onClose={onClose}
+          move2StepsForward={move2StepsForward}
         />
       );
   }

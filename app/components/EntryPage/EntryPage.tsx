@@ -9,20 +9,11 @@ import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
 import { loadWallet } from '../Wizard/actions';
-import {
-  getWalletStatus,
-  getIsLoading,
-  getWalletError,
-  getWalletVersion
-} from '../Wizard/selectors';
+import { getWalletStatus, getIsLoading, getWalletError, getWalletVersion } from '../Wizard/selectors';
 import wizardSaga from '../Wizard/saga';
 
 import { loadAccounts } from '../Accounts/actions';
-import {
-  getAccounts,
-  getAccountsLoadingStatus,
-  getAccountsError,
-} from '../Accounts/selectors';
+import { getAccounts, getAccountsLoadingStatus, getAccountsError } from '../Accounts/selectors';
 import accountsSaga from '../Accounts/saga';
 
 import { useInjectSaga } from '../../utils/injectSaga';

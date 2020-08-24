@@ -39,24 +39,21 @@ const CustomModal = (props) => {
   return (
     <Wrapper>
       <Content width={width} height={height}>
-        <CloseButton>
-          <Icon name="close" onClick={onClose} fontSize="32px" />
-        </CloseButton>
+        {onClose && (
+          <CloseButton>
+            <Icon name="close" onClick={onClose} fontSize="32px" />
+          </CloseButton>
+        )}
         {children}
       </Content>
     </Wrapper>
   );
 };
 
-CustomModal.defaultProps = {
-  padding: '0px',
-};
-
 CustomModal.propTypes = {
   children: PropTypes.node,
   width: PropTypes.string,
   height: PropTypes.string,
-  padding: PropTypes.string,
   onClose: PropTypes.func,
 };
 

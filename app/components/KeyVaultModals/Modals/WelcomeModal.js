@@ -15,7 +15,7 @@ const WelcomeModal = ({onClick, onClose}) => {
         To fix this issue, we will restart your KeyVault.
         If unsuccessful, a quick reinstall is required.
       </Description>
-      <SmallText>This process is automated and only takes a few minutes.</SmallText>
+      <SmallText />
       <Button onClick={onClick}>Reactivate KeyVault</Button>
     </ModalTemplate>
   );

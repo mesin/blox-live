@@ -3,23 +3,21 @@ import { SmallModal, WelcomeModal, RestartingModal,
          SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals/Modals';
 
 const KeyVaultReactivation = ({onClose}: Props) => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const move1StepForward = () => setStep(step + 1);
   const move2StepsForward = () => setStep(step + 2);
   const contactSupport = () => { move1StepForward(); };
   switch (step) {
-    case 0:
-      return <SmallModal onClick={move1StepForward} onClose={onClose} />;
     case 1:
       return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
     case 2:
-      return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose} />;
+      return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
     case 3:
       return <SuccessModal title={'KeyVault Reactivated!'} onClose={onClose} />;
     case 4:
       return (
         <ReinstallingModal title={'Reinstalling KeyVault'} description={'KeyVault still inactive. Starting the reinstall process.'}
-          move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} onClose={onClose}
+          move1StepForward={move1StepForward} move2StepsForward={move2StepsForward}
         />
       );
     case 5:

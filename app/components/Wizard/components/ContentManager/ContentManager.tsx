@@ -61,6 +61,12 @@ const switcher = (props: Props) => {
           component={<ValidatorPages.StakingDeposit {...props} />}
         />
       );
+    case 8:
+      return (
+        <Template key={7} bgImage={validatorImage} {...props}
+          component={<ValidatorPages.CongratulationPage {...props} />}
+        />
+      );
     default:
       return <WelcomePage {...props} />;
   }

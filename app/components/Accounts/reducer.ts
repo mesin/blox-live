@@ -7,8 +7,8 @@ const initialState = {
   data: null,
 };
 
-const accountsReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const accountsReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.LOAD_ACCOUNTS:
         draft.isLoading = true;
@@ -30,6 +30,12 @@ const accountsReducer = (state = initialState, action: Action) =>
         break;
       case actionTypes.DELETE_ACCOUNT_FAILURE:
         draft.isLoading = false;
+        break;
+
+      case actionTypes.CLEAR_DATA:
+        draft.isLoading = initialState.isLoading;
+        draft.error = initialState.error;
+        draft.data = initialState.data;
         break;
     }
   });
