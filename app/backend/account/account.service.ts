@@ -24,7 +24,8 @@ export default class AccountService {
   };
 
   delete = async () => {
-    return await BloxApiService.request(METHOD.DELETE, 'accounts');
+    const deleted = await BloxApiService.request(METHOD.DELETE, 'accounts');
+    return deleted;
   };
 
   updateStatus = async (route: string, payload: any) => {
@@ -45,7 +46,7 @@ export default class AccountService {
   async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
-      throw new Error(`No account to create`);
+      throw new Error('No account to create');
     }
     try {
       const account = await this.create(lastIndexedAccount);

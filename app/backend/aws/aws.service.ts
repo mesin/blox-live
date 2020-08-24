@@ -186,7 +186,7 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Truncate Old EC2 instance',
+    name: 'Removing old EC2 instance...',
     requiredConfig: ['instanceId', 'addressId']
   })
   async truncateServer() {
@@ -196,14 +196,15 @@ export default class AwsService {
   }
 
   @step({
-    name: 'Reboot instance',
+    name: 'Establishing connection to your server...',
     requiredConfig: ['instanceId', 'publicIp']
   })
   async rebootInstance({ notifier }) {
     await this.ec2.rebootInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
+    // TODO: should be removed, not used
     notifier.instance[notifier.func].bind(notifier.instance)({
       step: {
-        name: 'Server rebooting...',
+        name: 'Restarting KeyVault...',
         status: 'processing'
       }
     });
@@ -229,9 +230,10 @@ export default class AwsService {
         const ip: any = this.storeService.get('publicIp');
         socket.connect(22, ip, () => {
           console.log('Server is online');
+          // TODO: should be removed, not used
           notifier.instance[notifier.func].bind(notifier.instance)({
             step: {
-              name: 'Server is online',
+              name: 'Restarting KeyVault...',
               status: 'processing'
             }
           });
