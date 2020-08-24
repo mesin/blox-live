@@ -16,16 +16,16 @@ export default {
         test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-        },
-      },
-    ],
+          loader: 'babel-loader'
+        }
+      }
+    ]
   },
 
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs2'
   },
 
   /**
@@ -33,7 +33,7 @@ export default {
    */
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
+    modules: [path.join(__dirname, '..', 'app'), 'node_modules']
   },
 
   plugins: [
@@ -44,8 +44,9 @@ export default {
       AUTH0_LOGOUT_URL: 'http://localhost',
       AUTH0_CALLBACK_URL: 'http://localhost/callback',
       API_URL: 'https://api.stage.bloxstaking.com',
+      VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0'
     }),
 
-    new webpack.NamedModulesPlugin(),
-  ],
+    new webpack.NamedModulesPlugin()
+  ]
 };

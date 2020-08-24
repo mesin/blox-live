@@ -1,7 +1,7 @@
 import { resolveStoreService, StoreService } from '../store-manager/store.service';
 import NodeSSH from 'node-ssh';
 
-export default class ServerService {
+export default class KeyVaultSshService {
   private readonly storeService: StoreService;
 
   constructor(storePrefix: string = '') {
@@ -9,8 +9,6 @@ export default class ServerService {
   }
 
   getConnection = async (): Promise<NodeSSH> => {
-    // this.flow.validate('publicIp');
-    // this.flow.validate('keyPair');
     const ssh = new NodeSSH();
     const keyPair: any = this.storeService.get('keyPair');
     await ssh.connect({
@@ -19,5 +17,9 @@ export default class ServerService {
       privateKey: keyPair.privateKey
     });
     return ssh;
+  };
+
+  buildCurlCommand = (data: any): string => {
+    return `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${data.authToken}" --request ${data.method} ${data.data ? `--data '${JSON.stringify(data.data)}'` : ''} ${data.route}`;
   };
 }

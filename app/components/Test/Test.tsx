@@ -12,7 +12,7 @@ import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.pr
 import SeedService from '../../backend/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
 import KeyVaultService from '../../backend/key-vault/key-vault.service';
-import BloxApiService from '../../backend/communication-manager/blox-api.service';
+import AccountService from '../../backend/account/account.service';
 // import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
@@ -39,8 +39,8 @@ const Test = (props) => {
   // logger.debug('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
+  const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
-  console.log('---->generalConf', storeService);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -207,7 +207,7 @@ const Test = (props) => {
         <button onClick={async () => {
           await accountKeyVaultService.createWallet();
         }}>
-          Create Account
+          Create Wallet
         </button>
         <button onClick={async () => {
           await accountKeyVaultService.createAccount();
@@ -241,19 +241,19 @@ const Test = (props) => {
       <h2>Blox API</h2>
       <div>
         <button onClick={async () => {
-          console.log(await BloxApiService.request('GET', 'accounts'));
+          console.log(await accountService.get());
         }}>
           Get Accounts
+        </button>
+        <button onClick={async () => {
+          console.log(await accountService.getLatestTag());
+        }}>
+          Get Latest Tag
         </button>
       </div>
       <p/>
       <h2>Vault Plugin API</h2>
       <div>
-        <button onClick={async () => {
-          console.log(await keyVaultService.initKeyVaultApi());
-        }}>
-          Init KeyVault API
-        </button>
         <button onClick={async () => {
           console.log(JSON.parse(await keyVaultService.healthCheck()));
         }}>

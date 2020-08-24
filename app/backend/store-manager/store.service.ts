@@ -1,5 +1,9 @@
 import ElectronStore from 'electron-store';
 import BaseStoreService from './base-store.service';
+import { step } from '../decorators';
+
+// TODO import from .env
+const tempStorePrefix = 'tmp';
 
 class StoreService extends BaseStoreService {
   private store: ElectronStore;
@@ -47,6 +51,37 @@ class StoreService extends BaseStoreService {
   logout = (): void => {
     this.baseStore.clear();
   };
+
+  @step({
+    name: 'Prepare tmp storage'
+  })
+  prepareTmpStorageConfig(): void {
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
+    tmpStoreService.setMultiple({
+      uuid: storeService.get('uuid'),
+      credentials: storeService.get('credentials'),
+      keyPair: storeService.get('keyPair'),
+      securityGroupId: storeService.get('securityGroupId'),
+      keyVaultStorage: storeService.get('keyVaultStorage')
+    });
+  }
+
+  @step({
+    name: 'Store tmp config into main'
+  })
+  saveTmpConfigIntoMain(): void {
+    const tmpStoreService = resolveStoreService(tempStorePrefix);
+    storeService.setMultiple({
+      uuid: tmpStoreService.get('uuid'),
+      addressId: tmpStoreService.get('addressId'),
+      publicIp: tmpStoreService.get('publicIp'),
+      instanceId: tmpStoreService.get('instanceId'),
+      vaultRootToken: tmpStoreService.get('vaultRootToken'),
+      keyVaultVersion: tmpStoreService.get('keyVaultVersion'),
+      keyVaultStorage: tmpStoreService.get('keyVaultStorage')
+    });
+    tmpStoreService.clear();
+  }
 }
 
 const storeService = new StoreService();
