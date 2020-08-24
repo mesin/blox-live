@@ -45,7 +45,7 @@ export default class AccountService {
   async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
-      throw new Error(`No account to create`);
+      throw new Error('No account to create');
     }
     try {
       const account = await this.create(lastIndexedAccount);
