@@ -119,7 +119,7 @@ export default class AccountService {
     }
     try {
       const response = await BloxApiService.request('POST', 'accounts', lastIndexedAccount);
-      return { data: response };
+      return { data: JSON.parse(response) };
     } catch (error) {
       throw new Error(`STEP: Create Blox Account error: ${error}`);
     }
