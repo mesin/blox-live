@@ -26,11 +26,10 @@ function* startProcess(action) {
       };
       yield put(actions.processObserve(observePayload));
     }
-  }
-  catch (e) {
+  } catch (e) {
     yield put(actions.processFailure(e));
-  }
-  finally {
+    channel.close();
+  } finally {
     yield put(actions.processUnSubscribe());
     channel.close();
   }
@@ -41,13 +40,17 @@ function createChannel(process) {
     const callback = (subject, payload) => {
       const { state } = subject;
       const { status } = payload.step;
+      if (status === 'error') {
+        process.unsubscribe(listener);
+        emitter(payload.error);
+      }
       if (status === 'completed' && state === subject.actions.length) {
         process.unsubscribe(listener);
-        emitter({subject, payload});
+        emitter({ subject, payload });
         emitter(END);
         return;
       }
-      emitter({subject, payload});
+      emitter({ subject, payload });
     };
 
     const listener = new Listener(callback);
