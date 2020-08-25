@@ -2,21 +2,19 @@ import keytar from 'keytar';
 import os from 'os';
 import url from 'url';
 import jwtDecode from 'jwt-decode';
-import axios, { AxiosRequestConfig } from 'axios';
-
 import { SOCIAL_APPS } from '../../common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-
-import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
 import { storeService } from '../../backend/store-manager/store.service';
-
+import BloxApiService from '../../backend/communication-manager/blox-api.service';
+import AuthApiService from '../../backend/communication-manager/auth-api.service';
 
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
   keytar: Record<string, any>;
+  private readonly authApiService: AuthApiService;
 
   constructor() {
     this.tokens = {
@@ -36,6 +34,7 @@ export default class Auth {
       service: 'bloxstaking-openid-oauth',
       account: os.userInfo().username
     };
+    this.authApiService = new AuthApiService();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -44,7 +43,6 @@ export default class Auth {
         if (response.status === 200) {
           const userProfile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
-          this.interceptIdToken(response.data.id_token);
           resolve({
             idToken: response.data.id_token,
             idTokenPayload: userProfile
@@ -59,10 +57,9 @@ export default class Auth {
   checkIfTokensExist = async () => {
     return new Promise((resolve, reject) => {
       const callBack = (response) => {
-        if (response.status === 200) {
+        if (response.statusCode === 200) {
           const userProfile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
-          this.interceptIdToken(response.data.id_token);
           resolve({
             idToken: response.data.id_token,
             idTokenPayload: userProfile
@@ -76,27 +73,21 @@ export default class Auth {
 
   getAuthenticationURL = (socialAppName) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
-    const authUrl = `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
-    return authUrl;
+    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
   };
 
   loadRefreshToken = async (callBack) => {
-    const { domain, clientID } = this.auth;
+    const { clientID } = this.auth;
     const { service, account } = this.keytar;
     const refreshToken = await keytar.getPassword(service, account);
     if (refreshToken) {
-      const refreshUrl = `https://${domain}/oauth/token`;
-      const config: AxiosRequestConfig = {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        data: {
-          grant_type: 'refresh_token',
-          client_id: clientID,
-          refresh_token: refreshToken
-        }
+      const payload = {
+        grant_type: 'refresh_token',
+        client_id: clientID,
+        refresh_token: refreshToken
       };
       try {
-        const response = await axios(refreshUrl, config);
+        const response = await this.authApiService.request('POST', 'token', payload);
         return callBack(response);
       } catch (error) {
         await this.logout();
@@ -108,10 +99,9 @@ export default class Auth {
   };
 
   loadAuthToken = async (callbackURL) => {
-    const { domain, clientID, redirectUri } = this.auth;
+    const { clientID, redirectUri } = this.auth;
     const urlParts = url.parse(callbackURL, true);
     const { query } = urlParts;
-
     const exchangeOptions = {
       grant_type: 'authorization_code',
       client_id: clientID,
@@ -119,18 +109,8 @@ export default class Auth {
       redirect_uri: redirectUri
     };
 
-    const tokenUrl = `https://${domain}/oauth/token`;
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      data: JSON.stringify(exchangeOptions)
-    };
-
     try {
-      const response = await axios(tokenUrl, config);
-      return response;
+      return  await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions));
     } catch (error) {
       await this.logout();
       return Error(error);
@@ -144,6 +124,7 @@ export default class Auth {
     this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
     storeService.init(userProfile.sub, authResult.id_token);
+    BloxApiService.init();
     console.log('SET SESSION', authResult, userProfile);
     console.log('electronStore===>', storeService);
     if (refresh_token) {
@@ -167,12 +148,6 @@ export default class Auth {
   getProfile = (cb: CallBack) => {
     // TODO: get /userinfo in case userProfile is null
     return cb(this.userProfile, null);
-  };
-
-  interceptIdToken = (idToken: string) => {
-    axios.interceptors.request.use(
-      (config: AxiosRequestConfig) => onAxiosInterceptorSuccess(config, idToken), onAxiosInterceptorFailure
-    );
   };
 
   logout = async () => { // check the keytar

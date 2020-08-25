@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
 
-import Auth from '../Auth';
 import GlobalStyle from '../../common/styles/global-styles';
 import { initApp } from './service';
 
@@ -21,7 +20,6 @@ const AppWrapper = styled.div`
 `;
 
 const key = 'login';
-const auth = new Auth();
 
 const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
@@ -31,7 +29,7 @@ const App = (props: Props) => {
   const init = async () => {
     await setAppInitialised(true);
     await isTokensExist();
-    await initApp(isLoggedIn, auth);
+    await initApp();
   };
 
   useEffect(() => {

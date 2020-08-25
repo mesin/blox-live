@@ -4,7 +4,7 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   isLoading: false,
   error: null,
-  data: null,
+  data: null
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -21,17 +21,6 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.error = action.payload;
         draft.isLoading = false;
         break;
-
-      case actionTypes.DELETE_ACCOUNT:
-        draft.isLoading = true;
-        break;
-      case actionTypes.DELETE_ACCOUNT_SUCCESS:
-        draft.isLoading = false;
-        break;
-      case actionTypes.DELETE_ACCOUNT_FAILURE:
-        draft.isLoading = false;
-        break;
-
       case actionTypes.CLEAR_DATA:
         draft.isLoading = initialState.isLoading;
         draft.error = initialState.error;

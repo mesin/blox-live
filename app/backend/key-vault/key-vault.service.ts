@@ -1,32 +1,83 @@
-import got from 'got';
 import { StoreService, resolveStoreService } from '../store-manager/store.service';
-import ServerService from './server.service';
+import KeyVaultSshService from '../communication-manager/key-vault-ssh.service';
+import AccountService from '../account/account.service';
+import { resolveKeyVaultApiService, KeyVaultApiService } from '../communication-manager/key-vault-api.service';
 import { step } from '../decorators';
+import { METHOD } from '../communication-manager/constants';
 
 export default class KeyVaultService {
   private readonly storeService: StoreService;
-  private readonly serverService: ServerService;
+  private readonly keyVaultSshService: KeyVaultSshService;
+  private readonly accountService: AccountService;
+  private readonly keyVaultApiService: KeyVaultApiService;
 
   constructor(storePrefix: string = '') {
     this.storeService = resolveStoreService(storePrefix);
-    this.serverService = new ServerService(storePrefix);
+    this.keyVaultSshService = new KeyVaultSshService(storePrefix);
+    this.accountService = new AccountService(storePrefix);
+    this.keyVaultApiService = resolveKeyVaultApiService(storePrefix);
+  }
+
+  updateStorage = async (payload: any) => {
+    this.keyVaultApiService.init();
+    return await this.keyVaultApiService.request(METHOD.POST, 'ethereum/storage', payload);
+  };
+
+  listAccounts = async () => {
+    this.keyVaultApiService.init();
+    return await this.keyVaultApiService.request(METHOD.LIST, 'ethereum/accounts');
+  };
+
+  healthCheck = async () => {
+    this.keyVaultApiService.init();
+    return await this.keyVaultApiService.request(METHOD.GET, 'sys/health');
+  };
+
+  @step({
+    name: 'Installing docker...'
+  })
+  async installDockerScope(): Promise<void> {
+    const ssh = await this.keyVaultSshService.getConnection();
+    const { stdout } = await ssh.execCommand('docker -v', {});
+    const installedAlready = stdout.includes('version');
+    if (installedAlready) return;
+
+    await ssh.execCommand('sudo yum update -y', {});
+    await ssh.execCommand('sudo yum install docker -y', {});
+    await ssh.execCommand('sudo service docker start', {});
+    await ssh.execCommand('sudo usermod -a -G docker ec2-user', {});
+    await ssh.execCommand(
+      'sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose',
+      {}
+    );
+  }
+
+  @step({
+    name: 'Getting KeyVault authentication token...',
+    requiredConfig: ['publicIp']
+  })
+  async getKeyVaultRootToken(): Promise<void> {
+    const ssh = await this.keyVaultSshService.getConnection();
+    const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
+    if (!rootToken) throw new Error('vault-plugin rootToken not found');
+    this.storeService.set('vaultRootToken', rootToken);
   }
 
   @step({
     name: 'Running docker container...'
   })
   async runDockerContainer(): Promise<void> {
-    const ssh = await this.serverService.getConnection();
+    const ssh = await this.keyVaultSshService.getConnection();
     const { stdout, stderr } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
     if (stderr) {
       console.log(stderr);
     }
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const { body: keyVaultVersion } = await got.get('https://api.stage.bloxstaking.com/key-vault/latest-tag');
+    const keyVaultVersion = await this.accountService.getLatestTag();
     this.storeService.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
-      `curl -L "https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
+      `curl -L "${process.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
       {}
     );
   }
@@ -35,7 +86,7 @@ export default class KeyVaultService {
     name: 'Running KeyVault...'
   })
   async runScripts(): Promise<void> {
-    const ssh = await this.serverService.getConnection();
+    const ssh = await this.keyVaultSshService.getConnection();
     const { stdout: containerId, stderr: error } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
     if (error) {
       console.log(error);
@@ -58,20 +109,9 @@ export default class KeyVaultService {
   })
   async updateVaultStorage(): Promise<void> {
     try {
-      const storage = this.storeService.get('keyVaultStorage');
-      await got.post(`http://${this.storeService.get('publicIp')}:8200/v1/ethereum/storage`, {
-        headers: {
-          'Authorization': `Bearer ${this.storeService.get('vaultRootToken')}`
-        },
-        body: {
-          // @ts-ignore
-          data: storage
-        },
-        // @ts-ignore
-        json: true
-      });
+      await this.updateStorage({ data: this.storeService.get('keyVaultStorage') });
     } catch (error) {
-      throw new Error(`Vault plugin api error: ${error}`);
+      throw new Error(`STEP: Update Storage error: ${error}`);
     }
   }
 
@@ -83,18 +123,7 @@ export default class KeyVaultService {
     // check if the key vault is alive
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
-      await got.get(
-        `http://${this.storeService.get('publicIp')}:8200/v1/sys/health`,
-        {
-          retry: {
-            limit: 2,
-            calculateDelay: ({ attemptCount, computedValue }) => {
-              return +attemptCount < 2 ? computedValue : 0;
-            }
-          },
-          timeout: 5000
-        }
-      );
+      await this.healthCheck();
       return { isActive: true };
     } catch (e) {
       console.log(e);

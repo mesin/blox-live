@@ -11,6 +11,8 @@ import AccountCreateProcess from '../../backend/proccess-manager/account-create.
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
 import SeedService from '../../backend/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
+import KeyVaultService from '../../backend/key-vault/key-vault.service';
+import AccountService from '../../backend/account/account.service';
 // import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
@@ -37,7 +39,8 @@ const Test = (props) => {
   // logger.debug('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
-  console.log('---->generalConf', storeService);
+  const accountService = new AccountService();
+  const keyVaultService = new KeyVaultService();
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -133,6 +136,7 @@ const Test = (props) => {
             } catch (e) {
               setProcessStatus(e);
             }
+            console.log('+ Congratulations. Re-installation is done!');
           }}
         >
           Reinstall
@@ -201,6 +205,11 @@ const Test = (props) => {
           Generate Mnemonic
         </button>
         <button onClick={async () => {
+          await accountKeyVaultService.createWallet();
+        }}>
+          Create Wallet
+        </button>
+        <button onClick={async () => {
           await accountKeyVaultService.createAccount();
         }}>
           Create Account
@@ -226,6 +235,34 @@ const Test = (props) => {
           await accountKeyVaultService.getDepositData(publicKey);
         }}>
           Get Account Deposit Data
+        </button>
+      </div>
+      <p/>
+      <h2>Blox API</h2>
+      <div>
+        <button onClick={async () => {
+          console.log(await accountService.get());
+        }}>
+          Get Accounts
+        </button>
+        <button onClick={async () => {
+          console.log(await accountService.getLatestTag());
+        }}>
+          Get Latest Tag
+        </button>
+      </div>
+      <p/>
+      <h2>Vault Plugin API</h2>
+      <div>
+        <button onClick={async () => {
+          console.log(JSON.parse(await keyVaultService.healthCheck()));
+        }}>
+          Status
+        </button>
+        <button onClick={async () => {
+          console.log(JSON.parse(await keyVaultService.listAccounts()));
+        }}>
+          List Accounts
         </button>
       </div>
       <p/>

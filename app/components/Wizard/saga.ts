@@ -1,12 +1,15 @@
 import { call, put, select, takeLatest } from 'redux-saga/effects';
-import axios from 'axios';
 import { notification } from 'antd';
-
 import { LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS } from './actionTypes';
 import * as actions from './actions';
 import { getData } from '../ProcessRunner/selectors';
-
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
+import WalletService from '../../backend/wallet/wallet.service';
+import AccountService from '../../backend/account/account.service';
+
+const walletService = new WalletService();
+const accountService = new AccountService();
+const accountKeyVaultService = new AccountKeyVaultService();
 
 function* onAccountStatusUpdateSuccess() {
   yield put(actions.updateAccountStatusSuccess());
@@ -18,7 +21,7 @@ function* onAccountStatusUpdateFailure(error) {
 }
 
 function* onLoadWalletSuccess(response) {
-  yield put(actions.loadWalletSuccess(response.data));
+  yield put(actions.loadWalletSuccess(response));
 }
 
 function* onLoadWalletFailure(error) {
@@ -37,8 +40,8 @@ function* onLoadDepositDataFailure(error) {
 
 function* loadWallet() {
   try {
-    const url = `${process.env.API_URL}/wallets`;
-    const response = yield call(axios.get, url);
+    const response = yield call(walletService.get);
+    console.log(response);
     yield call(onLoadWalletSuccess, response);
   } catch (error) {
     yield error && call(onLoadWalletFailure, error);
@@ -48,10 +51,8 @@ function* loadWallet() {
 function* loadDepositData() {
   const accountData = yield select(getData);
   const { publicKey } = accountData;
-  const publicKeyWithoutPrefix = publicKey.slice(2);
-  const accountKeyVaultService = new AccountKeyVaultService('blox');
   try {
-    const response = yield call(accountKeyVaultService.getDepositData, publicKeyWithoutPrefix);
+    const response = yield call(accountKeyVaultService.getDepositData, publicKey);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);
@@ -61,11 +62,9 @@ function* loadDepositData() {
 function* startUpdatingAccountStatus(action) {
   const { payload } = action;
   try {
-    const url = `${process.env.API_URL}/accounts/${payload}`;
-    yield call(axios.patch, url, { deposited: true });
+    yield call(accountService.updateStatus, payload, { deposited: true });
     yield call(onAccountStatusUpdateSuccess);
-  }
-  catch (error) {
+  } catch (error) {
     yield error && call(onAccountStatusUpdateFailure, error);
   }
 }

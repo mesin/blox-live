@@ -9,8 +9,7 @@ function* startLoadingMnemonic() {
   try {
     const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
-  }
-  catch (error) {
+  } catch (error) {
     yield put(actions.keyvaultLoadMnemonicFailure(error));
     notification.error({ message: 'Error', description: error.message });
   }
@@ -22,8 +21,7 @@ function* startSavingMnemonic(action) {
   try {
     yield call(seedService.storeMnemonic, mnemonic, password);
     yield put(actions.keyvaultSaveMnemonicSuccess());
-  }
-  catch (error) {
+  } catch (error) {
     yield put(actions.keyvaultSaveMnemonicFailure(error));
     notification.error({ message: 'Error', description: error.message });
   }
