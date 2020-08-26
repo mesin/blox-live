@@ -42,7 +42,7 @@ const DepositData = (props: Props) => {
     <Wrapper>
       {DEPOSIT_DATA.map((row, index) => {
         const { label, title, moreInfo, value } = row;
-        const isTxData = label === DEPOSIT_DATA[2].label;
+        const isTxData = label === DEPOSIT_DATA[1].label;
         const valueText = isTxData ? depositData : value;
         return (
           <Row key={index}>
