@@ -1,6 +1,6 @@
 import { Subject } from './subject.interface';
 import { Observer } from './observer.interface';
-import { Catch, catchDecoratorStore } from '../decorators/catch.decorator';
+import { Catch, catchDecoratorStore } from '../decorators';
 // import LoggerService from '../logger/logger.service';
 
 export default class ProcessClass implements Subject {
