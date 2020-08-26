@@ -34,7 +34,7 @@ const ValueText = styled.span`
   font-size: 14px;
   font-weight: 500;
   margin-right:7px;
-  max-width:400px;
+  max-width:350px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;

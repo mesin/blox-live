@@ -60,21 +60,22 @@ const StakingDeposit = (props: Props) => {
     }
   }, [depositData, isLoading, accountsFromApi]);
 
-  const onButtonClick = async () => {
+  const clearWizardAndAccountsData = async () => {
     await clearWizardData();
     await callClearAccountsData();
-    await setPage(page + 1);
   };
 
   const onMadeDepositButtonClick = async () => {
     const accountId = accountDataFromProcess ?
       accountDataFromProcess.id : accountsFromApi[0].id;
     await updateAccountStatus(accountId);
-    await onButtonClick();
+    await clearWizardAndAccountsData();
+    await setPage(page + 1);
   };
 
   const onDepositLaterButtonClick = async () => {
-    await onButtonClick();
+    await clearWizardAndAccountsData();
+    await setPage(page + 2);
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});

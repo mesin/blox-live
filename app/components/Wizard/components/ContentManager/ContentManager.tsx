@@ -63,7 +63,7 @@ const switcher = (props: Props) => {
       );
     case 8:
       return (
-        <Template key={7} bgImage={validatorImage} {...props}
+        <Template key={8} bgImage={validatorImage} {...props}
           component={<ValidatorPages.CongratulationPage {...props} />}
         />
       );
