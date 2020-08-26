@@ -1,9 +1,13 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Box from './Box';
 import ReactivatePopper from './ReactivatePopper';
 import UpdatePopper from './UpdatePopper';
+import * as dashboardActions from '../../../actions';
+import * as selectors from '../../../selectors';
 
 const Wrapper = styled.div`
   position:relative;
@@ -11,9 +15,8 @@ const Wrapper = styled.div`
 `;
 
 const BoxWithTooltip = (props) => {
-  const { isActive, walletVersion, width, color, bigText, medText, tinyText, image,
-          setReactivationModalDisplay, setUpdateModalDisplay
-        } = props;
+  const { isActive, walletVersion, width, color, bigText, medText, tinyText, image, actions } = props;
+  const { setReactivationModalDisplay, setUpdateModalDisplay } = actions;
   const [showReactivationPopper, setReactivationPopperDisplay] = React.useState(false);
   const [showUpdatePopper, setUpdatePopperDisplay] = React.useState(false);
 
@@ -42,6 +45,16 @@ const BoxWithTooltip = (props) => {
   );
 };
 
+const mapStateToProps = (state) => ({
+  showReactivationModal: selectors.getReactivationModalDisplayStatus(state),
+  showUpdateModal: selectors.getUpdateModalDisplayStatus(state),
+  showDepositInfoModal: selectors.getDepositInfoModalDisplayStatus(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(dashboardActions, dispatch),
+});
+
 BoxWithTooltip.propTypes = {
   isActive: PropTypes.bool,
   walletVersion: PropTypes.string,
@@ -51,8 +64,7 @@ BoxWithTooltip.propTypes = {
   medText: PropTypes.string,
   tinyText: PropTypes.string,
   image: PropTypes.string,
-  setReactivationModalDisplay: PropTypes.func,
-  setUpdateModalDisplay: PropTypes.func,
+  actions: PropTypes.object,
 };
 
-export default BoxWithTooltip;
+export default connect(mapStateToProps, mapDispatchToProps)(BoxWithTooltip);

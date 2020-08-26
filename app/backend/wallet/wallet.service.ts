@@ -15,8 +15,7 @@ export default class WalletService {
   }
 
   get = async () => {
-    const wallets = await BloxApiService.request(METHOD.GET, 'wallets');
-    return JSON.parse(wallets);
+    return await BloxApiService.request(METHOD.GET, 'wallets');
   };
 
   sync = async (payload: any) => {

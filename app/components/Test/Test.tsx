@@ -253,12 +253,12 @@ const Test = () => {
       <h2>Vault Plugin API</h2>
       <div>
         <button onClick={async () => {
-          console.log(JSON.parse(await keyVaultService.healthCheck()));
+          console.log(await keyVaultService.healthCheck());
         }}>
           Status
         </button>
         <button onClick={async () => {
-          console.log(JSON.parse(await keyVaultService.listAccounts()));
+          console.log(await keyVaultService.listAccounts());
         }}>
           List Accounts
         </button>

@@ -6,7 +6,7 @@ import globalReducer from './components/App/reducer';
 import login from './components/CallbackPage/reducer';
 import organization from './components/Organization/reducer';
 import wizard from './components/Wizard/reducer';
-import metaMask from './components/MetaMask/reducer';
+import dashboard from './components/Dashboard/reducer';
 import websocket from './components/WebSockets/reducer';
 import accounts from './components/Accounts/reducer';
 import KeyvaultManagement from './components/KeyvaultManagement/reducer';
@@ -19,7 +19,7 @@ export default function createRootReducer(history: History) {
     login,
     organization,
     wizard,
-    metaMask,
+    dashboard,
     websocket,
     accounts,
     KeyvaultManagement,

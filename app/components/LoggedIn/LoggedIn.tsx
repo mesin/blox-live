@@ -43,6 +43,8 @@ import webSocketSaga from '../WebSockets/saga';
 // auth
 import { logout } from '../CallbackPage/actions';
 
+import { allAccountsDeposited } from '../Accounts/service';
+
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const websocketKey = 'websocket';
@@ -82,7 +84,7 @@ const LoggedIn = (props: Props) => {
     }
 
     if (walletStatus && accounts && websocket) {
-      if ((walletStatus === 'active' || walletStatus === 'offline') && accounts.length > 0) {
+      if ((walletStatus === 'active' || walletStatus === 'offline') && accounts.length > 0 && allAccountsDeposited(accounts)) {
         callSetFinishedWizard(true);
       }
       toggleLoadingAll(true);

@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { InfoWithTooltip } from 'common/components';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
-import { clearAccountsData } from '../../../../Accounts/actions';
 import * as selectors from '../../../selectors';
+
+import { clearAccountsData } from '../../../../Accounts/actions';
+import { getAccounts } from '../../../../Accounts/selectors';
+
 import { getData } from '../../../../ProcessRunner/selectors';
+
 import { DepositData } from './components';
 
 const Wrapper = styled.div`
@@ -46,8 +50,14 @@ let toolTipText = 'GoETH are test tokens needed in order to participate in the G
 toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountData, actions, callClearAccountsData } = props;
-  const { updateAccountStatus, clearWizardData } = actions;
+  const { setPage, page, isLoading, depositData, accountDataFromProcess, accountsFromApi, actions, callClearAccountsData } = props;
+  const { updateAccountStatus, clearWizardData, loadDepositData } = actions;
+
+  useEffect(() => {
+    if (!depositData && !isLoading && accountsFromApi && accountsFromApi.length > 0) {
+      loadDepositData(accountsFromApi[0].publicKey);
+    }
+  }, [depositData, isLoading, accountsFromApi]);
 
   const onButtonClick = async () => {
     await clearWizardData();
@@ -56,7 +66,7 @@ const StakingDeposit = (props: Props) => {
   };
 
   const onMadeDepositButtonClick = async () => {
-    await updateAccountStatus(accountData.id);
+    await updateAccountStatus(accountDataFromProcess.id);
     await onButtonClick();
   };
 
@@ -92,7 +102,8 @@ const StakingDeposit = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
-  accountData: getData(state),
+  accountDataFromProcess: getData(state),
+  accountsFromApi: getAccounts(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -107,7 +118,8 @@ type Props = {
   setStep: (page: number) => void;
   isLoading: boolean;
   depositData: Record<string, any> | null;
-  accountData: Record<string, any> | null;
+  accountDataFromProcess: Record<string, any> | null;
+  accountsFromApi: [] | undefined;
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
 };

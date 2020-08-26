@@ -9,6 +9,8 @@ import { useInjectSaga } from '../../../../utils/injectSaga';
 import * as wizardActions from '../../actions';
 import * as selectors from '../../selectors';
 import saga from '../../saga';
+import { getAccounts } from '../../../Accounts/selectors';
+import { allAccountsDeposited } from '../../../Accounts/service';
 import ButtonWithIcon from './ButtonWithIcon';
 
 import SeedService from 'backend/key-vault/seed.service';
@@ -59,7 +61,7 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, wallet, isLoading } = props;
+  const { setPage, setStep, step, actions, wallet, accounts, isLoading } = props;
   const { loadWallet } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
@@ -75,7 +77,8 @@ const WelcomePage = (props: Props) => {
 
     if (hasWallet) {
       if (hasSeed) {
-        setStep2Status(true);
+        if (!allAccountsDeposited(accounts)) { jumpToDepositPage(); }
+        else { setStep2Status(true); }
       }
       else {
         jumpToPassPhrasePage();
@@ -90,12 +93,21 @@ const WelcomePage = (props: Props) => {
       setReactivationModalDisplay(true);
     }
     else if (wallet.status === 'active') {
-      setStep(step + 1);
-      setPage(5);
+      jumpToCreateWallet();
     }
   };
 
   const jumpToPassPhrasePage = () => setPage(3);
+
+  const jumpToCreateWallet = () => {
+    setStep(step + 1);
+    setPage(5);
+  };
+
+  const jumpToDepositPage = () => {
+    setStep(step + 1);
+    setPage(7);
+  };
 
   return (
     <Wrapper>
@@ -125,6 +137,7 @@ const WelcomePage = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   wallet: selectors.getWallet(state),
+  accounts: getAccounts(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -137,6 +150,7 @@ type Props = {
   step: number;
   actions: Record<string, any>;
   wallet: Record<string, any>;
+  accounts: [];
   isLoading: boolean;
 };
 

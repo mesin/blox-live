@@ -15,13 +15,11 @@ export default class AccountService {
   }
 
   get = async () => {
-    const accounts = await BloxApiService.request(METHOD.GET, 'accounts');
-    return JSON.parse(accounts);
+    return await BloxApiService.request(METHOD.GET, 'accounts');
   };
 
   create = async (payload: any) => {
-    const account = await BloxApiService.request(METHOD.POST, 'accounts', payload);
-    return JSON.parse(account);
+    return await BloxApiService.request(METHOD.POST, 'accounts', payload);
   };
 
   delete = async () => {
