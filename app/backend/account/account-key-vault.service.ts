@@ -1,8 +1,9 @@
 import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
 import { storeService, StoreService } from '../store-manager/store.service';
-import { step } from '../decorators';
 import Web3 from 'web3';
+import { Catch, CatchClass, Step } from '../decorators';
 
+@CatchClass<AccountKeyVaultService>()
 export default class AccountKeyVaultService extends KeyVaultCliService {
   private readonly storeService: StoreService;
 
@@ -11,8 +12,11 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     this.storeService = storeService;
   }
 
-  @step({
+  @Step({
     name: 'Creating wallet...'
+  })
+  @Catch({
+    displayMessage: 'CLI Create Wallet failed'
   })
   async createWallet(): Promise<void> {
     if (this.storeService.get('keyVaultStorage')) return;
@@ -24,9 +28,12 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
-  @step({
+  @Step({
     name: 'Create Account',
     requiredConfig: ['seed', 'keyVaultStorage']
+  })
+  @Catch({
+    displayMessage: 'CLI Create Account failed'
   })
   async createAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(

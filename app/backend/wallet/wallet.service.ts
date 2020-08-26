@@ -1,9 +1,10 @@
 import BloxApiService from '../communication-manager/blox-api.service';
 import { METHOD } from '../communication-manager/constants';
-import { step } from '../decorators';
 import { resolveStoreService, StoreService } from '../store-manager/store.service';
 import KeyVaultSshService from '../communication-manager/key-vault-ssh.service';
+import { CatchClass, Step } from '../decorators';
 
+@CatchClass<WalletService>()
 export default class WalletService {
   private readonly storeService: StoreService;
   private readonly keyVaultSshService: KeyVaultSshService;
@@ -31,7 +32,7 @@ export default class WalletService {
     await BloxApiService.request(METHOD.DELETE, 'organizations');
   };
 
-  @step({
+  @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']
   })
@@ -49,7 +50,7 @@ export default class WalletService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
@@ -72,7 +73,7 @@ export default class WalletService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Re-sync vault with blox api',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })

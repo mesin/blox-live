@@ -2,9 +2,10 @@ import { StoreService, resolveStoreService } from '../store-manager/store.servic
 import KeyVaultSshService from '../communication-manager/key-vault-ssh.service';
 import AccountService from '../account/account.service';
 import { resolveKeyVaultApiService, KeyVaultApiService } from '../communication-manager/key-vault-api.service';
-import { step } from '../decorators';
 import { METHOD } from '../communication-manager/constants';
+import { CatchClass, Step } from '../decorators';
 
+@CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly storeService: StoreService;
   private readonly keyVaultSshService: KeyVaultSshService;
@@ -33,7 +34,7 @@ export default class KeyVaultService {
     return await this.keyVaultApiService.request(METHOD.GET, 'sys/health');
   };
 
-  @step({
+  @Step({
     name: 'Installing docker...'
   })
   async installDockerScope(): Promise<void> {
@@ -52,7 +53,7 @@ export default class KeyVaultService {
     );
   }
 
-  @step({
+  @Step({
     name: 'Getting KeyVault authentication token...',
     requiredConfig: ['publicIp']
   })
@@ -63,7 +64,7 @@ export default class KeyVaultService {
     this.storeService.set('vaultRootToken', rootToken);
   }
 
-  @step({
+  @Step({
     name: 'Running docker container...'
   })
   async runDockerContainer(): Promise<void> {
@@ -82,7 +83,7 @@ export default class KeyVaultService {
     );
   }
 
-  @step({
+  @Step({
     name: 'Running KeyVault...'
   })
   async runScripts(): Promise<void> {
@@ -103,7 +104,7 @@ export default class KeyVaultService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Updating server storage...',
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
@@ -115,7 +116,7 @@ export default class KeyVaultService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Validating KeyVault final configuration...',
     requiredConfig: ['publicIp']
   })

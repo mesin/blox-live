@@ -32,9 +32,7 @@ class Listener implements Observer {
 }
 
 let configIsSet = false;
-const Test = (props) => {
-  const { token } = props;
-  console.log('token', token);
+const Test = () => {
   // const logger = new LoggerService();
   // logger.debug('token', token);
   const seedService = new SeedService();
