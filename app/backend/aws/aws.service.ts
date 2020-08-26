@@ -3,6 +3,9 @@ import { StoreService, resolveStoreService } from '../store-manager/store.servic
 import * as AWS from 'aws-sdk';
 import { step } from '../decorators';
 
+// TODO import from .env
+const tempStorePrefix = 'tmp';
+
 export default class AwsService {
   private ec2!: AWS.EC2;
   private readonly storeService: StoreService;
@@ -183,6 +186,8 @@ export default class AwsService {
     await this.ec2.deleteKeyPair({ KeyPairId: this.storeService.get('keyPair.pairId') }).promise();
     await this.ec2.deleteSecurityGroup({ GroupId: this.storeService.get('securityGroupId'), DryRun: false }).promise();
     this.storeService.clear();
+    const storeServiceTmp = resolveStoreService(tempStorePrefix);
+    storeServiceTmp.clear();
   }
 
   @step({

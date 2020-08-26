@@ -70,7 +70,6 @@ export default class ProcessClass implements Subject {
         delete result.step;
         this.notify({ step: { name: stepInfo.name, status: 'completed' }, ...result });
       } catch (e) {
-        console.log(e);
         // this.logger.error(e);
         if (Array.isArray(this.fallbackActions)) {
           const found = this.fallbackActions.find(step => step.method === action.method);
@@ -82,7 +81,7 @@ export default class ProcessClass implements Subject {
             }
           }
         }
-        throw e;
+        this.notify({ step: { status: 'error' }, error: e });
       }
     }
   }
