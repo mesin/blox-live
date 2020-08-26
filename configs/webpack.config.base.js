@@ -44,7 +44,8 @@ export default {
       AUTH0_LOGOUT_URL: 'http://localhost',
       AUTH0_CALLBACK_URL: 'http://localhost/callback',
       API_URL: 'https://api.stage.bloxstaking.com',
-      VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0'
+      VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0',
+      WEBSITE_URL: 'https://www.bloxstaking.com',
     }),
 
     new webpack.NamedModulesPlugin()
