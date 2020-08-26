@@ -50,7 +50,7 @@ const CancelButton = styled(BigButton)`
 
 const StakingDeposit = (props: Props) => {
   const { setPage, page, isLoading, depositData, accountDataFromProcess, accountsFromApi, actions, callClearAccountsData } = props;
-  const { updateAccountStatus, clearWizardData, loadDepositData } = actions;
+  const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
   useEffect(() => {
     const needToLoadDepositData = !depositData && !isLoading && accountsFromApi && accountsFromApi.length > 0;
@@ -75,7 +75,7 @@ const StakingDeposit = (props: Props) => {
 
   const onDepositLaterButtonClick = async () => {
     await clearWizardAndAccountsData();
-    await setPage(page + 2);
+    await setFinishedWizard(true);
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
