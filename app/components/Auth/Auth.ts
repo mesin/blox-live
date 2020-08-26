@@ -57,7 +57,7 @@ export default class Auth {
   checkIfTokensExist = async () => {
     return new Promise((resolve, reject) => {
       const callBack = (response) => {
-        if (response.statusCode === 200) {
+        if (response.status === 200) {
           const userProfile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
           resolve({
@@ -87,7 +87,7 @@ export default class Auth {
         refresh_token: refreshToken
       };
       try {
-        const response = await this.authApiService.request('POST', 'token', payload);
+        const response = await this.authApiService.request('POST', 'token', payload, true);
         return callBack(response);
       } catch (error) {
         await this.logout();
@@ -110,7 +110,7 @@ export default class Auth {
     };
 
     try {
-      return  await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions));
+      return await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions), true);
     } catch (error) {
       await this.logout();
       return Error(error);
