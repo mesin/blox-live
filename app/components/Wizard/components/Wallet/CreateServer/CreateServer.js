@@ -51,7 +51,7 @@ const CreateServer = (props) => {
   const { processSubscribe, processClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
-  const [showGuide, setGuideDisplay] = React.useState(false);
+  const [showGuide, setGuideDisplay] = React.useState(true);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
   const isPasswordInputDisabled = isLoading || isDone;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);

@@ -7,7 +7,9 @@ export default [
     key: 'key',
     title: 'Key',
     width: '40%',
-    valueRender: (value) => <KeyCell value={value} />,
+    valueRender: (value) => {
+      return <KeyCell value={value} />;
+    },
   },
   {
     key: 'currentBalance',

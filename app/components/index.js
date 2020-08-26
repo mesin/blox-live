@@ -5,4 +5,6 @@ export { default as Dashboard } from './Dashboard';
 export { default as NotFoundPage } from './NotFoundPage';
 export { default as SettingsPage } from './SettingsPage';
 export { default as KeyVaultReactivation } from './KeyVaultReactivation';
+export { default as KeyVaultUpdate } from './KeyVaultUpdate';
+export { default as DepositInfoModal } from './DepositInfoModal';
 export { default as Test } from './Test';

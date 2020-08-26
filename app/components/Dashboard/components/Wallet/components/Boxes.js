@@ -35,7 +35,6 @@ const Boxes = (props) => {
 Boxes.propTypes = {
   isActive: PropTypes.bool,
   summary: PropTypes.object,
-  setReactivationModalDisplay: PropTypes.func,
 };
 
 export default Boxes;

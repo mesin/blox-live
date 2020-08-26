@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useInjectSaga } from 'utils/injectSaga';
-import * as currentActions from '../../../../ProcessRunner/actions';
+import * as processRunnerActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 import { loadDepositData } from '../../../actions';
@@ -11,14 +11,14 @@ import { GenerateKeys, KeysGenerated } from './components';
 const key = 'processRunner';
 
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, message, validatorData, callLoadDepositData } = props;
+  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData } = props;
   const { processSubscribe } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
 
   useEffect(() => {
     if (!isLoading && validatorData) {
-      callLoadDepositData();
+      callLoadDepositData(validatorData.publicKey);
     }
   }, [isLoading, validatorData]);
 
@@ -35,7 +35,7 @@ const CreateValidator = (props: Props) => {
       {validatorData ? (
         <KeysGenerated onClick={onContinueClick} validatorData={validatorData} />
       ) : (
-        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} message={message} />
+        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} />
       )}
     </>
   );
@@ -44,12 +44,11 @@ const CreateValidator = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   validatorData: selectors.getData(state),
-  message: selectors.getMessage(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  actions: bindActionCreators(currentActions, dispatch),
-  callLoadDepositData: () => dispatch(loadDepositData()),
+  actions: bindActionCreators(processRunnerActions, dispatch),
+  callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
 });
 
 type Props = {
@@ -60,8 +59,7 @@ type Props = {
   isLoading: boolean;
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
-  message: string;
-  callLoadDepositData: () => void;
+  callLoadDepositData: (publicKey: string) => void;
 };
 
 type State = Record<string, any>;

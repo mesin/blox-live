@@ -1,8 +1,7 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects';
+import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import { LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS } from './actionTypes';
 import * as actions from './actions';
-import { getData } from '../ProcessRunner/selectors';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
 import WalletService from '../../backend/wallet/wallet.service';
 import AccountService from '../../backend/account/account.service';
@@ -41,18 +40,16 @@ function* onLoadDepositDataFailure(error) {
 function* loadWallet() {
   try {
     const response = yield call(walletService.get);
-    console.log(response);
     yield call(onLoadWalletSuccess, response);
   } catch (error) {
     yield error && call(onLoadWalletFailure, error);
   }
 }
 
-function* loadDepositData() {
-  const accountData = yield select(getData);
-  const { publicKey } = accountData;
+function* loadDepositData(action) {
+  const { payload } = action;
   try {
-    const response = yield call(accountKeyVaultService.getDepositData, publicKey);
+    const response = yield call(accountKeyVaultService.getDepositData, payload);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);

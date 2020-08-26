@@ -64,7 +64,7 @@ const StakingDeposit = (props: Props) => {
     await onButtonClick();
   };
 
-  return (
+  return ( // TODO: load deposit data in case it's not exist
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
