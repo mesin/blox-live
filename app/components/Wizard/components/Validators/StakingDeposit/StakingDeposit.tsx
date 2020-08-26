@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { notification } from 'antd';
 import { InfoWithTooltip } from 'common/components';
+import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
@@ -46,16 +48,15 @@ const CancelButton = styled(BigButton)`
   border:1px solid ${({theme}) => theme.gray400};
 `;
 
-let toolTipText = 'GoETH are test tokens needed in order to participate in the Goerli Test Network.';
-toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
-
 const StakingDeposit = (props: Props) => {
   const { setPage, page, isLoading, depositData, accountDataFromProcess, accountsFromApi, actions, callClearAccountsData } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData } = actions;
 
   useEffect(() => {
-    if (!depositData && !isLoading && accountsFromApi && accountsFromApi.length > 0) {
-      loadDepositData(accountsFromApi[0].publicKey);
+    const needToLoadDepositData = !depositData && !isLoading && accountsFromApi && accountsFromApi.length > 0;
+    if (needToLoadDepositData) {
+      const { publicKey } = accountsFromApi[0];
+      loadDepositData(publicKey);
     }
   }, [depositData, isLoading, accountsFromApi]);
 
@@ -74,12 +75,14 @@ const StakingDeposit = (props: Props) => {
     await onButtonClick();
   };
 
+  const onCopy = () => notification.success({message: 'Copied to clipboard!'});
+
   return (
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
         To start staking on our Testnet, you are required to stake 32 GoEth
-        <InfoWithTooltip title={toolTipText} placement="bottom" /> into the
+        <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
         <br />
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
@@ -87,7 +90,7 @@ const StakingDeposit = (props: Props) => {
         <GoEthButton href={'https://discord.gg/Kw5eFh'} target={'_blank'}>Need GoETH?</GoEthButton>
       </Paragraph>
 
-      {depositData && <DepositData depositData={depositData} />}
+      {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
       <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
         Need help?
       </Link>
@@ -117,9 +120,9 @@ type Props = {
   step: number;
   setStep: (page: number) => void;
   isLoading: boolean;
-  depositData: Record<string, any> | null;
+  depositData: string;
   accountDataFromProcess: Record<string, any> | null;
-  accountsFromApi: [] | undefined;
+  accountsFromApi: { publicKey: string }[];
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
 };

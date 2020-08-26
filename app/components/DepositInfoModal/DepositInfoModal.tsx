@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { notification } from 'antd';
-import { CustomModal, InfoWithTooltip } from 'common/components';
+import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
+import { DEPOSIT_DATA } from '../Wizard/components/Validators/StakingDeposit/constants';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -24,12 +25,12 @@ const Row = styled.div`
   margin-bottom:25px;
 `;
 
-const Key = styled.span`
+const KeyText = styled.span`
   font-size: 16px;
   font-weight: 900;
 `;
 
-const Value = styled.span`
+const ValueText = styled.span`
   font-size: 14px;
   font-weight: 500;
   margin-right:7px;
@@ -48,15 +49,6 @@ const CloseButton = styled.div`
   }
 `;
 
-const moreInfoTexts = {
-  to: 'This where your deposit transactions should be sent in order to run your validator and start staking.',
-  txData: 'TX data holds additional information that is required for the transaction.',
-  amount: 'The transaction amount refers to the amount of Ethereum required for staking. Please send the exact amount.',
-};
-
-const depositTo = '0x07b39f4fde4a38bace212b546dac87c58dfe3fdc';
-const amount = '32 GoETH';
-
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
 const DepositInfoModal = ({onClose, depositData}: Props) => {
@@ -64,32 +56,29 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
         <Title>Deposit Info</Title>
+        {DEPOSIT_DATA.map((row, index) => {
+          const { label, title, moreInfo, value } = row;
+          const isTxData = label === DEPOSIT_DATA[2].label;
+          const valueText = isTxData ? depositData : value;
+          return (
+            <Row key={index}>
+              <KeyText>
+                {title}:
+                <InfoWithTooltip title={moreInfo} placement="right" />
+              </KeyText>
+              {isTxData ? (
+                <Tooltip placement={'bottom'} title={valueText}>
+                  <ValueText>{valueText}</ValueText>
+                </Tooltip>
+              ) : (
+                <ValueText>{valueText}</ValueText>
+              )}
+              <CopyToClipboardIcon text={valueText} onCopy={onCopy} />
+            </Row>
+          );
+        })}
         <Row>
-          <Key>
-            To Address
-            <InfoWithTooltip title={moreInfoTexts.to} placement="right" />
-          </Key>
-          <Value>{depositTo}</Value>
-          <CopyToClipboardIcon text={depositTo} onCopy={onCopy} />
-        </Row>
-        <Row>
-          <Key>
-            Tx Data:
-            <InfoWithTooltip title={moreInfoTexts.txData} placement="right" />
-          </Key>
-          <Value>{depositData}</Value>
-          <CopyToClipboardIcon text={depositData} onCopy={onCopy} />
-        </Row>
-        <Row>
-          <Key>
-            Amount:
-            <InfoWithTooltip title={moreInfoTexts.amount} placement="right" />
-          </Key>
-          <Value>{amount}</Value>
-          <CopyToClipboardIcon text={amount} onCopy={onCopy} />
-        </Row>
-        <Row>
-          <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
+          <Link href={`${process.env.WEBSITE_URL}/blox-guide-how-do-i-submit-my-staking-deposit`}>
             Need help?
           </Link>
         </Row>

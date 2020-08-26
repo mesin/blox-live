@@ -4,9 +4,9 @@ import { useInjectSaga } from 'utils/injectSaga';
 
 import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
-import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyvaultManagement/actions';
-import { getMnemonic, getIsLoading } from '../../../../KeyvaultManagement/selectors';
-import saga from '../../../../KeyvaultManagement/saga';
+import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyVaultManagement/actions';
+import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
+import saga from '../../../../KeyVaultManagement/saga';
 
 const key = 'KeyvaultManagement';
 

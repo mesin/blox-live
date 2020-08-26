@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import CustomButton from './CustomButton';
 import { CLOUD_PROVIDERS } from './constants';
 import { Title, SubTitle, Paragraph, Link } from '../../common';
-import { keyvaultSetCouldProvider } from '../../../../KeyvaultManagement/actions';
+import { keyvaultSetCouldProvider } from '../../../../KeyVaultManagement/actions';
 
 const Wrapper = styled.div`
   width: 100%;
