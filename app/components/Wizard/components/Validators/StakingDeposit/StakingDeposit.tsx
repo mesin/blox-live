@@ -67,7 +67,9 @@ const StakingDeposit = (props: Props) => {
   };
 
   const onMadeDepositButtonClick = async () => {
-    await updateAccountStatus(accountDataFromProcess.id);
+    const accountId = accountDataFromProcess ?
+      accountDataFromProcess.id : accountsFromApi[0].id;
+    await updateAccountStatus(accountId);
     await onButtonClick();
   };
 
@@ -122,7 +124,7 @@ type Props = {
   isLoading: boolean;
   depositData: string;
   accountDataFromProcess: Record<string, any> | null;
-  accountsFromApi: { publicKey: string }[];
+  accountsFromApi: { publicKey: string, id: number }[];
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
 };
