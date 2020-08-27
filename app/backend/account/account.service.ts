@@ -1,9 +1,10 @@
 import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import AccountKeyVaultService from './account-key-vault.service';
 import BloxApiService from '../communication-manager/blox-api.service';
-import { step } from '../decorators';
 import { METHOD } from '../communication-manager/constants';
+import { Catch, CatchClass, Step } from '../decorators';
 
+@CatchClass<AccountService>()
 export default class AccountService {
   private readonly storeService: StoreService;
   private readonly accountKeyVaultService: AccountKeyVaultService;
@@ -36,33 +37,28 @@ export default class AccountService {
     return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
   };
 
-  @step({
+  @Step({
     name: 'Create Blox Account',
     requiredConfig: ['authToken']
+  })
+  @Catch({
+    displayMessage: 'Create Blox Account failed'
   })
   async createBloxAccount(): Promise<any> {
     const lastIndexedAccount = await this.accountKeyVaultService.getLastIndexedAccount();
     if (!lastIndexedAccount) {
       throw new Error('No account to create');
     }
-    try {
-      const account = await this.create(lastIndexedAccount);
-      return { data: account };
-    } catch (error) {
-      throw new Error(`STEP: Create Blox Account error: ${error}`);
-    }
+    const account = await this.create(lastIndexedAccount);
+    return { data: account };
   }
 
-  @step({
+  @Step({
     name: 'Remove Blox Accounts',
     requiredConfig: ['authToken']
   })
   async deleteBloxAccounts(): Promise<void> {
-    try {
-      await this.delete();
-      this.storeService.delete('keyVaultStorage');
-    } catch (error) {
-      throw new Error(`STEP: Remove Blox Accounts step error: ${error}`);
-    }
+    await this.delete();
+    this.storeService.delete('keyVaultStorage');
   }
 }

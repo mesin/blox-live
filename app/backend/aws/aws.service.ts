@@ -1,11 +1,12 @@
 import net from 'net';
 import { StoreService, resolveStoreService } from '../store-manager/store.service';
 import * as AWS from 'aws-sdk';
-import { step } from '../decorators';
+import { CatchClass, Step } from '../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
 
+@CatchClass<AwsService>()
 export default class AwsService {
   private ec2!: AWS.EC2;
   private readonly storeService: StoreService;
@@ -24,7 +25,7 @@ export default class AwsService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Securely connecting to AWS...',
     requiredConfig: ['credentials']
   })
@@ -36,7 +37,7 @@ export default class AwsService {
     });
   }
 
-  @step({
+  @Step({
     name: 'Checking AWS keys permissions...'
   })
   async validateAWSPermissions() {
@@ -49,7 +50,7 @@ export default class AwsService {
     }
   }
 
-  @step({
+  @Step({
     name: 'Creating secure EC2 key pair...',
     requiredConfig: ['uuid']
   })
@@ -65,7 +66,7 @@ export default class AwsService {
     this.storeService.set('keyPair', { pairId, privateKey });
   }
 
-  @step({
+  @Step({
     name: 'Enabling connection using Elastic IP...'
   })
   async createElasticIp() {
@@ -79,7 +80,7 @@ export default class AwsService {
     this.storeService.set('publicIp', publicIp);
   }
 
-  @step({
+  @Step({
     name: 'Setting security group permissions...',
     requiredConfig: ['uuid']
   })
@@ -117,7 +118,7 @@ export default class AwsService {
     this.storeService.set('securityGroupId', securityGroupId);
   }
 
-  @step({
+  @Step({
     name: 'Establishing KeyVault server...',
     requiredConfig: ['uuid', 'securityGroupId', 'addressId']
   })
@@ -150,7 +151,7 @@ export default class AwsService {
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
   }
 
-  @step({
+  @Step({
     name: 'Delete all EC2 items',
     requiredConfig: ['instanceId', 'securityGroupId', 'addressId', 'keyPair']
   })
@@ -190,7 +191,7 @@ export default class AwsService {
     storeServiceTmp.clear();
   }
 
-  @step({
+  @Step({
     name: 'Removing old EC2 instance...',
     requiredConfig: ['instanceId', 'addressId']
   })
@@ -200,7 +201,7 @@ export default class AwsService {
     await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
   }
 
-  @step({
+  @Step({
     name: 'Establishing connection to your server...',
     requiredConfig: ['instanceId', 'publicIp']
   })
