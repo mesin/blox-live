@@ -1,10 +1,11 @@
 import ElectronStore from 'electron-store';
 import BaseStoreService from './base-store.service';
-import { Step } from '../decorators';
+import { CatchClass, Step } from '../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
 
+@CatchClass<StoreService>()
 class StoreService extends BaseStoreService {
   private store: ElectronStore;
   private readonly prefix: string;
