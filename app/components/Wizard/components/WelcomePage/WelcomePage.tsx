@@ -80,7 +80,7 @@ const WelcomePage = (props: Props) => {
 
     if (hasWallet) {
       if (hasSeed) {
-        if (!allAccountsDeposited(accounts)) { setFinishedWizard(); }
+        if (!allAccountsDeposited(accounts)) { setFinishedWizard(true); }
         else { setStep2Status(true); }
       }
       else {

@@ -42,16 +42,14 @@ export default class Auth {
         }
         reject(new Error('Error in login'));
       };
-      const onFailure = () => reject(new Error('Error in login'));
+      const onFailure = () => reject(new Error('Authentication window closed'));
       createAuthWindow(this, name, onSuccess, onFailure);
     });
   };
 
   getAuthenticationURL = (socialAppName) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
-    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}
-            &client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}
-            &redirect_uri=${redirectUri}&prompt=login`;
+    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
   };
 
   loadAuthToken = async (callbackURL) => {
