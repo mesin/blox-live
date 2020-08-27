@@ -89,8 +89,8 @@ export default class ProcessClass implements Subject {
         this.notify({ step: { status: 'error' }, error });
         return;
       } else {
-        this.notify({ step: { name: step.name, status: 'completed' }, ...result });
         delete result.step;
+        this.notify({ step: { name: step.name, status: 'completed' }, ...result });
       }
     }
   }
