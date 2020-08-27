@@ -258,7 +258,8 @@ const Test = () => {
           Status
         </button>
         <button onClick={async () => {
-          console.log(await keyVaultService.listAccounts());
+          const response = await keyVaultService.listAccounts();
+          console.log(response.data.accounts);
         }}>
           List Accounts
         </button>

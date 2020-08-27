@@ -26,9 +26,9 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
 
         // TODO Vadim should use logging service
         if (payload.localHandler) {
-          payload.localHandler.call(null, extendedError, this);
+          return payload.localHandler.call(null, extendedError, this);
         } else if (handler) {
-          handler.call(null, extendedError, this);
+          return handler.call(null, extendedError, this);
         } else {
           throw new Error(displayMessage);
         }
@@ -48,9 +48,6 @@ function CatchClass<T>(payload: any = {}) {
       if (Reflect.getMetadata(propertyName, target.prototype, propertyName))
         continue;
       let descriptor = Object.getOwnPropertyDescriptor(target.prototype, propertyName);
-      const isMethod = descriptor.value instanceof Function;
-      if (!isMethod)
-        continue;
       if (descriptor) {
         descriptor = Catch(payload, false)(target, propertyName, descriptor);
         Object.defineProperty(target.prototype, propertyName, descriptor);

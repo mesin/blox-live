@@ -66,11 +66,13 @@ export default class ProcessClass implements Subject {
         }
       }
     }
-    this.notify({ step: { status: 'error' }, error: new Error(payload.displayMessage) });
+    return {
+      error: new Error(payload.displayMessage)
+    };
   };
 
   @Catch({
-    displayMessage: 'process failed'
+    displayMessage: 'Process failed'
   })
   async run(): Promise<void> {
     for (const [index, action] of this.actions.entries()) {
@@ -82,9 +84,14 @@ export default class ProcessClass implements Subject {
           func: 'notify'
         }
       });
-      const stepInfo = { ...result.step };
-      delete result.step;
-      this.notify({ step: { name: stepInfo.name, status: 'completed' }, ...result });
+      const { error = null, step = null } = { ...result };
+      if (error) {
+        this.notify({ step: { status: 'error' }, error });
+        return;
+      } else {
+        this.notify({ step: { name: step.name, status: 'completed' }, ...result });
+        delete result.step;
+      }
     }
   }
 }

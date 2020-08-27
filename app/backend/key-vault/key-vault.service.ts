@@ -109,11 +109,7 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
   async updateVaultStorage(): Promise<void> {
-    try {
-      await this.updateStorage({ data: this.storeService.get('keyVaultStorage') });
-    } catch (error) {
-      throw new Error(`STEP: Update Storage error: ${error}`);
-    }
+    await this.updateStorage({ data: this.storeService.get('keyVaultStorage') });
   }
 
   @Step({
