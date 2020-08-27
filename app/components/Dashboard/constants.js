@@ -1,6 +1,6 @@
 export const STATUSES = {
   active: { name: 'Active', color: 'accent2400' },
-  waiting: { name: 'Waiting', color: 'gray600' },
+  waiting: { name: 'Waiting', color: 'warning700' },
   pending: { name: 'Pending', color: 'warning900' },
   exited: { name: 'Exited', color: 'gray400' },
   invalid: { name: 'Invalid', color: 'gray400' },

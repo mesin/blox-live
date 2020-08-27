@@ -1,8 +1,6 @@
-import keytar from 'keytar';
-import os from 'os';
 import url from 'url';
 import jwtDecode from 'jwt-decode';
-import { SOCIAL_APPS } from '../../common/constants';
+import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
 import { storeService } from '../../backend/store-manager/store.service';
@@ -13,14 +11,12 @@ export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
-  keytar: Record<string, any>;
   private readonly authApiService: AuthApiService;
 
   constructor() {
     this.tokens = {
       accessToken: '',
       idToken: '',
-      refreshToken: ''
     };
     this.userProfile = null;
     this.auth = {
@@ -30,16 +26,12 @@ export default class Auth {
       responseType: 'code',
       scope: 'openid profile email offline_access'
     };
-    this.keytar = {
-      service: 'bloxstaking-openid-oauth',
-      account: os.userInfo().username
-    };
     this.authApiService = new AuthApiService();
   }
 
   loginWithSocialApp = async (name: string) => {
     return new Promise((resolve, reject) => {
-      const callBack = (response) => {
+      const onSuccess = (response) => {
         if (response.status === 200) {
           const userProfile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
@@ -50,52 +42,16 @@ export default class Auth {
         }
         reject(new Error('Error in login'));
       };
-      createAuthWindow(this, name, callBack);
-    });
-  };
-
-  checkIfTokensExist = async () => {
-    return new Promise((resolve, reject) => {
-      const callBack = (response) => {
-        if (response.status === 200) {
-          const userProfile = jwtDecode(response.data.id_token);
-          this.setSession(response.data, userProfile);
-          resolve({
-            idToken: response.data.id_token,
-            idTokenPayload: userProfile
-          });
-        }
-        reject(new Error(response));
-      };
-      this.loadRefreshToken(callBack);
+      const onFailure = () => reject(new Error('Error in login'));
+      createAuthWindow(this, name, onSuccess, onFailure);
     });
   };
 
   getAuthenticationURL = (socialAppName) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
-    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
-  };
-
-  loadRefreshToken = async (callBack) => {
-    const { clientID } = this.auth;
-    const { service, account } = this.keytar;
-    const refreshToken = await keytar.getPassword(service, account);
-    if (refreshToken) {
-      const payload = {
-        grant_type: 'refresh_token',
-        client_id: clientID,
-        refresh_token: refreshToken
-      };
-      try {
-        const response = await this.authApiService.request('POST', 'token', payload, true);
-        return callBack(response);
-      } catch (error) {
-        await this.logout();
-        return callBack(Error(error));
-      }
-    } else {
-      return callBack(Error('No available refresh token.'));
-    }
+    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}
+            &client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}
+            &redirect_uri=${redirectUri}&prompt=login`;
   };
 
   loadAuthToken = async (callbackURL) => {
@@ -118,22 +74,12 @@ export default class Auth {
   };
 
   setSession = async (authResult, userProfile) => {
-    const { access_token, id_token, refresh_token } = authResult;
+    const { access_token, id_token } = authResult;
     this.tokens.accessToken = access_token;
     this.tokens.idToken = id_token;
-    this.tokens.refreshToken = refresh_token;
     this.userProfile = userProfile;
     storeService.init(userProfile.sub, authResult.id_token);
     BloxApiService.init();
-    console.log('SET SESSION', authResult, userProfile);
-    console.log('electronStore===>', storeService);
-    if (refresh_token) {
-      await keytar.setPassword(
-        this.keytar.service,
-        this.keytar.account,
-        refresh_token
-      );
-    }
   };
 
   isLoggedIn = () => {
@@ -141,24 +87,18 @@ export default class Auth {
     return new Date().getTime() < Number(expiresAt);
   };
 
-  getAccessToken = () => this.tokens.accessToken; // TODO: add electron-storage
+  getAccessToken = () => this.tokens.accessToken;
 
   getIdToken = () => this.tokens.idToken;
 
-  getProfile = (cb: CallBack) => {
-    // TODO: get /userinfo in case userProfile is null
-    return cb(this.userProfile, null);
-  };
+  getProfile = (cb: CallBack) => cb(this.userProfile, null);
 
-  logout = async () => { // check the keytar
-    const { service, account } = this.keytar;
-    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
-    await keytar.deletePassword(service, account);
+  logout = async () => { // TODO: check https://auth0.com/docs/logout/log-users-out-of-idps
+    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
     storeService.logout();
     this.tokens = {
       accessToken: null,
       profile: null,
-      refreshToken: null
     };
     this.userProfile = null;
   };

@@ -90,7 +90,7 @@ const StakingDeposit = (props: Props) => {
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
         simulate validator deposits on the proof-of-work enabled Beacon-chain.
-        <GoEthButton href={'https://discord.gg/Kw5eFh'} target={'_blank'}>Need GoETH?</GoEthButton>
+        <GoEthButton href={process.env.DISCORD_INVITE} target={'_blank'}>Need GoETH?</GoEthButton>
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}

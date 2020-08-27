@@ -46,6 +46,7 @@ export default {
       API_URL: 'https://api.stage.bloxstaking.com',
       VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/vault-plugin-secrets-eth2.0',
       WEBSITE_URL: 'https://www.bloxstaking.com',
+      DISCORD_INVITE: 'https://discord.gg/P4qwwK',
     }),
 
     new webpack.NamedModulesPlugin()

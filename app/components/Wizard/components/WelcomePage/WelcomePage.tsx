@@ -3,17 +3,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { InfoWithTooltip } from 'common/components';
+import { useInjectSaga } from 'utils/injectSaga';
+
 import { KeyVaultReactivation } from '../../..';
-import { useInjectSaga } from '../../../../utils/injectSaga';
 import * as wizardActions from '../../actions';
 import * as selectors from '../../selectors';
 import saga from '../../saga';
+
 import { getAccounts } from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
-import ButtonWithIcon from './ButtonWithIcon';
 
 import SeedService from 'backend/key-vault/seed.service';
+
+import { InfoWithTooltip } from 'common/components';
+import ButtonWithIcon from './ButtonWithIcon';
 
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
@@ -62,7 +65,7 @@ const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
   const { setPage, setStep, step, actions, wallet, accounts, isLoading } = props;
-  const { loadWallet } = actions;
+  const { loadWallet, setFinishedWizard } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
   const [showStep2, setStep2Status] = useState(false);
@@ -77,7 +80,7 @@ const WelcomePage = (props: Props) => {
 
     if (hasWallet) {
       if (hasSeed) {
-        if (!allAccountsDeposited(accounts)) { jumpToDepositPage(); }
+        if (!allAccountsDeposited(accounts)) { setFinishedWizard(); }
         else { setStep2Status(true); }
       }
       else {
@@ -102,11 +105,6 @@ const WelcomePage = (props: Props) => {
   const jumpToCreateWallet = () => {
     setStep(step + 1);
     setPage(5);
-  };
-
-  const jumpToDepositPage = () => {
-    setStep(step + 1);
-    setPage(7);
   };
 
   return (

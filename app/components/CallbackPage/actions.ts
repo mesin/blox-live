@@ -20,20 +20,6 @@ export const setIdToken = (idToken: string) => ({
   payload: idToken,
 });
 
-export const checkIfTokensExist = () => ({
-  type: actionTypes.CHECK_IF_TOKEN_EXIST,
-});
-
-export const checkIfTokensExistSuccess = (refreshToken: string) => ({
-  type: actionTypes.CHECK_IF_TOKEN_EXIST_SUCCESS,
-  payload: refreshToken,
-});
-
-export const checkIfTokensExistFailure = (error: Record<string, any>) => ({
-  type: actionTypes.CHECK_IF_TOKEN_EXIST_FAILURE,
-  payload: error,
-});
-
 export const logout = () => ({
   type: actionTypes.LOGOUT,
 });

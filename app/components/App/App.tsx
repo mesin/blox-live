@@ -8,7 +8,6 @@ import NotLoggedIn from '../NotLoggedIn';
 import GlobalStyle from '../../common/styles/global-styles';
 import { initApp } from './service';
 
-import { checkIfTokensExist } from '../CallbackPage/actions';
 import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
 import saga from '../CallbackPage/saga';
 import { Loader } from '../../common/components';
@@ -24,11 +23,10 @@ const key = 'login';
 const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
   useInjectSaga({ key, saga, mode: '' });
-  const { isLoggedIn, isLoading, isTokensExist } = props;
+  const { isLoggedIn, isLoading } = props;
 
   const init = async () => {
     await setAppInitialised(true);
-    await isTokensExist();
     await initApp();
   };
 
@@ -61,8 +59,4 @@ const mapStateToProps = (state: any) => ({
   isLoading: getIsLoading(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  isTokensExist: () => dispatch(checkIfTokensExist()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);
