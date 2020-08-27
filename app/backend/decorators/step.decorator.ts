@@ -1,4 +1,4 @@
-export function step(metadata: any) {
+export function Step(metadata: any) {
   return (target, key, descriptor) => {
     // save a reference to the original method this way we keep the values currently in the
     // descriptor and don't overwrite what another decorator might have done to the descriptor.

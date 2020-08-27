@@ -1,7 +1,8 @@
 import { storeService, StoreService } from '../store-manager/store.service';
 import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
-import { step } from '../decorators';
+import { CatchClass } from '../decorators';
 
+@CatchClass<SeedService>()
 export default class SeedService extends KeyVaultCliService {
   private readonly storeService: StoreService;
 
@@ -10,10 +11,7 @@ export default class SeedService extends KeyVaultCliService {
     this.storeService = storeService;
   }
 
-  @step({
-    name: 'Seed generate'
-  })
-  async seedGenerate(): Promise<void> {
+  seedGenerate = async (): Promise<void> => {
     if (this.storeService.get('seed')) return;
 
     const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate`);
@@ -21,7 +19,7 @@ export default class SeedService extends KeyVaultCliService {
       throw new Error(stderr);
     }
     this.storeService.set('seed', stdout.replace('\n', ''));
-  }
+  };
 
   getSeed = () => this.storeService.get('seed');
 

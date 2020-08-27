@@ -1,6 +1,8 @@
 import BloxApiService from '../communication-manager/blox-api.service';
 import { METHOD } from '../communication-manager/constants';
+import { CatchClass } from '../decorators';
 
+@CatchClass<OrganizationService>()
 export default class OrganizationService {
 
   get = async () => {

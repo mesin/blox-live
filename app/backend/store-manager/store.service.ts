@@ -1,6 +1,6 @@
 import ElectronStore from 'electron-store';
 import BaseStoreService from './base-store.service';
-import { step } from '../decorators';
+import { Step } from '../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -52,7 +52,7 @@ class StoreService extends BaseStoreService {
     this.baseStore.clear();
   };
 
-  @step({
+  @Step({
     name: 'Prepare tmp storage'
   })
   prepareTmpStorageConfig(): void {
@@ -66,7 +66,7 @@ class StoreService extends BaseStoreService {
     });
   }
 
-  @step({
+  @Step({
     name: 'Store tmp config into main'
   })
   saveTmpConfigIntoMain(): void {
