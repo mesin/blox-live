@@ -10,7 +10,7 @@ import * as wizardActions from '../../actions';
 import * as selectors from '../../selectors';
 import saga from '../../saga';
 
-import { getAccounts } from '../../../Accounts/selectors';
+import { getAccounts, getDepositNeededStatus } from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
 
 import SeedService from 'backend/key-vault/seed.service';
@@ -64,7 +64,7 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, wallet, accounts, isLoading } = props;
+  const { setPage, setStep, step, actions, wallet, accounts, isLoading, isDepositNeeded } = props;
   const { loadWallet, setFinishedWizard } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
@@ -80,11 +80,14 @@ const WelcomePage = (props: Props) => {
 
     if (hasWallet) {
       if (hasSeed) {
-        if (!allAccountsDeposited(accounts)) { setFinishedWizard(true); }
+        if (!allAccountsDeposited(accounts)) {
+          if (isDepositNeeded) { redirectToDepositPage(); }
+          else { setFinishedWizard(true); }
+        }
         else { setStep2Status(true); }
       }
       else {
-        jumpToPassPhrasePage();
+        redirectToPassPhrasePage();
       }
     }
   }, [isLoading]);
@@ -96,15 +99,20 @@ const WelcomePage = (props: Props) => {
       setReactivationModalDisplay(true);
     }
     else if (wallet.status === 'active') {
-      jumpToCreateWallet();
+      redirectToCreateAccount();
     }
   };
 
-  const jumpToPassPhrasePage = () => setPage(3);
+  const redirectToPassPhrasePage = () => setPage(3);
 
-  const jumpToCreateWallet = () => {
+  const redirectToCreateAccount = () => {
     setStep(step + 1);
     setPage(5);
+  };
+
+  const redirectToDepositPage = () => {
+    setStep(step + 1);
+    setPage(7);
   };
 
   return (
@@ -136,6 +144,7 @@ const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   wallet: selectors.getWallet(state),
   accounts: getAccounts(state),
+  isDepositNeeded: getDepositNeededStatus(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -150,6 +159,7 @@ type Props = {
   wallet: Record<string, any>;
   accounts: [];
   isLoading: boolean;
+  isDepositNeeded: boolean;
 };
 
 type State = Record<string, any>;

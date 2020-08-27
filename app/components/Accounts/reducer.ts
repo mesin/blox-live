@@ -4,7 +4,8 @@ import * as actionTypes from './actionTypes';
 const initialState = {
   isLoading: false,
   error: null,
-  data: null
+  data: null,
+  depositNeeded: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -25,6 +26,9 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.isLoading = initialState.isLoading;
         draft.error = initialState.error;
         draft.data = initialState.data;
+        break;
+      case actionTypes.SET_DEPOSIT_NEEDED:
+        draft.depositNeeded = action.payload;
         break;
     }
   });

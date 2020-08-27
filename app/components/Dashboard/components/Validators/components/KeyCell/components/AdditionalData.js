@@ -7,18 +7,25 @@ import { setDepositInfoModalDisplay } from '../../../../../actions';
 import { loadDepositData, setFinishedWizard } from '../../../../../../Wizard/actions';
 import { getIsLoading } from '../../../../../../Wizard/selectors';
 
+import { setDepositNeeded } from '../../../../../../Accounts/actions';
+
 import WarningText from './WarningText';
 import BlueButton from './BlueButton';
 import Date from './Date';
 
 const AdditionalData = (props) => {
   const { publicKey, status, createdAt, callSetDepositInfoModalDisplay,
-          callLoadDepositData, callSetFinishedWizard, isLoading
+          callLoadDepositData, callSetFinishedWizard, isLoading, callSetDepositNeeded
         } = props;
 
   const onDepositInfoButtonClick = async () => {
     await callLoadDepositData(publicKey);
     await callSetDepositInfoModalDisplay(true);
+  };
+
+  const onFinishSetupClick = () => {
+    callSetDepositNeeded(true);
+    callSetFinishedWizard(false);
   };
 
   if (status === 'pending') {
@@ -34,7 +41,7 @@ const AdditionalData = (props) => {
     return (
       <>
         <WarningText>Waiting for deposit</WarningText>
-        <BlueButton onClick={() => callSetFinishedWizard(false)}>Finish Setup</BlueButton>
+        <BlueButton onClick={() => onFinishSetupClick()}>Finish Setup</BlueButton>
       </>
     );
   }
@@ -50,6 +57,7 @@ AdditionalData.propTypes = {
   callLoadDepositData: PropTypes.func,
   callSetDepositInfoModalDisplay: PropTypes.func,
   callSetFinishedWizard: PropTypes.func,
+  callSetDepositNeeded: PropTypes.func,
   isLoading: PropTypes.bool,
 };
 
@@ -60,7 +68,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
   callSetDepositInfoModalDisplay: (show) => dispatch(setDepositInfoModalDisplay(show)),
-  callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished))
+  callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
+  callSetDepositNeeded: (depositNeeded) => dispatch(setDepositNeeded(depositNeeded)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdditionalData);

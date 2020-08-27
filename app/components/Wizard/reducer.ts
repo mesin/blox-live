@@ -9,7 +9,6 @@ const initialState: WizardState = {
   network: '',
   account: null,
   depositData: null,
-  isFinished: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
