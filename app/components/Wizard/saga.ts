@@ -20,12 +20,14 @@ function* onAccountStatusUpdateFailure(error) {
 }
 
 function* onLoadWalletSuccess(response) {
-  yield put(actions.loadWalletSuccess(response));
+  if (response) { yield put(actions.loadWalletSuccess(response)); }
+  const error = new Error('Can\'t find wallet');
+  yield call(onLoadWalletFailure, error);
 }
 
 function* onLoadWalletFailure(error) {
   yield put(actions.loadWalletFailure(error));
-  notification.error({ message: 'Error', description: error.message });
+  notification.error({ message: 'Error', description: error.message});
 }
 
 function* onLoadDepositDataSuccess(response) {

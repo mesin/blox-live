@@ -1,15 +1,11 @@
 import {
   configureStore,
   getDefaultMiddleware,
-  // Action,
-  // DeepPartial,
 } from '@reduxjs/toolkit';
 import { createHashHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
-// import { ThunkAction } from 'redux-thunk';
-// eslint-disable-next-line import/no-cycle
 import createRootReducer from './rootReducer';
 
 export const history = createHashHistory();
@@ -21,7 +17,7 @@ const reduxSagaMonitorOptions = {};
 
 const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
 
-const middleware = [...getDefaultMiddleware(), router, sagaMiddleware];
+const middleware = [...getDefaultMiddleware({serializableCheck: false}), router, sagaMiddleware];
 
 const excludeLoggerEnvs = ['test', 'production'];
 const shouldIncludeLogger = !excludeLoggerEnvs.includes(
