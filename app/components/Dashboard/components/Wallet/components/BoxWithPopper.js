@@ -15,7 +15,7 @@ const Wrapper = styled.div`
 `;
 
 const BoxWithTooltip = (props) => {
-  const { isActive, walletVersion, width, color, bigText, medText, tinyText, image, actions } = props;
+  const { isActive, walletNeedsUpdate, width, color, bigText, medText, tinyText, image, actions } = props;
   const { setReactivationModalDisplay, setUpdateModalDisplay } = actions;
   const [showReactivationPopper, setReactivationPopperDisplay] = React.useState(false);
   const [showUpdatePopper, setUpdatePopperDisplay] = React.useState(false);
@@ -30,15 +30,15 @@ const BoxWithTooltip = (props) => {
     setUpdatePopperDisplay(false);
   };
 
-  return ( // TODO: add !isActive to line no 35 and compare the walletVersion
+  return (
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Box width={width} color={color} bigText={bigText}
         medText={medText} tinyText={tinyText} image={image}
       />
-      {showReactivationPopper && (
+      {showReactivationPopper && !isActive && (
         <ReactivatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />
       )}
-      {showUpdatePopper && (
+      {showUpdatePopper && walletNeedsUpdate && isActive && (
         <UpdatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setUpdateModalDisplay} />
       )}
     </Wrapper>
@@ -57,7 +57,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 BoxWithTooltip.propTypes = {
   isActive: PropTypes.bool,
-  walletVersion: PropTypes.string,
+  walletNeedsUpdate: PropTypes.bool,
   width: PropTypes.string,
   color: PropTypes.string,
   bigText: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

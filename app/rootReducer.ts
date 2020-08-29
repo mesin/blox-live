@@ -9,7 +9,7 @@ import wizard from './components/Wizard/reducer';
 import dashboard from './components/Dashboard/reducer';
 import websocket from './components/WebSockets/reducer';
 import accounts from './components/Accounts/reducer';
-import KeyvaultManagement from './components/KeyVaultManagement/reducer';
+import keyvaultManagement from './components/KeyVaultManagement/reducer';
 import processRunner from './components/ProcessRunner/reducer';
 
 export default function createRootReducer(history: History) {
@@ -22,7 +22,7 @@ export default function createRootReducer(history: History) {
     dashboard,
     websocket,
     accounts,
-    KeyvaultManagement,
+    keyvaultManagement,
     processRunner,
   });
 }

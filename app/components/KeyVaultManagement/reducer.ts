@@ -6,6 +6,7 @@ const initialState = {
   error: '',
   cloudProvider: '',
   mnemonic: '',
+  latestVersion: '',
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -16,6 +17,7 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       break;
     case actionTypes.KEYVAULT_LOAD_MNEMONIC:
     case actionTypes.KEYVAULT_SAVE_MNEMONIC:
+    case actionTypes.KEYVAULT_LOAD_LATEST_VERSION:
       draft.isLoading = true;
       break;
     case actionTypes.KEYVAULT_LOAD_MNEMONIC_SUCCESS:
@@ -25,8 +27,13 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_SAVE_MNEMONIC_SUCCESS:
       draft.isLoading = initialState.isLoading;
       break;
+    case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_SUCCESS:
+      draft.latestVersion = action.payload;
+      draft.isLoading = initialState.isLoading;
+      break;
     case actionTypes.KEYVAULT_LOAD_MNEMONIC_FAILURE:
     case actionTypes.KEYVAULT_SAVE_MNEMONIC_FAILURE:
+    case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_FAILURE:
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
       break;

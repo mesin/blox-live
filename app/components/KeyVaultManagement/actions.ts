@@ -32,3 +32,17 @@ export const keyvaultSaveMnemonicFailure = (error: Record<string, any>) => ({
   type: actionTypes.KEYVAULT_SAVE_MNEMONIC_FAILURE,
   payload: error,
 });
+
+export const kevaultLoadLatestVersion = () => ({
+  type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION,
+});
+
+export const KevaultLoadLatestVersionSuccess = (version: string) => ({
+  type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION_SUCCESS,
+  payload: version
+});
+
+export const KevaultLoadLatestVersionFailure = (error: Record<string, any>) => ({
+  type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION,
+  payload: error,
+});

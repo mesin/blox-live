@@ -5,3 +5,5 @@ export const getError = (state) => state.KeyvaultManagement.error;
 export const getCloudProvider = (state) => state.KeyvaultManagement.cloudProvider;
 
 export const getMnemonic = (state) => state.KeyvaultManagement.mnemonic;
+
+export const getLatestVersion = (state) => state.KeyvaultManagement.latestVersion;

@@ -1,8 +1,11 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
-import { KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC } from './actionTypes';
+import { KEYVAULT_LOAD_LATEST_VERSION, KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC } from './actionTypes';
 import * as actions from './actions';
-import SeedService from '../../backend/key-vault/seed.service';
+import SeedService from 'backend/key-vault/seed.service';
+import BloxApiService from 'backend/communication-manager/blox-api.service';
+import { METHOD } from 'backend/communication-manager/constants';
+
 const seedService = new SeedService();
 
 function* startLoadingMnemonic() {
@@ -27,7 +30,19 @@ function* startSavingMnemonic(action) {
   }
 }
 
+function* startLoadingLatestVersion() {
+  try {
+    const latestVersion = yield call(BloxApiService.request, METHOD.GET, 'key-vault/latest-tag');
+    debugger;
+    yield put(actions.KevaultLoadLatestVersionSuccess(latestVersion));
+  } catch (error) {
+    yield put(actions.KevaultLoadLatestVersionFailure(error));
+    notification.error({ message: 'Error', description: error.message });
+  }
+}
+
 export default function* keyVaultManagementSaga() {
   yield takeLatest(KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
   yield takeLatest(KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
+  yield takeLatest(KEYVAULT_LOAD_LATEST_VERSION, startLoadingLatestVersion);
 }

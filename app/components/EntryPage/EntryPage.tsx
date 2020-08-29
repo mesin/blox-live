@@ -9,17 +9,22 @@ import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
 import { loadWallet } from '../Wizard/actions';
-import { getWalletStatus, getIsLoading, getWalletError, getWalletVersion } from '../Wizard/selectors';
 import wizardSaga from '../Wizard/saga';
+import * as wizardSelectors from '../Wizard/selectors';
 
 import { loadAccounts } from '../Accounts/actions';
-import { getAccounts, getAccountsLoadingStatus, getAccountsError } from '../Accounts/selectors';
 import accountsSaga from '../Accounts/saga';
+import * as accountsSelectors from '../Accounts/selectors';
+
+import { kevaultLoadLatestVersion } from '../KeyVaultManagement/actions';
+import walletSaga from '../KeyVaultManagement/saga';
+import { getLatestVersion } from '../KeyVaultManagement/selectors';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
+const walletKey = 'keyvaultManagement';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -37,8 +42,10 @@ const Content = styled.div`
 const EntryPage = (props: Props) => {
   const {
     callLoadWallet,
+    loadWalletLatestVersion,
     walletStatus,
-    walletVersion,
+    walletCurrentVersion,
+    walletLatestVersion,
     isLoadingWallet,
     walletErorr,
     callLoadAllAccounts,
@@ -46,14 +53,17 @@ const EntryPage = (props: Props) => {
     isLoadingAccounts,
     accountsErorr,
   } = props;
+
   useInjectSaga({ key: wizardKey, saga: wizardSaga, mode: '' });
   useInjectSaga({ key: accountsKey, saga: accountsSaga, mode: '' });
+  useInjectSaga({ key: walletKey, saga: walletSaga, mode: '' });
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
 
     if (didntLoadWallet) {
+      loadWalletLatestVersion();
       callLoadWallet();
     }
     if (didntLoadAccounts) {
@@ -61,8 +71,12 @@ const EntryPage = (props: Props) => {
     }
   }, [isLoadingWallet, isLoadingAccounts]);
 
+  const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
+  console.log('walletCurrentVersion', walletCurrentVersion);
+  console.log('walletLatestVersion', walletLatestVersion);
+
   const otherProps = {
-    walletVersion,
+    walletNeedsUpdate,
     walletStatus,
     isLoadingWallet,
     accounts,
@@ -79,17 +93,10 @@ const EntryPage = (props: Props) => {
       <Content>
         <Switch>
           <Route exact path="/"
-            render={(renderProps) => (
-              <Dashboard
-                {...renderProps}
-                {...otherProps}
-              />
-            )}
+            render={(renderProps) => (<Dashboard {...renderProps} {...otherProps} />)}
           />
           <Route path="/settings"
-            render={(renderProps) => (
-              <SettingsPage withMenu {...renderProps} {...otherProps} />
-            )}
+            render={(renderProps) => (<SettingsPage withMenu {...renderProps} {...otherProps} />)}
           />
         </Switch>
       </Content>
@@ -102,6 +109,10 @@ type Props = {
   isLoadingWallet: boolean;
   walletErorr: string;
   callLoadWallet: () => void;
+  loadWalletLatestVersion: () => void;
+
+  walletCurrentVersion: string;
+  walletLatestVersion: string;
 
   accounts: [];
   isLoadingAccounts: boolean;
@@ -110,19 +121,21 @@ type Props = {
 };
 
 const mapStateToProps = (state: State) => ({
-  walletStatus: getWalletStatus(state),
-  isLoadingWallet: getIsLoading(state),
-  walletErorr: getWalletError(state),
-  walletVersion: getWalletVersion(state),
+  walletStatus: wizardSelectors.getWalletStatus(state),
+  isLoadingWallet: wizardSelectors.getIsLoading(state),
+  walletErorr: wizardSelectors.getWalletError(state),
+  walletCurrentVersion: wizardSelectors.getWalletVersion(state),
+  walletLatestVersion: getLatestVersion(state),
 
-  accounts: getAccounts(state),
-  isLoadingAccounts: getAccountsLoadingStatus(state),
-  accountsErorr: getAccountsError(state),
+  accounts: accountsSelectors.getAccounts(state),
+  isLoadingAccounts: accountsSelectors.getAccountsLoadingStatus(state),
+  accountsErorr: accountsSelectors.getAccountsError(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAllAccounts: () => dispatch(loadAccounts()),
+  loadWalletLatestVersion: () => dispatch(kevaultLoadLatestVersion()),
 });
 
 type State = Record<string, any>;

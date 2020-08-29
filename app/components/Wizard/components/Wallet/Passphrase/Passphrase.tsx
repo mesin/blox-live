@@ -8,7 +8,7 @@ import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyVault
 import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
 import saga from '../../../../KeyVaultManagement/saga';
 
-const key = 'KeyvaultManagement';
+const key = 'keyvaultManagement';
 
 const Passphrase = (props: Props) => {
   const { page, setPage, mnemonic, isLoading } = props;

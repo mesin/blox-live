@@ -20,7 +20,7 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
-  const { walletStatus, accounts, walletVersion, actions, showReactivationModal, showUpdateModal,
+  const { walletStatus, accounts, actions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
           depositData, showDepositInfoModal } = props;
   const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay } = actions;
   const accountsSummary = accounts && summarizeAccounts(accounts);
@@ -28,7 +28,7 @@ const Dashboard = (props) => {
 
   return (
     <Wrapper>
-      <Wallet isActive={walletStatus === 'active'} walletVersion={walletVersion} summary={accountsSummary} />
+      <Wallet isActive={walletStatus === 'active'} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
       {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
       {showUpdateModal && <KeyVaultUpdate onClose={() => setUpdateModalDisplay(false)} />}
@@ -51,7 +51,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 Dashboard.propTypes = {
-  walletVersion: PropTypes.string,
+  walletNeedsUpdate: PropTypes.bool,
   walletStatus: PropTypes.string,
   accounts: PropTypes.array,
   actions: PropTypes.object,
