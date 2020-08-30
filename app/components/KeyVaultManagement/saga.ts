@@ -33,7 +33,6 @@ function* startSavingMnemonic(action) {
 function* startLoadingLatestVersion() {
   try {
     const latestVersion = yield call(BloxApiService.request, METHOD.GET, 'key-vault/latest-tag');
-    debugger;
     yield put(actions.KevaultLoadLatestVersionSuccess(latestVersion));
   } catch (error) {
     yield put(actions.KevaultLoadLatestVersionFailure(error));

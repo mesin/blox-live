@@ -62,14 +62,16 @@ const EntryPage = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
 
-    if (didntLoadWallet) {
+    if (!walletLatestVersion) {
       loadWalletLatestVersion();
+    }
+    if (didntLoadWallet) {
       callLoadWallet();
     }
     if (didntLoadAccounts) {
       callLoadAllAccounts();
     }
-  }, [isLoadingWallet, isLoadingAccounts]);
+  }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion]);
 
   const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
   console.log('walletCurrentVersion', walletCurrentVersion);
@@ -83,7 +85,7 @@ const EntryPage = (props: Props) => {
     isLoadingAccounts,
   };
 
-  if (isLoadingWallet || isLoadingAccounts) {
+  if (isLoadingWallet || isLoadingAccounts || !walletLatestVersion) {
     return <Loader />;
   }
 

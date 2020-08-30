@@ -18,7 +18,7 @@ const Wrapper = styled.div`
   justify-content:space-between;
   position:absolute;
   bottom:${`-${height}`};
-  right:450px;
+  right:0;
   transition:1s all;
   :after {
     content:'';

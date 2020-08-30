@@ -1,9 +1,9 @@
-export const getIsLoading = (state) => state.KeyvaultManagement.isLoading;
+export const getIsLoading = (state) => state.keyvaultManagement.isLoading;
 
-export const getError = (state) => state.KeyvaultManagement.error;
+export const getError = (state) => state.keyvaultManagement.error;
 
-export const getCloudProvider = (state) => state.KeyvaultManagement.cloudProvider;
+export const getCloudProvider = (state) => state.keyvaultManagement.cloudProvider;
 
-export const getMnemonic = (state) => state.KeyvaultManagement.mnemonic;
+export const getMnemonic = (state) => state.keyvaultManagement.mnemonic;
 
-export const getLatestVersion = (state) => state.KeyvaultManagement.latestVersion;
+export const getLatestVersion = (state) => state.keyvaultManagement && state.keyvaultManagement.latestVersion;
