@@ -1,4 +1,3 @@
-import axios from 'axios';
 import HttpService from './http.service';
 
 class BloxApiService extends HttpService {
@@ -8,10 +7,8 @@ class BloxApiService extends HttpService {
   }
 
   init = () => {
-    this.instance = axios.create({
-      baseURL: this.baseUrl,
-      headers: { 'Authorization': `Bearer ${this.storeService.get('authToken')}` }
-    });
+    this.instance.defaults.baseURL = this.baseUrl;
+    this.instance.defaults.headers.common['Authorization'] = `Bearer ${this.storeService.get('authToken')}`;
   };
 }
 
