@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Icon } from 'common/components';
+import Icon from '../Icon';
 
 const Wrapper = styled.div`
   width:220px;
@@ -30,14 +30,14 @@ const ErrorMessage = styled.span`
   line-height: 1.67;
   color: ${({theme}) => theme.destructive600};
   position:absolute;
-  bottom:-25px;
+  bottom:${({title}) => title ? '-25px' : '12px'};
 `;
 
 const IconWrapper = styled.div`
   width:25px;
   height:35px;
   position:absolute;
-  bottom:0px;
+  top:${({title}) => title ? '36px' : '3px'};
   right:0px;
   cursor:pointer;
   display:flex;
@@ -59,14 +59,14 @@ const PasswordInput = (props) => {
 
   return (
     <Wrapper>
-      <Label htmlFor={name}>{title}</Label>
+      {title && <Label htmlFor={name}>{title}</Label>}
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         disabled={isDisabled} {...rest} error={error} />
-      <IconWrapper onClick={toggleType}>
+      <IconWrapper onClick={toggleType} title={title}>
         <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
       </IconWrapper>
 
-      {error && (<ErrorMessage>{error}</ErrorMessage>)}
+      {error && (<ErrorMessage title={title}>{error}</ErrorMessage>)}
     </Wrapper>
   );
 };

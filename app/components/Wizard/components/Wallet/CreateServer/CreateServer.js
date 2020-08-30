@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { ProcessLoader, Button } from 'common/components';
+import { ProcessLoader, Button, PasswordInput } from 'common/components';
 import { useInjectSaga } from 'utils/injectSaga';
 import { precentageCalculator } from 'utils/service';
 
@@ -12,7 +12,7 @@ import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 
-import { Title, Paragraph, PasswordInput } from '../../common';
+import { Title, Paragraph } from '../../common';
 import Guide from '../Guide';
 
 const key = 'processRunner';

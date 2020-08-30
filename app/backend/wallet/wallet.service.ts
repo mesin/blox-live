@@ -25,6 +25,10 @@ export default class WalletService {
     await BloxApiService.request(METHOD.DELETE, 'organizations');
   };
 
+  getLatestTag = async () => {
+    return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
+  };
+
   @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']
@@ -67,7 +71,7 @@ export default class WalletService {
   }
 
   @Step({
-    name: 'Re-sync vault with blox api',
+    name: 'Re-syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async reSyncVaultWithBlox(): Promise<void> {

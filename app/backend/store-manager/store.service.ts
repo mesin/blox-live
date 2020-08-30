@@ -54,7 +54,7 @@ class StoreService extends BaseStoreService {
   };
 
   @Step({
-    name: 'Prepare tmp storage'
+    name: 'Creating local backup...'
   })
   prepareTmpStorageConfig(): void {
     const tmpStoreService = resolveStoreService(tempStorePrefix);
@@ -68,7 +68,7 @@ class StoreService extends BaseStoreService {
   }
 
   @Step({
-    name: 'Store tmp config into main'
+    name: 'Configuring local storage...'
   })
   saveTmpConfigIntoMain(): void {
     const tmpStoreService = resolveStoreService(tempStorePrefix);

@@ -13,6 +13,7 @@ import SeedService from '../../backend/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
 import KeyVaultService from '../../backend/key-vault/key-vault.service';
 import AccountService from '../../backend/account/account.service';
+import WalletService from '../../backend/wallet/wallet.service';
 // import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
@@ -39,6 +40,7 @@ const Test = () => {
   const accountKeyVaultService = new AccountKeyVaultService();
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
+  const walletService = new WalletService();
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -244,7 +246,7 @@ const Test = () => {
           Get Accounts
         </button>
         <button onClick={async () => {
-          console.log(await accountService.getLatestTag());
+          console.log(await walletService.getLatestTag());
         }}>
           Get Latest Tag
         </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SmallModal, WelcomeModal, RestartingModal,
+import { SmallModal, WelcomeModal, RestartingModal, PasswordModal,
          SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals/Modals';
 
 const KeyVaultReactivation = ({onClose}: Props) => {
@@ -11,20 +11,22 @@ const KeyVaultReactivation = ({onClose}: Props) => {
     case 1:
       return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
     case 2:
-      return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
+      return <PasswordModal onClose={onClose} move1StepForward={move1StepForward} />;
     case 3:
-      return <SuccessModal title={'KeyVault Reactivated!'} onClose={onClose} />;
+      return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
     case 4:
+      return <SuccessModal title={'KeyVault Reactivated!'} onClose={onClose} />;
+    case 5:
       return (
         <ReinstallingModal title={'Reinstalling KeyVault'} description={'KeyVault still inactive. Starting the reinstall process.'}
           move1StepForward={move1StepForward} move2StepsForward={move2StepsForward}
         />
       );
-    case 5:
-      return <SuccessModal title={'Reactivating your KeyVault'} onClose={onClose} />;
     case 6:
-      return <FailureModal title={'Troubleshooting Failed'} onClick={contactSupport} onClose={onClose} />;
+      return <SuccessModal title={'Reactivating your KeyVault'} onClose={onClose} />;
     case 7:
+      return <FailureModal title={'Troubleshooting Failed'} onClick={contactSupport} onClose={onClose} />;
+    case 8:
       return <ThankYouModal onClose={onClose} />;
     default:
       return <SmallModal onClick={move1StepForward} onClose={onClose} />;
