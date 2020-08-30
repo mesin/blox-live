@@ -21,8 +21,6 @@ function* onAccountStatusUpdateFailure(error) {
 
 function* onLoadWalletSuccess(response) {
   if (response) { yield put(actions.loadWalletSuccess(response)); }
-  const error = new Error('Can\'t find wallet');
-  yield call(onLoadWalletFailure, error);
 }
 
 function* onLoadWalletFailure(error) {
