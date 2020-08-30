@@ -37,7 +37,7 @@ const IconWrapper = styled.div`
   width:25px;
   height:35px;
   position:absolute;
-  top:3px;
+  top:${({title}) => title ? '36px' : '3px'};
   right:0px;
   cursor:pointer;
   display:flex;
@@ -62,7 +62,7 @@ const PasswordInput = (props) => {
       {title && <Label htmlFor={name}>{title}</Label>}
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         disabled={isDisabled} {...rest} error={error} />
-      <IconWrapper onClick={toggleType}>
+      <IconWrapper onClick={toggleType} title={title}>
         <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
       </IconWrapper>
 

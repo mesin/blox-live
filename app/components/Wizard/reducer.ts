@@ -9,6 +9,7 @@ const initialState = {
   network: '',
   account: null,
   depositData: null,
+  isFinished: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -61,6 +62,7 @@ const wizardReducer = (state = initialState, action: Action) => produce(state, (
     case actionTypes.CLEAR_DATA:
     case LOGOUT:
       draft.isLoading = initialState.isLoading;
+      draft.isFinished = initialState.isFinished;
       draft.error = initialState.error;
       draft.wallet = initialState.wallet;
       draft.network = initialState.network;
