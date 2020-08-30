@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Icon } from 'common/components';
+import Icon from '../Icon';
 
 const Wrapper = styled.div`
   width:220px;
@@ -59,7 +59,7 @@ const PasswordInput = (props) => {
 
   return (
     <Wrapper>
-      <Label htmlFor={name}>{title}</Label>
+      {title && <Label htmlFor={name}>{title}</Label>}
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         disabled={isDisabled} {...rest} error={error} />
       <IconWrapper onClick={toggleType}>

@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button, Icon, Spinner } from 'common/components';
-import { Title, Paragraph, Warning, PasswordInput, TextArea } from '../../../../common';
+import { Button, Icon, Spinner, PasswordInput } from 'common/components';
+import { Title, Paragraph, Warning, TextArea } from '../../../../common';
 
 const Wrapper = styled.div`
   width: 100%;
