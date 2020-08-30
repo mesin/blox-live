@@ -26,7 +26,6 @@ export default class WalletService {
   };
 
   getLatestTag = async () => {
-    // TODO: change the key-vault route to wallet
     return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
   };
 
@@ -72,7 +71,7 @@ export default class WalletService {
   }
 
   @Step({
-    name: 'Re-sync vault with blox api',
+    name: 'Re-syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
   })
   async reSyncVaultWithBlox(): Promise<void> {

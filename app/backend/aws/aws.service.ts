@@ -155,32 +155,7 @@ export default class AwsService {
     name: 'Delete all EC2 items',
     requiredConfig: ['instanceId', 'securityGroupId', 'addressId', 'keyPair']
   })
-  async uninstallItems() { // opts?: any
-    /*
-    const actions = {
-      instance: async () => {
-        await this.ec2.terminateInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise()
-      },
-      securityGroup: async () => {
-        await this.ec2.deleteSecurityGroup({ GroupId: this.storeService.get('securityGroupId'), DryRun: false }).promise();
-      },
-      address: async () => {
-        await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
-      },
-      keyPair: async () => {
-        await this.ec2.deleteKeyPair({ KeyPairId: this.storeService.get('keyPair.pairId') }).promise();
-      },
-    };
-    for (const actionName of Object.keys(actions)) {
-      const pass = !Array.isArray(opts) || opts.includes(actionName);
-      // eslint-disable-next-line no-await-in-loop
-      try {
-        pass && await actions[actionName]();
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    */
+  async uninstallItems() {
     await this.ec2.terminateInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
     await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.storeService.get('instanceId')] }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
@@ -205,15 +180,8 @@ export default class AwsService {
     name: 'Establishing connection to your server...',
     requiredConfig: ['instanceId', 'publicIp']
   })
-  async rebootInstance({ notifier }) {
+  async rebootInstance() {
     await this.ec2.rebootInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
-    // TODO: should be removed, not used
-    notifier.instance[notifier.func].bind(notifier.instance)({
-      step: {
-        name: 'Restarting KeyVault...',
-        status: 'processing'
-      }
-    });
     await new Promise((resolve) => {
       let totalSeconds = 0;
       const DELAY = 5000; // 5 sec
@@ -236,13 +204,6 @@ export default class AwsService {
         const ip: any = this.storeService.get('publicIp');
         socket.connect(22, ip, () => {
           console.log('Server is online');
-          // TODO: should be removed, not used
-          notifier.instance[notifier.func].bind(notifier.instance)({
-            step: {
-              name: 'Restarting KeyVault...',
-              status: 'processing'
-            }
-          });
           socket.destroy();
           clearInterval(intervalId);
           resolve();
