@@ -1,8 +1,8 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
-import { WizardState } from './types';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
-const initialState: WizardState = {
+const initialState = {
   isLoading: false,
   error: null,
   wallet: null,
@@ -59,6 +59,7 @@ const wizardReducer = (state = initialState, action: Action) => produce(state, (
       break;
 
     case actionTypes.CLEAR_DATA:
+    case LOGOUT:
       draft.isLoading = initialState.isLoading;
       draft.error = initialState.error;
       draft.wallet = initialState.wallet;

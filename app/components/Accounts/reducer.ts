@@ -1,5 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
 const initialState = {
   isLoading: false,
@@ -23,6 +24,7 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.isLoading = false;
         break;
       case actionTypes.CLEAR_DATA:
+      case LOGOUT:
         draft.isLoading = initialState.isLoading;
         draft.error = initialState.error;
         draft.data = initialState.data;
