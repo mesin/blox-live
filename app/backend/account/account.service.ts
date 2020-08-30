@@ -33,10 +33,6 @@ export default class AccountService {
     return await BloxApiService.request(METHOD.PATCH, `accounts/${route}`, payload);
   };
 
-  getLatestTag = async () => {
-    return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
-  };
-
   @Step({
     name: 'Create Blox Account',
     requiredConfig: ['authToken']

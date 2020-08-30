@@ -25,6 +25,11 @@ export default class WalletService {
     await BloxApiService.request(METHOD.DELETE, 'organizations');
   };
 
+  getLatestTag = async () => {
+    // TODO: change the key-vault route to wallet
+    return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
+  };
+
   @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']
