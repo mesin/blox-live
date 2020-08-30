@@ -1,8 +1,11 @@
-import got from 'got';
+import fs from 'fs';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
+import FormData from 'form-data';
 
-import { storeService } from '../store-manager/store.service';
+// eslint-disable-next-line import/no-cycle
+import BloxApiService from '../communication-manager/blox-api.service';
+import { METHOD } from '../communication-manager/constants';
 
 export default class LoggerService {
   private readonly logger: winston.Logger;
@@ -15,10 +18,11 @@ export default class LoggerService {
         service: 'user-service'
       },
       transports: [
+        new winston.transports.Console(),
         new winston.transports.DailyRotateFile({
           filename: 'logs/error.log',
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '1k',
+          maxSize: '10k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'error'
@@ -26,7 +30,7 @@ export default class LoggerService {
         new winston.transports.DailyRotateFile({
           filename: 'logs/debug.log',
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '1k',
+          maxSize: '10k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'debug'
@@ -44,10 +48,17 @@ export default class LoggerService {
   }
 
   async sendCrashReport(): Promise<void> {
+    console.log('SEND REPORT CRASH');
+    const form = new FormData();
+    form.append('file', fs.createReadStream('logs/error.log.2020-08-30-14.2'));
+    console.log(form);
+    await BloxApiService.request(METHOD.POST, 'users/crash-report', form);
+    /*
     await got.post('https://api.stage.bloxstaking.com/users/crash-report', {
       headers: {
         'Authorization': `Bearer ${storeService.get('authToken')}`
       }
     });
+    */
   }
 }

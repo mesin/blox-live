@@ -206,6 +206,7 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'publicIp']
   })
   async rebootInstance({ notifier }) {
+    throw new Error('test reboot failed');
     await this.ec2.rebootInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
     // TODO: should be removed, not used
     notifier.instance[notifier.func].bind(notifier.instance)({
