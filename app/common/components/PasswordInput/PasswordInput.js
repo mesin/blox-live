@@ -30,14 +30,14 @@ const ErrorMessage = styled.span`
   line-height: 1.67;
   color: ${({theme}) => theme.destructive600};
   position:absolute;
-  bottom:-25px;
+  bottom:${({title}) => title ? '-25px' : '12px'};
 `;
 
 const IconWrapper = styled.div`
   width:25px;
   height:35px;
   position:absolute;
-  bottom:0px;
+  top:3px;
   right:0px;
   cursor:pointer;
   display:flex;
@@ -66,7 +66,7 @@ const PasswordInput = (props) => {
         <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
       </IconWrapper>
 
-      {error && (<ErrorMessage>{error}</ErrorMessage>)}
+      {error && (<ErrorMessage title={title}>{error}</ErrorMessage>)}
     </Wrapper>
   );
 };
