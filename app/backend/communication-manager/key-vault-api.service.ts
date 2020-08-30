@@ -1,5 +1,4 @@
 import HttpService from './http.service';
-import axios from 'axios';
 
 class KeyVaultApiService extends HttpService {
   constructor(storePrefix: string = '') {
@@ -7,10 +6,8 @@ class KeyVaultApiService extends HttpService {
   }
 
   init = () => {
-    this.instance = axios.create({
-      baseURL: `http://${this.storeService.get('publicIp')}:8200/v1`,
-      headers: { 'Authorization': `Bearer ${this.storeService.get('vaultRootToken')}` }
-    });
+    this.instance.defaults.baseURL = `http://${this.storeService.get('publicIp')}:8200/v1`;
+    this.instance.defaults.headers.common['Authorization'] = `Bearer ${this.storeService.get('vaultRootToken')}`;
   };
 }
 
