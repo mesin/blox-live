@@ -1,4 +1,5 @@
-// import fs from 'fs';
+import electron from 'electron';
+import path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
@@ -6,6 +7,7 @@ export class LoggerService {
   private readonly logger: winston.Logger;
 
   constructor() {
+    const userDataPath = (electron.app || electron.remote.app).getPath('userData');
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.json(),
@@ -15,7 +17,7 @@ export class LoggerService {
       transports: [
         new winston.transports.Console(),
         new winston.transports.DailyRotateFile({
-          filename: 'logs/error.log',
+          filename: path.join(userDataPath, 'logs/error.log'),
           datePattern: 'YYYY-MM-DD-HH',
           maxSize: '10k',
           maxFiles: 1,
@@ -23,7 +25,7 @@ export class LoggerService {
           level: 'error'
         }),
         new winston.transports.DailyRotateFile({
-          filename: 'logs/debug.log',
+          filename: path.join(userDataPath, 'logs/debug.log'),
           datePattern: 'YYYY-MM-DD-HH',
           maxSize: '10k',
           maxFiles: 1,

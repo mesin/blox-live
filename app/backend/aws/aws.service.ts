@@ -181,7 +181,6 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'publicIp']
   })
   async rebootInstance() {
-    throw new Error('test reboot failed');
     await this.ec2.rebootInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
     await new Promise((resolve) => {
       let totalSeconds = 0;
