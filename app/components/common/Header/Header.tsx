@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { ClickAwayListener } from '@material-ui/core';
-import imageSrc from 'assets/images/staking-logo.svg';
 import HeaderLink from './HeaderLink';
 import { FaqMenu, ProfileMenu } from './components';
 import { logout } from '../../CallbackPage/actions';
 import { getUserData } from '../../CallbackPage/selectors';
+
+import imageSrc from 'assets/images/staking-logo.svg';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -51,7 +53,7 @@ const Right = styled.div`
 `;
 
 const Header = (props: Props) => {
-  const { withMenu, profile, logoutUser } = props;
+  const { withMenu, profile, logoutUser, location } = props;
   const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
   const [showOrangeDot, toggleOrangeDotDisplay] = useState(true);
@@ -70,6 +72,8 @@ const Header = (props: Props) => {
   const handleProfileClickAway = () => {
     toggleProfileMenuOpenDisplay(false);
   };
+
+  console.log('pathname', location.pathname);
 
   return (
     <Wrapper>
@@ -111,11 +115,11 @@ const Header = (props: Props) => {
   );
 };
 
-type Props = {
+interface Props extends RouteComponentProps {
   withMenu: boolean;
   profile: Record<string, any>;
   logoutUser: () => void;
-};
+}
 
 const mapStateToProps = (state) => ({
   profile: getUserData(state),
@@ -125,4 +129,4 @@ const mapDispatchToProps = (dispatch) => ({
   logoutUser: () => dispatch(logout()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));
