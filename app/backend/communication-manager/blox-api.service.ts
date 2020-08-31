@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import axios from 'axios';
-// eslint-disable-next-line import/no-cycle
-=======
->>>>>>> ec154a48136d4e5e0cb4a77f3dab6bf37f07ea27
 import HttpService from './http.service';
 
 class BloxApiService extends HttpService {
@@ -18,4 +13,5 @@ class BloxApiService extends HttpService {
 }
 
 const bloxApiService = new BloxApiService();
+
 export default bloxApiService;

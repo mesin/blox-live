@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import LoggerService from '../logger/logger.service';
+import { LoggerService } from '../logger/logger.service';
 
 const catchDecoratorStore = {
   handler: null,
