@@ -25,6 +25,8 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
         const extendedError = { error, displayMessage };
 
         // TODO Vadim should use logging service
+        console.error(`displayErrorMessage: ${displayMessage}`);
+        console.error(error);
         if (payload.localHandler) {
           return payload.localHandler.call(null, extendedError, this);
         } else if (handler) {
