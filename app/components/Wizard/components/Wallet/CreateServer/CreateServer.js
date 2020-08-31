@@ -46,24 +46,34 @@ const ProgressWrapper = styled.div`
   margin-top:20px;
 `;
 
+const ErrorMessage = styled.div`
+  margin-top:7px;
+  font-size:12px;
+  font-weight:500;
+  color:${({theme}) => theme.destructive600};
+`;
+
 const CreateServer = (props) => {
-  const { page, setPage, isLoading, isDone, processName, installMessage, actions, overallSteps, currentStep } = props;
+  const { page, setPage, isLoading, isDone, processName, error, installMessage, actions, overallSteps, currentStep } = props;
   const { processSubscribe, processClearState } = actions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(true);
-  const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || isDone;
+  const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || (isDone && !error);
   const isPasswordInputDisabled = isLoading || isDone;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
 
   useInjectSaga({ key, saga, mode: '' });
 
   React.useEffect(() => {
-    if (!isLoading && isDone) {
+    if (error) {
+      processClearState();
+    }
+    if (!isLoading && isDone && !error) {
       processClearState();
       setPage(page + 1);
     }
-  }, [isLoading, isDone]);
+  }, [isLoading, isDone, error]);
 
   const onClick = async () => {
     if (!isButtonDisabled && !installMessage && !processName) {
@@ -90,10 +100,15 @@ const CreateServer = (props) => {
         />
       </PasswordInputsWrapper>
       <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
-      {isLoading && installMessage && (
+      {isLoading && installMessage && !error && (
         <ProgressWrapper>
           <ProcessLoader text={installMessage} precentage={loaderPrecentage} />
         </ProgressWrapper>
+      )}
+      {error && (
+        <ErrorMessage>
+          {error}, please try again.
+        </ErrorMessage>
       )}
       {showGuide && <Guide onClose={() => setGuideDisplay(false)} />}
     </Wrapper>
@@ -107,6 +122,7 @@ const mapStateToProps = (state) => ({
   isDone: selectors.getIsDone(state),
   overallSteps: selectors.getOverallSteps(state),
   currentStep: selectors.getCurrentStep(state),
+  error: selectors.getError(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -123,6 +139,7 @@ CreateServer.propTypes = {
   installMessage: PropTypes.string,
   overallSteps: PropTypes.number,
   currentStep: PropTypes.number,
+  error: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServer);

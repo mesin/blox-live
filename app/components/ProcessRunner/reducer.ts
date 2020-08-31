@@ -21,6 +21,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isLoading = true;
       draft.name = payload.name;
       draft.message = payload.defaultMessage;
+      draft.error = '';
       break;
     case actionTypes.PROCESS_OBSERVE:
       draft.message = payload.message;
