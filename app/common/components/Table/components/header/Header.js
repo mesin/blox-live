@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {Icon} from '../../index';
+import Sorting from './Sorting';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -20,7 +20,7 @@ const Cell = styled.div`
   padding-right: ${({padding_right}) => padding_right};
 `;
 
-const Header = ({columns}) => (
+const Header = ({columns, selectedSorting, sortType, onSortClick}) => (
   <Wrapper>
     {columns.map((column) => {
       const {key, title, width, isSort} = column;
@@ -28,12 +28,7 @@ const Header = ({columns}) => (
         ? (
           <Cell width={width} key={key}>
             {title}
-            <Icon
-              name={false ? 'sorting-up' : 'sorting-down'}
-              color="gray800"
-              fontSize="16px"
-              onClick={() => false}
-            />
+            <Sorting sortKey={key} selectedSorting={selectedSorting} sortType={sortType} onSortClick={onSortClick} />
           </Cell>
         )
         : (
@@ -47,6 +42,9 @@ const Header = ({columns}) => (
 
 Header.propTypes = {
   columns: PropTypes.array,
+  selectedSorting: PropTypes.string,
+  sortType: PropTypes.string,
+  onSortClick: PropTypes.func
 };
 
 export default Header;

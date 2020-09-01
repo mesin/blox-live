@@ -15,10 +15,10 @@ const Wrapper = styled.div`
 `;
 
 const Table = (props) => {
-  const { data, columns, isLoading } = props;
+  const { data, columns, isLoading, selectedSorting, sortType, onSortClick } = props;
   return (
     <Wrapper>
-      <Header columns={columns} isLoading={isLoading} />
+      <Header columns={columns} isLoading={isLoading} selectedSorting={selectedSorting} sortType={sortType} onSortClick={onSortClick} />
       <Body columns={columns} isLoading={isLoading} data={data} />
       <Footer />
     </Wrapper>
@@ -29,6 +29,9 @@ Table.propTypes = {
   data: PropTypes.array,
   columns: PropTypes.array,
   isLoading: PropTypes.bool,
+  selectedSorting: PropTypes.string,
+  sortType: PropTypes.string,
+  onSortClick: PropTypes.func,
 };
 
 export default Table;
