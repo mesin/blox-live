@@ -7,10 +7,10 @@ import { useInjectSaga } from 'utils/injectSaga';
 
 import { KeyVaultReactivation } from '../../..';
 import * as wizardActions from '../../actions';
-import * as selectors from '../../selectors';
+import * as wizardSelectors from '../../selectors';
 import saga from '../../saga';
 
-import { getAccounts, getDepositNeededStatus } from '../../../Accounts/selectors';
+import * as accountSelectors from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
 
 import SeedService from 'backend/key-vault/seed.service';
@@ -64,7 +64,7 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, wallet, accounts, isLoading, isDepositNeeded } = props;
+  const { setPage, setStep, step, actions, wallet, accounts, isLoading, isDepositNeeded, addAnotherAccount } = props;
   const { loadWallet, setFinishedWizard } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
@@ -80,15 +80,22 @@ const WelcomePage = (props: Props) => {
 
     if (hasWallet) {
       if (hasSeed) {
-        if (!allAccountsDeposited(accounts)) {
-          if (isDepositNeeded) { redirectToDepositPage(); }
-          else { setFinishedWizard(true); }
+        if (addAnotherAccount) {
+          redirectToCreateAccount();
+          return;
         }
-        else { setStep2Status(true); }
+        if (!allAccountsDeposited(accounts)) {
+          if (isDepositNeeded) {
+            redirectToDepositPage();
+            return;
+          }
+          setFinishedWizard(true);
+          return;
+        }
+        setStep2Status(true);
+        return;
       }
-      else {
-        redirectToPassPhrasePage();
-      }
+      redirectToPassPhrasePage();
     }
   }, [isLoading]);
 
@@ -141,10 +148,11 @@ const WelcomePage = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
-  wallet: selectors.getWallet(state),
-  accounts: getAccounts(state),
-  isDepositNeeded: getDepositNeededStatus(state),
+  isLoading: wizardSelectors.getIsLoading(state),
+  wallet: wizardSelectors.getWallet(state),
+  accounts: accountSelectors.getAccounts(state),
+  isDepositNeeded: accountSelectors.getDepositNeededStatus(state),
+  addAnotherAccount: accountSelectors.getAddAnotherAccount(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

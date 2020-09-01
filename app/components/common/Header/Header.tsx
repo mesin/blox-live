@@ -77,7 +77,7 @@ const AddValidatorButton = styled.button`
   }
 `;
 
-const Header = (props: Props) => { // TODO: check if wallet is active
+const Header = (props: Props) => {
   const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location, dashboardActions } = props;
   const { setReactivationModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
   const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
@@ -157,7 +157,7 @@ interface Props extends RouteComponentProps {
   logoutUser: () => void;
   isFinishedWizard: boolean;
   walletStatus: string;
-  dashboardActions: Record<string, any>
+  dashboardActions: Record<string, any>;
 }
 
 const mapStateToProps = (state) => ({
