@@ -13,7 +13,7 @@ const Sorting = (props) => {
     <Wrapper>
       <Icon
         name={selectedSorting === sortKey ? sortingTypeIcon : 'sorting'}
-        color="gray800"
+        color={selectedSorting === sortKey ? 'primary800' : 'gray800'}
         fontSize="16px"
         onClick={() => onSortClick(sortKey)}
       />
