@@ -48,7 +48,7 @@ export default class Auth {
 
   getAuthenticationURL = (socialAppName) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
-    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
+    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&prompt=login&redirect_uri=${redirectUri}`;
   };
 
   loadAuthToken = async (callbackURL) => {

@@ -28,7 +28,7 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.depositNeeded = action.payload;
         break;
       case actionTypes.ADD_ANOTHER_ACCOUNT:
-        draft.addAnotherAccount = true;
+        draft.addAnotherAccount = action.payload;
         break;
       case actionTypes.CLEAR_DATA:
       case LOGOUT:

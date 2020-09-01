@@ -24,10 +24,11 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
+  // TODO: remove the loading of wallet, wallet last version and accounts from elsewhere and put it here
   const { walletStatus, accounts, dashboardActions, accountsActions, wizardActions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
           depositData, showDepositInfoModal, showAddValidatorModal } = props;
   const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
-  const { addAnotherAccount } = accountsActions;
+  const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
@@ -35,7 +36,7 @@ const Dashboard = (props) => {
   const onPasswordModalClick = () => {
     setAddValidatorModalDisplay(false);
     setFinishedWizard(false);
-    addAnotherAccount();
+    setAddAnotherAccount(true);
   };
 
   return (
