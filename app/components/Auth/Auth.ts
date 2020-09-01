@@ -15,7 +15,6 @@ export default class Auth {
 
   constructor() {
     this.tokens = {
-      accessToken: '',
       idToken: '',
     };
     this.userProfile = null;
@@ -72,8 +71,7 @@ export default class Auth {
   };
 
   setSession = async (authResult, userProfile) => {
-    const { access_token, id_token } = authResult;
-    this.tokens.accessToken = access_token;
+    const { id_token } = authResult;
     this.tokens.idToken = id_token;
     this.userProfile = userProfile;
     storeService.init(userProfile.sub, authResult.id_token);
@@ -85,8 +83,6 @@ export default class Auth {
     return new Date().getTime() < Number(expiresAt);
   };
 
-  getAccessToken = () => this.tokens.accessToken;
-
   getIdToken = () => this.tokens.idToken;
 
   getProfile = (cb: CallBack) => cb(this.userProfile, null);
@@ -95,7 +91,7 @@ export default class Auth {
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
     storeService.logout();
     this.tokens = {
-      accessToken: null,
+      idToken: '',
       profile: null,
     };
     this.userProfile = null;

@@ -20,8 +20,9 @@ export const createAuthWindow = (auth, socialAppName, onSuccess, onFailure) => {
   const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) old-airport-include/1.0.0 Chrome Electron/7.1.7 Safari/537.36';
   win.loadURL(auth.getAuthenticationURL(socialAppName), { userAgent });
 
-  const { session: { webRequest } } = win.webContents;
-  const filter = { urls: ['http://localhost/callback*'] };
+  const { session: { webRequest, clearStorageData } } = win.webContents;
+  clearStorageData();
+  const filter = { urls: ['https://localhost/callback*'] };
 
   const listener = async ({ url }) => {
     const tokensResponse = await auth.loadAuthToken(url);
