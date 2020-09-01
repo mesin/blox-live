@@ -35,10 +35,10 @@ const BoxWithTooltip = (props) => {
       <Box width={width} color={color} bigText={bigText}
         medText={medText} tinyText={tinyText} image={image}
       />
-      {showReactivationPopper && isActive && (
+      {showReactivationPopper && !isActive && (
         <ReactivatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />
       )}
-      {showUpdatePopper && walletNeedsUpdate && !isActive && (
+      {showUpdatePopper && walletNeedsUpdate && isActive && (
         <UpdatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setUpdateModalDisplay} />
       )}
     </Wrapper>

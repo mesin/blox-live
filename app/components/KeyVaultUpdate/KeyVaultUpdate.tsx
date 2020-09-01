@@ -8,7 +8,7 @@ const KeyVaultUpdate = ({onClose}: Props) => {
   const contactSupport = () => { move1StepForward(); };
   switch (step) {
     case 0:
-      return <PasswordModal onClose={onClose} move1StepForward={move1StepForward} />;
+      return <PasswordModal onClose={onClose} onClick={move1StepForward} />;
     case 1:
       return (
         <ReinstallingModal title={'Updating KeyVault'} move1StepForward={move1StepForward}

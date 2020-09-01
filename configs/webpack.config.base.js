@@ -46,7 +46,7 @@ export default {
       API_URL: 'https://api.stage.bloxstaking.com',
       VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/key-vault',
       WEBSITE_URL: 'https://www.bloxstaking.com',
-      DISCORD_INVITE: 'https://discord.gg/P4qwwK',
+      DISCORD_INVITE: 'https://discord.gg/27Mf9y4',
       HTTP_RETRIES: '3',
       HTTP_RETRY_DELAY: '1000'
     }),

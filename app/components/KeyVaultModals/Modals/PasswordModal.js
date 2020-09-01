@@ -7,7 +7,7 @@ import { PasswordInput, Button } from 'common/components';
 import image from '../../Wizard/assets/img-password.svg';
 
 const PasswordModal = (props) => {
-  const { onClose, move1StepForward } = props;
+  const { onClose, onClick } = props;
   const [password, setPassword] = useState('');
   const [showPasswordError, setPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !password || showPasswordError;
@@ -29,14 +29,14 @@ const PasswordModal = (props) => {
         onBlur={onPasswordBlur} error={showPasswordError ? 'The password is too short' : ''}
       />
       <a href={process.env.DISCORD_INVITE} target={'_blank'}>Forgot password?</a>
-      <Button isDisabled={isButtonDisabled} onClick={() => move1StepForward()}>Continue</Button>
+      <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
     </ModalTemplate>
   );
 };
 
 PasswordModal.propTypes = {
   onClose: PropTypes.func,
-  move1StepForward: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 export default PasswordModal;

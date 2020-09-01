@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { ClickAwayListener } from '@material-ui/core';
-import imageSrc from 'assets/images/staking-logo.svg';
 import HeaderLink from './HeaderLink';
 import { FaqMenu, ProfileMenu } from './components';
+
 import { logout } from '../../CallbackPage/actions';
 import { getUserData } from '../../CallbackPage/selectors';
+
+import { getWizardFinishedStatus, getWalletStatus } from '../../Wizard/selectors';
+
+import * as actionsFromDashboard from '../../Dashboard/actions';
+
+import imageSrc from 'assets/images/staking-logo.svg';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -50,11 +58,32 @@ const Right = styled.div`
   justify-content: flex-end;
 `;
 
+const AddValidatorButton = styled.button`
+  width:136px;
+  height:32px;
+  background-color:${({theme}) => theme.primary700};
+  color:${({theme}) => theme.gray50};
+  margin-right:20px;
+  border:0px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 14px;
+  font-weight: 900;
+  border-radius:6px;
+  cursor:pointer;
+  &:hover {
+    color:${({theme}) => theme.accent2200};
+  }
+`;
+
 const Header = (props: Props) => {
-  const { withMenu, profile, logoutUser } = props;
+  const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location, dashboardActions } = props;
+  const { setReactivationModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
   const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
   const [showOrangeDot, toggleOrangeDotDisplay] = useState(true);
+  const isInDashboardPage = location.pathname === '/' && isFinishedWizard;
 
   const onFaqMenuClick = (isOpen) => {
     toggleFaqMenuOpenDisplay(isOpen);
@@ -69,6 +98,14 @@ const Header = (props: Props) => {
 
   const handleProfileClickAway = () => {
     toggleProfileMenuOpenDisplay(false);
+  };
+
+  const onAddValidatorClick = () => {
+    if (walletStatus === 'active') {
+      setAddValidatorModalDisplay(true);
+      return;
+    }
+    setReactivationModalDisplay(true);
   };
 
   return (
@@ -89,6 +126,9 @@ const Header = (props: Props) => {
         </Center>
       )}
       <Right>
+        {isInDashboardPage && (
+          <AddValidatorButton onClick={() => onAddValidatorClick()}>Add Validator</AddValidatorButton>
+        )}
         <ClickAwayListener onClickAway={handleFaqClickAway}>
           <FaqMenu
             isOpen={isFaqMenuOpen}
@@ -111,18 +151,24 @@ const Header = (props: Props) => {
   );
 };
 
-type Props = {
+interface Props extends RouteComponentProps {
   withMenu: boolean;
   profile: Record<string, any>;
   logoutUser: () => void;
-};
+  isFinishedWizard: boolean;
+  walletStatus: string;
+  dashboardActions: Record<string, any>;
+}
 
 const mapStateToProps = (state) => ({
   profile: getUserData(state),
+  isFinishedWizard: getWizardFinishedStatus(state),
+  walletStatus: getWalletStatus(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   logoutUser: () => dispatch(logout()),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));

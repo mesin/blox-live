@@ -4,9 +4,13 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '..';
+import { PasswordModal } from '../KeyVaultModals/Modals';
 import { Wallet, Validators } from './components';
 import { summarizeAccounts, normalizeAccountsData } from './service';
-import * as dashboardActions from './actions';
+import * as actionsFromDashboard from './actions';
+import * as actionsFromWizard from '../Wizard/actions';
+import * as actionsFromAccounts from '../Accounts/actions';
+
 import * as selectors from './selectors';
 import { getDepositData } from '../Wizard/selectors';
 
@@ -20,11 +24,19 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
-  const { walletStatus, accounts, actions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
-          depositData, showDepositInfoModal } = props;
-  const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay } = actions;
+  const { walletStatus, accounts, dashboardActions, accountsActions, wizardActions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
+          depositData, showDepositInfoModal, showAddValidatorModal } = props;
+  const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
+  const { addAnotherAccount } = accountsActions;
+  const { setFinishedWizard } = wizardActions;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
+
+  const onPasswordModalClick = () => {
+    setAddValidatorModalDisplay(false);
+    setFinishedWizard(false);
+    addAnotherAccount();
+  };
 
   return (
     <Wrapper>
@@ -35,6 +47,9 @@ const Dashboard = (props) => {
       {!!depositData && showDepositInfoModal && (
         <DepositInfoModal depositData={depositData} onClose={() => setDepositInfoModalDisplay(false)} />
       )}
+      {showAddValidatorModal && (
+        <PasswordModal onClick={onPasswordModalClick} onClose={() => setAddValidatorModalDisplay(false)} />
+      )}
     </Wrapper>
   );
 };
@@ -43,21 +58,27 @@ const mapStateToProps = (state) => ({
   showReactivationModal: selectors.getReactivationModalDisplayStatus(state),
   showUpdateModal: selectors.getUpdateModalDisplayStatus(state),
   showDepositInfoModal: selectors.getDepositInfoModalDisplayStatus(state),
+  showAddValidatorModal: selectors.getValidatorModalDisplayStatus(state),
   depositData: getDepositData(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(dashboardActions, dispatch),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
+  accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
+  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
 });
 
 Dashboard.propTypes = {
   walletNeedsUpdate: PropTypes.bool,
   walletStatus: PropTypes.string,
   accounts: PropTypes.array,
-  actions: PropTypes.object,
+  dashboardActions: PropTypes.object,
+  accountsActions: PropTypes.object,
+  wizardActions: PropTypes.object,
   showReactivationModal: PropTypes.bool,
   showUpdateModal: PropTypes.bool,
   showDepositInfoModal: PropTypes.bool,
+  showAddValidatorModal: PropTypes.bool,
   depositData: PropTypes.string,
 };
 

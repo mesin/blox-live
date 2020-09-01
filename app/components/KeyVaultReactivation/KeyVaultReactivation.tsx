@@ -11,7 +11,7 @@ const KeyVaultReactivation = ({onClose}: Props) => {
     case 1:
       return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
     case 2:
-      return <PasswordModal onClose={onClose} move1StepForward={move1StepForward} />;
+      return <PasswordModal onClose={onClose} onClick={move1StepForward} />;
     case 3:
       return <RestartingModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
     case 4:
