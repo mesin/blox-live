@@ -13,4 +13,5 @@ class BloxApiService extends HttpService {
 }
 
 const bloxApiService = new BloxApiService();
+
 export default bloxApiService;

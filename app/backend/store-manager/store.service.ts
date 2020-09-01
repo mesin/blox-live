@@ -86,14 +86,14 @@ class StoreService extends BaseStoreService {
 }
 
 const storeService = new StoreService();
+
 const resolveStoreService = (storePrefix: string): StoreService => {
   if (storePrefix) {
     const prefixStoreService = new StoreService(storePrefix);
     prefixStoreService.init(storeService.get('currentUserId'), storeService.get('authToken'));
     return prefixStoreService;
-  } else {
-    return storeService;
   }
+  return storeService;
 };
 
 export {

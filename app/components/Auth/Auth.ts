@@ -64,7 +64,7 @@ export default class Auth {
     };
 
     try {
-      return await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions), true);
+      return await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
     } catch (error) {
       await this.logout();
       return Error(error);

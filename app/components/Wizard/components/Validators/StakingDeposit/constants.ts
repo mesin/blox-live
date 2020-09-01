@@ -8,7 +8,7 @@ export const DEPOSIT_DATA = [
   {
     label: 'txData',
     value: '',
-    title: 'To Address',
+    title: 'Tx Data',
     moreInfo: 'TX data holds additional information that is required for the transaction.',
   },
   {

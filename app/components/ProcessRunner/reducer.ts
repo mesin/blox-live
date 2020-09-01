@@ -47,6 +47,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isDone = initialState.isDone;
       draft.overallSteps = initialState.overallSteps;
       draft.currentStep = initialState.currentStep;
+      draft.isServerActive = initialState.isServerActive;
       break;
   }
 });

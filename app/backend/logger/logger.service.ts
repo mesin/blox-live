@@ -1,13 +1,13 @@
-import got from 'got';
+import electron from 'electron';
+import path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
-import { storeService } from '../store-manager/store.service';
-
-export default class LoggerService {
+export class LoggerService {
   private readonly logger: winston.Logger;
 
   constructor() {
+    const userDataPath = (electron.app || electron.remote.app).getPath('userData');
     this.logger = winston.createLogger({
       level: 'info',
       format: winston.format.json(),
@@ -15,18 +15,19 @@ export default class LoggerService {
         service: 'user-service'
       },
       transports: [
+        new winston.transports.Console(),
         new winston.transports.DailyRotateFile({
-          filename: 'logs/error.log',
+          filename: path.join(userDataPath, 'logs/error.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '1k',
+          maxSize: '10k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'error'
         }),
         new winston.transports.DailyRotateFile({
-          filename: 'logs/debug.log',
+          filename: path.join(userDataPath, 'logs/debug.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '1k',
+          maxSize: '10k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'debug'
@@ -43,11 +44,16 @@ export default class LoggerService {
     this.logger.debug(message, trace);
   }
 
+  /*
   async sendCrashReport(): Promise<void> {
-    await got.post('https://api.stage.bloxstaking.com/users/crash-report', {
-      headers: {
-        'Authorization': `Bearer ${storeService.get('authToken')}`
-      }
-    });
+    const BloxApiService = require('../communication-manager/blox-api.service').default;
+    console.log('SEND REPORT CRASH');
+    const form = new FormData();
+    form.append('file', fs.createReadStream('logs/error.log.2020-08-30-14.2'));
+    // eslint-disable-next-line no-underscore-dangle
+    console.log(`multipart/form-data; boundary=${form._boundary}`);
+    await BloxApiService.request(METHOD.POST, 'organizations/crash-report', form, { 'Content-Type': 'multipart/form-data' });
+    console.log('---->done crash report');
   }
+  */
 }

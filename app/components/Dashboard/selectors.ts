@@ -3,3 +3,5 @@ export const getReactivationModalDisplayStatus = (state) => state.dashboard.show
 export const getUpdateModalDisplayStatus = (state) => state.dashboard.showUpdate;
 
 export const getDepositInfoModalDisplayStatus = (state) => state.dashboard.showDepositInfo;
+
+export const getValidatorModalDisplayStatus = (state) => state.dashboard.showAddValidator;

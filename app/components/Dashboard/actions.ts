@@ -14,3 +14,8 @@ export const setDepositInfoModalDisplay = (show: boolean) => ({
   type: actionTypes.TOGGLE_DEPOSIT_INFO_MODAL_DISPLAY,
   payload: show
 });
+
+export const setAddValidatorModalDisplay = (show: boolean) => ({
+  type: actionTypes.TOGGLE_ADD_VALIDATOR_MODAL_DISPLAY,
+  payload: show
+});

@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { LoggerService } from '../logger/logger.service';
 
 const catchDecoratorStore = {
   handler: null,
@@ -9,6 +10,7 @@ const catchDecoratorStore = {
 
 const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
   return function(target, key, descriptor) {
+    const logger = new LoggerService();
     if (toReflect) {
       Reflect.defineMetadata(key, true, target, key);
     }
@@ -24,9 +26,7 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
         const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
         const extendedError = { error, displayMessage };
 
-        // TODO Vadim should use logging service
-        console.error(`displayErrorMessage: ${displayMessage}`);
-        console.error(error);
+        logger.error(displayMessage, extendedError);
         if (payload.localHandler) {
           return payload.localHandler.call(null, extendedError, this);
         } else if (handler) {
