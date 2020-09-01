@@ -14,20 +14,26 @@ export default class WalletService {
     this.keyVaultSshService = new KeyVaultSshService(storePrefix);
   }
 
-  get = async () => await BloxApiService.request(METHOD.GET, 'wallets');
+  async get() {
+    return await BloxApiService.request(METHOD.GET, 'wallets');
+  }
 
-  sync = async (payload: any) => await BloxApiService.request(METHOD.POST, 'wallets/sync', payload);
+  async sync(payload: any) {
+    return await BloxApiService.request(METHOD.POST, 'wallets/sync', payload);
+  }
 
-  reSync = async (payload: any) => await BloxApiService.request(METHOD.PATCH, 'wallets/sync', payload);
+  async reSync(payload: any) {
+    return await BloxApiService.request(METHOD.PATCH, 'wallets/sync', payload);
+  }
 
-  delete = async () => {
+  async delete() {
     // TODO request to delete wallet and not organization
     await BloxApiService.request(METHOD.DELETE, 'organizations');
-  };
+  }
 
-  getLatestTag = async () => {
+  async getLatestTag() {
     return await BloxApiService.request(METHOD.GET, 'key-vault/latest-tag');
-  };
+  }
 
   @Step({
     name: 'Remove blox wallet',

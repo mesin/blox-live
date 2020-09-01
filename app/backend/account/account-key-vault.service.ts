@@ -46,7 +46,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
-  listAccounts = async (): Promise<any> => {
+  async listAccounts(): Promise<any> {
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account list --storage=${this.storeService.get('keyVaultStorage')}`
     );
@@ -56,18 +56,17 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     const accounts = stdout ? JSON.parse(stdout) : [];
     console.log(accounts);
     return accounts;
-  };
+  }
 
-  getLastIndexedAccount = async (): Promise<any> => {
+  async getLastIndexedAccount(): Promise<any> {
     const accounts = await this.listAccounts();
     if (accounts.length) {
       console.log('account', accounts[0]);
       return accounts[0];
     }
-    return;
-  };
+  }
 
-  getDepositData = async (pubKey: string): Promise<any> => {
+  async getDepositData(pubKey: string): Promise<any> {
     if (!pubKey) {
       throw new Error('publicKey is empty');
     }
@@ -102,9 +101,9 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     const data = depositMethod.encodeABI();
     console.log(data);
     return data;
-  };
+  }
 
-  deleteLastIndexedAccount = async (): Promise<void> => {
+  async deleteLastIndexedAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account delete --storage=${this.storeService.get('keyVaultStorage')}`
     );
@@ -113,5 +112,5 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     }
     console.log(stdout);
     this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
-  };
+  }
 }
