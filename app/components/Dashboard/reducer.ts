@@ -5,6 +5,7 @@ const initialState = {
   showReactivation: false,
   showUpdate: false,
   showDepositInfo: false,
+  showAddValidator: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -18,6 +19,9 @@ const dashboardReducer = (state = initialState, action: Action) => produce(state
       break;
     case actionTypes.TOGGLE_DEPOSIT_INFO_MODAL_DISPLAY:
       draft.showDepositInfo = action.payload;
+      break;
+    case actionTypes.TOGGLE_ADD_VALIDATOR_MODAL_DISPLAY:
+      draft.showAddValidator = action.payload;
       break;
   }
 });

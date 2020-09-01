@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '..';
+import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal, AddValidatorModal } from '..';
 import { Wallet, Validators } from './components';
 import { summarizeAccounts, normalizeAccountsData } from './service';
 import * as dashboardActions from './actions';
@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 
 const Dashboard = (props) => {
   const { walletStatus, accounts, actions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
-          depositData, showDepositInfoModal } = props;
+          depositData, showDepositInfoModal, showAddValidatorModal } = props;
   const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay } = actions;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
@@ -35,6 +35,7 @@ const Dashboard = (props) => {
       {!!depositData && showDepositInfoModal && (
         <DepositInfoModal depositData={depositData} onClose={() => setDepositInfoModalDisplay(false)} />
       )}
+      {showAddValidatorModal && <AddValidatorModal />}
     </Wrapper>
   );
 };
@@ -43,6 +44,7 @@ const mapStateToProps = (state) => ({
   showReactivationModal: selectors.getReactivationModalDisplayStatus(state),
   showUpdateModal: selectors.getUpdateModalDisplayStatus(state),
   showDepositInfoModal: selectors.getDepositInfoModalDisplayStatus(state),
+  showAddValidatorModal: selectors.getValidatorModalDisplayStatus(state),
   depositData: getDepositData(state),
 });
 
@@ -58,6 +60,7 @@ Dashboard.propTypes = {
   showReactivationModal: PropTypes.bool,
   showUpdateModal: PropTypes.bool,
   showDepositInfoModal: PropTypes.bool,
+  showAddValidatorModal: PropTypes.bool,
   depositData: PropTypes.string,
 };
 

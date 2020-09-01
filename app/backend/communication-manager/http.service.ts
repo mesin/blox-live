@@ -18,11 +18,12 @@ export default class HttpService {
     });
   }
 
-  request = async (method: string, url: string, data: any = null, fullResponse: boolean = false): Promise<any> => {
+  request = async (method: string, url: string, data: any = null, headers: any = null, fullResponse: boolean = false): Promise<any> => {
     const response = await this.instance({
       url,
       method,
-      data
+      data,
+      headers: {...this.instance.defaults.headers.common, ...headers}
     });
     return fullResponse ? response : response.data;
   };

@@ -1,2 +1,2 @@
-export * from './catch.decorator'
-export * from './step.decorator'
+export * from './catch.decorator';
+export * from './step.decorator';
