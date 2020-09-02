@@ -2,9 +2,13 @@ import PropTypes from 'prop-types';
 import {Icon} from '../../../index';
 import React from 'react';
 import styled from 'styled-components';
-import {SortType} from '../../../../../components/Dashboard/components/Validators/Validators';
 
 const Wrapper = styled.div``;
+
+export const SortType = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending'
+};
 
 const Sorting = (props) => {
   const {sortKey, selectedSorting, sortType, onSortClick} = props;
