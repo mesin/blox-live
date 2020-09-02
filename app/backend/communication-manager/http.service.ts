@@ -1,6 +1,7 @@
 import { resolveStoreService, StoreService } from '../store-manager/store.service';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
+import { Catch } from '../decorators';
 
 export default class HttpService {
   protected readonly storeService: StoreService;
@@ -18,13 +19,14 @@ export default class HttpService {
     });
   }
 
-  request = async (method: string, url: string, data: any = null, headers: any = null, fullResponse: boolean = false): Promise<any> => {
+  @Catch()
+  async request(method: string, url: string, data: any = null, headers: any = null, fullResponse: boolean = false): Promise<any> {
     const response = await this.instance({
       url,
       method,
       data,
-      headers: {...this.instance.defaults.headers.common, ...headers}
+      headers: { ...this.instance.defaults.headers.common, ...headers }
     });
     return fullResponse ? response : response.data;
-  };
+  }
 }
