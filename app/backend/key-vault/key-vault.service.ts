@@ -19,20 +19,20 @@ export default class KeyVaultService {
     this.keyVaultApiService = resolveKeyVaultApiService(storePrefix);
   }
 
-  updateStorage = async (payload: any) => {
+  async updateStorage(payload: any) {
     this.keyVaultApiService.init();
     return await this.keyVaultApiService.request(METHOD.POST, 'ethereum/storage', payload);
-  };
+  }
 
-  listAccounts = async () => {
+  async listAccounts() {
     this.keyVaultApiService.init();
     return await this.keyVaultApiService.request(METHOD.LIST, 'ethereum/accounts');
-  };
+  }
 
-  healthCheck = async () => {
+  async healthCheck() {
     this.keyVaultApiService.init();
     return await this.keyVaultApiService.request(METHOD.GET, 'sys/health');
-  };
+  }
 
   @Step({
     name: 'Installing docker...'

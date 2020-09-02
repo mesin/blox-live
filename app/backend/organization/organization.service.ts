@@ -4,12 +4,11 @@ import { CatchClass } from '../decorators';
 
 @CatchClass<OrganizationService>()
 export default class OrganizationService {
-
-  get = async () => {
+  async get() {
     return await BloxApiService.request(METHOD.GET, 'organizations/profile');
-  };
+  }
 
-  update = async (payload: any) => {
+  async update(payload: any) {
     return await BloxApiService.request(METHOD.PATCH, 'organizations/profile', payload);
-  };
+  }
 }

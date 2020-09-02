@@ -25,8 +25,8 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
         const { handler } = catchDecoratorStore;
         const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
         const extendedError = { error, displayMessage };
-
-        logger.error(displayMessage, extendedError);
+        console.log(extendedError);
+        logger.error(displayMessage, error);
         if (payload.localHandler) {
           return payload.localHandler.call(null, extendedError, this);
         } else if (handler) {

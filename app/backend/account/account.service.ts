@@ -14,24 +14,24 @@ export default class AccountService {
     this.accountKeyVaultService = new AccountKeyVaultService();
   }
 
-  get = async () => {
+  async get() {
     return await BloxApiService.request(METHOD.GET, 'accounts');
-  };
+  }
 
-  create = async (payload: any) => {
+  async create(payload: any) {
     return await BloxApiService.request(METHOD.POST, 'accounts', payload);
-  };
+  }
 
-  delete = async () => {
+  async delete() {
     return await BloxApiService.request(METHOD.DELETE, 'accounts');
-  };
+  }
 
-  updateStatus = async (route: string, payload: any) => {
+  async updateStatus(route: string, payload: any) {
     if (!route) {
       throw new Error('route');
     }
     return await BloxApiService.request(METHOD.PATCH, `accounts/${route}`, payload);
-  };
+  }
 
   @Step({
     name: 'Create Blox Account',

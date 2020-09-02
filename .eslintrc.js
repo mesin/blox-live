@@ -78,6 +78,7 @@ module.exports = {
     'default-case': 0,
     'comma-dangle': 0,
     'operator-linebreak': 0,
+    'no-return-await': 0,
     '@typescript-eslint/indent': 0,
     '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/explicit-function-return-type': 0,

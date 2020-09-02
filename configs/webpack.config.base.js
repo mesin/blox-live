@@ -42,7 +42,7 @@ export default {
       AUTH0_DOMAIN: 'blox-infra.eu.auth0.com',
       AUTH0_CLIENT_ID: 'NsZvhkQvZOWwXT2rcA1RWGgA7YxxhsJZ',
       AUTH0_LOGOUT_URL: 'http://localhost',
-      AUTH0_CALLBACK_URL: 'http://localhost/callback',
+      AUTH0_CALLBACK_URL: 'https://localhost/callback',
       API_URL: 'https://api.stage.bloxstaking.com',
       VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/key-vault',
       WEBSITE_URL: 'https://www.bloxstaking.com',
