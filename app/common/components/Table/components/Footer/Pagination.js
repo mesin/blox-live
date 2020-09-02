@@ -21,7 +21,7 @@ const Wrapper = styled.div`
 const Button = styled.div`
   width: 100%;
   font-size: 11px;
-  border-left: solid 1px ${({theme}) => theme.gray300};
+  border-left: ${({withBorder, theme}) => withBorder ? `solid 1px ${theme.gray300}` : ''} ;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,7 +48,8 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       title: `${paginationInfo.offset + 1} ~ ${Math.min(pageLength, paginationInfo.total)} of ${paginationInfo.total}`,
       color: 'gray600',
       reverse: true,
-      clickable: false
+      clickable: false,
+      withBorder: false
     },
     {
       key: PaginationAction.FIRST,
@@ -57,7 +58,8 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       color: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       reverse: true,
-      clickable: paginationInfo.offset > 0
+      clickable: paginationInfo.offset > 0,
+      withBorder: true
     },
     {
       key: PaginationAction.PREVIEW,
@@ -66,7 +68,8 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       color: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       reverse: true,
-      clickable: paginationInfo.offset > 0
+      clickable: paginationInfo.offset > 0,
+      withBorder: true
     },
     {
       key: PaginationAction.NEXT,
@@ -75,7 +78,8 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       color: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       reverse: false,
-      clickable: pageLength < paginationInfo.total
+      clickable: pageLength < paginationInfo.total,
+      withBorder: true
     },
     {
       key: PaginationAction.LAST,
@@ -84,7 +88,8 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       color: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       reverse: false,
-      clickable: pageLength < paginationInfo.total
+      clickable: pageLength < paginationInfo.total,
+      withBorder: true
     }
   ];
 
@@ -110,10 +115,10 @@ const Pagination = ({paginationInfo, onPageClick}) => {
   };
 
   return (
-    paginationButtons.map(({key, title, icon, iconColor, color, reverse, clickable}) => {
+    paginationButtons.map(({key, title, icon, iconColor, color, reverse, clickable, withBorder}) => {
       return reverse ? (
         <Wrapper onClick={() => clickable ? onPaginationClick(key) : false}>
-          <Button color={color}>
+          <Button color={color} withBorder={withBorder}>
             <Icon
               name={icon}
               color={iconColor}
@@ -124,7 +129,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
         </Wrapper>
       ) : (
         <Wrapper onClick={() => clickable ? onPaginationClick(key) : false}>
-          <Button color={color}>
+          <Button color={color} withBorder={withBorder}>
             {title}
             <Icon
               name={icon}
