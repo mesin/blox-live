@@ -18,10 +18,20 @@ const Title = styled.h1`
 `;
 
 const Validators = ({accounts}) => {
-  const PAGE_SIZE = 1;
+  const PAGE_SIZE = 10;
+  const [pagedAccounts, setPagedAccounts] = React.useState([]);
+  const [paginationInfo, setPaginationInfo] = React.useState(null);
   const [selectedSort, setSelectedSort] = React.useState('key');
   const [sortType, setSortType] = React.useState(SortType.DESCENDING);
-  const [paginationInfo, setPaginationInfo] = React.useState(null);
+
+  const onPaginationClick = (offset) => {
+    setPagedAccounts(accounts.slice(offset, Math.min(offset + PAGE_SIZE, accounts.length)));
+    setPaginationInfo({
+      offset,
+      pageSize: PAGE_SIZE,
+      total: accounts.length,
+    });
+  };
 
   const onSortClick = (sortKey) => {
     setSelectedSort(sortKey);
@@ -33,20 +43,14 @@ const Validators = ({accounts}) => {
       }
       return a[selectedSort] < b[selectedSort] ? 1 : -1;
     });
-  };
 
-  const onPaginationClick = (offset) => {
-    setPaginationInfo({
-      offset,
-      pageSize: PAGE_SIZE,
-      total: accounts.length
-    });
+    setPagedAccounts(accounts.slice(paginationInfo.offset, Math.min(paginationInfo.offset + paginationInfo.pageSize, accounts.length)));
   };
 
   return (
     <Wrapper>
       <Title>Validators</Title>
-      <Table columns={tableColumns} data={accounts} isLoading={false} isPagination
+      <Table columns={tableColumns} data={pagedAccounts} isLoading={false} isPagination
         selectedSorting={selectedSort} sortType={sortType} onSortClick={onSortClick}
         paginationInfo={paginationInfo} onPageClick={onPaginationClick} />
     </Wrapper>

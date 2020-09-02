@@ -37,15 +37,15 @@ export const PaginationAction = {
 
 const Pagination = ({paginationInfo, onPageClick}) => {
   if (paginationInfo == null) {
-    onPageClick(1);
+    onPageClick(0); // in order to start at page 1
     return <Wrapper />;
   }
-  const pageLength = (paginationInfo.offset - 1) + paginationInfo.pageSize;
+  const pageLength = (paginationInfo.offset) + paginationInfo.pageSize;
 
   const paginationButtons = [
     {
       key: 'page',
-      title: `${paginationInfo.offset} ~ ${Math.min(pageLength, paginationInfo.total)} of ${paginationInfo.total}`,
+      title: `${paginationInfo.offset + 1} ~ ${Math.min(pageLength, paginationInfo.total)} of ${paginationInfo.total}`,
       color: 'gray600',
       reverse: true,
       clickable: false
@@ -54,19 +54,19 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       key: PaginationAction.FIRST,
       title: 'First',
       icon: 'first-page',
-      iconColor: `${paginationInfo.offset > 1 ? 'primary900' : 'gray400'}`,
-      color: `${paginationInfo.offset > 1 ? 'primary900' : 'gray400'}`,
+      iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
+      color: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       reverse: true,
-      clickable: true
+      clickable: paginationInfo.offset > 0
     },
     {
       key: PaginationAction.PREVIEW,
       title: 'Prev',
       icon: 'chevron-left',
-      iconColor: `${paginationInfo.offset > 1 ? 'primary900' : 'gray400'}`,
-      color: `${paginationInfo.offset > 1 ? 'primary900' : 'gray400'}`,
+      iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
+      color: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
       reverse: true,
-      clickable: true
+      clickable: paginationInfo.offset > 0
     },
     {
       key: PaginationAction.NEXT,
@@ -75,7 +75,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       color: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       reverse: false,
-      clickable: true
+      clickable: pageLength < paginationInfo.total
     },
     {
       key: PaginationAction.LAST,
@@ -84,7 +84,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       color: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
       reverse: false,
-      clickable: true
+      clickable: pageLength < paginationInfo.total
     }
   ];
 
@@ -92,18 +92,19 @@ const Pagination = ({paginationInfo, onPageClick}) => {
     let offset = null;
     switch (key) {
       case PaginationAction.FIRST:
-        offset = 1;
+        offset = 0;
         break;
       case PaginationAction.PREVIEW:
-        offset = paginationInfo.offset - paginationInfo.pageSize;
+        offset = Math.max(0, paginationInfo.offset - paginationInfo.pageSize);
         break;
       case PaginationAction.NEXT:
-        offset = paginationInfo.offset + paginationInfo.pageSize;
+        offset = Math.min(paginationInfo.total, paginationInfo.offset + paginationInfo.pageSize);
         break;
-      case PaginationAction.LAST:
-        offset = 1 + paginationInfo.pageSize *
-          ((Math.ceil(paginationInfo.total / paginationInfo.pageSize)) - 1);
+      case PaginationAction.LAST: {
+        const totalPages = Math.ceil(paginationInfo.total / paginationInfo.pageSize);
+        offset = paginationInfo.pageSize * ((totalPages - 1));
         break;
+      }
     }
     onPageClick(offset);
   };
@@ -141,7 +142,7 @@ Pagination.propTypes = {
   paginationInfo: PropTypes.shape({
     offset: PropTypes.number,
     pageSize: PropTypes.number,
-    total: PropTypes.number
+    total: PropTypes.number,
   }),
   onPageClick: PropTypes.func
 };
