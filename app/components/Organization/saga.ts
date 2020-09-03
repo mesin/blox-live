@@ -21,7 +21,7 @@ function* onLoadingFailure(error: Record<string, any>) {
 
 export function* startLoadingOrganization() {
   try {
-    const response = yield call([organizationService, organizationService.get]);
+    const response = yield call([organizationService, 'get']);
     yield call(onLoadingSuccess, response);
   } catch (error) {
     yield error && call(onLoadingFailure, error);
@@ -43,7 +43,7 @@ function* onUpdatingFailure(error: Record<string, any>) {
 
 export function* startUpdatingOrganization(action) {
   try {
-    const response = yield call([organizationService, organizationService.update], { name: action.payload });
+    const response = yield call([organizationService, 'update'], { name: action.payload });
     yield call(onUpdatingSuccess, response);
   } catch (error) {
     yield error && call(onUpdatingFailure, error);

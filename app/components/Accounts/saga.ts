@@ -18,7 +18,7 @@ function* onLoadingFailure(error: Record<string, any>) {
 
 export function* startLoadingAccounts() {
   try {
-    const response = yield call([accountService, accountService.get]);
+    const response = yield call([accountService, 'get']);
     yield call(onLoadingSuccess, response);
   } catch (error) {
     yield error && call(onLoadingFailure, error);

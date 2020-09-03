@@ -39,7 +39,7 @@ function* onLoadDepositDataFailure(error) {
 
 function* loadWallet() {
   try {
-    const response = yield call([walletService, walletService.get]);
+    const response = yield call([walletService, 'get']);
     yield call(onLoadWalletSuccess, response);
   } catch (error) {
     yield error && call(onLoadWalletFailure, error);
@@ -49,7 +49,7 @@ function* loadWallet() {
 function* loadDepositData(action) {
   const { payload } = action;
   try {
-    const response = yield call([accountKeyVaultService, accountKeyVaultService.getDepositData], payload);
+    const response = yield call([accountKeyVaultService, 'getDepositData'], payload);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);
@@ -59,7 +59,7 @@ function* loadDepositData(action) {
 function* startUpdatingAccountStatus(action) {
   const { payload } = action;
   try {
-    yield call([accountService, accountService.updateStatus], payload, { deposited: true });
+    yield call([accountService, 'updateStatus'], payload, { deposited: true });
     yield call(onAccountStatusUpdateSuccess);
   } catch (error) {
     yield error && call(onAccountStatusUpdateFailure, error);
