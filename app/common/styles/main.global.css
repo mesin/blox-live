@@ -207,9 +207,6 @@
 .icon-protection:before {
   content: "\61";
 }
-.icon-check:before {
-  content: "\64";
-}
 .icon-close:before {
   content: "\65";
 }
@@ -249,9 +246,6 @@
 .icon-chevron-left:before {
   content: "\6f";
 }
-.icon-chevron-right:before {
-  content: "\70";
-}
 .icon-expand-more:before {
   content: "\71";
 }
@@ -260,4 +254,28 @@
 }
 .icon-eye:before {
   content: "\73";
+}
+.icon-sorting-up:before {
+  content: "\74";
+}
+.icon-sorting-down:before {
+  content: "\75";
+}
+.icon-sorting:before {
+  content: "\76";
+}
+.icon-filter:before {
+  content: "\77";
+}
+.icon-check:before {
+  content: "\64";
+}
+.icon-chevron-right:before {
+  content: "\70";
+}
+.icon-first-page:before {
+  content: "\78";
+}
+.icon-last-page:before {
+  content: "\79";
 }
