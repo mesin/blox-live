@@ -25,26 +25,30 @@ const Validators = ({accounts}) => {
   const [sortType, setSortType] = React.useState(SortType.DESCENDING);
 
   const onPaginationClick = (offset) => {
-    setPagedAccounts(accounts.slice(offset, Math.min(offset + PAGE_SIZE, accounts.length)));
-    setPaginationInfo({
-      offset,
-      pageSize: PAGE_SIZE,
-      total: accounts.length,
-    });
+    if (accounts) {
+      setPagedAccounts(accounts.slice(offset, Math.min(offset + PAGE_SIZE, accounts.length)));
+      setPaginationInfo({
+        offset,
+        pageSize: PAGE_SIZE,
+        total: accounts.length,
+      });
+    }
   };
 
   const onSortClick = (sortKey) => {
-    setSelectedSort(sortKey);
-    setSortType(sortType === SortType.ASCENDING ? SortType.DESCENDING : SortType.ASCENDING);
+    if (accounts) {
+      setSelectedSort(sortKey);
+      setSortType(sortType === SortType.ASCENDING ? SortType.DESCENDING : SortType.ASCENDING);
 
-    accounts.sort((a, b) => {
-      if (sortType === SortType.DESCENDING) {
-        return a[selectedSort] < b[selectedSort] ? -1 : 1;
-      }
-      return a[selectedSort] < b[selectedSort] ? 1 : -1;
-    });
+      accounts.sort((a, b) => {
+        if (sortType === SortType.DESCENDING) {
+          return a[selectedSort] < b[selectedSort] ? -1 : 1;
+        }
+        return a[selectedSort] < b[selectedSort] ? 1 : -1;
+      });
 
-    setPagedAccounts(accounts.slice(paginationInfo.offset, Math.min(paginationInfo.offset + paginationInfo.pageSize, accounts.length)));
+      setPagedAccounts(accounts.slice(paginationInfo.offset, Math.min(paginationInfo.offset + paginationInfo.pageSize, accounts.length)));
+    }
   };
 
   return (
