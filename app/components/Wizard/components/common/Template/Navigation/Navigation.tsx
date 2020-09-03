@@ -20,19 +20,24 @@ const Separator = styled.div`
 `;
 
 const Navigation = (props: Props) => {
-  const { page, step } = props;
+  const { page, step, addAdditionalAccount } = props;
   return (
     <Wrapper>
-      <MenuItem text="KeyVault Setup" number={1} step={step} page={page} finalPage={4} />
-      {(step === 1 && page !== 4) && (
+      {!addAdditionalAccount && (
         <>
-          <SubMenuItem text="Select Cloud Provider" page={page} number={1} />
-          <SubMenuItem text="Create Server" page={page} number={2} />
-          <SubMenuItem text="Save Passphrase" page={page} number={3} />
+          <MenuItem text="KeyVault Setup" number={1} step={step} page={page} finalPage={4} />
+          {(step === 1 && page !== 4) && (
+            <>
+              <SubMenuItem text="Select Cloud Provider" page={page} number={1} />
+              <SubMenuItem text="Create Server" page={page} number={2} />
+              <SubMenuItem text="Save Passphrase" page={page} number={3} />
+            </>
+          )}
+          <Separator />
         </>
       )}
-      <Separator />
-      <MenuItem text="Validator Creation" number={2} step={step} page={page} finalPage={8} />
+
+      <MenuItem text="Validator Creation" hideNumber={addAdditionalAccount} number={2} step={step} page={page} finalPage={8} />
       {((step === 2 && page !== 8) || page === 4) && (
         <>
           <SubMenuItem text="Select Staking Network" page={page} number={5} />
@@ -49,6 +54,7 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
+  addAdditionalAccount: boolean;
 };
 
 export default Navigation;

@@ -60,21 +60,16 @@ const StakingDeposit = (props: Props) => {
     }
   }, [depositData, isLoading, accountsFromApi]);
 
-  const clearWizardAndAccountsData = async () => {
-    await clearWizardData();
-    await callClearAccountsData();
-  };
-
   const onMadeDepositButtonClick = async () => {
     const accountId = accountDataFromProcess ?
       accountDataFromProcess.id : accountsFromApi[0].id;
     await updateAccountStatus(accountId);
-    await clearWizardAndAccountsData();
     await setPage(page + 1);
   };
 
   const onDepositLaterButtonClick = async () => {
-    await clearWizardAndAccountsData();
+    await clearWizardData();
+    await callClearAccountsData();
     await setFinishedWizard(true);
   };
 

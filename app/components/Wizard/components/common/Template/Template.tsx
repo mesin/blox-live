@@ -50,7 +50,7 @@ const Template = (props: Props) => {
   const { isFinishedWizard, addAnotherAccount, step } = rest;
   const { setFinishedWizard } = wizardActions;
   const { setAddAnotherAccount } = accountsActions;
-  const showCloseButton = !isFinishedWizard && addAnotherAccount && step === 2;
+  const addAdditionalAccount = !isFinishedWizard && addAnotherAccount && step === 2;
 
   const onCloseClick = () => {
     setFinishedWizard(true);
@@ -59,9 +59,9 @@ const Template = (props: Props) => {
 
   return (
     <Wrapper>
-      <Navigation {...rest} />
+      <Navigation {...rest} addAdditionalAccount={addAdditionalAccount} />
       <Content>
-        {showCloseButton && (
+        {addAdditionalAccount && (
           <CloseButton onClick={onCloseClick}>
             <Icon name={'close'} fontSize={'24px'} color={'gray900'} />
           </CloseButton>
