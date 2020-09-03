@@ -1,15 +1,15 @@
-import { resolveStoreService, StoreService } from '../store-manager/store.service';
+import { resolveStore, Store } from '../store-manager/store';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
-import { Catch } from '../decorators';
+import { Catch } from '../../decorators';
 
-export default class HttpService {
-  protected readonly storeService: StoreService;
+export default class Http {
+  protected readonly store: Store;
   baseUrl: string;
   protected instance: any;
 
   constructor(storePrefix: string = '') {
-    this.storeService = resolveStoreService(storePrefix);
+    this.store = resolveStore(storePrefix);
     this.instance = axios.create();
     axiosRetry(this.instance, {
       retries: +process.env.HTTP_RETRIES,

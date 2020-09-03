@@ -1,7 +1,7 @@
 import net from 'net';
-import { StoreService, resolveStoreService } from '../store-manager/store.service';
+import { Store, resolveStore } from '../../common/store-manager/store';
 import * as AWS from 'aws-sdk';
-import { CatchClass, Step } from '../decorators';
+import { CatchClass, Step } from '../../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -9,7 +9,7 @@ const tempStorePrefix = 'tmp';
 @CatchClass<AwsService>()
 export default class AwsService {
   private ec2!: AWS.EC2;
-  private readonly storeService: StoreService;
+  private readonly store: Store;
   private readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   private readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
   private readonly defaultAwsOptions = {
@@ -18,9 +18,9 @@ export default class AwsService {
   };
 
   constructor(storePrefix: string = '') {
-    this.storeService = resolveStoreService(storePrefix);
+    this.store = resolveStore(storePrefix);
 
-    if (!this.ec2 && this.storeService.get('credentials')) {
+    if (!this.ec2 && this.store.get('credentials')) {
       this.setAWSCredentials();
     }
   }
@@ -30,7 +30,7 @@ export default class AwsService {
     requiredConfig: ['credentials']
   })
   async setAWSCredentials(): Promise<any> {
-    const credentials: any = this.storeService.get('credentials');
+    const credentials: any = this.store.get('credentials');
     this.ec2 = new AWS.EC2({
       ...this.defaultAwsOptions,
       credentials
@@ -45,7 +45,7 @@ export default class AwsService {
       await this.ec2.describeInstances().promise();
       await this.ec2.describeAddresses().promise();
     } catch (error) {
-      this.storeService.delete('credentials');
+      this.store.delete('credentials');
       throw new Error(error.message);
     }
   }
@@ -55,29 +55,29 @@ export default class AwsService {
     requiredConfig: ['uuid']
   })
   async createEc2KeyPair() {
-    if (this.storeService.get('keyPair')) return;
+    if (this.store.get('keyPair')) return;
 
     const {
       KeyPairId: pairId,
       KeyMaterial: privateKey
     } = await this.ec2
-      .createKeyPair({ KeyName: `${this.keyName}-${this.storeService.get('uuid')}` })
+      .createKeyPair({ KeyName: `${this.keyName}-${this.store.get('uuid')}` })
       .promise();
-    this.storeService.set('keyPair', { pairId, privateKey });
+    this.store.set('keyPair', { pairId, privateKey });
   }
 
   @Step({
     name: 'Enabling connection using Elastic IP...'
   })
   async createElasticIp() {
-    if (this.storeService.get('addressId')) return;
+    if (this.store.get('addressId')) return;
 
     const {
       AllocationId: addressId,
       PublicIp: publicIp
     } = await this.ec2.allocateAddress({ Domain: 'vpc' }).promise();
-    this.storeService.set('addressId', addressId);
-    this.storeService.set('publicIp', publicIp);
+    this.store.set('addressId', addressId);
+    this.store.set('publicIp', publicIp);
   }
 
   @Step({
@@ -85,14 +85,14 @@ export default class AwsService {
     requiredConfig: ['uuid']
   })
   async createSecurityGroup() {
-    if (this.storeService.get('securityGroupId')) return;
+    if (this.store.get('securityGroupId')) return;
 
     const vpcList = await this.ec2.describeVpcs().promise();
     const vpc = vpcList?.Vpcs![0].VpcId;
     const securityData = await this.ec2
       .createSecurityGroup({
-        Description: `${this.securityGroupName}-${this.storeService.get('uuid')}`,
-        GroupName: `${this.securityGroupName}-${this.storeService.get('uuid')}`,
+        Description: `${this.securityGroupName}-${this.store.get('uuid')}`,
+        GroupName: `${this.securityGroupName}-${this.store.get('uuid')}`,
         VpcId: vpc
       })
       .promise();
@@ -115,7 +115,7 @@ export default class AwsService {
           }
         ]
       }).promise();
-    this.storeService.set('securityGroupId', securityGroupId);
+    this.store.set('securityGroupId', securityGroupId);
   }
 
   @Step({
@@ -123,13 +123,13 @@ export default class AwsService {
     requiredConfig: ['uuid', 'securityGroupId', 'addressId']
   })
   async createInstance() {
-    if (this.storeService.get('instanceId')) return;
+    if (this.store.get('instanceId')) return;
 
     const data = await this.ec2.runInstances({
       ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1
       InstanceType: 't2.micro',
-      SecurityGroupIds: [this.storeService.get('securityGroupId')],
-      KeyName: `${this.keyName}-${this.storeService.get('uuid')}`,
+      SecurityGroupIds: [this.store.get('securityGroupId')],
+      KeyName: `${this.keyName}-${this.store.get('uuid')}`,
       MinCount: 1,
       MaxCount: 1
     }).promise();
@@ -137,7 +137,7 @@ export default class AwsService {
     await this.ec2
       .waitFor('instanceRunning', { InstanceIds: [instanceId] })
       .promise();
-    this.storeService.set('instanceId', instanceId);
+    this.store.set('instanceId', instanceId);
 
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
@@ -145,7 +145,7 @@ export default class AwsService {
     };
     await this.ec2.createTags(tagsOptions).promise();
     await this.ec2.associateAddress({
-      AllocationId: this.storeService.get('addressId'),
+      AllocationId: this.store.get('addressId'),
       InstanceId: instanceId
     }).promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
@@ -156,14 +156,14 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'securityGroupId', 'addressId', 'keyPair']
   })
   async uninstallItems() {
-    await this.ec2.terminateInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.storeService.get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
-    await this.ec2.deleteKeyPair({ KeyPairId: this.storeService.get('keyPair.pairId') }).promise();
-    await this.ec2.deleteSecurityGroup({ GroupId: this.storeService.get('securityGroupId'), DryRun: false }).promise();
-    this.storeService.clear();
-    const storeServiceTmp = resolveStoreService(tempStorePrefix);
-    storeServiceTmp.clear();
+    await this.ec2.terminateInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.store.get('instanceId')] }).promise();
+    await this.ec2.releaseAddress({ AllocationId: this.store.get('addressId') }).promise();
+    await this.ec2.deleteKeyPair({ KeyPairId: this.store.get('keyPair.pairId') }).promise();
+    await this.ec2.deleteSecurityGroup({ GroupId: this.store.get('securityGroupId'), DryRun: false }).promise();
+    this.store.clear();
+    const storeTmp = resolveStore(tempStorePrefix);
+    storeTmp.clear();
   }
 
   @Step({
@@ -171,9 +171,9 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'addressId']
   })
   async truncateServer() {
-    await this.ec2.terminateInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.storeService.get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: this.storeService.get('addressId') }).promise();
+    await this.ec2.terminateInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.store.get('instanceId')] }).promise();
+    await this.ec2.releaseAddress({ AllocationId: this.store.get('addressId') }).promise();
   }
 
   @Step({
@@ -181,8 +181,7 @@ export default class AwsService {
     requiredConfig: ['instanceId', 'publicIp']
   })
   async rebootInstance() {
-    throw new Error('test error');
-    await this.ec2.rebootInstances({ InstanceIds: [this.storeService.get('instanceId')] }).promise();
+    await this.ec2.rebootInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
     await new Promise((resolve) => {
       let totalSeconds = 0;
       const DELAY = 5000; // 5 sec
@@ -190,7 +189,7 @@ export default class AwsService {
         const socket = new net.Socket();
         const onError = () => {
           socket.destroy();
-          console.log('waiting', this.storeService.get('publicIp'), totalSeconds);
+          console.log('waiting', this.store.get('publicIp'), totalSeconds);
           if (totalSeconds >= 80000) { // 80 sec
             console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
@@ -202,7 +201,7 @@ export default class AwsService {
         socket.setTimeout(1000);
         socket.once('error', onError);
         socket.once('timeout', onError);
-        const ip: any = this.storeService.get('publicIp');
+        const ip: any = this.store.get('publicIp');
         socket.connect(22, ip, () => {
           console.log('Server is online');
           socket.destroy();

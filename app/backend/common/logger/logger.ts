@@ -5,7 +5,7 @@ import path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
-export class LoggerService {
+export class Logger {
   private readonly logger: winston.Logger;
   private readonly userDataPath: string;
 
@@ -15,7 +15,7 @@ export class LoggerService {
       level: 'info',
       format: winston.format.json(),
       defaultMeta: {
-        service: 'user-service'
+        service: 'blox-live'
       },
       transports: [
         new winston.transports.Console(),

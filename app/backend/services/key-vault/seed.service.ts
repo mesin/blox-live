@@ -1,28 +1,28 @@
-import { storeService, StoreService } from '../store-manager/store.service';
-import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
-import { CatchClass } from '../decorators';
+import { store, Store } from '../../common/store-manager/store';
+import KeyVaultCli from '../../common/communication-manager/key-vault-cli';
+import { CatchClass } from '../../decorators';
 
 @CatchClass<SeedService>()
-export default class SeedService extends KeyVaultCliService {
-  private readonly storeService: StoreService;
+export default class SeedService extends KeyVaultCli {
+  private readonly store: Store;
 
   constructor() {
     super();
-    this.storeService = storeService;
+    this.store = store;
   }
 
   async seedGenerate(): Promise<void> {
-    if (this.storeService.get('seed')) return;
+    if (this.store.get('seed')) return;
 
     const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate`);
     if (stderr) {
       throw new Error(stderr);
     }
-    this.storeService.set('seed', stdout.replace('\n', ''));
+    this.store.set('seed', stdout.replace('\n', ''));
   }
 
   getSeed() {
-    return this.storeService.get('seed');
+    return this.store.get('seed');
   }
 
   async mnemonicGenerate(): Promise<void> {
@@ -40,7 +40,7 @@ export default class SeedService extends KeyVaultCliService {
     // generate seed from mnemonic
     const seed = await this.seedFromMnemonicGenerate(mnemonic);
     console.log(seed);
-    this.storeService.set('seed', seed);
+    this.store.set('seed', seed);
   }
 
   async seedFromMnemonicGenerate(mnemonic): Promise<string> {
