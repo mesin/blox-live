@@ -3,7 +3,7 @@ import { notification } from 'antd';
 
 import { LOAD_ACCOUNTS } from './actionTypes';
 import * as actions from './actions';
-import AccountService from '../../backend/account/account.service';
+import AccountService from '../../backend/services/account/account.service';
 
 const accountService = new AccountService();
 

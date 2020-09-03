@@ -3,15 +3,15 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import { storeService } from '../../backend/store-manager/store.service';
-import BloxApiService from '../../backend/communication-manager/blox-api.service';
-import AuthApiService from '../../backend/communication-manager/auth-api.service';
+import { store } from '../../backend/common/store-manager/store';
+import BloxApi from '../../backend/common/communication-manager/blox-api';
+import AuthApi from '../../backend/common/communication-manager/auth-api';
 
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
-  private readonly authApiService: AuthApiService;
+  private readonly authApi: AuthApi;
 
   constructor() {
     this.tokens = {
