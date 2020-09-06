@@ -11,7 +11,7 @@ export default class Store extends BaseStore {
   private storage: ElectronStore;
   private readonly prefix: string;
   private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials'];
-  private readonly cryptoAlgorith: string = 'aes-256-ecb';
+  private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
   private timer: any;
@@ -98,11 +98,10 @@ export default class Store extends BaseStore {
   encrypt = (value): any => {
     try {
       const str = Buffer.from(JSON.stringify(value)).toString('base64');
-      const cipher = crypto.createCipheriv(this.cryptoAlgorith, this.cryptoKey, null);
+      const cipher = crypto.createCipheriv(this.cryptoAlgorithm, this.cryptoKey, null);
       const encrypted = Buffer.concat([cipher.update(str), cipher.final()]);
       return encrypted.toString('hex');
     } catch (e) {
-      //
       console.error(e);
       return value;
       // throw new Error('not possible to encrypt value');
@@ -111,7 +110,7 @@ export default class Store extends BaseStore {
 
   decrypt = (value): any => {
     try {
-      const decipher = crypto.createDecipheriv(this.cryptoAlgorith, this.cryptoKey, null);
+      const decipher = crypto.createDecipheriv(this.cryptoAlgorithm, this.cryptoKey, null);
       const encryptedText = Buffer.from(value, 'hex');
       const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
       return JSON.parse(Buffer.from(decrypted.toString(), 'base64').toString('ascii'));

@@ -64,7 +64,7 @@ const Test = () => {
             }
           }}
         >
-          Set password
+          Set password for 15mins
         </button>
 
         <h3>Step 1. Clean storage</h3>
