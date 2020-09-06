@@ -41,6 +41,7 @@ const Test = () => {
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  let [cryptoKey, setCryptoKey] = useState('');
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -49,8 +50,10 @@ const Test = () => {
 
   if (!configIsSet) {
     configIsSet = true;
-    if (Store.getStore().get('credentials')) {
-      const credentials: any = Store.getStore().get('credentials');
+    const store: Store = Store.getStore();
+    store.setCryptoKey(cryptoKey);
+    if (store.get('credentials')) {
+      const credentials: any = store.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
       setSecretAccessKey(credentials.secretAccessKey);
     }
@@ -64,6 +67,7 @@ const Test = () => {
         <button
           onClick={async () => {
             Store.getStore().clear();
+            cryptoKey = '';
             accessKeyId = '';
             secretAccessKey = '';
             mnemonic = '';
@@ -75,15 +79,14 @@ const Test = () => {
           Clean config
         </button>
         <h3>Step 2. Install server & key-vault</h3>
-        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)}
-               placeholder="Access Key"/>
-        <br/>
-        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)}
-               placeholder="Access Key Secret"/>
-        <br/>
+        <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)} placeholder="Password" />
+        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
+        <br />
+        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
+        <br />
         <button
           onClick={async () => { // TODO: check this func
-            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey });
+            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey }, cryptoKey);
             const listener = new Listener(setProcessStatus);
             installProcess.subscribe(listener);
             try {
@@ -129,7 +132,7 @@ const Test = () => {
         <button
           onClick={async () => {
             const listener = new Listener(setProcessStatus);
-            const reinstallProcess = new ReinstallProcess();
+            const reinstallProcess = new ReinstallProcess(cryptoKey);
             reinstallProcess.subscribe(listener);
             try {
               await reinstallProcess.run();

@@ -15,14 +15,15 @@ export default class ReinstallProcess extends ProcessClass {
   private readonly walletService: WalletService;
   public readonly actions: Array<any>;
 
-  constructor(cryptoKey?: 'string') {
+  constructor(cryptoKey: string) {
     super();
     this.keyVaultService = new KeyVaultService(tempStorePrefix);
     this.keyVaultServiceOld = new KeyVaultService();
     this.awsService = new AwsService(tempStorePrefix);
     this.awsServiceOld = new AwsService();
     this.walletService = new WalletService(tempStorePrefix);
-    const store = Store.getStore('', cryptoKey);
+    const store: Store = Store.getStore();
+    store.setCryptoKey(cryptoKey);
     this.actions = [
       { instance: store, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
