@@ -2,8 +2,8 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import { KEYVAULT_LOAD_LATEST_VERSION, KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC } from './actionTypes';
 import * as actions from './actions';
-import SeedService from 'backend/key-vault/seed.service';
-import WalletService from 'backend/wallet/wallet.service';
+import SeedService from 'backend/services/key-vault/seed.service';
+import WalletService from 'backend/services/wallet/wallet.service';
 
 const seedService = new SeedService();
 const walletService = new WalletService();

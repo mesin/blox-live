@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import { LOAD_ORGANIZATION, UPDATE_ORGANIZATION } from './actionTypes';
 import * as actions from './actions';
-import OrganizationService from '../../backend/organization/organization.service';
+import OrganizationService from '../../backend/services/organization/organization.service';
 
 const organizationService = new OrganizationService();
 

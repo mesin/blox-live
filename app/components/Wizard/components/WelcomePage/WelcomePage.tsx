@@ -13,7 +13,7 @@ import saga from '../../saga';
 import * as accountSelectors from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
 
-import SeedService from 'backend/key-vault/seed.service';
+import SeedService from 'backend/services/key-vault/seed.service';
 
 import { InfoWithTooltip } from 'common/components';
 import ButtonWithIcon from './ButtonWithIcon';

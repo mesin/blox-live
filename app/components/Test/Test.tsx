@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { storeService } from '../../backend/store-manager/store.service';
+import { store } from '../../backend/common/store-manager/store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -9,11 +9,11 @@ import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
-import SeedService from '../../backend/key-vault/seed.service';
-import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
-import KeyVaultService from '../../backend/key-vault/key-vault.service';
-import AccountService from '../../backend/account/account.service';
-import WalletService from '../../backend/wallet/wallet.service';
+import SeedService from '../../backend/services/key-vault/seed.service';
+import AccountKeyVaultService from '../../backend/services/account/account-key-vault.service';
+import KeyVaultService from '../../backend/services/key-vault/key-vault.service';
+import AccountService from '../../backend/services/account/account.service';
+import WalletService from '../../backend/services/wallet/wallet.service';
 // import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
@@ -49,8 +49,8 @@ const Test = () => {
 
   if (!configIsSet) {
     configIsSet = true;
-    if (storeService.get('credentials')) {
-      const credentials: any = storeService.get('credentials');
+    if (store.get('credentials')) {
+      const credentials: any = store.get('credentials');
       setAccessKeyId(credentials.accessKeyId);
       setSecretAccessKey(credentials.secretAccessKey);
     }
@@ -63,7 +63,7 @@ const Test = () => {
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
-            storeService.clear();
+            store.clear();
             accessKeyId = '';
             secretAccessKey = '';
             mnemonic = '';

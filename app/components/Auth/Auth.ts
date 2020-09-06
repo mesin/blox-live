@@ -25,7 +25,7 @@ export default class Auth {
       responseType: 'code',
       scope: 'openid profile email offline_access'
     };
-    this.authApiService = new AuthApiService();
+    this.authApi = new AuthApi();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -63,7 +63,7 @@ export default class Auth {
     };
 
     try {
-      return await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
+      return await this.authApi.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
     } catch (error) {
       await this.logout();
       return Error(error);
@@ -74,8 +74,8 @@ export default class Auth {
     const { id_token } = authResult;
     this.tokens.idToken = id_token;
     this.userProfile = userProfile;
-    storeService.init(userProfile.sub, authResult.id_token);
-    BloxApiService.init();
+    store.init(userProfile.sub, authResult.id_token);
+    BloxApi.init();
   };
 
   isLoggedIn = () => {
@@ -89,7 +89,7 @@ export default class Auth {
 
   logout = async () => { // TODO: check https://auth0.com/docs/logout/log-users-out-of-idps
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
-    storeService.logout();
+    store.logout();
     this.tokens = {
       idToken: '',
       profile: null,

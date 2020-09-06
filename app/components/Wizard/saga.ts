@@ -2,9 +2,9 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import { LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS } from './actionTypes';
 import * as actions from './actions';
-import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
-import WalletService from '../../backend/wallet/wallet.service';
-import AccountService from '../../backend/account/account.service';
+import AccountKeyVaultService from '../../backend/services/account/account-key-vault.service';
+import WalletService from '../../backend/services/wallet/wallet.service';
+import AccountService from '../../backend/services/account/account.service';
 
 const walletService = new WalletService();
 const accountService = new AccountService();
