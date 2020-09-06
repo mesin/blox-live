@@ -1,4 +1,4 @@
-import { Store, resolveStore } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import WalletService from '../wallet/wallet.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
@@ -13,7 +13,7 @@ export default class KeyVaultService {
   private readonly keyVaultApi: KeyVaultApi;
 
   constructor(storePrefix: string = '') {
-    this.store = resolveStore(storePrefix);
+    this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
     this.walletService = new WalletService(storePrefix);
     this.keyVaultApi = resolveKeyVaultApi(storePrefix);

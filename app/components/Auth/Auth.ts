@@ -3,7 +3,7 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import { store } from '../../backend/common/store-manager/store';
+import Store from '../../backend/common/store-manager/store';
 import BloxApi from '../../backend/common/communication-manager/blox-api';
 import AuthApi from '../../backend/common/communication-manager/auth-api';
 
@@ -74,7 +74,7 @@ export default class Auth {
     const { id_token } = authResult;
     this.tokens.idToken = id_token;
     this.userProfile = userProfile;
-    store.init(userProfile.sub, authResult.id_token);
+    Store.getStore().init(userProfile.sub, authResult.id_token);
     BloxApi.init();
   };
 
@@ -89,7 +89,7 @@ export default class Auth {
 
   logout = async () => { // TODO: check https://auth0.com/docs/logout/log-users-out-of-idps
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
-    store.logout();
+    Store.getStore().logout();
     this.tokens = {
       idToken: '',
       profile: null,

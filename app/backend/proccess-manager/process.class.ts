@@ -78,12 +78,14 @@ export default class ProcessClass implements Subject {
     for (const [index, action] of this.actions.entries()) {
       this.action = action;
       this.state = index + 1;
-      const result = await action.instance[action.method].bind(action.instance)({
+      let extra = {
         notifier: {
           instance: this,
           func: 'notify'
         }
-      });
+      };
+      if (action.params) extra = { ...extra, ...action.params };
+      const result = await action.instance[action.method].bind(action.instance)(extra);
       const { error = null, step = null } = { ...result };
       if (error) {
         this.notify({ step: { status: 'error' }, error });

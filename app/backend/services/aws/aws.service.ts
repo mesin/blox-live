@@ -1,5 +1,5 @@
 import net from 'net';
-import { Store, resolveStore } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import * as AWS from 'aws-sdk';
 import { CatchClass, Step } from '../../decorators';
 
@@ -18,7 +18,7 @@ export default class AwsService {
   };
 
   constructor(storePrefix: string = '') {
-    this.store = resolveStore(storePrefix);
+    this.store = Store.getStore(storePrefix);
 
     if (!this.ec2 && this.store.get('credentials')) {
       this.setAWSCredentials();
@@ -162,7 +162,7 @@ export default class AwsService {
     await this.ec2.deleteKeyPair({ KeyPairId: this.store.get('keyPair.pairId') }).promise();
     await this.ec2.deleteSecurityGroup({ GroupId: this.store.get('securityGroupId'), DryRun: false }).promise();
     this.store.clear();
-    const storeTmp = resolveStore(tempStorePrefix);
+    const storeTmp = Store.getStore(tempStorePrefix);
     storeTmp.clear();
   }
 

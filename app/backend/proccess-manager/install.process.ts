@@ -1,10 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
-import AwsService from '../aws/aws.service';
-import WalletService from '../wallet/wallet.service';
-import KeyVaultService from '../key-vault/key-vault.service';
+import AwsService from '../services/aws/aws.service';
+import WalletService from '../services/wallet/wallet.service';
+import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
-import AccountKeyVaultService from '../account/account-key-vault.service';
-import { storeService } from '../store-manager/store.service';
+import AccountKeyVaultService from '../services/account/account-key-vault.service';
+import Store from '../common/store-manager/store';
 
 export default class InstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
@@ -15,10 +15,11 @@ export default class InstallProcess extends ProcessClass {
 
   constructor({ accessKeyId, secretAccessKey }) {
     super();
-    if (!storeService.get('uuid')) {
-      storeService.set('uuid', uuidv4());
+    const store = Store.getStore();
+    if (!store.get('uuid')) {
+      store.set('uuid', uuidv4());
     }
-    storeService.set('credentials', {
+    store.set('credentials', {
       accessKeyId,
       secretAccessKey
     });

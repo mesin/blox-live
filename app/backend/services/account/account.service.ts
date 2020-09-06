@@ -1,4 +1,4 @@
-import { Store, resolveStore } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import AccountKeyVaultService from './account-key-vault.service';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
@@ -10,7 +10,7 @@ export default class AccountService {
   private readonly accountKeyVaultService: AccountKeyVaultService;
 
   constructor(storePrefix: string = '') {
-    this.store = resolveStore(storePrefix);
+    this.store = Store.getStore(storePrefix);
     this.accountKeyVaultService = new AccountKeyVaultService();
   }
 

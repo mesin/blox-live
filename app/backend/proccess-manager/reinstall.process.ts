@@ -1,8 +1,8 @@
-import AwsService from '../aws/aws.service';
-import KeyVaultService from '../key-vault/key-vault.service';
+import AwsService from '../services/aws/aws.service';
+import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
-import WalletService from '../wallet/wallet.service';
-import { storeService } from '../store-manager/store.service';
+import WalletService from '../services/wallet/wallet.service';
+import Store from '../common/store-manager/store';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -15,15 +15,16 @@ export default class ReinstallProcess extends ProcessClass {
   private readonly walletService: WalletService;
   public readonly actions: Array<any>;
 
-  constructor() {
+  constructor(cryptoKey?: 'string') {
     super();
     this.keyVaultService = new KeyVaultService(tempStorePrefix);
     this.keyVaultServiceOld = new KeyVaultService();
     this.awsService = new AwsService(tempStorePrefix);
     this.awsServiceOld = new AwsService();
     this.walletService = new WalletService(tempStorePrefix);
+    const store = Store.getStore('', cryptoKey);
     this.actions = [
-      { instance: storeService, method: 'prepareTmpStorageConfig' },
+      { instance: store, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'createElasticIp' },
       { instance: this.awsService, method: 'createInstance' },
@@ -34,7 +35,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.walletService, method: 'reSyncVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
-      { instance: storeService, method: 'saveTmpConfigIntoMain' },
+      { instance: store, method: 'saveTmpConfigIntoMain' },
       { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' }
     ];
   }

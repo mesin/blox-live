@@ -1,6 +1,6 @@
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
-import { resolveStore, Store } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import { CatchClass, Step } from '../../decorators';
 
@@ -10,7 +10,7 @@ export default class WalletService {
   private readonly keyVaultSsh: KeyVaultSsh;
 
   constructor(storePrefix: string = '') {
-    this.store = resolveStore(storePrefix);
+    this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
   }
 

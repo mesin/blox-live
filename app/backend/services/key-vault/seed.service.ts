@@ -1,4 +1,4 @@
-import { store, Store } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import KeyVaultCli from '../../common/communication-manager/key-vault-cli';
 import { CatchClass } from '../../decorators';
 
@@ -8,7 +8,7 @@ export default class SeedService extends KeyVaultCli {
 
   constructor() {
     super();
-    this.store = store;
+    this.store = Store.getStore();
   }
 
   async seedGenerate(): Promise<void> {

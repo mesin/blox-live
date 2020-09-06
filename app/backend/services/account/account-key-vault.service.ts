@@ -1,5 +1,5 @@
 import KeyVaultCli from '../../common/communication-manager/key-vault-cli';
-import { store, Store } from '../../common/store-manager/store';
+import Store from '../../common/store-manager/store';
 import Web3 from 'web3';
 import { Catch, CatchClass, Step } from '../../decorators';
 
@@ -9,7 +9,7 @@ export default class AccountKeyVaultService extends KeyVaultCli {
 
   constructor() {
     super();
-    this.store = store;
+    this.store = Store.getStore();
   }
 
   @Step({

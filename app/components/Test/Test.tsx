@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { store } from '../../backend/common/store-manager/store';
+import Store from '../../backend/common/store-manager/store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -49,8 +49,8 @@ const Test = () => {
 
   if (!configIsSet) {
     configIsSet = true;
-    if (store.get('credentials')) {
-      const credentials: any = store.get('credentials');
+    if (Store.getStore().get('credentials')) {
+      const credentials: any = Store.getStore().get('credentials');
       setAccessKeyId(credentials.accessKeyId);
       setSecretAccessKey(credentials.secretAccessKey);
     }
@@ -63,7 +63,7 @@ const Test = () => {
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
-            store.clear();
+            Store.getStore().clear();
             accessKeyId = '';
             secretAccessKey = '';
             mnemonic = '';

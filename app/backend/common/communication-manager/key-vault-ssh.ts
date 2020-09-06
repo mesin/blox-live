@@ -1,11 +1,11 @@
-import { resolveStore, Store } from '../store-manager/store';
+import Store from '../store-manager/store';
 import NodeSSH from 'node-ssh';
 
 export default class KeyVaultSsh {
   private readonly store: Store;
 
   constructor(storePrefix: string = '') {
-    this.store = resolveStore(storePrefix);
+    this.store = Store.getStore(storePrefix);
   }
 
   getConnection = async (): Promise<NodeSSH> => {
