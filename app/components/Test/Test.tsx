@@ -235,6 +235,13 @@ const Test = () => {
         }}>
           Delete Last Indexed Account
         </button>
+        <br />
+        <button onClick={async () => {
+          const store: Store = Store.getStore();
+          console.log(store.get('seed'));
+        }}>
+          Show seed in console
+        </button>
         <br/>
         <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key"/>
         <button onClick={async () => {

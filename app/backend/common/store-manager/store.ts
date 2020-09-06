@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
+import { Logger } from '../logger/logger';
 import { Step } from '../../decorators';
 
 // TODO import from .env
@@ -15,10 +16,12 @@ export default class Store extends BaseStore {
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
   private timer: any;
+  private logger: Logger;
 
   private constructor(prefix: string = '') {
     super();
     this.prefix = prefix;
+    this.logger = new Logger();
   }
 
   static getStore = (prefix: string = '') => {
@@ -38,11 +41,13 @@ export default class Store extends BaseStore {
       .digest('base64')
       .substr(0, 32);
     console.log('key', this.cryptoKey);
+    this.logger.error('setCryptoKey');
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
   };
 
   unsetCryptoKey = () => {
     console.error('UNSET crypto key');
+    this.logger.error('unsetCryptoKey');
     this.cryptoKey = null;
     if (this.timer) {
       clearTimeout(this.timer);
