@@ -60,7 +60,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   async getLastIndexedAccount(): Promise<any> {
     const accounts = await this.listAccounts();
-    if (accounts.length) {
+    if (accounts && accounts.length) {
       console.log('account', accounts[0]);
       return accounts[0];
     }
@@ -112,5 +112,17 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     }
     console.log(stdout);
     this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
+  }
+
+  async generatePublicKey(): Promise<void> {
+    for (let i = 0; i < 10; i ++) {
+      const { stdout, stderr } = await this.executor(
+        `${this.executablePath} wallet public-key generate --seed=${this.storeService.get('seed')} --index=${i}`
+      );
+      if (stderr) {
+        throw new Error(`Cli error: ${stderr}`);
+      }
+      console.log(stdout);
+    }
   }
 }
