@@ -80,6 +80,7 @@ const Test = () => {
         </button>
         <h3>Step 2. Install server & key-vault</h3>
         <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)} placeholder="Password" />
+        <br />
         <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
         <br />
         <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />

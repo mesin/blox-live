@@ -10,8 +10,8 @@ export default class Store extends BaseStore {
   private static instances: any = {};
   private storage: ElectronStore;
   private readonly prefix: string;
-  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed'];
-  private readonly cryptoAlgorith: string = 'aes256';
+  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials'];
+  private readonly cryptoAlgorith: string = 'aes-256-ecb';
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
   private timer: any;
@@ -23,6 +23,7 @@ export default class Store extends BaseStore {
 
   static getStore = (prefix: string = '') => {
     if (!Store.instances[prefix]) {
+      console.log('USE EXISTED STORE', prefix);
       Store.instances[prefix] = new Store(prefix);
     }
     return Store.instances[prefix];
@@ -31,7 +32,11 @@ export default class Store extends BaseStore {
   setCryptoKey = (cryptoKey: string) => {
     // clean timer which was run before, and run new one
     this.unsetCryptoKey();
-    this.cryptoKey = cryptoKey;
+    this.cryptoKey = crypto
+      .createHash('sha256')
+      .update(String(cryptoKey))
+      .digest('base64')
+      .substr(0, 32);
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
   };
 
@@ -55,14 +60,15 @@ export default class Store extends BaseStore {
 
   get = (key: string): any => {
     const value = this.storage.get(key) || this.baseStore.get(key);
-    if (this.encryptedKeys.includes(key)) {
+    if (value && this.encryptedKeys.includes(key)) {
       return this.decrypt(value);
     }
     return value;
   };
 
   set = (key: string, value: any): void => {
-    if (this.encryptedKeys.includes(key)) {
+    if (value && this.encryptedKeys.includes(key)) {
+      console.log(key, value);
       this.storage.set(key, this.encrypt(value));
     } else {
       this.storage.set(key, value);
@@ -93,7 +99,10 @@ export default class Store extends BaseStore {
       const cipher = crypto.createCipheriv(this.cryptoAlgorith, this.cryptoKey, null);
       return `${cipher.update(value, 'utf8', 'hex')}${cipher.final('hex')}`;
     } catch (e) {
-      throw new Error('not possible to encrypt value');
+      //
+      console.error(e);
+      return value;
+      // throw new Error('not possible to encrypt value');
     }
   };
 
@@ -102,7 +111,9 @@ export default class Store extends BaseStore {
       const decipher = crypto.createDecipheriv(this.cryptoAlgorith, this.cryptoKey, null);
       return `${decipher.update(value, 'hex', 'utf8')}${decipher.final('utf8')}`;
     } catch (e) {
-      throw new Error('not possible to decrypt value');
+      console.error(e);
+      return value;
+      // throw new Error('not possible to decrypt value');
     }
   };
 
