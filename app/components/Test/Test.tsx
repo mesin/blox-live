@@ -32,7 +32,6 @@ class Listener implements Observer {
   }
 }
 
-let configIsSet = false;
 const Test = () => {
   // const logger = new LoggerService();
   // logger.debug('token', token);
@@ -47,21 +46,27 @@ const Test = () => {
   let [publicKey, setPublicKey] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
-  if (!configIsSet) {
-    configIsSet = true;
-    const store: Store = Store.getStore();
-    store.setCryptoKey(cryptoKey);
-    if (store.get('credentials')) {
-      const credentials: any = store.get('credentials');
-      setAccessKeyId(credentials.accessKeyId);
-      setSecretAccessKey(credentials.secretAccessKey);
-    }
-  }
   return (
     <div>
       <h1>CLI commands</h1>
       <div>
-        <h2>Restore Process</h2>
+        <h3>Step 0. Set password and init storage</h3>
+        <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)} placeholder="Password" />
+        <br />
+        <button
+          onClick={async () => {
+            const store: Store = Store.getStore();
+            store.setCryptoKey(cryptoKey);
+            if (store.get('credentials')) {
+              const credentials: any = store.get('credentials');
+              setAccessKeyId(credentials.accessKeyId);
+              setSecretAccessKey(credentials.secretAccessKey);
+            }
+          }}
+        >
+          Set password
+        </button>
+
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
@@ -78,8 +83,6 @@ const Test = () => {
           Clean config
         </button>
         <h3>Step 2. Install server & key-vault</h3>
-        <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)} placeholder="Password" />
-        <br />
         <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
         <br />
         <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
