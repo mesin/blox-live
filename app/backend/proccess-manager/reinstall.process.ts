@@ -23,6 +23,7 @@ export default class ReinstallProcess extends ProcessClass {
     this.awsServiceOld = new AwsService();
     this.walletService = new WalletService(tempStorePrefix);
     this.actions = [
+      { instance: this.keyVaultServiceOld, method: 'exportSlashingData' },
       { instance: storeService, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'createElasticIp' },
@@ -32,6 +33,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'runScripts' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
+      { instance: this.keyVaultService, method: 'importSlashingData' },
       { instance: this.walletService, method: 'reSyncVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: storeService, method: 'saveTmpConfigIntoMain' },

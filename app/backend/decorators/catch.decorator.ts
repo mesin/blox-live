@@ -15,6 +15,7 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
       Reflect.defineMetadata(key, true, target, key);
     }
     if (descriptor === undefined) {
+      // no-param-reassign
       descriptor = Object.getOwnPropertyDescriptor(target, key);
     }
     const originalMethod = descriptor.value;
@@ -25,15 +26,15 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
         const { handler } = catchDecoratorStore;
         const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
         const extendedError = { error, displayMessage };
-        console.log(extendedError);
+        console.error(extendedError);
         logger.error(displayMessage, error);
         if (payload.localHandler) {
           return payload.localHandler.call(null, extendedError, this);
-        } else if (handler) {
-          return handler.call(null, extendedError, this);
-        } else {
-          throw new Error(displayMessage);
         }
+        if (handler) {
+          return handler.call(null, extendedError, this);
+        }
+        throw new Error(displayMessage);
       }
     };
     return descriptor;
@@ -47,8 +48,9 @@ function Catch(payload: any = {}, toReflect: boolean = true) {
 function CatchClass<T>(payload: any = {}) {
   return function(target: new (...params: any[]) => T) {
     for (const propertyName of Object.getOwnPropertyNames(target.prototype)) {
-      if (Reflect.getMetadata(propertyName, target.prototype, propertyName))
+      if (Reflect.getMetadata(propertyName, target.prototype, propertyName)) {
         continue;
+      }
       let descriptor = Object.getOwnPropertyDescriptor(target.prototype, propertyName);
       if (descriptor) {
         descriptor = Catch(payload, false)(target, propertyName, descriptor);
