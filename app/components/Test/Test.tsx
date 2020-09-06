@@ -47,7 +47,6 @@ const Test = () => {
   let [publicKey, setPublicKey] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
-
   if (!configIsSet) {
     configIsSet = true;
     const store: Store = Store.getStore();
