@@ -1,10 +1,12 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import Lottie from 'lottie-web-react';
 import { SuccessIcon } from 'common/components';
 import { Title, Paragraph, BigButton } from '../../common';
-import { setFinishedWizard } from '../../../actions';
+import * as actionsFromWizard from '../../../actions';
+import * as actionsFromAccounts from '../../../../Accounts/actions';
 
 import animationData from 'assets/animations/confetti.json';
 
@@ -31,10 +33,14 @@ const defaultOptions = {
 const confettiArray = [{ speed: 0.5 }, { speed: 0.6 }, { speed: 0.7 }];
 
 const CongratulationPage = (props: Props) => {
-  const { callSetFinishedWizard } = props;
+  const { wizardActions, accountsActions } = props;
+  const { clearAccountsData } = accountsActions;
+  const { setFinishedWizard, clearWizardData } = wizardActions;
 
-  const onClick = () => {
-    callSetFinishedWizard(true);
+  const onClick = async () => {
+    await clearAccountsData();
+    await clearWizardData();
+    await setFinishedWizard(true);
   };
 
   return (
@@ -65,13 +71,15 @@ const CongratulationPage = (props: Props) => {
 };
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callSetFinishedWizard: (status) => dispatch(setFinishedWizard(status)),
+  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
+  accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
 });
 
 type Props = {
   page: number;
   setPage: (page: number) => void;
-  callSetFinishedWizard: (status: boolean) => void;
+  wizardActions: Record<string, any>;
+  accountsActions: Record<string, any>;
 };
 
 type Dispatch = (arg0: { type: string }) => any;

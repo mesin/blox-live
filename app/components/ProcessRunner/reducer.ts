@@ -1,5 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
 const initialState = {
   name: '',
@@ -44,6 +45,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isDone = true;
       break;
     case actionTypes.PROCESS_CLEAR_STATE:
+    case LOGOUT:
       draft.isDone = initialState.isDone;
       draft.overallSteps = initialState.overallSteps;
       draft.currentStep = initialState.currentStep;

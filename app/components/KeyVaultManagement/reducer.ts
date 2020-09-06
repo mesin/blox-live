@@ -1,5 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
 const initialState = {
   isLoading: false,
@@ -36,6 +37,14 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_FAILURE:
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
+      break;
+    case actionTypes.KEYVAULT_CLEAR_DATA:
+    case LOGOUT:
+      draft.isLoading = initialState.isLoading;
+      draft.error = initialState.error;
+      draft.cloudProvider = initialState.cloudProvider;
+      draft.mnemonic = initialState.mnemonic;
+      draft.latestVersion = initialState.latestVersion;
       break;
   }
 });

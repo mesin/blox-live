@@ -18,9 +18,12 @@ const Wrapper = styled.div`
   background-color: ${({ theme, color }) => theme[color]};
 `;
 
-const Status = ({ status }) => (
-  <Wrapper color={STATUSES[status].color}>{STATUSES[status].name}</Wrapper>
-);
+const Status = ({ status }) => {
+  if (STATUSES[status]) {
+    return <Wrapper color={STATUSES[status].color}>{STATUSES[status].name}</Wrapper>;
+  }
+  return false;
+};
 
 Status.propTypes = {
   status: PropTypes.string,
