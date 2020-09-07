@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { shell } from 'electron';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { InfoWithTooltip } from 'common/components';
@@ -16,6 +15,7 @@ import { getAccounts } from '../../../../Accounts/selectors';
 import { getData } from '../../../../ProcessRunner/selectors';
 
 import { DepositData } from './components';
+import { openExternalLink } from '../../../../common/service';
 
 const Wrapper = styled.div`
   width:580px;
@@ -90,9 +90,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
-      <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/how-to-make-the-staking-deposit/`)}>
-        Need help?
-      </Link>
+      <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
         <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>

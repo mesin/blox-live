@@ -5,6 +5,7 @@ import { notification } from 'antd';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Icon } from 'common/components';
 import { AddressKey, AdditionalData, AdditionalDataWrapper, Left, Right, TestNet } from './components';
+import { truncateText } from '../../../../../common/service';
 
 const Wrapper = styled.div`
   width: 85%;
@@ -18,7 +19,7 @@ const KeyCell = ({ value }) => {
   return (
     <Wrapper>
       <Left>
-        <AddressKey>{`${publicKey.substring(0, 31)}...${publicKey.substring(publicKey.length - 6)}`}</AddressKey>
+        <AddressKey>{truncateText(publicKey, 31, 6)}</AddressKey>
         <AdditionalDataWrapper>
           <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt} />
         </AdditionalDataWrapper>

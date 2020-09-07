@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { shell } from 'electron';
 import styled from 'styled-components';
 import { SOCIAL_APPS } from '../../../../common/constants';
 import { BUTTONS_TEXTS } from './constants';
@@ -10,6 +9,7 @@ import * as loginActions from '../../../CallbackPage/actions';
 import { getIsLoggedIn } from '../../../CallbackPage/selectors';
 import saga from '../../../CallbackPage/saga';
 import { useInjectSaga } from '../../../../utils/injectSaga';
+import { openExternalLink } from '../../../common/service';
 
 const key = 'login';
 
@@ -159,9 +159,9 @@ const Right = ({ actions }: Props) => {
         </ButtonsWrapper>
         <LinksWrapper>
           By {BUTTONS_TEXTS[isSignUp].terms}, I agree to Blox’s &nbsp;
-          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/privacy-policy/`)}>Privacy policy</Link>
+          <Link onClick={() => openExternalLink('privacy-policy')}>Privacy policy</Link>
           &nbsp; &amp; &nbsp;
-          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/terms-of-use/`)}>Terms of use</Link>
+          <Link onClick={() => openExternalLink('terms-of-use')}>Terms of use</Link>
         </LinksWrapper>
         <AlreadyHaveWrapper>
           {BUTTONS_TEXTS[isSignUp].account} &nbsp;

@@ -1,8 +1,8 @@
 import React from 'react';
-import { shell } from 'electron';
 import styled from 'styled-components';
 import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link } from '../../../common';
+import { openExternalLink } from '../../../../../common/service';
 
 const Wrapper = styled.div``;
 
@@ -31,9 +31,7 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/what-is-a-validator-key/`)}>
-          What is a validator key?
-        </Link>
+        <Link onClick={() => openExternalLink('guides/what-is-a-validator-key')}>What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
         <BigButton isDisabled={isLoading} onClick={onClick}>

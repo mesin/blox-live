@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { shell } from 'electron';
 import styled from 'styled-components';
 import CustomButton from './CustomButton';
 import { CLOUD_PROVIDERS } from './constants';
 import { Title, SubTitle, Paragraph, Link } from '../../common';
 import { keyvaultSetCouldProvider } from '../../../../KeyVaultManagement/actions';
+import { openExternalLink } from '../../../../common/service';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -41,7 +41,7 @@ const CloudProvider = (props: Props) => {
         must be installed on our available cloud providers. <br />
         This ensures your private keys are secured and available for a safe and <br />
         reliable staking experience.&nbsp;
-        <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/why-blox-needs-an-access-point-to-my-servers/`)}>
+        <Link onClick={() => openExternalLink('guides/why-blox-needs-an-access-point-to-my-servers')}>
           Why does Blox need access to my server?
         </Link>
       </Paragraph>

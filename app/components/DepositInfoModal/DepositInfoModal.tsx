@@ -1,10 +1,10 @@
 import React from 'react';
-import { shell } from 'electron';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
 import { DEPOSIT_DATA } from '../Wizard/components/Validators/StakingDeposit/constants';
+import { openExternalLink } from '../common/service';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -79,7 +79,7 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
           );
         })}
         <Row>
-          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/how-to-make-the-staking-deposit/`)}>
+          <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>
             Need help?
           </Link>
         </Row>
