@@ -7,4 +7,12 @@ export const STATUSES = {
   slashing: { name: 'Slashed', color: 'destructive600' },
   disabled: { name: 'Disabled', color: 'destructive600' },
   unknown_status: { name: 'Unknown', color: 'destructive600' },
+  test_mode: { name: 'Unknown', color: 'destructive600' },
+};
+
+export const MODAL_TYPES = {
+  REACTIVATION: 'reactivation',
+  UPDATE: 'update',
+  DEPOSIT_INFO: 'depositInfo',
+  ADD_VALIDATOR: 'addValidator',
 };

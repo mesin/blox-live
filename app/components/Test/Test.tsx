@@ -18,28 +18,24 @@ import WalletService from '../../backend/services/wallet/wallet.service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
-  // private readonly logger: LoggerService;
 
   constructor(func: any) {
     this.logFunc = func;
-    // this.logger = new LoggerService();
   }
 
   public update(subject: Subject, payload: any) {
     this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.step.name}`);
     console.log(`${subject.state}/${subject.actions.length}`, payload);
-    // this.logger.error(`${subject.state}/${subject.actions.length}`, payload);
   }
 }
 
 const Test = () => {
-  // const logger = new LoggerService();
-  // logger.debug('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  const store: Store = Store.getStore();
   let [cryptoKey, setCryptoKey] = useState('');
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -55,7 +51,6 @@ const Test = () => {
         <br />
         <button
           onClick={async () => {
-            const store: Store = Store.getStore();
             store.setCryptoKey(cryptoKey);
             if (store.get('credentials')) {
               const credentials: any = store.get('credentials');
@@ -104,8 +99,7 @@ const Test = () => {
           Install
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
-        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
-          placeholder="Mnemonic phrase" />
+        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)} placeholder="Mnemonic phrase" />
         <button onClick={async () => {
           await seedService.storeMnemonic(mnemonic, '');
         }}>
@@ -243,11 +237,16 @@ const Test = () => {
           Show seed in console
         </button>
         <br/>
-        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key"/>
+        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key" />
         <button onClick={async () => {
           await accountKeyVaultService.getDepositData(publicKey);
         }}>
           Get Account Deposit Data
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.generatePublicKey();
+        }}>
+          Generate Public Key
         </button>
       </div>
       <p/>
@@ -277,6 +276,28 @@ const Test = () => {
           console.log(response.data.accounts);
         }}>
           List Accounts
+        </button>
+        <button onClick={async () => {
+          const response = await keyVaultService.getVersion();
+          console.log(response.data.version);
+        }}>
+          Get Version
+        </button>
+        <button onClick={async () => {
+          const response = await keyVaultService.updateStorage({ data: store.get('keyVaultStorage') });
+          console.log(response.data.status);
+        }}>
+          Update Storage
+        </button>
+        <button onClick={async () => {
+          await keyVaultService.exportSlashingData();
+        }}>
+          Get Slashing Storage
+        </button>
+        <button onClick={async () => {
+          await keyVaultService.importSlashingData();
+        }}>
+          Update Slashing Storage
         </button>
       </div>
       <p/>

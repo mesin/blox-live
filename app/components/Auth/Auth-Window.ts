@@ -3,7 +3,7 @@ import electron from 'electron';
 let win = null;
 const { BrowserWindow } = electron.remote;
 
-export const createAuthWindow = (auth, socialAppName, onSuccess, onFailure) => {
+export const createAuthWindow = async (auth, socialAppName, onSuccess, onFailure) => {
   destroyAuthWin();
 
   let finishedAuthentication = false;
@@ -17,12 +17,11 @@ export const createAuthWindow = (auth, socialAppName, onSuccess, onFailure) => {
     },
   });
 
-  const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) old-airport-include/1.0.0 Chrome Electron/7.1.7 Safari/537.36';
+  const userAgent = 'Chrome';
   win.loadURL(auth.getAuthenticationURL(socialAppName), { userAgent });
 
-  const { session: { webRequest, clearStorageData } } = win.webContents;
-  clearStorageData();
-  const filter = { urls: ['https://localhost/callback*'] };
+  const { session: { webRequest } } = win.webContents;
+  const filter = { urls: ['file:///callback*'] };
 
   const listener = async ({ url }) => {
     const tokensResponse = await auth.loadAuthToken(url);

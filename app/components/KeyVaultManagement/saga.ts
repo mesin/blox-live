@@ -10,7 +10,7 @@ const walletService = new WalletService();
 
 function* startLoadingMnemonic() {
   try {
-    const mnemonicPhrase = yield call(seedService.mnemonicGenerate);
+    const mnemonicPhrase = yield call([seedService, 'mnemonicGenerate']);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
   } catch (error) {
     yield put(actions.keyvaultLoadMnemonicFailure(error));
@@ -22,7 +22,7 @@ function* startSavingMnemonic(action) {
   const { payload } = action;
   const { mnemonic, password } = payload;
   try {
-    yield call(seedService.storeMnemonic, mnemonic, password);
+    yield call([seedService, 'storeMnemonic'], mnemonic, password);
     yield put(actions.keyvaultSaveMnemonicSuccess());
   } catch (error) {
     yield put(actions.keyvaultSaveMnemonicFailure(error));
@@ -32,7 +32,7 @@ function* startSavingMnemonic(action) {
 
 function* startLoadingLatestVersion() {
   try {
-    const latestVersion = yield call(walletService.getLatestTag);
+    const latestVersion = yield call([walletService, 'getLatestTag']);
     yield put(actions.KevaultLoadLatestVersionSuccess(latestVersion));
   } catch (error) {
     yield put(actions.KevaultLoadLatestVersionFailure(error));

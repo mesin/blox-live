@@ -48,8 +48,7 @@ const Circle = styled.div`
     position: absolute;
     width: 10px;
     height: 10px;
-    background-color: ${({ theme, isActive }) =>
-      isActive ? theme.primary900 : 'transparent'};
+    background-color: ${({ theme, isActive }) => isActive ? theme.primary900 : 'transparent'};
     top: 1px;
     left: 1px;
     border-radius: 50%;

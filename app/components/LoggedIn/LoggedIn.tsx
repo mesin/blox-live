@@ -28,6 +28,7 @@ import {
   getAccounts,
   getAccountsLoadingStatus,
   getAccountsError,
+  getAddAnotherAccount
 } from '../Accounts/selectors';
 import accountsSaga from '../Accounts/saga';
 
@@ -57,8 +58,8 @@ const LoggedIn = (props: Props) => {
 
   const {
     logoutUser, isFinishedWizard, callSetFinishedWizard, walletStatus,
-    isLoadingWallet, walletError, callLoadWallet, accounts, isLoadingAccounts,
-    accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
+    isLoadingWallet, walletError, callLoadWallet,
+    accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
     websocket, webSocketError,
   } = props;
 
@@ -84,7 +85,9 @@ const LoggedIn = (props: Props) => {
     }
 
     if (walletStatus && accounts && websocket) {
-      if ((walletStatus === 'active' || walletStatus === 'offline') && accounts.length > 0 && allAccountsDeposited(accounts)) {
+      if ((walletStatus === 'active' || walletStatus === 'offline') &&
+          accounts.length > 0 && allAccountsDeposited(accounts) &&
+          !addAnotherAccount) {
         callSetFinishedWizard(true);
       }
       toggleLoadingAll(true);
@@ -117,6 +120,7 @@ const mapStateToProps = (state: State) => ({
   accounts: getAccounts(state),
   isLoadingAccounts: getAccountsLoadingStatus(state),
   accountsError: getAccountsError(state),
+  addAnotherAccount: getAddAnotherAccount(state),
 
   // websocket
   websocket: getIsConnected(state),

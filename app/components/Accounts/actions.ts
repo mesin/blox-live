@@ -17,6 +17,9 @@ export const setDepositNeeded = (depositNeeded: boolean) => ({
   payload: depositNeeded
 });
 
-export const addAnotherAccount = () => ({ type: actionTypes.ADD_ANOTHER_ACCOUNT });
+export const setAddAnotherAccount = (addAnotherAccount: boolean) => ({
+  type: actionTypes.ADD_ANOTHER_ACCOUNT,
+  payload: addAnotherAccount
+});
 
 export const clearAccountsData = () => ({ type: actionTypes.CLEAR_DATA });

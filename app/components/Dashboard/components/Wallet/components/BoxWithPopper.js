@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
 import Box from './Box';
 import ReactivatePopper from './ReactivatePopper';
 import UpdatePopper from './UpdatePopper';
 import * as dashboardActions from '../../../actions';
-import * as selectors from '../../../selectors';
+import { MODAL_TYPES } from '../../../constants';
 
 const Wrapper = styled.div`
   position:relative;
@@ -16,40 +17,31 @@ const Wrapper = styled.div`
 
 const BoxWithTooltip = (props) => {
   const { isActive, walletNeedsUpdate, width, color, bigText, medText, tinyText, image, actions } = props;
-  const { setReactivationModalDisplay, setUpdateModalDisplay } = actions;
+  const { setModalDisplay } = actions;
   const [showReactivationPopper, setReactivationPopperDisplay] = React.useState(false);
-  const [showUpdatePopper, setUpdatePopperDisplay] = React.useState(false);
 
-  const onMouseEnter = () => {
-    setReactivationPopperDisplay(true);
-    setUpdatePopperDisplay(true);
-  };
+  const onMouseEnter = () => setReactivationPopperDisplay(true);
 
-  const onMouseLeave = () => {
-    setReactivationPopperDisplay(false);
-    setUpdatePopperDisplay(false);
-  };
+  const onMouseLeave = () => setReactivationPopperDisplay(false);
 
-  return (
+  const showReactivationModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: '', });
+
+  const showUpdateModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: '', });
+
+  return ( // TODO: replace with new methods
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Box width={width} color={color} bigText={bigText}
         medText={medText} tinyText={tinyText} image={image}
       />
       {showReactivationPopper && !isActive && (
-        <ReactivatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />
+        <ReactivatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={showReactivationModal} />
       )}
-      {showUpdatePopper && walletNeedsUpdate && isActive && (
-        <UpdatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setUpdateModalDisplay} />
+      {walletNeedsUpdate && isActive && (
+        <UpdatePopper onClick={showUpdateModal} />
       )}
     </Wrapper>
   );
 };
-
-const mapStateToProps = (state) => ({
-  showReactivationModal: selectors.getReactivationModalDisplayStatus(state),
-  showUpdateModal: selectors.getUpdateModalDisplayStatus(state),
-  showDepositInfoModal: selectors.getDepositInfoModalDisplayStatus(state),
-});
 
 const mapDispatchToProps = (dispatch) => ({
   actions: bindActionCreators(dashboardActions, dispatch),
@@ -67,4 +59,4 @@ BoxWithTooltip.propTypes = {
   actions: PropTypes.object,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(BoxWithTooltip);
+export default connect(null, mapDispatchToProps)(BoxWithTooltip);

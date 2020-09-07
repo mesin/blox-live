@@ -34,6 +34,21 @@ export default class KeyVaultService {
     return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
   }
 
+  async getVersion() {
+    this.keyVaultApi.init();
+    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/version');
+  }
+
+  async getSlashingStorage() {
+    this.keyVaultApi.init();
+    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/storage/slashing');
+  }
+
+  async updateSlashingStorage(payload: any) {
+    this.keyVaultApi.init();
+    return await this.keyVaultApi.request(METHOD.POST, 'ethereum/storage/slashing', payload);
+  }
+
   @Step({
     name: 'Installing docker...'
   })
@@ -110,6 +125,24 @@ export default class KeyVaultService {
   })
   async updateVaultStorage(): Promise<void> {
     await this.updateStorage({ data: this.store.get('keyVaultStorage') });
+  }
+
+  @Step({
+    name: 'Export slashing protection data...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  async exportSlashingData(): Promise<any> {
+    const slashingData = await this.getSlashingStorage();
+    this.store.set('slashingData', slashingData.data);
+  }
+
+  @Step({
+    name: 'Import slashing protection data...',
+    requiredConfig: ['publicIp', 'vaultRootToken', 'slashingData']
+  })
+  async importSlashingData(): Promise<any> {
+    const slashingData = this.store.get('slashingData');
+    await this.updateSlashingStorage(slashingData);
   }
 
   @Step({

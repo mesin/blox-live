@@ -1,8 +1,10 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Spinner } from 'common/components';
-import { setDepositInfoModalDisplay } from '../../../../../actions';
+import * as actionsFromDashboard from '../../../../../actions';
+import { MODAL_TYPES } from '../../../../../constants';
 
 import { loadDepositData, setFinishedWizard } from '../../../../../../Wizard/actions';
 import { getIsLoading } from '../../../../../../Wizard/selectors';
@@ -14,13 +16,14 @@ import BlueButton from './BlueButton';
 import Date from './Date';
 
 const AdditionalData = (props) => {
-  const { publicKey, status, createdAt, callSetDepositInfoModalDisplay,
+  const { publicKey, status, createdAt, dashboardActions,
           callLoadDepositData, callSetFinishedWizard, isLoading, callSetDepositNeeded
         } = props;
+  const { setModalDisplay } = dashboardActions;
 
   const onDepositInfoButtonClick = async () => {
     await callLoadDepositData(publicKey);
-    await callSetDepositInfoModalDisplay(true);
+    await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
   };
 
   const onFinishSetupClick = () => {
@@ -54,8 +57,8 @@ AdditionalData.propTypes = {
   publicKey: PropTypes.string,
   status: PropTypes.string,
   createdAt: PropTypes.string,
+  dashboardActions: PropTypes.object,
   callLoadDepositData: PropTypes.func,
-  callSetDepositInfoModalDisplay: PropTypes.func,
   callSetFinishedWizard: PropTypes.func,
   callSetDepositNeeded: PropTypes.func,
   isLoading: PropTypes.bool,
@@ -66,8 +69,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
   callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
-  callSetDepositInfoModalDisplay: (show) => dispatch(setDepositInfoModalDisplay(show)),
   callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
   callSetDepositNeeded: (depositNeeded) => dispatch(setDepositNeeded(depositNeeded)),
 });

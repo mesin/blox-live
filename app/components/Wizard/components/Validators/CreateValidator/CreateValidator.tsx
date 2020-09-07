@@ -23,7 +23,9 @@ const CreateValidator = (props: Props) => {
   }, [isLoading, validatorData]);
 
   const onGenerateKeysClick = () => {
-    processSubscribe('createAccount', 'Generating Validator Keys...');
+    if (!isLoading) {
+      processSubscribe('createAccount', 'Generating Validator Keys...');
+    }
   };
 
   const onContinueClick = () => {

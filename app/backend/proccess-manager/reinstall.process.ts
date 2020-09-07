@@ -25,6 +25,7 @@ export default class ReinstallProcess extends ProcessClass {
     const store: Store = Store.getStore();
     store.setCryptoKey(cryptoKey);
     this.actions = [
+      { instance: this.keyVaultServiceOld, method: 'exportSlashingData' },
       { instance: store, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'createElasticIp' },
@@ -34,6 +35,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'runScripts' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
+      { instance: this.keyVaultService, method: 'importSlashingData' },
       { instance: this.walletService, method: 'reSyncVaultWithBlox' },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: store, method: 'saveTmpConfigIntoMain' },

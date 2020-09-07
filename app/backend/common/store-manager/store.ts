@@ -137,8 +137,10 @@ export default class Store extends BaseStore {
       credentials: store.get('credentials'),
       keyPair: store.get('keyPair'),
       securityGroupId: store.get('securityGroupId'),
-      keyVaultStorage: store.get('keyVaultStorage')
+      keyVaultStorage: store.get('keyVaultStorage'),
+      slashingData: store.get('slashingData')
     });
+    store.delete('slashingData');
   }
 
   @Step({
