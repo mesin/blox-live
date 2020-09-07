@@ -49,6 +49,10 @@ const Backup = (props) => {
           isLoading, showDuplicatedMnemonicError, onDuplicateMnemonicBlur,
           showPasswordError, onPasswordBlur, showConfirmPasswordError, onConfirmPasswordBlur
         } = props;
+  const handleChange = event => {
+    const value = event.replace(/[\r\n\v]+/g, '');
+    setDuplicatedMnemonic(value);
+  };
   return (
     <Wrapper>
       <BackButton onClick={onBackButtonClick}>
@@ -64,7 +68,7 @@ const Backup = (props) => {
         creating/removing a validator.
       </Paragraph>
 
-      <TextArea value={duplicatedMnemonic} onChange={setDuplicatedMnemonic} onBlur={onDuplicateMnemonicBlur}
+      <TextArea value={duplicatedMnemonic} onChange={handleChange} onBlur={onDuplicateMnemonicBlur}
         placeholder={'Separate each word with a space'} error={showDuplicatedMnemonicError ? 'Passphrase not correct' : ''}
       />
 

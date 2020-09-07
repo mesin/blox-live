@@ -41,6 +41,7 @@ const Left = styled.div`
   color: ${({ theme }) => theme.gray50};
   font-size: 54px;
   font-weight: 500;
+  line-height: 76px
   text-align: center;
 `;
 
@@ -124,16 +125,14 @@ const WelcomePage = (props: Props) => {
 
   return (
     <Wrapper>
-      <Left>Start Staking With Blox!</Left>
+      <Left>
+        Start Your <br />Staking Journey
+      </Left>
       <Right>
         <IntroText>
-          Never surrender your private keys with non-custodial staking. <br />
-          This one-time wizard will guide you through creating your <br />
-          KeyVault
+          This one-time wizard will guide you through creating your KeyVault
           <InfoWithTooltip title={toolTipText} placement="bottom" />
-          and validator client. <br /> <br />
-          Your KeyVault securely manages private keys and must <br />
-          maintain online connectivity.
+          and validator client.
         </IntroText>
         <ButtonWithIcon title="Step 1" subTitle="KeyVault Setup" image={keyVaultImg}
           isDisabled={showStep2} onClick={onStep1Click} isLoading={isLoading}

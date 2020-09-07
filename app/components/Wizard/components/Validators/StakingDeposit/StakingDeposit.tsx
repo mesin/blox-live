@@ -15,6 +15,7 @@ import { getAccounts } from '../../../../Accounts/selectors';
 import { getData } from '../../../../ProcessRunner/selectors';
 
 import { DepositData } from './components';
+import { openExternalLink } from '../../../../common/service';
 
 const Wrapper = styled.div`
   width:580px;
@@ -89,9 +90,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
-      <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
-        Need help?
-      </Link>
+      <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
         <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>

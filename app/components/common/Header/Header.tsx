@@ -5,7 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import styled from 'styled-components';
 import { ClickAwayListener } from '@material-ui/core';
 import HeaderLink from './HeaderLink';
-import { FaqMenu, ProfileMenu } from './components';
+import { ProfileMenu } from './components';
 
 import { logout } from '../../CallbackPage/actions';
 import { getUserData } from '../../CallbackPage/selectors';
@@ -62,8 +62,8 @@ const Right = styled.div`
 const AddValidatorButton = styled.button`
   width:136px;
   height:32px;
-  background-color:${({theme}) => theme.primary700};
-  color:${({theme}) => theme.gray50};
+  background-color:${({ theme }) => theme.primary700};
+  color:${({ theme }) => theme.gray50};
   margin-right:20px;
   border:0px;
   display:flex;
@@ -74,29 +74,16 @@ const AddValidatorButton = styled.button`
   border-radius:6px;
   cursor:pointer;
   &:hover {
-    color:${({theme}) => theme.accent2200};
+    color:${({ theme }) => theme.accent2200};
   }
 `;
 
 const Header = (props: Props) => {
   const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location, dashboardActions } = props;
   const { setModalDisplay } = dashboardActions;
-  const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
-  const [showOrangeDot, toggleOrangeDotDisplay] = useState(true);
   const isInDashboardPage = location.pathname === '/' && isFinishedWizard;
   const hideTopNav = true;
-
-  const onFaqMenuClick = (isOpen) => {
-    toggleFaqMenuOpenDisplay(isOpen);
-    if (isOpen === false) {
-      toggleOrangeDotDisplay(false);
-    }
-  };
-
-  const handleFaqClickAway = () => {
-    toggleFaqMenuOpenDisplay(false);
-  };
 
   const handleProfileClickAway = () => {
     toggleProfileMenuOpenDisplay(false);
@@ -124,13 +111,6 @@ const Header = (props: Props) => {
         {isInDashboardPage && (
           <AddValidatorButton onClick={() => onAddValidatorClick()}>Add Validator</AddValidatorButton>
         )}
-        <ClickAwayListener onClickAway={handleFaqClickAway}>
-          <FaqMenu
-            isOpen={isFaqMenuOpen}
-            onClick={onFaqMenuClick}
-            showOrangeDot={showOrangeDot}
-          />
-        </ClickAwayListener>
         {profile && (
           <ClickAwayListener onClickAway={handleProfileClickAway}>
             <ProfileMenu
@@ -158,12 +138,12 @@ interface Props extends RouteComponentProps {
 const mapStateToProps = (state) => ({
   profile: getUserData(state),
   isFinishedWizard: getWizardFinishedStatus(state),
-  walletStatus: getWalletStatus(state),
+  walletStatus: getWalletStatus(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
   logoutUser: () => dispatch(logout()),
-  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch)
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));
