@@ -24,11 +24,12 @@ const EventLogs = ({events}) => {
   const onPageClick = (offset) => {
     handlePageClick(events, offset, setPagedEvents, setPaginationInfo, PAGE_SIZE);
   };
+
   return (
     <Wrapper>
       <Title>Latest Events</Title>
-      {<Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false} isPagination
-        paginationInfo={paginationInfo} onPageClick={onPageClick} />}
+      {<Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false}
+        isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />}
     </Wrapper>
   );
 };

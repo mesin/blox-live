@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Wallet, Validators, ModalsManager } from './components';
-import { summarizeAccounts, normalizeAccountsData } from './service';
+import { summarizeAccounts, normalizeAccountsData, normalizeEventLogs } from './service';
 import EventLogs from './components/EventLogs';
 
 const Wrapper = styled.div`
@@ -18,12 +18,13 @@ const Dashboard = (props) => {
   const { walletStatus, accounts, eventLogs, walletNeedsUpdate } = props;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
+  const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
 
   return (
     <Wrapper>
       <Wallet isActive={walletStatus === 'active'} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
-      <EventLogs events={eventLogs} />
+      <EventLogs events={normalizedEventLogs} />
       <ModalsManager />
     </Wrapper>
   );

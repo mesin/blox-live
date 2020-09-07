@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const isActive = (to, pathname) => {
   const hasSubDir = to.lastIndexOf('/') > 0 && pathname.lastIndexOf('/') > 0;
   if (hasSubDir) {
@@ -19,4 +21,28 @@ export const precentageCalculator = (current, overall) => {
     return 0;
   }
   return Number(((current / overall) * 100).toFixed(0), 2);
+};
+
+export const lastDateFormat = (utcDate) => {
+  if (moment(utcDate).isAfter(moment().subtract(24, 'hours'))) {
+    // less than 24 hours
+    if (moment(utcDate).isAfter(moment().subtract(1, 'minutes'))) {
+      return 'Less than a minute ago';
+    }
+    if (moment(utcDate).isAfter(moment().subtract(2, 'minutes'))) {
+      return 'About a minute ago';
+    }
+
+    const minutesPassed = Math.abs(moment(utcDate).diff(moment(), 'minutes'));
+    return `${minutesPassed} minutes ago`;
+  } if (moment(utcDate).isAfter(moment().subtract(48, 'hours'))) {
+    // more than 24h but less than 48h
+    return moment(utcDate).format('MMMM DD, YYYY HH:MM');
+  }
+    // more than 48 hours
+    return moment(utcDate).format('MMMM DD, YYYY');
+};
+
+export const publicKeyFormat = (publicKey) => {
+  return `${publicKey.substr(0, 6)}...${publicKey.substr(publicKey.length - 6, publicKey.length)}`;
 };

@@ -1,23 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {Icon} from '../../../../../common/components';
+import {lastDateFormat} from '../../../../../utils/service';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  color: ${({theme}) => theme.gray800}
+`;
 
-const Date = ({date}) => (
+const Date = ({createdAt}) => (
   <Wrapper>
-    {date}
-    <Icon
-      name={'sorting'}
-      color={'primary800'}
-      fontSize="16px"
-      onClick={() => false}
-    /></Wrapper>
+    {lastDateFormat(createdAt)}
+  </Wrapper>
 );
 
 Date.propTypes = {
-  date: PropTypes.string,
+  createdAt: PropTypes.string,
 };
 
 export default Date;

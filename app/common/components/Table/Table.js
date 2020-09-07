@@ -18,7 +18,7 @@ const Table = (props) => {
   const {data, columns, isHeader, isLoading, isPagination, selectedSorting, sortType, onSortClick, paginationInfo, onPageClick} = props;
   return (
     <Wrapper>
-      <Header columns={columns} isheader={isHeader} isLoading={isLoading} selectedSorting={selectedSorting} sortType={sortType}
+      <Header columns={columns} isHeader={isHeader} isLoading={isLoading} selectedSorting={selectedSorting} sortType={sortType}
         onSortClick={onSortClick} />
       <Body columns={columns} isLoading={isLoading} data={data} />
       <Footer isPagination={isPagination} paginationInfo={paginationInfo} onPageClick={onPageClick} />
