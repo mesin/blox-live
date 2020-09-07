@@ -8,7 +8,7 @@ import { loadWallet } from '../../Wizard/actions';
 
 import image from '../../Wizard/assets/img-key-vault.svg';
 
-const SuccessModal = ({onClose, callLoadWallet, title}) => {
+const SuccessModal = ({onClose, callLoadWallet, title, text}) => {
   const loadWalletAndClose = () => {
     callLoadWallet();
     onClose();
@@ -19,9 +19,7 @@ const SuccessModal = ({onClose, callLoadWallet, title}) => {
         <SuccessIcon size={'40px'} fontSize={'30px'} />
         <Title fontSize={'32px'} color={'accent2400'}>{title}</Title>
       </Wrapper>
-      <Description>
-        KeyVault is active and all validators are staking normally. We are investigating what caused the issue.
-      </Description>
+      <Description>{text}</Description>
       <Button onClick={loadWalletAndClose}>Return to Dashboard</Button>
     </ModalTemplate>
   );
@@ -29,6 +27,7 @@ const SuccessModal = ({onClose, callLoadWallet, title}) => {
 
 SuccessModal.propTypes = {
   title: PropTypes.string,
+  text: PropTypes.string,
   onClose: PropTypes.func,
   callLoadWallet: PropTypes.func,
 };

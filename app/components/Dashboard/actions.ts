@@ -1,5 +1,9 @@
 import * as actionTypes from './actionTypes';
 
+export const setModalDisplay = (payload: Record<string, any>) => ({
+  type: actionTypes.SET_MODAL_DISPLAY, payload
+});
+
 export const setReactivationModalDisplay = (show: boolean) => ({
   type: actionTypes.TOGGLE_REACTIVATION_MODAL_DISPLAY,
   payload: show

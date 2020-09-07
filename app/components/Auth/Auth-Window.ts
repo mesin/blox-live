@@ -20,8 +20,8 @@ export const createAuthWindow = async (auth, socialAppName, onSuccess, onFailure
   const userAgent = 'Chrome';
   win.loadURL(auth.getAuthenticationURL(socialAppName), { userAgent });
 
-  const { session: { webRequest, clearStorageData } } = win.webContents;
-  clearStorageData();
+  const { session: { webRequest } } = win.webContents; // clearStorageData
+  // clearStorageData();
   const filter = { urls: ['file:///callback*'] };
 
   const listener = async ({ url }) => {
