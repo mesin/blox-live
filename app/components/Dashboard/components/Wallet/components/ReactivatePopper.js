@@ -51,7 +51,7 @@ const ReactivatePopper = ({onMouseEnter, onMouseLeave, onClick}) => {
     <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <Icon name={'report'} fontSize={'20px'} />
       <Text>{tooltipText}</Text>
-      <Button onClick={() => onClick(true)}>Reactivate <Icon name={'chevron-right'} /></Button>
+      <Button onClick={() => onClick()}>Reactivate <Icon name={'chevron-right'} /></Button>
     </Wrapper>
   );
 };
