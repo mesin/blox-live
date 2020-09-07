@@ -26,9 +26,7 @@ const KeyText = styled.div`
 `;
 
 const ValueText = styled.div`
-  max-width:300px;
   overflow:hidden;
-  text-overflow:ellipsis;
   white-space:nowrap;
   font-size: 13px;
   font-weight: 500;
@@ -52,7 +50,7 @@ const DepositData = (props: Props) => {
             </KeyText>
             {isTxData ? (
               <Tooltip placement={'bottom'} title={valueText}>
-                <ValueText>{valueText}</ValueText>
+                <ValueText>{`${valueText.substring(0, 36)}...${valueText.substring(valueText.length - 6)}`}</ValueText>
               </Tooltip>
             ) : (
               <ValueText>{valueText}</ValueText>

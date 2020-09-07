@@ -18,7 +18,7 @@ const KeyCell = ({ value }) => {
   return (
     <Wrapper>
       <Left>
-        <AddressKey>{publicKey}</AddressKey>
+        <AddressKey>{`${publicKey.substring(0, 31)}...${publicKey.substring(publicKey.length - 6)}`}</AddressKey>
         <AdditionalDataWrapper>
           <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt} />
         </AdditionalDataWrapper>
