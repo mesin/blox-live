@@ -11,14 +11,12 @@ import * as selectors from '../../ProcessRunner/selectors';
 import saga from '../../ProcessRunner/saga';
 import { precentageCalculator } from 'utils/service';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
-
 const key = 'processRunner';
 
 const ReinstallingModal = (props) => {
   const { title, description, move1StepForward, move2StepsForward, onClose,
           isLoading, reinstallMessage, isDone, isServerActive, processName,
-          actions, overallSteps, currentStep
+          actions, overallSteps, currentStep, image
         } = props;
   const { processSubscribe, processClearState } = actions;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
@@ -49,6 +47,7 @@ const ReinstallingModal = (props) => {
 };
 
 ReinstallingModal.propTypes = {
+  image: PropTypes.string,
   title: PropTypes.string,
   description: PropTypes.string,
   processName: PropTypes.string,

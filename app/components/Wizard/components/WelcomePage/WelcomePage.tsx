@@ -167,6 +167,7 @@ type Props = {
   accounts: [];
   isLoading: boolean;
   isDepositNeeded: boolean;
+  addAnotherAccount: boolean;
 };
 
 type State = Record<string, any>;
