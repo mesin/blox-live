@@ -35,7 +35,7 @@ const Validators = ({accounts}) => {
   return (
     <Wrapper>
       <Title>Validators</Title>
-      <Table columns={tableColumns} data={pagedAccounts} isLoading={false} isPagination
+      <Table columns={tableColumns} data={pagedAccounts} isHeader isLoading={false} isPagination
         selectedSorting={selectedSort} sortType={sortType} onSortClick={onSortClick}
         paginationInfo={paginationInfo} onPageClick={onPageClick} />
     </Wrapper>

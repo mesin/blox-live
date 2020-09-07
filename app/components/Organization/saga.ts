@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
-import { LOAD_ORGANIZATION, UPDATE_ORGANIZATION } from './actionTypes';
+import {LOAD_EVENT_LOGS, LOAD_ORGANIZATION, UPDATE_ORGANIZATION} from './actionTypes';
 import * as actions from './actions';
 import OrganizationService from '../../backend/organization/organization.service';
 
@@ -50,7 +50,26 @@ export function* startUpdatingOrganization(action) {
   }
 }
 
+export function* startLoadingEventLogs() {
+  try {
+    const response = yield call([organizationService, 'getEventLogs']);
+    yield call(onLoadingEventLogsSuccess, response);
+  } catch (error) {
+    yield error && call(onLoadingEventLogsFailure, error);
+  }
+}
+
+function* onLoadingEventLogsSuccess(response: Record<string, any>) {
+  yield put(actions.loadEventLogsSuccess(response));
+}
+
+function* onLoadingEventLogsFailure(error: Record<string, any>) {
+  notification.error({ message: 'Error', description: error.message });
+  yield put(actions.loadEventLogsFailure(error.response.data));
+}
+
 export default function* organizationActions() {
   yield takeLatest(LOAD_ORGANIZATION, startLoadingOrganization);
   yield takeLatest(UPDATE_ORGANIZATION, startUpdatingOrganization);
+  yield takeLatest(LOAD_EVENT_LOGS, startLoadingEventLogs);
 }

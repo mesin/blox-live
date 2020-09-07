@@ -13,6 +13,7 @@ import * as actionsFromAccounts from '../Accounts/actions';
 
 import * as selectors from './selectors';
 import { getDepositData } from '../Wizard/selectors';
+import EventLogs from './components/EventLogs';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -25,14 +26,13 @@ const Wrapper = styled.div`
 
 const Dashboard = (props) => {
   // TODO: remove the loading of wallet, wallet last version and accounts from elsewhere and put it here
-  const { walletStatus, accounts, dashboardActions, accountsActions, wizardActions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
+  const { walletStatus, accounts, eventLogs, dashboardActions, accountsActions, wizardActions, walletNeedsUpdate, showReactivationModal, showUpdateModal,
           depositData, showDepositInfoModal, showAddValidatorModal } = props;
   const { setReactivationModalDisplay, setUpdateModalDisplay, setDepositInfoModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
-
   const onPasswordModalClick = () => {
     setAddValidatorModalDisplay(false);
     setFinishedWizard(false);
@@ -43,6 +43,7 @@ const Dashboard = (props) => {
     <Wrapper>
       <Wallet isActive={walletStatus === 'active'} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
+      <EventLogs events={eventLogs} />
       {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
       {showUpdateModal && <KeyVaultUpdate onClose={() => setUpdateModalDisplay(false)} />}
       {!!depositData && showDepositInfoModal && (
@@ -81,6 +82,7 @@ Dashboard.propTypes = {
   showDepositInfoModal: PropTypes.bool,
   showAddValidatorModal: PropTypes.bool,
   depositData: PropTypes.string,
+  eventLogs: PropTypes.array,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
