@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
 import { ProcessLoader, Button, PasswordInput } from 'common/components';
+import { Title, Paragraph, ErrorMessage } from '../../common';
 import { useInjectSaga } from 'utils/injectSaga';
 import { precentageCalculator } from 'utils/service';
 
@@ -12,7 +13,6 @@ import * as keyVaultActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 
-import { Title, Paragraph } from '../../common';
 import Guide from '../Guide';
 
 const key = 'processRunner';
@@ -44,13 +44,6 @@ const PasswordInputsWrapper = styled.div`
 const ProgressWrapper = styled.div`
   width:58%;
   margin-top:20px;
-`;
-
-const ErrorMessage = styled.div`
-  margin-top:7px;
-  font-size:12px;
-  font-weight:500;
-  color:${({theme}) => theme.destructive600};
 `;
 
 const CreateServer = (props) => {
