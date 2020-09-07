@@ -13,6 +13,7 @@ import { getUserData } from '../../CallbackPage/selectors';
 import { getWizardFinishedStatus, getWalletStatus } from '../../Wizard/selectors';
 
 import * as actionsFromDashboard from '../../Dashboard/actions';
+import { MODAL_TYPES } from '../../Dashboard/constants';
 
 import imageSrc from 'assets/images/staking-logo.svg';
 
@@ -79,11 +80,12 @@ const AddValidatorButton = styled.button`
 
 const Header = (props: Props) => {
   const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location, dashboardActions } = props;
-  const { setReactivationModalDisplay, setAddValidatorModalDisplay } = dashboardActions;
+  const { setModalDisplay } = dashboardActions;
   const [isFaqMenuOpen, toggleFaqMenuOpenDisplay] = useState(false);
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
   const [showOrangeDot, toggleOrangeDotDisplay] = useState(true);
   const isInDashboardPage = location.pathname === '/' && isFinishedWizard;
+  const hideTopNav = true;
 
   const onFaqMenuClick = (isOpen) => {
     toggleFaqMenuOpenDisplay(isOpen);
@@ -102,27 +104,20 @@ const Header = (props: Props) => {
 
   const onAddValidatorClick = () => {
     if (walletStatus === 'active') {
-      setAddValidatorModalDisplay(true);
+      setModalDisplay({show: true, type: MODAL_TYPES.ADD_VALIDATOR, text: ''});
       return;
     }
-    setReactivationModalDisplay(true);
+    const text = 'Your KeyVault is inactive. Please reactivate your KeyVault before creating a new validator.';
+    setModalDisplay({show: true, type: MODAL_TYPES.REACTIVATION, text});
   };
 
   return (
     <Wrapper>
-      <Left>
-        <a href="/">
-          <Logo src={imageSrc} />
-        </a>
-      </Left>
-      {withMenu && (
+      <Left> <Logo src={imageSrc} /> </Left>
+      {withMenu && !hideTopNav && (
         <Center>
           <HeaderLink to="/" name="Dashboard" iconName="graph" />
-          <HeaderLink
-            to="/settings/general"
-            name="Settings"
-            iconName="settings"
-          />
+          <HeaderLink to="/settings/general" name="Settings" iconName="settings" />
         </Center>
       )}
       <Right>

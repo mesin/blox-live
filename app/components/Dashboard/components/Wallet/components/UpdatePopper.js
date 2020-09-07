@@ -46,19 +46,17 @@ const Button = styled.button`
   cursor:pointer;
 `;
 
-const UpdatePopper = ({onMouseEnter, onMouseLeave, onClick}) => {
+const UpdatePopper = ({onClick}) => {
   return (
-    <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <Wrapper>
       <Icon name={'report'} fontSize={'20px'} />
       <Text>{tooltipText}</Text>
-      <Button onClick={() => onClick(true)}>Update <Icon name={'chevron-right'} /></Button>
+      <Button onClick={() => onClick()}>Update <Icon name={'chevron-right'} /></Button>
     </Wrapper>
   );
 };
 
 UpdatePopper.propTypes = {
-  onMouseEnter: PropTypes.func,
-  onMouseLeave: PropTypes.func,
   onClick: PropTypes.func,
 };
 

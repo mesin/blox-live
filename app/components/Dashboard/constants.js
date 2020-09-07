@@ -9,3 +9,10 @@ export const STATUSES = {
   unknown_status: { name: 'Unknown', color: 'destructive600' },
   test_mode: { name: 'Unknown', color: 'destructive600' },
 };
+
+export const MODAL_TYPES = {
+  REACTIVATION: 'reactivation',
+  UPDATE: 'update',
+  DEPOSIT_INFO: 'depositInfo',
+  ADD_VALIDATOR: 'addValidator',
+};

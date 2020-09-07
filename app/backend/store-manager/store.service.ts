@@ -63,8 +63,10 @@ class StoreService extends BaseStoreService {
       credentials: storeService.get('credentials'),
       keyPair: storeService.get('keyPair'),
       securityGroupId: storeService.get('securityGroupId'),
-      keyVaultStorage: storeService.get('keyVaultStorage')
+      keyVaultStorage: storeService.get('keyVaultStorage'),
+      slashingData: storeService.get('slashingData')
     });
+    storeService.delete('slashingData');
   }
 
   @Step({

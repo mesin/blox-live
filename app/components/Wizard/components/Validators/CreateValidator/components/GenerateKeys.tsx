@@ -35,7 +35,7 @@ const GenerateKeys = (props: Props) => {
         </Link>
       </Paragraph>
       <ButtonWrapper>
-        <BigButton onClick={onClick}>
+        <BigButton isDisabled={isLoading} onClick={onClick}>
           Generate Validator Keys
         </BigButton>
       </ButtonWrapper>
