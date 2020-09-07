@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { shell } from 'electron';
 import styled from 'styled-components';
 import { SOCIAL_APPS } from '../../../../common/constants';
 import { BUTTONS_TEXTS } from './constants';
@@ -28,6 +29,7 @@ const InnerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.h2`
@@ -45,6 +47,7 @@ const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const SocialAppButton = styled.button`
@@ -156,9 +159,9 @@ const Right = ({ actions }: Props) => {
         </ButtonsWrapper>
         <LinksWrapper>
           By {BUTTONS_TEXTS[isSignUp].terms}, I agree to Blox’s &nbsp;
-          <Link href="/">Privacy policy</Link>
+          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/privacy-policy/`)}>Privacy policy</Link>
           &nbsp; &amp; &nbsp;
-          <Link href="/">terms of use</Link>
+          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/terms-of-use/`)}>Terms of use</Link>
         </LinksWrapper>
         <AlreadyHaveWrapper>
           {BUTTONS_TEXTS[isSignUp].account} &nbsp;

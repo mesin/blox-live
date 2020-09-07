@@ -1,4 +1,5 @@
 import React from 'react';
+import { shell } from 'electron';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
@@ -78,7 +79,7 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
           );
         })}
         <Row>
-          <Link href={`${process.env.WEBSITE_URL}/blox-guide-how-do-i-submit-my-staking-deposit`}>
+          <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/how-to-make-the-staking-deposit/`)}>
             Need help?
           </Link>
         </Row>

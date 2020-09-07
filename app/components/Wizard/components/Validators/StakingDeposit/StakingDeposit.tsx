@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { shell } from 'electron';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { InfoWithTooltip } from 'common/components';
@@ -89,7 +90,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
-      <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
+      <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/how-to-make-the-staking-deposit/`)}>
         Need help?
       </Link>
       <ButtonsWrapper>

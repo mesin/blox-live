@@ -1,4 +1,5 @@
 import React from 'react';
+import { shell } from 'electron';
 import styled from 'styled-components';
 import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link } from '../../../common';
@@ -30,7 +31,7 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link href={'https://www.bloxstaking.com/blox-guide-what-is-a-validator-key'} target={'_blank'}>
+        <Link onClick={() => shell.openExternal(`${process.env.WEBSITE_URL}/guides/what-is-a-validator-key/`)}>
           What is a validator key?
         </Link>
       </Paragraph>
