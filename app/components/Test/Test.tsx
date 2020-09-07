@@ -14,28 +14,22 @@ import AccountKeyVaultService from '../../backend/account/account-key-vault.serv
 import KeyVaultService from '../../backend/key-vault/key-vault.service';
 import AccountService from '../../backend/account/account.service';
 import WalletService from '../../backend/wallet/wallet.service';
-// import LoggerService from '../../backend/logger/logger.service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
-  // private readonly logger: LoggerService;
 
   constructor(func: any) {
     this.logFunc = func;
-    // this.logger = new LoggerService();
   }
 
   public update(subject: Subject, payload: any) {
     this.logFunc(`${subject.state}/${subject.actions.length} > ${payload.step.name}`);
     console.log(`${subject.state}/${subject.actions.length}`, payload);
-    // this.logger.error(`${subject.state}/${subject.actions.length}`, payload);
   }
 }
 
 let configIsSet = false;
 const Test = () => {
-  // const logger = new LoggerService();
-  // logger.debug('token', token);
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
   const accountService = new AccountService();
@@ -99,7 +93,7 @@ const Test = () => {
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
-          placeholder="Mnemonic phrase" />
+               placeholder="Mnemonic phrase"/>
         <button onClick={async () => {
           await seedService.storeMnemonic(mnemonic, '');
         }}>
@@ -230,11 +224,17 @@ const Test = () => {
           Delete Last Indexed Account
         </button>
         <br/>
-        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key"/>
+        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)}
+               placeholder="Public key"/>
         <button onClick={async () => {
           await accountKeyVaultService.getDepositData(publicKey);
         }}>
           Get Account Deposit Data
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.generatePublicKey();
+        }}>
+          Generate Public Key
         </button>
       </div>
       <p/>
@@ -264,6 +264,28 @@ const Test = () => {
           console.log(response.data.accounts);
         }}>
           List Accounts
+        </button>
+        <button onClick={async () => {
+          const response = await keyVaultService.getVersion();
+          console.log(response.data.version);
+        }}>
+          Get Version
+        </button>
+        <button onClick={async () => {
+          const response = await keyVaultService.updateStorage({ data: storeService.get('keyVaultStorage') });
+          console.log(response.data.status);
+        }}>
+          Update Storage
+        </button>
+        <button onClick={async () => {
+          await keyVaultService.exportSlashingData();
+        }}>
+          Get Slashing Storage
+        </button>
+        <button onClick={async () => {
+          await keyVaultService.importSlashingData();
+        }}>
+          Update Slashing Storage
         </button>
       </div>
       <p/>
