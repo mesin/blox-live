@@ -21,7 +21,7 @@ export const keyvaultLoadMnemonicFailure = (error: Record<string, any>) => ({
 
 export const keyvaultSaveMnemonic = (mnemonic: string, password: string) => ({
   type: actionTypes.KEYVAULT_SAVE_MNEMONIC,
-  payload: { mnemonic, password },
+  payload: {mnemonic, password},
 });
 
 export const keyvaultSaveMnemonicSuccess = () => ({
@@ -33,16 +33,26 @@ export const keyvaultSaveMnemonicFailure = (error: Record<string, any>) => ({
   payload: error,
 });
 
-export const kevaultLoadLatestVersion = () => ({
+export const keyvaultLoadLatestVersion = () => ({
   type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION,
 });
 
-export const KevaultLoadLatestVersionSuccess = (version: string) => ({
+export const keyvaultLoadLatestVersionSuccess = (version: string) => ({
   type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION_SUCCESS,
   payload: version
 });
 
-export const KevaultLoadLatestVersionFailure = (error: Record<string, any>) => ({
+export const keyvaultLoadLatestVersionFailure = (error: Record<string, any>) => ({
   type: actionTypes.KEYVAULT_LOAD_LATEST_VERSION,
   payload: error,
+});
+
+export const keyvaultSavePassword = (password: string) => ({
+  type: actionTypes.KEYVAULT_SAVE_PASSWORD,
+  payload: password
+});
+
+export const keyvaultReplacePassword = (password: string) => ({
+  type: actionTypes.KEYVAULT_REPLACE_PASSWORD,
+  payload: password
 });

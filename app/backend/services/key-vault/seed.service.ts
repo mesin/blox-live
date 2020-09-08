@@ -34,12 +34,10 @@ export default class SeedService extends KeyVaultCli {
     return stdout.replace('\n', '');
   }
 
-  async storeMnemonic(mnemonic: string, password: string): Promise<void> {
-    // TODO validate password & handle password
-    console.log('storeMnemonic - password: ', password);
-    // generate seed from mnemonic
+  async storeMnemonic(mnemonic: string): Promise<void> {
     const seed = await this.seedFromMnemonicGenerate(mnemonic);
-    console.log(seed);
+    console.log('seed', seed);
+    debugger;
     this.store.set('seed', seed);
   }
 
