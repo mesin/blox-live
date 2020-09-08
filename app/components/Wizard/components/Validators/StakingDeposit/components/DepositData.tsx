@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { InfoWithTooltip, Tooltip } from 'common/components';
 import { CopyToClipboardIcon } from '../../../common';
 import { DEPOSIT_DATA } from '../constants';
+import { truncateText } from '../../../../../common/service';
 
 const Wrapper = styled.div`
   width:100%;
@@ -26,9 +27,7 @@ const KeyText = styled.div`
 `;
 
 const ValueText = styled.div`
-  max-width:300px;
   overflow:hidden;
-  text-overflow:ellipsis;
   white-space:nowrap;
   font-size: 13px;
   font-weight: 500;
@@ -52,7 +51,7 @@ const DepositData = (props: Props) => {
             </KeyText>
             {isTxData ? (
               <Tooltip placement={'bottom'} title={valueText}>
-                <ValueText>{valueText}</ValueText>
+                <ValueText>{truncateText(valueText, 36, 6)}</ValueText>
               </Tooltip>
             ) : (
               <ValueText>{valueText}</ValueText>

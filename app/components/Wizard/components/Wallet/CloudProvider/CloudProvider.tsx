@@ -5,6 +5,7 @@ import CustomButton from './CustomButton';
 import { CLOUD_PROVIDERS } from './constants';
 import { Title, SubTitle, Paragraph, Link } from '../../common';
 import { keyvaultSetCouldProvider } from '../../../../KeyVaultManagement/actions';
+import { openExternalLink } from '../../../../common/service';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -40,7 +41,7 @@ const CloudProvider = (props: Props) => {
         must be installed on our available cloud providers. <br />
         This ensures your private keys are secured and available for a safe and <br />
         reliable staking experience.&nbsp;
-        <Link href="https://www.bloxstaking.com/blox-guide-why-blox-need-access-to-my-server" target="_blank">
+        <Link onClick={() => openExternalLink('guides/why-blox-needs-an-access-point-to-my-servers')}>
           Why does Blox need access to my server?
         </Link>
       </Paragraph>

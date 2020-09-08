@@ -1,6 +1,6 @@
 {
   "name": "blox-live",
-  "productName": "BloxStaking Desktop App",
+  "productName": "Blox Staking Desktop App",
   "version": "0.1.3",
   "description": "Blox live, desktop app for managing staking accounts",
   "scripts": {
@@ -40,7 +40,7 @@
     ]
   },
   "build": {
-    "productName": "BloxStaking",
+    "productName": "Blox Staking",
     "appId": "com.bloxstaking.blox-live",
     "files": [
       "dist/",
@@ -136,6 +136,7 @@
   "keywords": [
     "blox",
     "bloxstaking",
+    "blox staking",
     "ethereum 2.0",
     "electron"
   ],
