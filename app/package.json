@@ -5,7 +5,7 @@
   "description": "Blox live, desktop app for managing staking accounts",
   "main": "./main.prod.js",
   "author": {
-    "name": "Blox Staking Maintainers",
+    "name": "Blox Staking",
     "email": "support@bloxstaking.com",
     "url": "https://www.bloxstaking.com/"
   },
