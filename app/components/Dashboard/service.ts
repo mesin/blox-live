@@ -20,7 +20,6 @@ export const normalizeAccountsData = (accounts) => {
     } = account;
     const newAccount = { ...account };
 
-
     newAccount.key = {
       publicKey,
       activationTime,
@@ -44,29 +43,27 @@ export const normalizeAccountsData = (accounts) => {
 export const summarizeAccounts = (accounts) => {
   const initialObject = {
     balance: 0.0,
+    sinceStart: 0.0,
     change: 0.0,
     totalChange: 0.0,
-    sinceStart: 0.0,
   };
   const summary = accounts.reduce((accumulator, value, index) => {
     const { effectiveBalance, currentBalance } = value;
-    if (Number.isNaN(effectiveBalance) || Number.isNaN(currentBalance)) {
-      return 'N/A';
+    if (Number.isNaN(parseFloat(effectiveBalance)) || Number.isNaN(parseFloat(currentBalance))) {
+      return accumulator;
     }
-    const difference = parseFloat(currentBalance) - parseFloat(effectiveBalance);
-    const precentage = (difference / parseFloat(effectiveBalance)) * 100;
-    const totalChange = accumulator.totalChange + precentage;
-
+    const initialBalance = '32.00'; // TODO 32 hard coded. need to be a initial balance prop.
+    const difference = parseFloat(currentBalance) - parseFloat(initialBalance);
+    const percentage = (difference / parseFloat(initialBalance)) * 100;
+    const totalChange = accumulator.totalChange + percentage;
     return {
       balance: accumulator.balance + parseFloat(currentBalance),
-      totalChange,
+      sinceStart: accumulator.sinceStart + (parseFloat(currentBalance) - parseFloat(initialBalance)),
       change: index + 1 === accounts.length ? totalChange / accounts.length : 0,
-      sinceStart: accumulator.sinceStart + parseFloat(effectiveBalance),
+      totalChange,
     };
   }, initialObject);
-
-  const withFixedNumbers = fixNumOfDigits(summary);
-  return withFixedNumbers;
+  return fixNumOfDigits(summary);
 };
 
 const fixNumOfDigits = (summary) => {
