@@ -107,7 +107,7 @@ export default class Store extends BaseStore {
       const encrypted = Buffer.concat([cipher.update(str), cipher.final()]);
       return encrypted.toString('hex');
     } catch (e) {
-      console.error(e);
+      console.error('Encrypt failed', e);
       return value;
       // throw new Error('not possible to encrypt value');
     }
@@ -120,7 +120,7 @@ export default class Store extends BaseStore {
       const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
       return JSON.parse(Buffer.from(decrypted.toString(), 'base64').toString('ascii'));
     } catch (e) {
-      console.error(e);
+      console.error('Decrypt failed', e);
       return value;
       // throw new Error('not possible to decrypt value');
     }
