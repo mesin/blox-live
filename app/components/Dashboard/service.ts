@@ -80,7 +80,7 @@ const fixNumOfDigits = (summary) => {
 };
 
 export const normalizeEventLogs = (events) => {
-  return events.map((event) => {
+  const normalizedEvents = events.map((event) => {
     const {
       createdAt,
       orgId,
@@ -93,8 +93,13 @@ export const normalizeEventLogs = (events) => {
     newEvent.description = {
       type,
       orgId,
-      publicKey
+      publicKey: publicKey !== null ? publicKey : '',
     };
     return newEvent;
   });
+
+  normalizedEvents.sort((a, b) => {
+    return a.createdAt - b.createdAt ? 1 : -1;
+  });
+  return normalizedEvents;
 };
