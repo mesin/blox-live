@@ -13,10 +13,9 @@ export default class InstallProcess extends ProcessClass {
   private readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
-  constructor({ accessKeyId, secretAccessKey }, cryptoKey: string) {
+  constructor({ accessKeyId, secretAccessKey }) {
     super();
     const store: Store = Store.getStore();
-    store.setCryptoKey(cryptoKey);
     if (!store.get('uuid')) {
       store.set('uuid', uuidv4());
     }

@@ -84,7 +84,7 @@ const Test = () => {
         <br />
         <button
           onClick={async () => { // TODO: check this func
-            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey }, cryptoKey);
+            const installProcess = new InstallProcess({ accessKeyId, secretAccessKey });
             const listener = new Listener(setProcessStatus);
             installProcess.subscribe(listener);
             try {
@@ -129,7 +129,7 @@ const Test = () => {
         <button
           onClick={async () => {
             const listener = new Listener(setProcessStatus);
-            const reinstallProcess = new ReinstallProcess(cryptoKey);
+            const reinstallProcess = new ReinstallProcess();
             reinstallProcess.subscribe(listener);
             try {
               await reinstallProcess.run();

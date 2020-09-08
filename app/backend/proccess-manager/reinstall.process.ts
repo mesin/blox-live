@@ -15,7 +15,7 @@ export default class ReinstallProcess extends ProcessClass {
   private readonly walletService: WalletService;
   public readonly actions: Array<any>;
 
-  constructor(cryptoKey: string) {
+  constructor() {
     super();
     this.keyVaultService = new KeyVaultService(tempStorePrefix);
     this.keyVaultServiceOld = new KeyVaultService();
@@ -23,7 +23,6 @@ export default class ReinstallProcess extends ProcessClass {
     this.awsServiceOld = new AwsService();
     this.walletService = new WalletService(tempStorePrefix);
     const store: Store = Store.getStore();
-    store.setCryptoKey(cryptoKey);
     this.actions = [
       { instance: this.keyVaultServiceOld, method: 'exportSlashingData' },
       { instance: store, method: 'prepareTmpStorageConfig' },
