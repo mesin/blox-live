@@ -32,7 +32,9 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
           return payload.localHandler.call(null, extendedError, this);
         }
         if (handler) {
-          return handler.call(null, extendedError, this);
+          const result = handler.call(null, extendedError, this);
+          catchDecoratorStore.setHandler(null);
+          return result
         }
         throw new Error(displayMessage);
       }
