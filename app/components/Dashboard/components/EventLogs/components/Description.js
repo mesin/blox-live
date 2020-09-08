@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {publicKeyFormat} from '../../../../../utils/service';
 import {EVENTS} from '../constants';
+import {truncateText} from '../../../../common/service';
 
 const Wrapper = styled.div`
   color: ${({theme}) => theme.gray800}
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 
 const Description = ({value}) => {
   const {type, publicKey} = value;
-  const formattedPublicKey = publicKeyFormat(publicKey);
+  const formattedPublicKey = truncateText(publicKey, 31, 6);
   const {description} = EVENTS[type];
   return (
     <Wrapper>

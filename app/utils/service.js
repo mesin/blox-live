@@ -42,7 +42,3 @@ export const lastDateFormat = (utcDate) => {
     // more than 48 hours
     return moment(utcDate).format('MMMM DD, YYYY');
 };
-
-export const publicKeyFormat = (publicKey) => {
-  return `${publicKey.substr(0, 6)}...${publicKey.substr(publicKey.length - 6, publicKey.length)}`;
-};
