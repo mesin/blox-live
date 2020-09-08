@@ -29,7 +29,7 @@ export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
       width: '290px',
       color: 'gray800',
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.balance),
-      medText: !summary ? '' : `.${trimDecimalNumber(summary.balance)} ETH`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.balance)} ETH`,
       tinyText: 'Total Balance',
     },
     {
