@@ -1,8 +1,9 @@
 import moment from 'moment';
 
-const handleChange = (currentBalance, effectiveBalance) => {
-  if (currentBalance && effectiveBalance) {
-    return `${currentBalance - effectiveBalance}`;
+const handleChange = (currentBalance) => {
+  const initialBalance = 32.00; // TODO 32 hard coded. need to be a initial balance prop.
+  if (currentBalance && initialBalance) {
+    return `${currentBalance - initialBalance}`;
   }
   return null;
 };
@@ -15,7 +16,6 @@ export const normalizeAccountsData = (accounts) => {
       activationTime,
       createdAt,
       currentBalance,
-      effectiveBalance,
       status,
     } = account;
     const newAccount = { ...account };
@@ -27,7 +27,7 @@ export const normalizeAccountsData = (accounts) => {
       status
     };
 
-    newAccount.change = handleChange(currentBalance, effectiveBalance);
+    newAccount.change = handleChange(currentBalance);
     delete newAccount.publicKey;
     delete newAccount.activationTime;
     delete newAccount.date;
