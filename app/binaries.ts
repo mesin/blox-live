@@ -11,4 +11,5 @@ const binariesPath =
     ? path.join(path.dirname(getAppPath()), '..', './Resources', './bin')
     : path.join(root, './resources', getPlatform(), './bin');
 
-export const execPath = path.resolve(path.join(binariesPath, './keyvault-cli'));
+const binariesPathTrimmed = binariesPath.replace(/ /g, '\\ ');
+export const execPath = path.resolve(path.join(binariesPathTrimmed, './keyvault-cli'));
