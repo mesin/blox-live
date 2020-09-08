@@ -1,6 +1,6 @@
 import React from 'react';
-import { ClickAwayListener } from '@material-ui/core';
-import { KeyCell, Status, Misc, Change, Balance } from './components';
+// import { ClickAwayListener } from '@material-ui/core';
+import { KeyCell, Status/* , Misc */, Change, Balance } from './components';
 
 export default [
   {
@@ -32,7 +32,7 @@ export default [
     width: '15%',
     isSort: true,
     valueRender: (value) => <Status status={value} />,
-  },
+  }/* ,
   {
     key: 'misc',
     title: '',
@@ -42,5 +42,5 @@ export default [
         <Misc {...misc} />
       </ClickAwayListener>
     ),
-  },
+  }, */
 ];
