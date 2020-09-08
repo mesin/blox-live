@@ -53,17 +53,17 @@ export default class MenuBuilder {
 
   buildDarwinTemplate(): MenuItemConstructorOptions[] {
     const subMenuAbout: DarwinMenuItemConstructorOptions = {
-      label: 'BloxStaking',
+      label: 'Blox Staking',
       submenu: [
         {
-          label: 'About BloxStaking',
+          label: 'About Blox Staking',
           selector: 'orderFrontStandardAboutPanel:',
         },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
         {
-          label: 'Hide BloxStaking',
+          label: 'Hide Blox Staking',
           accelerator: 'Command+H',
           selector: 'hide:',
         },

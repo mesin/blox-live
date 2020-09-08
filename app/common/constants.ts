@@ -9,3 +9,8 @@ interface SocialApps {
   microsoft: Record<string, string>;
   github: Record<string, string>;
 }
+
+export const SortType = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending'
+};
