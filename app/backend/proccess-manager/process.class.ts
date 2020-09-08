@@ -1,12 +1,10 @@
 import { Subject } from './subject.interface';
 import { Observer } from './observer.interface';
 import { Catch, catchDecoratorStore } from '../decorators';
-// import LoggerService from '../logger/logger.service';
 
 export default class ProcessClass implements Subject {
   readonly actions: Array<any>;
   readonly fallbackActions: Array<any>;
-  // private readonly logger: LoggerService;
   state: number;
   action: any;
   /**
@@ -17,7 +15,6 @@ export default class ProcessClass implements Subject {
   observers: Observer[] = [];
 
   constructor() {
-    // this.logger = new LoggerService();
     catchDecoratorStore.setHandler(error => this.errorHandler(error));
   }
 
@@ -66,9 +63,9 @@ export default class ProcessClass implements Subject {
         }
       }
     }
-    return {
-      error: new Error(payload.displayMessage)
-    };
+    const error = new Error(payload.displayMessage);
+    this.notify({ step: { status: 'error' }, error });
+    return { error };
   };
 
   @Catch({
@@ -86,12 +83,10 @@ export default class ProcessClass implements Subject {
       });
       const { error = null, step = null } = { ...result };
       if (error) {
-        this.notify({ step: { status: 'error' }, error });
         return;
-      } else {
-        delete result.step;
-        this.notify({ step: { name: step.name, status: 'completed' }, ...result });
       }
+      delete result.step;
+      this.notify({ step: { name: step.name, status: 'completed' }, ...result });
     }
   }
 }
