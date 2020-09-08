@@ -1,6 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
-import { State, Action } from './types';
+import {State, Action} from './types';
 
 export const initialState: State = {
   isLoading: false,
@@ -12,36 +12,50 @@ export const initialState: State = {
     createdAt: '',
   },
   error: '',
+  isLoadingEventLogs: false,
+  eventLogsError: null,
+  eventLogs: null,
 };
 
 /* eslint-disable default-case, no-param-reassign */
 const organizationReducer = (state = initialState, action: Action) => produce(state, (draft) => {
-    switch (action.type) {
-      case actionTypes.SET_ORGANIZATION_NAME:
-        draft.data.name = action.payload;
-        break;
-      case actionTypes.LOAD_ORGANIZATION:
-        draft.isLoading = true;
-        break;
-      case actionTypes.LOAD_ORGANIZATION_SUCCESS:
-        draft.data = action.payload;
-        draft.isLoading = false;
-        break;
-      case actionTypes.LOAD_ORGANIZATION_FAILURE:
-        draft.isLoading = false;
-        break;
-      case actionTypes.UPDATE_ORGANIZATION:
-        draft.isUpdateLoading = true;
-        break;
-      case actionTypes.UPDATE_ORGANIZATION_SUCCESS:
-        draft.isUpdateLoading = false;
-        draft.data = action.payload;
-        break;
-      case actionTypes.UPDATE_ORGANIZATION_FAILURE:
-        draft.isUpdateLoading = false;
-        draft.error = action.payload;
-        break;
-    }
-  });
+  switch (action.type) {
+    case actionTypes.SET_ORGANIZATION_NAME:
+      draft.data.name = action.payload;
+      break;
+    case actionTypes.LOAD_ORGANIZATION:
+      draft.isLoading = true;
+      break;
+    case actionTypes.LOAD_ORGANIZATION_SUCCESS:
+      draft.data = action.payload;
+      draft.isLoading = false;
+      break;
+    case actionTypes.LOAD_ORGANIZATION_FAILURE:
+      draft.isLoading = false;
+      break;
+    case actionTypes.UPDATE_ORGANIZATION:
+      draft.isUpdateLoading = true;
+      break;
+    case actionTypes.UPDATE_ORGANIZATION_SUCCESS:
+      draft.isUpdateLoading = false;
+      draft.data = action.payload;
+      break;
+    case actionTypes.UPDATE_ORGANIZATION_FAILURE:
+      draft.isUpdateLoading = false;
+      draft.error = action.payload;
+      break;
+    case actionTypes.LOAD_EVENT_LOGS:
+      draft.isLoadingEventLogs = true;
+      break;
+    case actionTypes.LOAD_EVENT_LOGS_SUCCESS:
+      draft.eventLogs = action.payload;
+      draft.isLoadingEventLogs = false;
+      break;
+    case actionTypes.LOAD_EVENT_LOGS_FAILURE:
+      draft.eventLogsError = action.payload;
+      draft.isLoadingEventLogs = false;
+      break;
+  }
+});
 
 export default organizationReducer;
