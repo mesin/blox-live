@@ -5,6 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
+import dotenv from 'dotenv';
 
 // TODO: add ts-loader and implement js
 export default {
@@ -37,20 +38,7 @@ export default {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production',
-      AUTH0_DOMAIN: 'blox-infra.eu.auth0.com',
-      AUTH0_CLIENT_ID: 'NsZvhkQvZOWwXT2rcA1RWGgA7YxxhsJZ',
-      AUTH0_LOGOUT_URL: 'https://localhost:1212',
-      AUTH0_CALLBACK_URL: 'file:///callback*',
-      API_URL: 'https://api.stage.bloxstaking.com',
-      VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/key-vault',
-      WEBSITE_URL: 'https://www.bloxstaking.com',
-      DISCORD_INVITE: 'https://discord.gg/27Mf9y4',
-      HTTP_RETRIES: '3',
-      HTTP_RETRY_DELAY: '1000'
-    }),
-
+    new webpack.EnvironmentPlugin(dotenv.config({ path: path.join(__dirname, '..', '/.env') }).parsed),
     new webpack.NamedModulesPlugin()
   ]
 };
