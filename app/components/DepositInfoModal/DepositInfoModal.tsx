@@ -4,6 +4,7 @@ import { notification } from 'antd';
 import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
 import { DEPOSIT_DATA } from '../Wizard/components/Validators/StakingDeposit/constants';
+import { openExternalLink } from '../common/service';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -78,7 +79,7 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
           );
         })}
         <Row>
-          <Link href={`${process.env.WEBSITE_URL}/blox-guide-how-do-i-submit-my-staking-deposit`}>
+          <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>
             Need help?
           </Link>
         </Row>

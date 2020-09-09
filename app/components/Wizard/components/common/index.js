@@ -11,3 +11,4 @@ export { default as SuccessIcon } from './SuccessIcon';
 export { default as Warning } from './Warning';
 export { default as TextArea } from './TextArea/TextArea';
 export { default as contentAnimation } from './contentAnimation';
+export { default as ErrorMessage } from './ErrorMessage';

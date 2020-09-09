@@ -11,4 +11,8 @@ export default class OrganizationService {
   async update(payload: any) {
     return await BloxApi.request(METHOD.PATCH, 'organizations/profile', payload);
   }
+
+  async getEventLogs() {
+    return await BloxApi.request(METHOD.GET, 'organizations/event-logs');
+  }
 }

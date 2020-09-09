@@ -11,8 +11,8 @@ import { GenerateKeys, KeysGenerated } from './components';
 const key = 'processRunner';
 
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData } = props;
-  const { processSubscribe } = actions;
+  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, error } = props;
+  const { processSubscribe, processClearState } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
 
@@ -23,6 +23,9 @@ const CreateValidator = (props: Props) => {
   }, [isLoading, validatorData]);
 
   const onGenerateKeysClick = () => {
+    if (error) {
+      processClearState();
+    }
     if (!isLoading) {
       processSubscribe('createAccount', 'Generating Validator Keys...');
     }
@@ -34,10 +37,10 @@ const CreateValidator = (props: Props) => {
 
   return (
     <>
-      {validatorData ? (
+      {validatorData && !error ? (
         <KeysGenerated onClick={onContinueClick} validatorData={validatorData} />
       ) : (
-        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} />
+        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error} />
       )}
     </>
   );
@@ -46,6 +49,7 @@ const CreateValidator = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   validatorData: selectors.getData(state),
+  error: selectors.getError(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -62,6 +66,7 @@ type Props = {
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
   callLoadDepositData: (publicKey: string) => void;
+  error: string;
 };
 
 type State = Record<string, any>;

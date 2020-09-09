@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import { Spinner } from 'common/components';
-import { Title, Paragraph, BigButton, Link } from '../../../common';
+import { Title, Paragraph, BigButton, Link, ErrorMessage } from '../../../common';
+import { openExternalLink } from '../../../../../common/service';
 
 const Wrapper = styled.div``;
 
@@ -21,7 +23,7 @@ const LoaderText = styled.span`
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, onClick } = props;
+  const { isLoading, onClick, error } = props;
   return (
     <Wrapper>
       <Title>Create TestNet Validator</Title>
@@ -30,9 +32,7 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link href={'https://www.bloxstaking.com/blox-guide-what-is-a-validator-key'} target={'_blank'}>
-          What is a validator key?
-        </Link>
+        <Link onClick={() => openExternalLink('guides/what-is-a-validator-key')}>What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
         <BigButton isDisabled={isLoading} onClick={onClick}>
@@ -45,6 +45,11 @@ const GenerateKeys = (props: Props) => {
           <LoaderText>Generating Validator Keys...</LoaderText>
         </LoaderWrapper>
       )}
+      {error && (
+        <ErrorMessage>
+          {error}, please try again.
+        </ErrorMessage>
+      )}
     </Wrapper>
   );
 };
@@ -52,6 +57,7 @@ const GenerateKeys = (props: Props) => {
 type Props = {
   isLoading: boolean;
   onClick: () => void;
+  error: string;
 };
 
 export default GenerateKeys;

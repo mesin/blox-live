@@ -9,6 +9,7 @@ import * as loginActions from '../../../CallbackPage/actions';
 import { getIsLoggedIn } from '../../../CallbackPage/selectors';
 import saga from '../../../CallbackPage/saga';
 import { useInjectSaga } from '../../../../utils/injectSaga';
+import { openExternalLink } from '../../../common/service';
 
 const key = 'login';
 
@@ -28,6 +29,7 @@ const InnerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 
 const Title = styled.h2`
@@ -45,6 +47,7 @@ const ButtonsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const SocialAppButton = styled.button`
@@ -156,9 +159,9 @@ const Right = ({ actions }: Props) => {
         </ButtonsWrapper>
         <LinksWrapper>
           By {BUTTONS_TEXTS[isSignUp].terms}, I agree to Blox’s &nbsp;
-          <Link href="/">Privacy policy</Link>
+          <Link onClick={() => openExternalLink('privacy-policy')}>Privacy policy</Link>
           &nbsp; &amp; &nbsp;
-          <Link href="/">terms of use</Link>
+          <Link onClick={() => openExternalLink('terms-of-use')}>Terms of use</Link>
         </LinksWrapper>
         <AlreadyHaveWrapper>
           {BUTTONS_TEXTS[isSignUp].account} &nbsp;
