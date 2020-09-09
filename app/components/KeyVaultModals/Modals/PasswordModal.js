@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
 import { Title, Description } from '..';
 import ModalTemplate from '../ModalTemplate';
 import { PasswordInput, Button } from 'common/components';
+import * as keyvaultActions from '../../KeyVaultManagement/actions';
 
 import image from '../../Wizard/assets/img-password.svg';
 
 const PasswordModal = (props) => {
-  const { onClose, onClick } = props;
+  const { onClose, onClick, actions } = props;
+  const { keyvaultValidatePassword } = actions;
   const [password, setPassword] = useState('');
   const [showPasswordError, setPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !password || showPasswordError;
@@ -21,6 +26,13 @@ const PasswordModal = (props) => {
     }
   };
 
+  const onButtonClick = () => {
+    const isValid = keyvaultValidatePassword(password);
+    console.log('isValid', isValid);
+    debugger;
+    onClick();
+  };
+
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Enter your password</Title>
@@ -29,7 +41,7 @@ const PasswordModal = (props) => {
         onBlur={onPasswordBlur} error={showPasswordError ? 'The password is too short' : ''}
       />
       <a href={process.env.DISCORD_INVITE} target={'_blank'}>Forgot password?</a>
-      <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
+      <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
     </ModalTemplate>
   );
 };
@@ -37,6 +49,11 @@ const PasswordModal = (props) => {
 PasswordModal.propTypes = {
   onClose: PropTypes.func,
   onClick: PropTypes.func,
+  actions: PropTypes.object,
 };
 
-export default PasswordModal;
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(keyvaultActions, dispatch),
+});
+
+export default connect(null, mapDispatchToProps)(PasswordModal);

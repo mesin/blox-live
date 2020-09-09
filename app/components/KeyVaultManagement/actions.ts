@@ -56,3 +56,8 @@ export const keyvaultReplacePassword = (password: string) => ({
   type: actionTypes.KEYVAULT_REPLACE_PASSWORD,
   payload: password
 });
+
+export const keyvaultValidatePassword = (password: string) => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSWORD,
+  payload: password
+});

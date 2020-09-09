@@ -62,7 +62,7 @@ const EntryPage = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
 
-    if (!walletLatestVersion) {
+    if (!walletLatestVersion && !walletErorr) {
       loadWalletLatestVersion();
     }
     if (didntLoadWallet) {

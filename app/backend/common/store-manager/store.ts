@@ -32,21 +32,20 @@ export default class Store extends BaseStore {
     return Store.instances[prefix];
   };
 
+  createCryptoKey = (cryptoKey: string) => {
+    return crypto.createHash('sha256').update(String(cryptoKey)).digest('base64').substr(0, 32);
+  };
+
   setCryptoKey = (cryptoKey: string) => {
     // clean timer which was run before, and run new one
     this.unsetCryptoKey();
-    this.cryptoKey = crypto
-      .createHash('sha256')
-      .update(String(cryptoKey))
-      .digest('base64')
-      .substr(0, 32);
-    console.log('key', this.cryptoKey);
+    this.cryptoKey = this.createCryptoKey(cryptoKey);
     this.logger.error('setCryptoKey');
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
   };
 
   unsetCryptoKey = () => {
-    console.error('UNSET crypto key');
+    console.log('UNSET crypto key');
     this.logger.error('unsetCryptoKey');
     this.cryptoKey = null;
     if (this.timer) {
@@ -68,14 +67,14 @@ export default class Store extends BaseStore {
   get = (key: string): any => {
     const value = this.storage.get(key) || this.baseStore.get(key);
     if (value && this.encryptedKeys.includes(key)) {
-      return this.decrypt(value);
+      return this.decryptCurrent(value);
     }
-    return value;
+    return null;
   };
 
   set = (key: string, value: any): void => {
     if (value && this.encryptedKeys.includes(key)) {
-      this.storage.set(key, this.encrypt(value));
+      this.storage.set(key, this.encryptCurrent(value));
     } else {
       this.storage.set(key, value);
     }
@@ -100,31 +99,34 @@ export default class Store extends BaseStore {
     this.baseStore.clear();
   };
 
-  encrypt = (value): any => {
+  encrypt = (cryptoKey: string, value: string): any => {
     try {
       const str = Buffer.from(JSON.stringify(value)).toString('base64');
-      const cipher = crypto.createCipheriv(this.cryptoAlgorithm, this.cryptoKey, null);
+      const cipher = crypto.createCipheriv(this.cryptoAlgorithm, cryptoKey, null);
       const encrypted = Buffer.concat([cipher.update(str), cipher.final()]);
       return encrypted.toString('hex');
-    } catch (e) {
+    }
+    catch (e) {
       console.error('Encrypt failed', e);
-      return value;
-      // throw new Error('not possible to encrypt value');
+      return null;
     }
   };
 
-  decrypt = (value): any => {
+  encryptCurrent = (value) => this.encrypt(this.cryptoKey, value);
+
+  decrypt = (cryptoKey: string, value: string): any => {
     try {
-      const decipher = crypto.createDecipheriv(this.cryptoAlgorithm, this.cryptoKey, null);
+      const decipher = crypto.createDecipheriv(this.cryptoAlgorithm, cryptoKey, null);
       const encryptedText = Buffer.from(value, 'hex');
       const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
       return JSON.parse(Buffer.from(decrypted.toString(), 'base64').toString('ascii'));
     } catch (e) {
       console.error('Decrypt failed', e);
-      return value;
-      // throw new Error('not possible to decrypt value');
+      return null;
     }
   };
+
+  decryptCurrent = (value) => this.decrypt(this.cryptoKey, value);
 
   setNewPassword = (cryptoKey: string) => {
     const object = {};
@@ -138,6 +140,15 @@ export default class Store extends BaseStore {
     for (const [key, value] of Object.entries(object)) {
       this.set(key, value);
     }
+  };
+
+  isCryptoKeyValid = (password: string) => {
+    const userInputCryptoKey = this.createCryptoKey(password);
+    console.log('userInputCryptoKey', userInputCryptoKey);
+    const decryptedSeed = this.decrypt(userInputCryptoKey, 'seed');
+    console.log('decryptedSeed', decryptedSeed);
+    debugger;
+    return !!decryptedSeed;
   };
 
   @Step({

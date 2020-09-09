@@ -34,7 +34,7 @@ export default class WalletService {
   }
 
   async getLatestTag() {
-    return await BloxApi.request(METHOD.GET, 'key-vault/latest-tag');
+    return await BloxApi.request(METHOD.GET, 'version/key-vault');
   }
 
   @Step({
