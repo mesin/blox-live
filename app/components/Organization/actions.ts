@@ -45,3 +45,7 @@ export const loadEventLogsFailure = (error: Record<string, any>) => ({
   type: actionTypes.LOAD_EVENT_LOGS_FAILURE,
   payload: { ...error }
 });
+
+export const logout = () => ({
+  type: actionTypes.LOGOUT,
+});

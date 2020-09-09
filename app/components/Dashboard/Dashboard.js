@@ -19,6 +19,7 @@ const Dashboard = (props) => {
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
   const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
+  // const isNeedUpdate = true; // TODO create a service func that checks if needs update
 
   return (
     <Wrapper>
