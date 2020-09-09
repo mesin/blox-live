@@ -22,7 +22,7 @@ export class Logger {
         new winston.transports.DailyRotateFile({
           filename: path.join(this.userDataPath, 'logs/error.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '10k',
+          maxSize: '1k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'error'
@@ -30,7 +30,7 @@ export class Logger {
         new winston.transports.DailyRotateFile({
           filename: path.join(this.userDataPath, 'logs/debug.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '10k',
+          maxSize: '1k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'debug'

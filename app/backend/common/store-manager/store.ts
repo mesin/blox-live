@@ -105,9 +105,8 @@ export default class Store extends BaseStore {
       const cipher = crypto.createCipheriv(this.cryptoAlgorithm, cryptoKey, null);
       const encrypted = Buffer.concat([cipher.update(str), cipher.final()]);
       return encrypted.toString('hex');
-    }
-    catch (e) {
-      console.error('Encrypt failed', e);
+    } catch (e) {
+      this.logger.error('Encrypt failed', e);
       return null;
     }
   };
@@ -121,7 +120,7 @@ export default class Store extends BaseStore {
       const decrypted = Buffer.concat([decipher.update(encryptedText), decipher.final()]);
       return JSON.parse(Buffer.from(decrypted.toString(), 'base64').toString('ascii'));
     } catch (e) {
-      console.error('Decrypt failed', e);
+      this.logger.error('Decrypt failed', e);
       return null;
     }
   };
@@ -144,11 +143,8 @@ export default class Store extends BaseStore {
 
   isCryptoKeyValid = (password: string) => {
     const userInputCryptoKey = this.createCryptoKey(password);
-    console.log('userInputCryptoKey', userInputCryptoKey);
     const encryptedSavedCredentials = this.storage.get('credentials');
-    console.log('encryptedSavedCredentials', encryptedSavedCredentials);
     const decryptedUserInputCredentials = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
-    console.log('decryptedUserInputCredentials', decryptedUserInputCredentials);
     return !!decryptedUserInputCredentials;
   };
 

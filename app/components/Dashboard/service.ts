@@ -20,7 +20,6 @@ export const normalizeAccountsData = (accounts) => {
     } = account;
     const newAccount = { ...account };
 
-
     newAccount.key = {
       publicKey,
       activationTime,
@@ -74,7 +73,33 @@ const fixNumOfDigits = (summary) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const [key, value] of Object.entries(summary)) {
     if (Number.isNaN(value)) { return null; }
+    // @ts-ignore
     newObject[key] = value.toFixed(2);
   }
   return newObject;
+};
+
+export const normalizeEventLogs = (events) => {
+  const normalizedEvents = events.map((event) => {
+    const {
+      createdAt,
+      orgId,
+      publicKey,
+      type,
+    } = event;
+    const newEvent = { ...event };
+
+    newEvent.createdAt = moment(createdAt).format('MMMM DD, YYYY');
+    newEvent.description = {
+      type,
+      orgId,
+      publicKey: publicKey !== null ? publicKey : '',
+    };
+    return newEvent;
+  });
+
+  normalizedEvents.sort((a, b) => {
+    return a.createdAt - b.createdAt ? 1 : -1;
+  });
+  return normalizedEvents;
 };
