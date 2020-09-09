@@ -69,7 +69,7 @@ export default class Store extends BaseStore {
     if (value && this.encryptedKeys.includes(key)) {
       return this.decryptCurrent(value);
     }
-    return null;
+    return value;
   };
 
   set = (key: string, value: any): void => {
@@ -145,10 +145,11 @@ export default class Store extends BaseStore {
   isCryptoKeyValid = (password: string) => {
     const userInputCryptoKey = this.createCryptoKey(password);
     console.log('userInputCryptoKey', userInputCryptoKey);
-    const decryptedSeed = this.decrypt(userInputCryptoKey, 'seed');
-    console.log('decryptedSeed', decryptedSeed);
-    debugger;
-    return !!decryptedSeed;
+    const encryptedSavedCredentials = this.storage.get('credentials');
+    console.log('encryptedSavedCredentials', encryptedSavedCredentials);
+    const decryptedUserInputCredentials = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
+    console.log('decryptedUserInputCredentials', decryptedUserInputCredentials);
+    return !!decryptedUserInputCredentials;
   };
 
   @Step({

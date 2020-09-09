@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Icon from '../Icon';
+import Spinner from '../Spinner';
 
 const Wrapper = styled.div`
   width:220px;
@@ -45,7 +46,7 @@ const IconWrapper = styled.div`
 `;
 
 const PasswordInput = (props) => {
-  const { name, title, onChange, value, isDisabled, error, ...rest } = props;
+  const { name, title, onChange, value, isDisabled, isValid, error, ...rest } = props;
   const [type, setType] = React.useState('password');
 
   const toggleType = () => {
@@ -63,7 +64,11 @@ const PasswordInput = (props) => {
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
         disabled={isDisabled} {...rest} error={error} />
       <IconWrapper onClick={toggleType} title={title}>
-        <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
+        {isValid ? (
+          <Icon name={'check'} fontSize={'20px'} color={'accent2400'} />
+        ) : (
+          <Icon name={'eye'} fontSize={'20px'} color={'gray400'} />
+        )}
       </IconWrapper>
 
       {error && (<ErrorMessage title={title}>{error}</ErrorMessage>)}
@@ -78,6 +83,7 @@ PasswordInput.propTypes = {
   type: PropTypes.string,
   value: PropTypes.string,
   isDisabled: PropTypes.bool,
+  isValid: PropTypes.bool,
   error: PropTypes.string,
 };
 

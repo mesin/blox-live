@@ -1,7 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
-import { KEYVAULT_LOAD_LATEST_VERSION, KEYVAULT_LOAD_MNEMONIC, KEYVAULT_SAVE_MNEMONIC,
-         KEYVAULT_SAVE_PASSWORD, KEYVAULT_REPLACE_PASSWORD, KEYVAULT_VALIDATE_PASSWORD } from './actionTypes';
+import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 import SeedService from 'backend/services/key-vault/seed.service';
 import WalletService from 'backend/services/wallet/wallet.service';
@@ -24,8 +23,7 @@ function* replacePassword(action) {
 function* validatePassword(action) {
   const { payload } = action;
   const isValid = yield call([store, 'isCryptoKeyValid'], payload);
-  console.log('isValid', isValid);
-  debugger;
+  yield put(actions.keyvaultSetPasswordValidation(isValid));
 }
 
 function* startLoadingMnemonic() {
@@ -62,10 +60,10 @@ function* startLoadingLatestVersion() {
 }
 
 export default function* keyVaultManagementSaga() {
-  yield takeLatest(KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
-  yield takeLatest(KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
-  yield takeLatest(KEYVAULT_LOAD_LATEST_VERSION, startLoadingLatestVersion);
-  yield takeLatest(KEYVAULT_SAVE_PASSWORD, savePassword);
-  yield takeLatest(KEYVAULT_REPLACE_PASSWORD, replacePassword);
-  yield takeLatest(KEYVAULT_VALIDATE_PASSWORD, validatePassword);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
+  yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, startLoadingLatestVersion);
+  yield takeLatest(actionTypes.KEYVAULT_SAVE_PASSWORD, savePassword);
+  yield takeLatest(actionTypes.KEYVAULT_REPLACE_PASSWORD, replacePassword);
+  yield takeLatest(actionTypes.KEYVAULT_CHECK_PASSWORD_VALIDATION, validatePassword);
 }

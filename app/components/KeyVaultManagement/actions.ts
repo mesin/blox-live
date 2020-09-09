@@ -57,7 +57,16 @@ export const keyvaultReplacePassword = (password: string) => ({
   payload: password
 });
 
-export const keyvaultValidatePassword = (password: string) => ({
-  type: actionTypes.KEYVAULT_VALIDATE_PASSWORD,
+export const keyvaultCheckPasswordValidation = (password: string) => ({
+  type: actionTypes.KEYVAULT_CHECK_PASSWORD_VALIDATION,
   payload: password
 });
+
+export const keyvaultSetPasswordValidation = (isValid: boolean) => ({
+  type: actionTypes.KEYVAULT_SET_PASSWORD_VALIDATION,
+  payload: isValid
+});
+
+export const keyvaultClearPasswordData = () => ({ type: actionTypes.KEYVAULT_CLEAR_PASSWORD_DATA });
+
+export const keyvaultClearData = () => ({ type: actionTypes.KEYVAULT_CLEAR_DATA });
