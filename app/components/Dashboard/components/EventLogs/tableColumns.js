@@ -5,19 +5,19 @@ export default [
   {
     key: 'createdAt',
     title: '',
-    width: '15%',
+    width: '25%',
     valueRender: (createdAt) => <Date createdAt={createdAt} />,
   },
   {
     key: 'type',
     title: '',
-    width: '25%',
+    width: '20%',
     valueRender: (type) => <Type type={type} />,
   },
   {
     key: 'description',
     title: '',
-    width: '60%',
+    width: '55%',
     valueRender: (description) => <Description value={description} />,
   },
 ];
