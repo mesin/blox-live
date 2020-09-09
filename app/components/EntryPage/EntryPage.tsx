@@ -16,7 +16,7 @@ import { loadAccounts } from '../Accounts/actions';
 import accountsSaga from '../Accounts/saga';
 import * as accountsSelectors from '../Accounts/selectors';
 
-import { kevaultLoadLatestVersion } from '../KeyVaultManagement/actions';
+import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import walletSaga from '../KeyVaultManagement/saga';
 import { getLatestVersion } from '../KeyVaultManagement/selectors';
 
@@ -137,7 +137,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAllAccounts: () => dispatch(loadAccounts()),
-  loadWalletLatestVersion: () => dispatch(kevaultLoadLatestVersion()),
+  loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
 });
 
 type State = Record<string, any>;

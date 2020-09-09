@@ -126,6 +126,20 @@ export default class Store extends BaseStore {
     }
   };
 
+  setNewPassword = (cryptoKey: string) => {
+    const object = {};
+    this.encryptedKeys.forEach((encryptedKey) => {
+      const value = this.get(encryptedKey);
+      object[encryptedKey] = value;
+    });
+     this.unsetCryptoKey();
+     this.setCryptoKey(cryptoKey);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of Object.entries(object)) {
+      this.set(key, value);
+    }
+  };
+
   @Step({
     name: 'Creating local backup...'
   })
