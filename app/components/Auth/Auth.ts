@@ -3,15 +3,15 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import { storeService } from '../../backend/store-manager/store.service';
-import BloxApiService from '../../backend/communication-manager/blox-api.service';
-import AuthApiService from '../../backend/communication-manager/auth-api.service';
+import Store from '../../backend/common/store-manager/store';
+import BloxApi from '../../backend/common/communication-manager/blox-api';
+import AuthApi from '../../backend/common/communication-manager/auth-api';
 
 export default class Auth {
   tokens: Record<string, any>;
   userProfile: Record<string, any> | null;
   auth: Record<string, any>;
-  private readonly authApiService: AuthApiService;
+  private readonly authApi: AuthApi;
 
   constructor() {
     this.tokens = {
@@ -25,7 +25,7 @@ export default class Auth {
       responseType: 'code',
       scope: 'openid profile email offline_access'
     };
-    this.authApiService = new AuthApiService();
+    this.authApi = new AuthApi();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -63,7 +63,7 @@ export default class Auth {
     };
 
     try {
-      return await this.authApiService.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
+      return await this.authApi.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
     } catch (error) {
       await this.logout();
       return Error(error);
@@ -74,8 +74,8 @@ export default class Auth {
     const { id_token } = authResult;
     this.tokens.idToken = id_token;
     this.userProfile = userProfile;
-    storeService.init(userProfile.sub, authResult.id_token);
-    BloxApiService.init();
+    Store.getStore().init(userProfile.sub, authResult.id_token);
+    BloxApi.init();
   };
 
   isLoggedIn = () => {
@@ -89,7 +89,7 @@ export default class Auth {
 
   logout = async () => { // TODO: check https://auth0.com/docs/logout/log-users-out-of-idps
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
-    storeService.logout();
+    Store.getStore().logout();
     this.tokens = {
       idToken: '',
       profile: null,

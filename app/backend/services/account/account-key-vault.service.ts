@@ -1,15 +1,15 @@
-import KeyVaultCliService from '../communication-manager/key-vault-cli.service';
-import { storeService, StoreService } from '../store-manager/store.service';
+import KeyVaultCli from '../../common/communication-manager/key-vault-cli';
+import Store from '../../common/store-manager/store';
 import Web3 from 'web3';
-import { Catch, CatchClass, Step } from '../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 
 @CatchClass<AccountKeyVaultService>()
-export default class AccountKeyVaultService extends KeyVaultCliService {
-  private readonly storeService: StoreService;
+export default class AccountKeyVaultService extends KeyVaultCli {
+  private readonly store: Store;
 
   constructor() {
     super();
-    this.storeService = storeService;
+    this.store = Store.getStore();
   }
 
   @Step({
@@ -19,13 +19,13 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     displayMessage: 'CLI Create Wallet failed'
   })
   async createWallet(): Promise<void> {
-    if (this.storeService.get('keyVaultStorage')) return;
+    if (this.store.get('keyVaultStorage')) return;
     const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   @Step({
@@ -37,18 +37,18 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
   })
   async createAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account create --seed=${this.storeService.get('seed')} --storage=${this.storeService.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account create --seed=${this.store.get('seed')} --storage=${this.store.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Create account error: ${stderr}`);
     }
     console.log(stdout);
-    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   async listAccounts(): Promise<any> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account list --storage=${this.storeService.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account list --storage=${this.store.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Get last created account error: ${stderr}`);
@@ -72,7 +72,7 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
     }
     const publicKeyWithoutPrefix = pubKey.replace(/^(0x)/, '');
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --storage=${this.storeService.get('keyVaultStorage')} --public-key=${publicKeyWithoutPrefix}`
+      `${this.executablePath} wallet account deposit-data --storage=${this.store.get('keyVaultStorage')} --public-key=${publicKeyWithoutPrefix}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
@@ -105,20 +105,19 @@ export default class AccountKeyVaultService extends KeyVaultCliService {
 
   async deleteLastIndexedAccount(): Promise<void> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account delete --storage=${this.storeService.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account delete --storage=${this.store.get('keyVaultStorage')}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.storeService.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
   }
 
   async generatePublicKey(): Promise<void> {
-    for (let i = 0; i < 10; i ++) {
-      const { stdout, stderr } = await this.executor(
-        `${this.executablePath} wallet public-key generate --seed=${this.storeService.get('seed')} --index=${i}`
-      );
+    for (let i = 0; i < 10; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const { stdout, stderr } = await this.executor(`${this.executablePath} wallet public-key generate --seed=${this.store.get('seed')} --index=${i}`);
       if (stderr) {
         throw new Error(`Cli error: ${stderr}`);
       }

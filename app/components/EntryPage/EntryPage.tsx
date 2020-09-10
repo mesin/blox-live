@@ -18,10 +18,11 @@ import {loadAccounts} from '../Accounts/actions';
 import accountsSaga from '../Accounts/saga';
 import * as accountsSelectors from '../Accounts/selectors';
 
-import {kevaultLoadLatestVersion} from '../KeyVaultManagement/actions';
+import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import walletSaga from '../KeyVaultManagement/saga';
 import {getLatestVersion} from '../KeyVaultManagement/selectors';
 
+import {loadEventLogs} from '../Organization/actions';
 import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
 import {loadEventLogs} from '../Organization/actions';
@@ -87,7 +88,7 @@ const EntryPage = (props: Props) => {
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
     const didntLoadVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
 
-    if (!walletLatestVersion) {
+    if (!walletLatestVersion && !walletErorr) {
       loadWalletLatestVersion();
     }
     if (didntLoadWallet) {
@@ -195,7 +196,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAllAccounts: () => dispatch(loadAccounts()),
-  loadWalletLatestVersion: () => dispatch(kevaultLoadLatestVersion()),
+  loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
   callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion())
 });

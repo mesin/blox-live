@@ -19,14 +19,12 @@ const Dashboard = (props: Props) => {
   const { setFinishedWizard } = wizardActions;
 
   const onPasswordModalClick = () => {
-    setModalDisplay({ show: true, type: MODAL_TYPES.ADD_VALIDATOR, text: '', });
     setFinishedWizard(false);
     setAddAnotherAccount(true);
   };
 
   const hideModal = () => setModalDisplay({ show: false, type: '', text: '', });
 
-  console.log('showModal', showModal);
   if (showModal) {
     switch (modalType) {
       case MODAL_TYPES.REACTIVATION:

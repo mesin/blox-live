@@ -7,5 +7,7 @@ export const getIsUpdateLoading = (organizationState: State) => organizationStat
 export const getOrganization = (organizationState: State) => organizationState.data;
 
 export const getEventLogs = (organizationState: State) => organizationState.eventLogs;
+
 export const getEventLogsLoadingStatus = (organizationState: State) => organizationState.isLoadingEventLogs;
+
 export const getEventLogsError = (organizationState: State) => organizationState.eventLogsError;

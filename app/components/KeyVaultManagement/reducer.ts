@@ -8,6 +8,8 @@ const initialState = {
   cloudProvider: '',
   mnemonic: '',
   latestVersion: '',
+  isPasswordValid: false,
+  isLoadingPasswordValidation: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -38,6 +40,17 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
       break;
+    case actionTypes.KEYVAULT_CHECK_PASSWORD_VALIDATION:
+      draft.isLoadingPasswordValidation = true;
+      break;
+    case actionTypes.KEYVAULT_SET_PASSWORD_VALIDATION:
+      draft.isPasswordValid = action.payload;
+      draft.isLoadingPasswordValidation = initialState.isLoadingPasswordValidation;
+      break;
+    case actionTypes.KEYVAULT_CLEAR_PASSWORD_DATA:
+      draft.isPasswordValid = initialState.isPasswordValid;
+      draft.isLoadingPasswordValidation = initialState.isLoadingPasswordValidation;
+      break;
     case actionTypes.KEYVAULT_CLEAR_DATA:
     case LOGOUT:
       draft.isLoading = initialState.isLoading;
@@ -45,6 +58,8 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       draft.cloudProvider = initialState.cloudProvider;
       draft.mnemonic = initialState.mnemonic;
       draft.latestVersion = initialState.latestVersion;
+      draft.isPasswordValid = initialState.isPasswordValid;
+      draft.isLoadingPasswordValidation = initialState.isLoadingPasswordValidation;
       break;
   }
 });

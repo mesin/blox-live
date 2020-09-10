@@ -5,7 +5,7 @@ import path from 'path';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
-export class LoggerService {
+export class Logger {
   private readonly logger: winston.Logger;
   private readonly userDataPath: string;
 
@@ -15,14 +15,14 @@ export class LoggerService {
       level: 'info',
       format: winston.format.json(),
       defaultMeta: {
-        service: 'user-service'
+        service: 'blox-live'
       },
       transports: [
         new winston.transports.Console(),
         new winston.transports.DailyRotateFile({
           filename: path.join(this.userDataPath, 'logs/error.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '10k',
+          maxSize: '1k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'error'
@@ -30,7 +30,7 @@ export class LoggerService {
         new winston.transports.DailyRotateFile({
           filename: path.join(this.userDataPath, 'logs/debug.log'),
           datePattern: 'YYYY-MM-DD-HH',
-          maxSize: '10k',
+          maxSize: '1k',
           maxFiles: 1,
           // zippedArchive: true,
           level: 'debug'
