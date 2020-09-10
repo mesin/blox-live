@@ -11,10 +11,10 @@ const Wrapper = styled.div`
 `;
 
 const Wallet = (props) => {
-  const { isActive, ...rest } = props;
+  const { isActive, isNeedUpdate, ...rest } = props;
   return (
     <Wrapper>
-      <UpdateBanner isNeedUpdate />
+      <UpdateBanner isNeedUpdate={isNeedUpdate} />
       <StatusBar isActive={isActive} />
       <Boxes isActive={isActive} {...rest} />
     </Wrapper>
@@ -23,6 +23,7 @@ const Wallet = (props) => {
 
 Wallet.propTypes = {
   isActive: PropTypes.bool,
+  isNeedUpdate: PropTypes.bool,
   summary: PropTypes.object,
 };
 

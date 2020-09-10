@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Rocket from '../../../assets/rocket.svg';
 import Icon from '../../../../../common/components/Icon';
+import {openExternalLink} from '../../../../common/service';
 
 const EmptyWrapper = styled.div``;
 
@@ -47,7 +48,13 @@ const ButtonWrapper = styled.div`
   display: flex;
   align-items: center;
   text-align: center;
-  onClick:
+  cursor: pointer;
+  :hover {
+    color: ${({theme, color}) => (color && theme.primary700) || '#ffffff'};
+  }
+  :active {
+    color: ${({theme, color}) => (color && theme.primary800) || '#ffffff'};
+  }
 `;
 
 const Button = styled.div`
@@ -68,7 +75,7 @@ const UpdateBanner = (props) => {
           {'Please update Blox Live to the latest app version for optimal staking experience.'}
         </Description>
       </TextWrapper>
-      <ButtonWrapper onClick={() => false}>
+      <ButtonWrapper onClick={() => openExternalLink('https://www.bloxstaking.com/beta/ ')}>
         <Button>
           {'Update Now'}
         </Button>
@@ -76,7 +83,6 @@ const UpdateBanner = (props) => {
           name={'chevron-right'}
           color={'primary900'}
           fontSize="15px"
-          onClick={() => false}
         />
       </ButtonWrapper>
     </Wrapper>
