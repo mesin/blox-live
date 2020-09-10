@@ -34,8 +34,12 @@ export default class WalletService {
     await BloxApiService.request(METHOD.DELETE, 'organizations');
   }
 
-  async getLatestTag() {
+  async getLatestKeyVaultVersion() {
     return await BloxApiService.request(METHOD.GET, 'version/key-vault');
+  }
+
+  async getLatestBloxLiveVersion() {
+    return await BloxApiService.request(METHOD.GET, 'version/blox-live');
   }
 
   @Step({

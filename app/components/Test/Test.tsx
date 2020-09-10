@@ -14,6 +14,8 @@ import AccountKeyVaultService from '../../backend/account/account-key-vault.serv
 import KeyVaultService from '../../backend/key-vault/key-vault.service';
 import AccountService from '../../backend/account/account.service';
 import WalletService from '../../backend/wallet/wallet.service';
+import OrganizationService from '../../backend/organization/organization.service';
+import { Link } from 'react-router-dom/esm/react-router-dom';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -35,6 +37,7 @@ const Test = () => {
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  const organizationService = new OrganizationService();
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -51,6 +54,7 @@ const Test = () => {
   }
   return (
     <div>
+      <Link to={'/'} style={{marginLeft: '16px'}}>Back</Link>
       <h1>CLI commands</h1>
       <div>
         <h2>Restore Process</h2>
@@ -241,14 +245,34 @@ const Test = () => {
       <h2>Blox API</h2>
       <div>
         <button onClick={async () => {
+          console.log(await walletService.get());
+        }}>
+          Get wallet
+        </button>
+        <button onClick={async () => {
           console.log(await accountService.get());
         }}>
           Get Accounts
         </button>
         <button onClick={async () => {
-          console.log(await walletService.getLatestTag());
+          console.log(await walletService.getLatestKeyVaultVersion());
         }}>
-          Get Latest Tag
+          Get Latest KeyVault Version
+        </button>
+        <button onClick={async () => {
+          console.log(await walletService.getLatestBloxLiveVersion());
+        }}>
+          Get Latest Blox-Live Version
+        </button>
+        <button onClick={async () => {
+          console.log(await organizationService.get());
+        }}>
+          Get Organization Profile
+        </button>
+        <button onClick={async () => {
+          console.log(await organizationService.getEventLogs());
+        }}>
+          Get Organization Event Logs
         </button>
       </div>
       <p/>
