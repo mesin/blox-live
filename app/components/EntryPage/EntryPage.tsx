@@ -22,7 +22,6 @@ import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import walletSaga from '../KeyVaultManagement/saga';
 import {getLatestVersion} from '../KeyVaultManagement/selectors';
 
-import {loadEventLogs} from '../Organization/actions';
 import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
 import {loadEventLogs} from '../Organization/actions';

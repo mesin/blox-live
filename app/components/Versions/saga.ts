@@ -2,7 +2,7 @@ import {call, put, takeLatest} from 'redux-saga/effects';
 import {notification} from 'antd';
 import {LOAD_BLOX_LIVE_VERSION} from './actionTypes';
 import * as actions from './actions';
-import VersionsService from '../../backend/versions/version.service';
+import VersionsService from '../../backend/services/versions/version.service';
 
 const versionsService = new VersionsService();
 
