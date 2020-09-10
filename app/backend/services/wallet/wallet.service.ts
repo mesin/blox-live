@@ -1,9 +1,9 @@
-import BloxApi from '../common/communication-manager/blox-api';
-import { METHOD } from '../common/communication-manager/constants';
-import Store from '../common/store-manager/store';
-import KeyVaultSsh from '../common/communication-manager/key-vault-ssh';
-import { CatchClass, Step } from '../decorators';
-import { Logger } from '../common/logger/logger';
+import BloxApi from '../../common/communication-manager/blox-api';
+import { METHOD } from '../../common/communication-manager/constants';
+import Store from '../../common/store-manager/store';
+import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
+import { CatchClass, Step } from '../../decorators';
+import { Logger } from '../../common/logger/logger';
 
 @CatchClass<WalletService>()
 export default class WalletService {
@@ -34,12 +34,8 @@ export default class WalletService {
     await BloxApi.request(METHOD.DELETE, 'organizations');
   }
 
-  async getLatestKeyVaultVersion() {
+  async getLatestTag() {
     return await BloxApi.request(METHOD.GET, 'version/key-vault');
-  }
-
-  async getLatestBloxLiveVersion() {
-    return await BloxApi.request(METHOD.GET, 'version/blox-live');
   }
 
   @Step({
@@ -54,7 +50,11 @@ export default class WalletService {
         method: METHOD.DELETE,
         route: `${BloxApi.baseUrl}/organizations`
       });
-      await ssh.execCommand(command, {});
+      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
+      if (+statusCode > 201) {
+        console.log(`ssh error - ${stderr} - retrying directly`);
+        await this.delete();
+      }
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.delete();
@@ -78,7 +78,11 @@ export default class WalletService {
         data: payload,
         route: `${BloxApi.baseUrl}/wallets/sync`
       });
-      await ssh.execCommand(command, {});
+      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
+      if (+statusCode > 201) {
+        console.log(`ssh error - ${stderr} - retrying directly`);
+        await this.sync(payload);
+      }
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.sync(payload);
@@ -102,7 +106,11 @@ export default class WalletService {
         data: payload,
         route: `${BloxApi.baseUrl}/wallets/sync`
       });
-      await ssh.execCommand(command, {});
+      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
+      if (+statusCode > 201) {
+        console.log(`ssh error - ${stderr} - retrying directly`);
+        await this.reSync(payload);
+      }
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.reSync(payload);

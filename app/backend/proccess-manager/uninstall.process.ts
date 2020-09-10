@@ -1,6 +1,6 @@
-import AwsService from '../aws/aws.service';
+import AwsService from '../services/aws/aws.service';
 import ProcessClass from './process.class';
-import WalletService from '../wallet/wallet.service';
+import WalletService from '../services/wallet/wallet.service';
 
 export default class UninstallProcess extends ProcessClass {
   private readonly awsService: AwsService;

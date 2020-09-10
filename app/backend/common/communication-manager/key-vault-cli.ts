@@ -1,9 +1,8 @@
 import { exec } from 'child_process';
-import { execPath } from '../../binaries';
+import { execPath } from '../../../binaries';
 import util from 'util';
 
-
-export default class KeyVaultCliService {
+export default class KeyVaultCli {
   protected readonly executablePath: string;
   protected readonly executor: (command: string) => Promise<any>;
 

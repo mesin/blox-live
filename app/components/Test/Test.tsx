@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { storeService } from '../../backend/store-manager/store.service';
+import Store from '../../backend/common/store-manager/store';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -9,12 +9,12 @@ import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
 import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
-import SeedService from '../../backend/key-vault/seed.service';
-import AccountKeyVaultService from '../../backend/account/account-key-vault.service';
-import KeyVaultService from '../../backend/key-vault/key-vault.service';
-import AccountService from '../../backend/account/account.service';
-import WalletService from '../../backend/wallet/wallet.service';
-import OrganizationService from '../../backend/organization/organization.service';
+import SeedService from '../../backend/services/key-vault/seed.service';
+import AccountKeyVaultService from '../../backend/services/account/account-key-vault.service';
+import KeyVaultService from '../../backend/services/key-vault/key-vault.service';
+import AccountService from '../../backend/services/account/account.service';
+import WalletService from '../../backend/services/wallet/wallet.service';
+import OrganizationService from '../../backend/services/organization/organization.service';
 import { Link } from 'react-router-dom/esm/react-router-dom';
 
 class Listener implements Observer {
@@ -30,38 +30,46 @@ class Listener implements Observer {
   }
 }
 
-let configIsSet = false;
 const Test = () => {
   const seedService = new SeedService();
   const accountKeyVaultService = new AccountKeyVaultService();
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  const store: Store = Store.getStore();
   const organizationService = new OrganizationService();
+  let [cryptoKey, setCryptoKey] = useState('');
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
-
-  if (!configIsSet) {
-    configIsSet = true;
-    if (storeService.get('credentials')) {
-      const credentials: any = storeService.get('credentials');
-      setAccessKeyId(credentials.accessKeyId);
-      setSecretAccessKey(credentials.secretAccessKey);
-    }
-  }
   return (
     <div>
       <Link to={'/'} style={{marginLeft: '16px'}}>Back</Link>
       <h1>CLI commands</h1>
       <div>
-        <h2>Restore Process</h2>
+        <h3>Step 0. Set password and init storage</h3>
+        <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)} placeholder="Password" />
+        <br />
+        <button
+          onClick={async () => {
+            store.setCryptoKey(cryptoKey);
+            if (store.get('credentials')) {
+              const credentials: any = store.get('credentials');
+              setAccessKeyId(credentials.accessKeyId);
+              setSecretAccessKey(credentials.secretAccessKey);
+            }
+          }}
+        >
+          Set password for 15mins
+        </button>
+
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
-            storeService.clear();
+            Store.getStore().clear();
+            cryptoKey = '';
             accessKeyId = '';
             secretAccessKey = '';
             mnemonic = '';
@@ -73,12 +81,10 @@ const Test = () => {
           Clean config
         </button>
         <h3>Step 2. Install server & key-vault</h3>
-        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)}
-               placeholder="Access Key"/>
-        <br/>
-        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)}
-               placeholder="Access Key Secret"/>
-        <br/>
+        <input type={'text'} value={accessKeyId} onChange={(event) => setAccessKeyId(event.target.value)} placeholder="Access Key" />
+        <br />
+        <input type={'text'} value={secretAccessKey} onChange={(event) => setSecretAccessKey(event.target.value)} placeholder="Access Key Secret" />
+        <br />
         <button
           onClick={async () => { // TODO: check this func
             const installProcess = new InstallProcess({ accessKeyId, secretAccessKey });
@@ -96,10 +102,9 @@ const Test = () => {
           Install
         </button>
         <h3>Step 3. Save mnemonic phrase</h3>
-        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)}
-               placeholder="Mnemonic phrase"/>
+        <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)} placeholder="Mnemonic phrase" />
         <button onClick={async () => {
-          await seedService.storeMnemonic(mnemonic, '');
+          await seedService.storeMnemonic(mnemonic);
         }}>
           Set mnemonic phrase
         </button>
@@ -227,9 +232,15 @@ const Test = () => {
         }}>
           Delete Last Indexed Account
         </button>
+        <br />
+        <button onClick={async () => {
+          const store: Store = Store.getStore();
+          console.log(store.get('seed'));
+        }}>
+          Show seed in console
+        </button>
         <br/>
-        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)}
-               placeholder="Public key"/>
+        <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key" />
         <button onClick={async () => {
           await accountKeyVaultService.getDepositData(publicKey);
         }}>
@@ -296,7 +307,7 @@ const Test = () => {
           Get Version
         </button>
         <button onClick={async () => {
-          const response = await keyVaultService.updateStorage({ data: storeService.get('keyVaultStorage') });
+          const response = await keyVaultService.updateStorage({ data: store.get('keyVaultStorage') });
           console.log(response.data.status);
         }}>
           Update Storage

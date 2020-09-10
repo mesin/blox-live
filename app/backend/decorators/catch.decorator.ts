@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { LoggerService } from '../logger/logger.service';
+import { Logger } from '../common/logger/logger';
 
 const catchDecoratorStore = {
   handler: null,
@@ -10,7 +10,7 @@ const catchDecoratorStore = {
 
 const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
   return function(target, key, descriptor) {
-    const logger = new LoggerService();
+    const logger = new Logger();
     if (toReflect) {
       Reflect.defineMetadata(key, true, target, key);
     }

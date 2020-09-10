@@ -1,7 +1,7 @@
-import HttpService from './http.service';
+import Http from './http';
 import axios from 'axios';
 
-export default class AuthApiService extends HttpService {
+export default class AuthApi extends Http {
   constructor() {
     super();
     this.baseUrl = `https://${process.env.AUTH0_DOMAIN}/oauth`;

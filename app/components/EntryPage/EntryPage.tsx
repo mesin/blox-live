@@ -16,15 +16,15 @@ import {loadAccounts} from '../Accounts/actions';
 import accountsSaga from '../Accounts/saga';
 import * as accountsSelectors from '../Accounts/selectors';
 
-import {kevaultLoadLatestVersion} from '../KeyVaultManagement/actions';
+import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import walletSaga from '../KeyVaultManagement/saga';
 import {getLatestVersion} from '../KeyVaultManagement/selectors';
 
+import {loadEventLogs} from '../Organization/actions';
 import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
 
 import {useInjectSaga} from '../../utils/injectSaga';
-import {loadEventLogs} from '../Organization/actions';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -73,7 +73,7 @@ const EntryPage = (props: Props) => {
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
 
-    if (!walletLatestVersion) {
+    if (!walletLatestVersion && !walletErorr) {
       loadWalletLatestVersion();
     }
     if (didntLoadWallet) {
@@ -162,7 +162,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAllAccounts: () => dispatch(loadAccounts()),
-  loadWalletLatestVersion: () => dispatch(kevaultLoadLatestVersion()),
+  loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
 });
 

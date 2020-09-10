@@ -9,13 +9,17 @@ import { Title, Paragraph, ErrorMessage } from '../../common';
 import { useInjectSaga } from 'utils/injectSaga';
 import { precentageCalculator } from 'utils/service';
 
-import * as keyVaultActions from '../../../../ProcessRunner/actions';
+import * as actionsFromProcessRunner from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
-import saga from '../../../../ProcessRunner/saga';
+import processRunnerSaga from '../../../../ProcessRunner/saga';
+
+import * as actionsFromKeyvault from '../../../../KeyVaultManagement/actions';
+import keyvaultSaga from '../../../../KeyVaultManagement/saga';
 
 import Guide from '../Guide';
 
-const key = 'processRunner';
+const processRunnerKey = 'processRunner';
+const keyvaultKey = 'keyvault';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -47,8 +51,9 @@ const ProgressWrapper = styled.div`
 `;
 
 const CreateServer = (props) => {
-  const { page, setPage, isLoading, isDone, processName, error, installMessage, actions, overallSteps, currentStep } = props;
-  const { processSubscribe, processClearState } = actions;
+  const { page, setPage, isLoading, isDone, processName, error, installMessage, processRunnerActions, keyvaultActions, overallSteps, currentStep } = props;
+  const { processSubscribe, processClearState } = processRunnerActions;
+  const { keyvaultSavePassword } = keyvaultActions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(true);
@@ -56,7 +61,8 @@ const CreateServer = (props) => {
   const isPasswordInputDisabled = isLoading || isDone;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
 
-  useInjectSaga({ key, saga, mode: '' });
+  useInjectSaga({ key: processRunnerKey, saga: processRunnerSaga, mode: '' });
+  useInjectSaga({ key: keyvaultKey, saga: keyvaultSaga, mode: '' });
 
   React.useEffect(() => {
     if (error) {
@@ -70,6 +76,7 @@ const CreateServer = (props) => {
 
   const onClick = async () => {
     if (!isButtonDisabled && !installMessage && !processName) {
+      keyvaultSavePassword('temp');
       const credentials = { accessKeyId, secretAccessKey };
       await processSubscribe('install', 'Checking KeyVault configuration...', credentials);
     }
@@ -119,20 +126,22 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(keyVaultActions, dispatch),
+  processRunnerActions: bindActionCreators(actionsFromProcessRunner, dispatch),
+  keyvaultActions: bindActionCreators(actionsFromKeyvault, dispatch),
 });
 
 CreateServer.propTypes = {
   page: PropTypes.number,
   setPage: PropTypes.func,
-  actions: PropTypes.object,
+  processRunnerActions: PropTypes.object,
+  keyvaultActions: PropTypes.object,
   isLoading: PropTypes.bool,
   isDone: PropTypes.bool,
   processName: PropTypes.string,
   installMessage: PropTypes.string,
   overallSteps: PropTypes.number,
   currentStep: PropTypes.number,
-  error: PropTypes.object,
+  error: PropTypes.string,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreateServer);

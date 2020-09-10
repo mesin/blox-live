@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store';
 // TODO import from .env
 const baseStoreName = 'blox';
 
-export default class BaseStoreService {
+export default class BaseStore {
   protected readonly baseStore: ElectronStore;
   protected baseStoreName: string;
 

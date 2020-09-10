@@ -1,7 +1,7 @@
-import AccountKeyVaultService from '../account/account-key-vault.service';
-import KeyVaultService from '../key-vault/key-vault.service';
+import AccountKeyVaultService from '../services/account/account-key-vault.service';
+import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
-import AccountService from '../account/account.service';
+import AccountService from '../services/account/account.service';
 
 export default class AccountCreateProcess extends ProcessClass {
   private readonly accountKeyVaultService: AccountKeyVaultService;
