@@ -4,6 +4,7 @@ import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import { CatchClass, Step } from '../../decorators';
 import { Logger } from '../../common/logger/logger';
+
 @CatchClass<WalletService>()
 export default class WalletService {
   private readonly store: Store;
