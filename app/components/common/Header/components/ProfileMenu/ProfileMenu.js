@@ -56,6 +56,10 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.gray300};
 `;
 
+const canViewTestPage = (profile) => {
+  return profile && profile.email && profile.email.endsWith('@blox.io');
+};
+
 const ProfileMenu = forwardRef(
   ({ isOpen, toggleOpen, profile, logout }, ref) => (
     <Wrapper ref={ref}>
@@ -69,9 +73,11 @@ const ProfileMenu = forwardRef(
             <Email>{profile.email}</Email>
           </MenuItem>
           <Separator />
-          <MenuItem>
-            <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
-          </MenuItem>
+          {canViewTestPage(profile) && (
+            <MenuItem>
+              <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
+            </MenuItem>
+          )}
           <MenuItem>
             <LogoutButton onClick={logout}>Log Out</LogoutButton>
           </MenuItem>
