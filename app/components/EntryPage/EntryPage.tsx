@@ -9,20 +9,20 @@ import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
 import {loadWallet} from '../Wizard/actions';
-import wizardSaga from '../Wizard/saga';
 import * as wizardSelectors from '../Wizard/selectors';
+import wizardSaga from '../Wizard/saga';
 
 import {loadAccounts} from '../Accounts/actions';
-import accountsSaga from '../Accounts/saga';
 import * as accountsSelectors from '../Accounts/selectors';
+import accountsSaga from '../Accounts/saga';
 
 import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
-import walletSaga from '../KeyVaultManagement/saga';
 import {getLatestVersion} from '../KeyVaultManagement/selectors';
+import walletSaga from '../KeyVaultManagement/saga';
 
 import {loadEventLogs} from '../Organization/actions';
-import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
+import organizationSaga from '../Organization/saga';
 
 import {useInjectSaga} from '../../utils/injectSaga';
 
