@@ -90,7 +90,7 @@ export default class KeyVaultService {
     }
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const keyVaultVersion = await this.walletService.getLatestTag();
+    const keyVaultVersion = await this.walletService.getLatestKeyVaultVersion();
     this.store.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "${process.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,

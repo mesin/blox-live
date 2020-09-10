@@ -51,7 +51,7 @@ function* startSavingMnemonic(action) {
 
 function* startLoadingLatestVersion() {
   try {
-    const latestVersion = yield call([walletService, 'getLatestTag']);
+    const latestVersion = yield call([walletService, 'getLatestKeyVaultVersion']);
     yield put(actions.keyvaultLoadLatestVersionSuccess(latestVersion));
   } catch (error) {
     yield put(actions.keyvaultLoadLatestVersionFailure(error));
