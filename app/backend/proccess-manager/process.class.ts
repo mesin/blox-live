@@ -84,6 +84,7 @@ export default class ProcessClass implements Subject {
       if (action.params) extra = { ...extra, ...action.params };
       const result = await action.instance[action.method].bind(action.instance)(extra);
       const { error = null, step = null } = { ...result };
+      this.action.method = null;
       if (error) {
         return;
       }
