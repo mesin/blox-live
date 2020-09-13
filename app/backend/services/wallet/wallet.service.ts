@@ -34,14 +34,6 @@ export default class WalletService {
     await BloxApi.request(METHOD.DELETE, 'organizations');
   }
 
-  async getLatestKeyVaultVersion() {
-    return await BloxApi.request(METHOD.GET, 'version/key-vault');
-  }
-
-  async getLatestBloxLiveVersion() {
-    return await BloxApi.request(METHOD.GET, 'version/blox-live');
-  }
-
   @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']

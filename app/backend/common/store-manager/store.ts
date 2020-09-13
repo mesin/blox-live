@@ -145,8 +145,12 @@ export default class Store extends BaseStore {
   isCryptoKeyValid(password: string) {
     const userInputCryptoKey = this.createCryptoKey(password);
     const encryptedSavedCredentials = this.storage.get('credentials');
-    const decryptedUserInputCredentials = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
-    return !!decryptedUserInputCredentials;
+    try {
+      this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @Step({

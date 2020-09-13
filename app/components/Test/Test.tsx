@@ -14,6 +14,7 @@ import AccountKeyVaultService from '../../backend/services/account/account-key-v
 import KeyVaultService from '../../backend/services/key-vault/key-vault.service';
 import AccountService from '../../backend/services/account/account.service';
 import WalletService from '../../backend/services/wallet/wallet.service';
+import VersionService from '../../backend/services/version/version.service';
 import OrganizationService from '../../backend/services/organization/organization.service';
 import { Link } from 'react-router-dom/esm/react-router-dom';
 
@@ -36,6 +37,7 @@ const Test = () => {
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  const versionService = new VersionService();
   const store: Store = Store.getStore();
   const organizationService = new OrganizationService();
   let [cryptoKey, setCryptoKey] = useState('');
@@ -260,12 +262,12 @@ const Test = () => {
           Get Accounts
         </button>
         <button onClick={async () => {
-          console.log(await walletService.getLatestKeyVaultVersion());
+          console.log(await versionService.getLatestKeyVaultVersion());
         }}>
           Get Latest KeyVault Version
         </button>
         <button onClick={async () => {
-          console.log(await walletService.getLatestBloxLiveVersion());
+          console.log(await versionService.getLatestBloxLiveVersion());
         }}>
           Get Latest Blox-Live Version
         </button>

@@ -3,11 +3,11 @@ import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 import SeedService from 'backend/services/key-vault/seed.service';
-import WalletService from 'backend/services/wallet/wallet.service';
+import VersionService from 'backend/services/version/version.service';
 import Store from 'backend/common/store-manager/store';
 
 const seedService = new SeedService();
-const walletService = new WalletService();
+const versionService = new VersionService();
 const store: Store = Store.getStore();
 
 function* savePassword(action) {
@@ -23,6 +23,9 @@ function* replacePassword(action) {
 function* validatePassword(action) {
   const { payload } = action;
   const isValid = yield call([store, 'isCryptoKeyValid'], payload);
+  if (isValid) {
+    yield call([store, 'setCryptoKey'], payload);
+  }
   yield put(actions.keyvaultSetPasswordValidation(isValid));
 }
 
@@ -51,7 +54,7 @@ function* startSavingMnemonic(action) {
 
 function* startLoadingLatestVersion() {
   try {
-    const latestVersion = yield call([walletService, 'getLatestKeyVaultVersion']);
+    const latestVersion = yield call([versionService, 'getLatestKeyVaultVersion']);
     yield put(actions.keyvaultLoadLatestVersionSuccess(latestVersion));
   } catch (error) {
     yield put(actions.keyvaultLoadLatestVersionFailure(error));
