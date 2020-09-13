@@ -10,7 +10,6 @@ const catchDecoratorStore = {
 
 const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
   return function(target, key, descriptor) {
-    const logger = new Logger();
     if (toReflect) {
       Reflect.defineMetadata(key, true, target, key);
     }
@@ -19,29 +18,45 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
       descriptor = Object.getOwnPropertyDescriptor(target, key);
     }
     const originalMethod = descriptor.value;
-    descriptor.value = async function(...args) {
-      try {
-        return await originalMethod.apply(this, args);
-      } catch (error) {
-        const { handler } = catchDecoratorStore;
-        const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
-        const extendedError = { error, displayMessage };
-        console.error(extendedError);
-        logger.error(displayMessage, error);
-        if (payload.localHandler) {
-          return payload.localHandler.call(null, extendedError, this);
+    const isAsync = originalMethod.constructor.name === 'AsyncFunction';
+    if (isAsync) {
+      descriptor.value = async function(...args) {
+        try {
+          return await originalMethod.apply(this, args);
+        } catch (error) {
+          handleCatchFunctionError(key, error, payload);
         }
-        if (handler) {
-          const result = handler.call(null, extendedError, this);
-          catchDecoratorStore.setHandler(null);
-          return result
+      };
+    } else {
+      descriptor.value = function(...args) {
+        try {
+          return originalMethod.apply(this, args);
+        } catch (error) {
+          handleCatchFunctionError(key, error, payload);
         }
-        throw new Error(displayMessage);
-      }
-    };
+      };
+    }
     return descriptor;
   };
 };
+
+function handleCatchFunctionError(key: string, error: Error, payload: any) {
+  const logger = new Logger();
+  const { handler } = catchDecoratorStore;
+  const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
+  const extendedError = { error, displayMessage };
+  console.error(extendedError);
+  logger.error(displayMessage, error);
+  if (payload.localHandler) {
+    return payload.localHandler.call(null, extendedError, this);
+  }
+  if (handler) {
+    const result = handler.call(null, extendedError, this);
+    catchDecoratorStore.setHandler(null);
+    return result;
+  }
+  throw new Error(displayMessage);
+}
 
 function Catch(payload: any = {}, toReflect: boolean = true) {
   return catchFunction(payload, toReflect);

@@ -15,13 +15,13 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
-  const { walletStatus, accounts, eventLogs, walletNeedsUpdate } = props;
+  const { walletStatus, accounts, eventLogs, walletNeedsUpdate, bloxLiveNeedsUpdate } = props;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
   const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
   return (
     <Wrapper>
-      <Wallet isActive={walletStatus === 'active'} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
+      <Wallet isActive={walletStatus === 'active'} isNeedUpdate={bloxLiveNeedsUpdate} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
       <EventLogs events={normalizedEventLogs} />
       <ModalsManager />
@@ -34,6 +34,7 @@ Dashboard.propTypes = {
   walletStatus: PropTypes.string,
   accounts: PropTypes.array,
   eventLogs: PropTypes.array,
+  bloxLiveNeedsUpdate: PropTypes.bool,
 };
 
 export default Dashboard;

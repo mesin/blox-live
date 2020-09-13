@@ -14,7 +14,9 @@ import AccountKeyVaultService from '../../backend/services/account/account-key-v
 import KeyVaultService from '../../backend/services/key-vault/key-vault.service';
 import AccountService from '../../backend/services/account/account.service';
 import WalletService from '../../backend/services/wallet/wallet.service';
-// import LoggerService from '../../backend/logger/logger.service';
+import VersionService from '../../backend/services/version/version.service';
+import OrganizationService from '../../backend/services/organization/organization.service';
+import { Link } from 'react-router-dom/esm/react-router-dom';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -35,7 +37,9 @@ const Test = () => {
   const accountService = new AccountService();
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
+  const versionService = new VersionService();
   const store: Store = Store.getStore();
+  const organizationService = new OrganizationService();
   let [cryptoKey, setCryptoKey] = useState('');
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
@@ -44,6 +48,7 @@ const Test = () => {
   let [processStatus, setProcessStatus] = useState('');
   return (
     <div>
+      <Link to={'/'} style={{marginLeft: '16px'}}>Back</Link>
       <h1>CLI commands</h1>
       <div>
         <h3>Step 0. Set password and init storage</h3>
@@ -93,7 +98,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Installation is done!');
-            // logger.debug('+ Congratulations. Installation is done!');
           }}
         >
           Install
@@ -101,7 +105,7 @@ const Test = () => {
         <h3>Step 3. Save mnemonic phrase</h3>
         <input type={'text'} value={mnemonic} onChange={(event) => setMnemonic(event.target.value)} placeholder="Mnemonic phrase" />
         <button onClick={async () => {
-          await seedService.storeMnemonic(mnemonic, '');
+          await seedService.storeMnemonic(mnemonic);
         }}>
           Set mnemonic phrase
         </button>
@@ -117,7 +121,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Account Created');
-            // logger.debug('+ Congratulations. Account Created');
           }}
         >
           Account Create
@@ -158,7 +161,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Uninstallation is done!');
-            // logger.debug('+ Uninstallation is done!');
           }}
         >
           Uninstall
@@ -174,7 +176,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Reboot is done!');
-            // logger.debug('+ Congratulations. Reboot is done!');
           }}
         >
           Reboot
@@ -190,7 +191,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+Clean Accounts from storage is done!');
-            // logger.debug('+Clean Accounts from storage is done!');
           }}
         >
           Clean Accounts from Storage
@@ -231,7 +231,6 @@ const Test = () => {
         </button>
         <br />
         <button onClick={async () => {
-          const store: Store = Store.getStore();
           console.log(store.get('seed'));
         }}>
           Show seed in console
@@ -253,14 +252,34 @@ const Test = () => {
       <h2>Blox API</h2>
       <div>
         <button onClick={async () => {
+          console.log(await walletService.get());
+        }}>
+          Get wallet
+        </button>
+        <button onClick={async () => {
           console.log(await accountService.get());
         }}>
           Get Accounts
         </button>
         <button onClick={async () => {
-          console.log(await walletService.getLatestTag());
+          console.log(await versionService.getLatestKeyVaultVersion());
         }}>
-          Get Latest Tag
+          Get Latest KeyVault Version
+        </button>
+        <button onClick={async () => {
+          console.log(await versionService.getLatestBloxLiveVersion());
+        }}>
+          Get Latest Blox-Live Version
+        </button>
+        <button onClick={async () => {
+          console.log(await organizationService.get());
+        }}>
+          Get Organization Profile
+        </button>
+        <button onClick={async () => {
+          console.log(await organizationService.getEventLogs());
+        }}>
+          Get Organization Event Logs
         </button>
       </div>
       <p/>
@@ -301,7 +320,7 @@ const Test = () => {
         </button>
       </div>
       <p/>
-      <textarea value={processStatus} cols={100} rows={10}></textarea>
+      <textarea value={processStatus} cols={100} rows={10} readOnly={true}></textarea>
     </div>
   );
 };

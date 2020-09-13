@@ -34,10 +34,6 @@ export default class WalletService {
     await BloxApi.request(METHOD.DELETE, 'organizations');
   }
 
-  async getLatestTag() {
-    return await BloxApi.request(METHOD.GET, 'version/key-vault');
-  }
-
   @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']
@@ -50,11 +46,7 @@ export default class WalletService {
         method: METHOD.DELETE,
         route: `${BloxApi.baseUrl}/organizations`
       });
-      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
-      if (+statusCode > 201) {
-        console.log(`ssh error - ${stderr} - retrying directly`);
-        await this.delete();
-      }
+      await ssh.execCommand(command, {});
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.delete();
@@ -78,11 +70,7 @@ export default class WalletService {
         data: payload,
         route: `${BloxApi.baseUrl}/wallets/sync`
       });
-      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
-      if (+statusCode > 201) {
-        console.log(`ssh error - ${stderr} - retrying directly`);
-        await this.sync(payload);
-      }
+      await ssh.execCommand(command, {});
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.sync(payload);
@@ -106,11 +94,7 @@ export default class WalletService {
         data: payload,
         route: `${BloxApi.baseUrl}/wallets/sync`
       });
-      const { stdout: statusCode, stderr } = await ssh.execCommand(command, {});
-      if (+statusCode > 201) {
-        console.log(`ssh error - ${stderr} - retrying directly`);
-        await this.reSync(payload);
-      }
+      await ssh.execCommand(command, {});
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.reSync(payload);

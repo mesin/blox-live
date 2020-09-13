@@ -4,9 +4,9 @@ export const normalizeCellsWidth = (columns) => columns.map((column) => column.w
 
 export const stringifyCellsWidth = (columnsWidth) => columnsWidth.toString().replace(/,/gi, ' ');
 
-export const handlePageClick = (data, offset, setPagedAccounts, setPaginationInfo, pageSize) => {
+export const handlePageClick = (data, offset, setPagedData, setPaginationInfo, pageSize) => {
   if (data) {
-    setPagedAccounts(data.slice(offset, Math.min(offset + pageSize, data.length)));
+    setPagedData(data.slice(offset, Math.min(offset + pageSize, data.length)));
     setPaginationInfo({
       offset,
       pageSize,

@@ -36,15 +36,11 @@ export const PaginationAction = {
 };
 
 const Pagination = ({paginationInfo, onPageClick}) => {
-  if (paginationInfo == null) {
-    onPageClick(0); // in order to start at page 1
-    return <Wrapper />;
-  }
   const pageLength = (paginationInfo.offset) + paginationInfo.pageSize;
 
   const paginationButtons = [
     {
-      key: 'page',
+      type: 'page',
       title: `${paginationInfo.offset + 1} ~ ${Math.min(pageLength, paginationInfo.total)} of ${paginationInfo.total}`,
       color: 'gray600',
       reverse: true,
@@ -52,7 +48,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       withBorder: false
     },
     {
-      key: PaginationAction.FIRST,
+      type: PaginationAction.FIRST,
       title: 'First',
       icon: 'first-page',
       iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
@@ -62,7 +58,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       withBorder: true
     },
     {
-      key: PaginationAction.PREVIEW,
+      type: PaginationAction.PREVIEW,
       title: 'Prev',
       icon: 'chevron-left',
       iconColor: `${paginationInfo.offset > 0 ? 'primary900' : 'gray400'}`,
@@ -72,7 +68,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       withBorder: true
     },
     {
-      key: PaginationAction.NEXT,
+      type: PaginationAction.NEXT,
       title: 'Next',
       icon: 'chevron-right',
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
@@ -82,7 +78,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
       withBorder: true
     },
     {
-      key: PaginationAction.LAST,
+      type: PaginationAction.LAST,
       title: 'Last',
       icon: 'last-page',
       iconColor: `${pageLength < paginationInfo.total ? 'primary900' : 'gray400'}`,
@@ -115,9 +111,9 @@ const Pagination = ({paginationInfo, onPageClick}) => {
   };
 
   return (
-    paginationButtons.map(({key, title, icon, iconColor, color, reverse, clickable, withBorder}) => {
+    paginationButtons.map(({type, title, icon, iconColor, color, reverse, clickable, withBorder}, index) => {
       return reverse ? (
-        <Wrapper onClick={() => clickable ? onPaginationClick(key) : false}>
+        <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
           <Button color={color} withBorder={withBorder}>
             <Icon
               name={icon}
@@ -128,7 +124,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
           </Button>
         </Wrapper>
       ) : (
-        <Wrapper onClick={() => clickable ? onPaginationClick(key) : false}>
+        <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
           <Button color={color} withBorder={withBorder}>
             {title}
             <Icon

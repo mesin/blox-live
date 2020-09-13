@@ -1,12 +1,11 @@
 import React from 'react';
-import { ClickAwayListener } from '@material-ui/core';
-import { KeyCell, Status, Misc, Change, Balance } from './components';
+import {KeyCell, Status, Change, Apr, Balance} from './components';
 
 export default [
   {
     key: 'key',
     title: 'Key',
-    width: '40%',
+    width: '35%',
     isSort: true,
     valueRender: (value) => {
       return <KeyCell value={value} />;
@@ -15,32 +14,29 @@ export default [
   {
     key: 'currentBalance',
     title: 'Balance',
-    width: '20%',
+    width: '15%',
     isSort: true,
     valueRender: (balance) => <Balance balance={balance} />,
   },
   {
     key: 'change',
     title: 'Change',
-    width: '20%',
+    width: '15%',
     isSort: true,
     valueRender: (change) => <Change change={change} />,
   },
   {
-    key: 'status',
-    title: 'Status',
+    key: 'apr',
+    title: 'Est. APR(%)',
     width: '15%',
     isSort: true,
-    valueRender: (value) => <Status status={value} />,
+    valueRender: (change) => <Apr change={change} />,
   },
   {
-    key: 'misc',
-    title: '',
-    width: '5%',
-    valueRender: (misc) => (
-      <ClickAwayListener>
-        <Misc {...misc} />
-      </ClickAwayListener>
-    ),
-  },
+    key: 'status',
+    title: 'Status',
+    width: '10%',
+    isSort: true,
+    valueRender: (value) => <Status status={value} />,
+  }
 ];

@@ -6,13 +6,12 @@ import { STATUSES } from '../../../constants';
 const Wrapper = styled.div`
   width: 80px;
   height: 30px;
-  padding-right: 12px;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 300;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   text-transform: capitalize;
   color: #ffffff;
   background-color: ${({ theme, color }) => theme[color]};

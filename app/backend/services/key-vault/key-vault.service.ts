@@ -1,6 +1,6 @@
 import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
-import WalletService from '../wallet/wallet.service';
+import VersionService from '../version/version.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
@@ -9,13 +9,13 @@ import { CatchClass, Step } from '../../decorators';
 export default class KeyVaultService {
   private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
-  private readonly walletService: WalletService;
   private readonly keyVaultApi: KeyVaultApi;
+  private readonly versionService: VersionService;
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
-    this.walletService = new WalletService(storePrefix);
+    this.versionService = new VersionService();
     this.keyVaultApi = resolveKeyVaultApi(storePrefix);
   }
 
@@ -90,7 +90,7 @@ export default class KeyVaultService {
     }
     const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
     if (runAlready) return;
-    const keyVaultVersion = await this.walletService.getLatestTag();
+    const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     this.store.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
       `curl -L "${process.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,

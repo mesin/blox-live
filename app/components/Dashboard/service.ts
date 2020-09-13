@@ -1,16 +1,24 @@
 import moment from 'moment';
 
-const handleChange = (currentBalance, effectiveBalance) => {
-  if (currentBalance && effectiveBalance) {
-    return `${currentBalance - effectiveBalance}`;
+const initialBalance = 32.00; // TODO 32 hard coded. need to be a initial balance prop.
+
+const handleChange = (currentBalance) => {
+  if (currentBalance && initialBalance) {
+    return `${currentBalance - initialBalance}`;
   }
   return null;
 };
 
 export const normalizeAccountsData = (accounts) => {
   return accounts.map((account) => {
-    const { id, publicKey, activationTime, createdAt, currentBalance,
-      effectiveBalance, status, } = account;
+    const {
+      id,
+      publicKey,
+      activationTime,
+      createdAt,
+      currentBalance,
+      status,
+    } = account;
     const newAccount = { ...account };
 
     newAccount.key = {
@@ -20,7 +28,7 @@ export const normalizeAccountsData = (accounts) => {
       status
     };
 
-    newAccount.change = handleChange(currentBalance, effectiveBalance);
+    newAccount.change = handleChange(currentBalance);
     delete newAccount.publicKey;
     delete newAccount.activationTime;
     delete newAccount.date;
@@ -36,29 +44,26 @@ export const normalizeAccountsData = (accounts) => {
 export const summarizeAccounts = (accounts) => {
   const initialObject = {
     balance: 0.0,
+    sinceStart: 0.0,
     change: 0.0,
     totalChange: 0.0,
-    sinceStart: 0.0,
   };
   const summary = accounts.reduce((accumulator, value, index) => {
     const { effectiveBalance, currentBalance } = value;
-    if (Number.isNaN(effectiveBalance) || Number.isNaN(currentBalance)) {
-      return 'N/A';
+    if (Number.isNaN(parseFloat(effectiveBalance)) || Number.isNaN(parseFloat(currentBalance))) {
+      return accumulator;
     }
-    const difference = parseFloat(currentBalance) - parseFloat(effectiveBalance);
-    const precentage = (difference / parseFloat(effectiveBalance)) * 100;
-    const totalChange = accumulator.totalChange + precentage;
-
+    const difference = parseFloat(currentBalance) - initialBalance;
+    const percentage = (difference / initialBalance) * 100;
+    const totalChange = accumulator.totalChange + percentage;
     return {
       balance: accumulator.balance + parseFloat(currentBalance),
-      totalChange,
+      sinceStart: accumulator.sinceStart + (parseFloat(currentBalance) - initialBalance),
       change: index + 1 === accounts.length ? totalChange / accounts.length : 0,
-      sinceStart: accumulator.sinceStart + parseFloat(effectiveBalance),
+      totalChange,
     };
   }, initialObject);
-
-  const withFixedNumbers = fixNumOfDigits(summary);
-  return withFixedNumbers;
+  return fixNumOfDigits(summary);
 };
 
 const fixNumOfDigits = (summary) => {
@@ -95,4 +100,8 @@ export const normalizeEventLogs = (events) => {
     return a.createdAt - b.createdAt ? 1 : -1;
   });
   return normalizedEvents;
+};
+
+export const calculateAPR = (change) => {
+  return change !== undefined ? ((change / initialBalance) * 100) : null;
 };

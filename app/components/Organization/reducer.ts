@@ -1,6 +1,7 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
 import {State, Action} from './types';
+import {LOGOUT} from '../CallbackPage/actionTypes';
 
 export const initialState: State = {
   isLoading: false,
@@ -58,6 +59,11 @@ const organizationReducer = (state = initialState, action: Action) => produce(st
       break;
     case actionTypes.SHOW_ACTIVE_VALIDATORS_POP_UP:
       draft.activeValidators = action.payload;
+      break;
+    case LOGOUT:
+      draft.isLoadingEventLogs = initialState.isLoadingEventLogs;
+      draft.eventLogs = initialState.eventLogs;
+      draft.eventLogsError = initialState.eventLogsError;
       break;
   }
 });
