@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-import {LOGOUT} from '../CallbackPage/actionTypes';
 
 export const setOrganizationName = (organizationName: string) => ({
   type: actionTypes.SET_ORGANIZATION_NAME,
@@ -45,8 +44,4 @@ export const loadEventLogsSuccess = (events: Record<string, any>) => ({
 export const loadEventLogsFailure = (error: Record<string, any>) => ({
   type: actionTypes.LOAD_EVENT_LOGS_FAILURE,
   payload: { ...error }
-});
-
-export const logout = () => ({
-  type: LOGOUT,
 });

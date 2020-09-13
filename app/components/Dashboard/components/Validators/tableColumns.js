@@ -1,7 +1,5 @@
 import React from 'react';
-// import { ClickAwayListener } from '@material-ui/core';
-// eslint-disable-next-line import/named
-import {KeyCell, Status/* , Misc */, Change, Apr, Balance} from './components';
+import {KeyCell, Status, Change, Apr, Balance} from './components';
 
 export default [
   {
@@ -40,15 +38,5 @@ export default [
     width: '10%',
     isSort: true,
     valueRender: (value) => <Status status={value} />,
-  }/* ,
-  {
-    key: 'misc',
-    title: '',
-    width: '5%',
-    valueRender: (misc) => (
-      <ClickAwayListener>
-        <Misc {...misc} />
-      </ClickAwayListener>
-    ),
-  }, */
+  }
 ];

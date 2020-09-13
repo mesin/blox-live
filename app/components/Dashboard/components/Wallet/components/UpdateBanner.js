@@ -69,15 +69,15 @@ const UpdateBanner = (props) => {
       <Image src={Rocket} />
       <TextWrapper>
         <Title>
-          {'Version Update Required'}
+          Version Update Required
         </Title>
         <Description>
-          {'Please update Blox Live to the latest app version for optimal staking experience.'}
+          Please update Blox Live to the latest app version for optimal staking experience.
         </Description>
       </TextWrapper>
       <ButtonWrapper onClick={() => openExternalLink('https://www.bloxstaking.com/beta/ ')}>
         <Button>
-          {'Update Now'}
+          Update Now
         </Button>
         <Icon
           name={'chevron-right'}

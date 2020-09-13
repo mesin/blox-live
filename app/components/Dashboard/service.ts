@@ -1,7 +1,8 @@
 import moment from 'moment';
 
+const initialBalance = 32.00; // TODO 32 hard coded. need to be a initial balance prop.
+
 const handleChange = (currentBalance) => {
-  const initialBalance = 32.00; // TODO 32 hard coded. need to be a initial balance prop.
   if (currentBalance && initialBalance) {
     return `${currentBalance - initialBalance}`;
   }
@@ -52,13 +53,12 @@ export const summarizeAccounts = (accounts) => {
     if (Number.isNaN(parseFloat(effectiveBalance)) || Number.isNaN(parseFloat(currentBalance))) {
       return accumulator;
     }
-    const initialBalance = '32.00'; // TODO 32 hard coded. need to be a initial balance prop.
-    const difference = parseFloat(currentBalance) - parseFloat(initialBalance);
-    const percentage = (difference / parseFloat(initialBalance)) * 100;
+    const difference = parseFloat(currentBalance) - initialBalance;
+    const percentage = (difference / initialBalance) * 100;
     const totalChange = accumulator.totalChange + percentage;
     return {
       balance: accumulator.balance + parseFloat(currentBalance),
-      sinceStart: accumulator.sinceStart + (parseFloat(currentBalance) - parseFloat(initialBalance)),
+      sinceStart: accumulator.sinceStart + (parseFloat(currentBalance) - initialBalance),
       change: index + 1 === accounts.length ? totalChange / accounts.length : 0,
       totalChange,
     };
@@ -100,4 +100,8 @@ export const normalizeEventLogs = (events) => {
     return a.createdAt - b.createdAt ? 1 : -1;
   });
   return normalizedEvents;
+};
+
+export const calculateAPR = (change) => {
+  return change !== undefined ? ((change / initialBalance) * 100) : null;
 };
