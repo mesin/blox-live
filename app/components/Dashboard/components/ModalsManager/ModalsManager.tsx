@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '../../..';
 import { PasswordModal } from '../../../KeyVaultModals/Modals';
+import ActiveValidatorModal from '../../../ActiveValidatorModal';
 import * as actionsFromDashboard from '../../actions';
 import * as actionsFromWizard from '../../../Wizard/actions';
 import * as actionsFromAccounts from '../../../Accounts/actions';
 
 import * as selectors from '../../selectors';
 import { getDepositData } from '../../../Wizard/selectors';
+import { getActiveValidators } from '../../../Organization/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
-const Dashboard = (props: Props) => {
-  const { dashboardActions, accountsActions, wizardActions, showModal, modalType, depositData } = props;
+const ModalsManager = (props: Props) => {
+  const { dashboardActions, accountsActions, wizardActions, showModal, modalType, depositData, activeValidators } = props;
   const { setModalDisplay } = dashboardActions;
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
@@ -38,6 +40,11 @@ const Dashboard = (props: Props) => {
         return null;
       case MODAL_TYPES.ADD_VALIDATOR:
         return <PasswordModal onClick={onPasswordModalClick} onClose={() => hideModal()} />;
+      case MODAL_TYPES.ACTIVE_VALIDATOR:
+        if (activeValidators.length > 0) {
+          return <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;
+        }
+        return null;
       default:
         return null;
     }
@@ -50,6 +57,7 @@ const mapStateToProps = (state) => ({
   modalType: selectors.getModalType(state),
   modalText: selectors.getModalText(state),
   depositData: getDepositData(state),
+  activeValidators: getActiveValidators(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -65,6 +73,7 @@ type Props = {
   showModal: boolean;
   modalType: string;
   depositData: string;
+  activeValidators: [{ publicKey: string }],
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(ModalsManager);

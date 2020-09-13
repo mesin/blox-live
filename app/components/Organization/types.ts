@@ -11,6 +11,7 @@ export type State = {
   eventLogs: any;
   isLoadingEventLogs: boolean;
   eventLogsError: string;
+  activeValidators: [],
 };
 
 export type Action = {

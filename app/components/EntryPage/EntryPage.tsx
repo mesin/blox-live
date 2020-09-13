@@ -3,10 +3,12 @@ import {connect} from 'react-redux';
 import {Switch, Route} from 'react-router-dom';
 import styled from 'styled-components';
 
-import {Loader} from '../../common/components';
+import {Loader} from 'common/components';
 import Dashboard from '../Dashboard';
 import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
+
+import { setModalDisplay } from '../Dashboard/actions';
 
 import {loadWallet} from '../Wizard/actions';
 import * as wizardSelectors from '../Wizard/selectors';
@@ -82,15 +84,12 @@ const EntryPage = (props: Props) => {
     if (didntLoadAccounts) {
       callLoadAllAccounts();
     }
-
     if (didntLoadEventLogs) {
       callLoadEventLogs();
     }
   }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion, isLoadingEventLogs]);
 
   const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
-  console.log('walletCurrentVersion', walletCurrentVersion);
-  console.log('walletLatestVersion', walletLatestVersion);
 
   const otherProps = {
     walletNeedsUpdate,
@@ -164,6 +163,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAllAccounts: () => dispatch(loadAccounts()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
+  callSetModalDisplay: (configObject) => dispatch(setModalDisplay(configObject)),
 });
 
 type State = Record<string, any>;

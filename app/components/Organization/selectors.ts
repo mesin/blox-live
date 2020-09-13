@@ -11,3 +11,5 @@ export const getEventLogs = (organizationState: State) => organizationState.even
 export const getEventLogsLoadingStatus = (organizationState: State) => organizationState.isLoadingEventLogs;
 
 export const getEventLogsError = (organizationState: State) => organizationState.eventLogsError;
+
+export const getActiveValidators = (state) => state.organization.activeValidators;

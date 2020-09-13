@@ -15,6 +15,7 @@ export const initialState: State = {
   isLoadingEventLogs: false,
   eventLogsError: null,
   eventLogs: null,
+  activeValidators: [],
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -54,6 +55,9 @@ const organizationReducer = (state = initialState, action: Action) => produce(st
     case actionTypes.LOAD_EVENT_LOGS_FAILURE:
       draft.eventLogsError = action.payload;
       draft.isLoadingEventLogs = false;
+      break;
+    case actionTypes.SHOW_ACTIVE_VALIDATORS_POP_UP:
+      draft.activeValidators = action.payload;
       break;
   }
 });

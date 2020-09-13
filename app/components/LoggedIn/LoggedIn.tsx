@@ -11,6 +11,7 @@ import EntryPage from '../EntryPage';
 import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
+import { onWindowClose } from 'common/service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -91,6 +92,7 @@ const LoggedIn = (props: Props) => {
         callSetFinishedWizard(true);
       }
       toggleLoadingAll(true);
+      onWindowClose();
     }
   }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isFinishedWizard]);
 
@@ -154,6 +156,7 @@ interface Props extends RouteComponentProps {
   isLoadingAccounts: boolean;
   accountsError: string;
   callLoadAccounts: () => void;
+  addAnotherAccount: boolean;
 
   // websocket
   isWebsocketLoading: boolean;

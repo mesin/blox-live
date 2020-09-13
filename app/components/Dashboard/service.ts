@@ -9,15 +9,8 @@ const handleChange = (currentBalance, effectiveBalance) => {
 
 export const normalizeAccountsData = (accounts) => {
   return accounts.map((account) => {
-    const {
-      id,
-      publicKey,
-      activationTime,
-      createdAt,
-      currentBalance,
-      effectiveBalance,
-      status,
-    } = account;
+    const { id, publicKey, activationTime, createdAt, currentBalance,
+      effectiveBalance, status, } = account;
     const newAccount = { ...account };
 
     newAccount.key = {

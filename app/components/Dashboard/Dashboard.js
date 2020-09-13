@@ -19,7 +19,6 @@ const Dashboard = (props) => {
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
   const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
-
   return (
     <Wrapper>
       <Wallet isActive={walletStatus === 'active'} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
