@@ -39,11 +39,11 @@ const AdditionalData = (props) => {
       </>
     );
   }
-  if (['waiting', 'partial'].includes(status)) {
+  if (['waiting', 'partially_deposited'].includes(status)) {
     let warningTitle = '';
     if (status === 'waiting') {
       warningTitle = 'Waiting for deposit';
-    } else if (status === 'partial') {
+    } else if (status === 'partially_deposited') {
       warningTitle = 'Partial deposited';
     }
     return (
