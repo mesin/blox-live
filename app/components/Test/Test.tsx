@@ -96,7 +96,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Installation is done!');
-            // logger.debug('+ Congratulations. Installation is done!');
           }}
         >
           Install
@@ -120,7 +119,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Account Created');
-            // logger.debug('+ Congratulations. Account Created');
           }}
         >
           Account Create
@@ -161,7 +159,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Uninstallation is done!');
-            // logger.debug('+ Uninstallation is done!');
           }}
         >
           Uninstall
@@ -177,7 +174,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+ Congratulations. Reboot is done!');
-            // logger.debug('+ Congratulations. Reboot is done!');
           }}
         >
           Reboot
@@ -193,7 +189,6 @@ const Test = () => {
               setProcessStatus(e);
             }
             console.log('+Clean Accounts from storage is done!');
-            // logger.debug('+Clean Accounts from storage is done!');
           }}
         >
           Clean Accounts from Storage
@@ -234,7 +229,6 @@ const Test = () => {
         </button>
         <br />
         <button onClick={async () => {
-          const store: Store = Store.getStore();
           console.log(store.get('seed'));
         }}>
           Show seed in console
@@ -324,7 +318,7 @@ const Test = () => {
         </button>
       </div>
       <p/>
-      <textarea value={processStatus} cols={100} rows={10}></textarea>
+      <textarea value={processStatus} cols={100} rows={10} readOnly={true}></textarea>
     </div>
   );
 };

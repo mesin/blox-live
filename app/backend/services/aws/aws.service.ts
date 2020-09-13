@@ -159,11 +159,13 @@ export default class AwsService {
     await this.ec2.terminateInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
     await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.store.get('instanceId')] }).promise();
     await this.ec2.releaseAddress({ AllocationId: this.store.get('addressId') }).promise();
-    await this.ec2.deleteKeyPair({ KeyPairId: this.store.get('keyPair.pairId') }).promise();
+    const keyPair = this.store.get('keyPair');
+    await this.ec2.deleteKeyPair({ KeyPairId: keyPair.pairId }).promise();
     await this.ec2.deleteSecurityGroup({ GroupId: this.store.get('securityGroupId'), DryRun: false }).promise();
     this.store.clear();
-    const storeTmp = Store.getStore(tempStorePrefix);
-    storeTmp.clear();
+    if (Store.isExist(tempStorePrefix)) {
+      Store.getStore(tempStorePrefix).clear();
+    }
   }
 
   @Step({
