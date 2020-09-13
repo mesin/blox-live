@@ -8,6 +8,8 @@ import Dashboard from '../Dashboard';
 import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
+import electron from 'electron';
+
 import {loadWallet} from '../Wizard/actions';
 import wizardSaga from '../Wizard/saga';
 import * as wizardSelectors from '../Wizard/selectors';
@@ -20,9 +22,13 @@ import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import walletSaga from '../KeyVaultManagement/saga';
 import {getLatestVersion} from '../KeyVaultManagement/selectors';
 
-import {loadEventLogs} from '../Organization/actions';
 import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
+import {loadEventLogs} from '../Organization/actions';
+
+import versionsSaga from '../Versions/saga';
+import * as versionsSelectors from '../Versions/selectors';
+import {loadBloxLiveVersion} from '../Versions/actions';
 
 import {useInjectSaga} from '../../utils/injectSaga';
 
@@ -30,6 +36,7 @@ const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const walletKey = 'keyvaultManagement';
 const organizationKey = 'organization';
+const versionsKey = 'versions';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -61,17 +68,24 @@ const EntryPage = (props: Props) => {
     eventLogs,
     isLoadingEventLogs,
     eventLogsError,
+
+    callLoadBloxLiveVersion,
+    bloxLiveLatestVersion,
+    isLoadingBloxLiveVersion,
+    bloxLiveVersionError,
   } = props;
 
   useInjectSaga({key: wizardKey, saga: wizardSaga, mode: ''});
   useInjectSaga({key: accountsKey, saga: accountsSaga, mode: ''});
   useInjectSaga({key: walletKey, saga: walletSaga, mode: ''});
   useInjectSaga({key: organizationKey, saga: organizationSaga, mode: ''});
+  useInjectSaga({key: versionsKey, saga: versionsSaga, mode: ''});
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
+    const didntLoadVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
 
     if (!walletLatestVersion && !walletErorr) {
       loadWalletLatestVersion();
@@ -86,11 +100,18 @@ const EntryPage = (props: Props) => {
     if (didntLoadEventLogs) {
       callLoadEventLogs();
     }
-  }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion, isLoadingEventLogs]);
+
+    if (didntLoadVersions) {
+      callLoadBloxLiveVersion();
+    }
+  }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
 
   const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
   console.log('walletCurrentVersion', walletCurrentVersion);
   console.log('walletLatestVersion', walletLatestVersion);
+
+  const bloxLiveCurrentVersion = electron.remote.app.getVersion();
+  const bloxLiveNeedsUpdate = bloxLiveCurrentVersion !== bloxLiveLatestVersion;
 
   const otherProps = {
     walletNeedsUpdate,
@@ -100,9 +121,12 @@ const EntryPage = (props: Props) => {
     isLoadingAccounts,
     eventLogs,
     isLoadingEventLogs,
+    bloxLiveLatestVersion,
+    isLoadingBloxLiveVersion,
+    bloxLiveNeedsUpdate
   };
 
-  if (isLoadingWallet || isLoadingAccounts || !walletLatestVersion || isLoadingEventLogs) {
+  if (isLoadingWallet || isLoadingAccounts || !walletLatestVersion || isLoadingEventLogs || isLoadingBloxLiveVersion) {
     return <Loader />;
   }
   return (
@@ -141,6 +165,11 @@ type Props = {
   isLoadingEventLogs: boolean;
   eventLogsError: string;
   callLoadEventLogs: () => void;
+
+  bloxLiveLatestVersion: string;
+  isLoadingBloxLiveVersion: boolean;
+  bloxLiveVersionError: string;
+  callLoadBloxLiveVersion: () => void;
 };
 
 const mapStateToProps = (state: State) => ({
@@ -157,6 +186,10 @@ const mapStateToProps = (state: State) => ({
   eventLogs: organizationSelectors.getEventLogs(state.organization),
   isLoadingEventLogs: organizationSelectors.getEventLogsLoadingStatus(state.organization),
   eventLogsError: organizationSelectors.getEventLogsError(state.organization),
+
+  bloxLiveLatestVersion: versionsSelectors.getLatestBloxLiveVersion(state),
+  isLoadingBloxLiveVersion: versionsSelectors.getLatestBloxLiveVersionLoadingStatus(state),
+  bloxLiveVersionError: versionsSelectors.getLatestBloxLiveVersionError(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -164,6 +197,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAllAccounts: () => dispatch(loadAccounts()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
+  callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion())
 });
 
 type State = Record<string, any>;

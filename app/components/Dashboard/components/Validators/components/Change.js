@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const getChangeColor = (change, theme) => {
-  if (Number.isInteger(change)) {
-    if (change > 0) {
-      return theme.plgreen;
-    }
-    if (change < 0) {
-      return theme.plred;
-    }
-    return theme.gray800;
+  if (change > 0) {
+    return theme.plgreen;
+  }
+  if (change < 0) {
+    return theme.plred;
   }
   return theme.gray800;
 };
@@ -20,7 +17,7 @@ const Wrapper = styled.div`
 `;
 
 const Change = ({ change }) => (
-  <Wrapper change={change}>{change !== null ? `${change} ETH` : 'N/A'}</Wrapper>
+  <Wrapper change={change}>{change !== null ? `${Number(change).toFixed(2)} ETH` : 'N/A'}</Wrapper>
 );
 
 Change.propTypes = {

@@ -25,6 +25,11 @@ const EventLogs = ({events}) => {
     handlePageClick(events, offset, setPagedEvents, setPaginationInfo, PAGE_SIZE);
   };
 
+  if (paginationInfo == null) {
+    onPageClick(0);
+    return <Wrapper />;
+  }
+
   return (
     <Wrapper>
       <Title>Latest Events</Title>

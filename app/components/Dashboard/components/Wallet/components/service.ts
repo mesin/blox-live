@@ -15,12 +15,13 @@ const getNumberColor = (number: number) => {
 
 const trimWholeNumber = (floatingNumber: number) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
-  return Math.floor(floatingNumber);
+  return floatingNumber > 0 ? Math.floor(floatingNumber) : Math.ceil(floatingNumber);
 };
 
 export const trimDecimalNumber = (floatingNumber: number) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
-  return (floatingNumber % 1).toFixed(2).substring(2);
+  const trimmedDecimal = (floatingNumber % 1).toFixed(2).substring(2);
+  return floatingNumber > 0 ? `.${trimmedDecimal}` : trimmedDecimal;
 };
 export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
   return [
@@ -28,21 +29,21 @@ export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
       width: '290px',
       color: 'gray800',
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.balance),
-      medText: !summary ? '' : `.${trimDecimalNumber(summary.balance)} ETH`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.balance)} ETH`,
       tinyText: 'Total Balance',
     },
     {
       width: '260px',
       color: !summary ? 'gray800' : getNumberColor(summary.sinceStart),
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.sinceStart),
-      medText: !summary ? '' : `.${trimDecimalNumber(summary.sinceStart)} ETH`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.sinceStart)} ETH`,
       tinyText: 'Since Start',
     },
     {
       width: '220px',
-      color: !summary ? 'gray800' : getNumberColor(summary.change),
-      bigText: !summary ? 'N/A' : trimWholeNumber(summary.change),
-      medText: !summary ? '' : `.${trimDecimalNumber(summary.change)}%`,
+      color: !summary ? 'gray800' : getNumberColor(summary.totalChange),
+      bigText: !summary ? 'N/A' : trimWholeNumber(summary.totalChange),
+      medText: !summary ? '' : `${trimDecimalNumber(summary.totalChange)}%`,
       tinyText: 'Change',
     },
     {

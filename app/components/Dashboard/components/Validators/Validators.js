@@ -32,6 +32,10 @@ const Validators = ({accounts}) => {
     handleSortClick(accounts, sortKey, setSelectedSort, setSortType, sortType, setPagedAccounts, paginationInfo);
   };
 
+  if (paginationInfo == null) {
+    onPageClick(0);
+    return <Wrapper />;
+  }
   return (
     <Wrapper>
       <Title>Validators</Title>

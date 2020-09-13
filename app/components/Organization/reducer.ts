@@ -1,6 +1,7 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
 import {State, Action} from './types';
+import {LOGOUT} from '../CallbackPage/actionTypes';
 
 export const initialState: State = {
   isLoading: false,
@@ -54,6 +55,11 @@ const organizationReducer = (state = initialState, action: Action) => produce(st
     case actionTypes.LOAD_EVENT_LOGS_FAILURE:
       draft.eventLogsError = action.payload;
       draft.isLoadingEventLogs = false;
+      break;
+    case LOGOUT:
+      draft.isLoadingEventLogs = initialState.isLoadingEventLogs;
+      draft.eventLogs = initialState.eventLogs;
+      draft.eventLogsError = initialState.eventLogsError;
       break;
   }
 });
