@@ -8,8 +8,6 @@ import Dashboard from '../Dashboard';
 import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
-import { setModalDisplay } from '../Dashboard/actions';
-
 import {loadWallet} from '../Wizard/actions';
 import * as wizardSelectors from '../Wizard/selectors';
 import wizardSaga from '../Wizard/saga';
@@ -163,7 +161,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAllAccounts: () => dispatch(loadAccounts()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
-  callSetModalDisplay: (configObject) => dispatch(setModalDisplay(configObject)),
 });
 
 type State = Record<string, any>;
