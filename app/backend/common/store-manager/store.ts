@@ -11,7 +11,7 @@ export default class Store extends BaseStore {
   private static instances: any = {};
   private storage: ElectronStore;
   private readonly prefix: string;
-  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials'];
+  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
@@ -28,8 +28,18 @@ export default class Store extends BaseStore {
     if (!Store.instances[prefix]) {
       console.log('USE EXISTED STORE', prefix);
       Store.instances[prefix] = new Store(prefix);
+      // Temp solution to init prefix storage
+      if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
+        const userId = Store.instances[''].get('currentUserId');
+        const authToken = Store.instances[''].get('authToken');
+        Store.instances[prefix].init(userId, authToken);
+      }
     }
     return Store.instances[prefix];
+  };
+
+  static isExist = (prefix: string = '') => {
+    return !!Store.instances[prefix];
   };
 
   init = (userId: string, authToken: string): any => {
@@ -44,14 +54,14 @@ export default class Store extends BaseStore {
 
   get = (key: string): any => {
     const value = this.storage.get(key) || this.baseStore.get(key);
-    if (value && this.encryptedKeys.includes(key)) {
+    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
       return this.decrypt(this.cryptoKey, value);
     }
     return value;
   };
 
   set = (key: string, value: any): void => {
-    if (value && this.encryptedKeys.includes(key)) {
+    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
       this.storage.set(key, this.encrypt(this.cryptoKey, value));
     } else {
       this.storage.set(key, value);
@@ -60,8 +70,8 @@ export default class Store extends BaseStore {
 
   setMultiple = (params: any): void => {
     // eslint-disable-next-line no-restricted-syntax
-    for (const key of params) {
-      this.set(key, params[key]);
+    for (const [key, value] of Object.entries(params)) {
+      this.set(key, value);
     }
   };
 
@@ -80,15 +90,6 @@ export default class Store extends BaseStore {
   @Catch()
   createCryptoKey(cryptoKey: string) {
     return crypto.createHash('sha256').update(String(cryptoKey)).digest('base64').substr(0, 32);
-  }
-
-  @Catch()
-  setCryptoKey(cryptoKey: string) {
-    // clean timer which was run before, and run new one
-    this.unsetCryptoKey();
-    this.cryptoKey = this.createCryptoKey(cryptoKey);
-    this.logger.error('setCryptoKey');
-    this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
   }
 
   @Catch()
@@ -119,16 +120,23 @@ export default class Store extends BaseStore {
   }
 
   @Catch()
-  setNewPassword(cryptoKey: string) {
-    const object = {};
-    this.encryptedKeys.forEach((encryptedKey) => {
-      const value = this.get(encryptedKey);
-      object[encryptedKey] = value;
-    });
+  setCryptoKey(cryptoKey: string) {
+    // clean timer which was run before, and run new one
     this.unsetCryptoKey();
+    this.cryptoKey = this.createCryptoKey(cryptoKey);
+    this.logger.error('setCryptoKey');
+    this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
+  }
+
+  @Catch()
+  setNewPassword(cryptoKey: string) {
+    const oldDecryptedKeys = {};
+    this.encryptedKeys.forEach((encryptedKey) => {
+      oldDecryptedKeys[encryptedKey] = this.get(encryptedKey);
+    });
     this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(object)) {
+    for (const [key, value] of Object.entries(oldDecryptedKeys)) {
       this.set(key, value);
     }
   }
