@@ -30,7 +30,6 @@ const AdditionalData = (props) => {
     callSetDepositNeeded(true);
     callSetFinishedWizard(false);
   };
-
   if (status === 'pending') {
     return (
       <>
@@ -40,10 +39,16 @@ const AdditionalData = (props) => {
       </>
     );
   }
-  if (status === 'waiting') {
+  if (['waiting', 'partial'].includes(status)) {
+    let warningTitle = '';
+    if (status === 'waiting') {
+      warningTitle = 'Waiting for deposit';
+    } else if (status === 'partial') {
+      warningTitle = 'Partial deposited';
+    }
     return (
       <>
-        <WarningText>Waiting for deposit</WarningText>
+        <WarningText>{warningTitle}</WarningText>
         <BlueButton onClick={() => onFinishSetupClick()}>Finish Setup</BlueButton>
       </>
     );

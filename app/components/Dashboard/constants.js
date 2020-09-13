@@ -8,6 +8,7 @@ export const STATUSES = {
   disabled: { name: 'Disabled', color: 'destructive600' },
   unknown_status: { name: 'Unknown', color: 'destructive600' },
   test_mode: { name: 'Unknown', color: 'destructive600' },
+  partial: { name: 'Partial', color: 'warning900' },
 };
 
 export const MODAL_TYPES = {
