@@ -2,13 +2,12 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Switch, Route} from 'react-router-dom';
 import styled from 'styled-components';
+import electron from 'electron';
 
 import {Loader} from 'common/components';
 import Dashboard from '../Dashboard';
 import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
-
-import electron from 'electron';
 
 import {loadWallet} from '../Wizard/actions';
 import * as wizardSelectors from '../Wizard/selectors';
@@ -19,7 +18,7 @@ import * as accountsSelectors from '../Accounts/selectors';
 import accountsSaga from '../Accounts/saga';
 
 import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
-import {getLatestVersion} from '../KeyVaultManagement/selectors';
+import * as keyvaultSelectors from '../KeyVaultManagement/selectors';
 import walletSaga from '../KeyVaultManagement/saga';
 
 import organizationSaga from '../Organization/saga';
@@ -61,10 +60,12 @@ const EntryPage = (props: Props) => {
     callLoadWallet,
     loadWalletLatestVersion,
     walletStatus,
-    walletCurrentVersion,
-    walletLatestVersion,
     isLoadingWallet,
     walletErorr,
+    keyvaultCurrentVersion,
+    keyvaultLatestVersion,
+    isLoadingKeyvault,
+    keyvaultError,
     callLoadAllAccounts,
     accounts,
     isLoadingAccounts,
@@ -92,13 +93,13 @@ const EntryPage = (props: Props) => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
-    const didntLoadVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
+    const didntLoadBloxLiveVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
+    const didntLoadKeyvaultVersion = !keyvaultLatestVersion && !isLoadingKeyvault && !keyvaultError;
 
     if (processRunnerData) {
       callProcessClearState();
     }
-
-    if (!walletLatestVersion && !walletErorr) {
+    if (didntLoadKeyvaultVersion) {
       loadWalletLatestVersion();
     }
     if (didntLoadWallet) {
@@ -110,13 +111,12 @@ const EntryPage = (props: Props) => {
     if (didntLoadEventLogs) {
       callLoadEventLogs();
     }
-
-    if (didntLoadVersions) {
+    if (didntLoadBloxLiveVersions) {
       callLoadBloxLiveVersion();
     }
-  }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
+  }, [isLoadingWallet, isLoadingAccounts, keyvaultLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
 
-  const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
+  const walletNeedsUpdate = keyvaultCurrentVersion !== keyvaultLatestVersion;
 
   const bloxLiveCurrentVersion = electron.remote.app.getVersion();
   const bloxLiveNeedsUpdate = bloxLiveCurrentVersion !== bloxLiveLatestVersion;
@@ -134,7 +134,7 @@ const EntryPage = (props: Props) => {
     bloxLiveNeedsUpdate
   };
 
-  if (isLoadingWallet || isLoadingAccounts || !walletLatestVersion || isLoadingEventLogs || isLoadingBloxLiveVersion) {
+  if (isLoadingWallet || isLoadingAccounts || !keyvaultLatestVersion || isLoadingEventLogs || isLoadingBloxLiveVersion) {
     return <Loader />;
   }
   return (
@@ -161,8 +161,10 @@ type Props = {
   callLoadWallet: () => void;
   loadWalletLatestVersion: () => void;
 
-  walletCurrentVersion: string;
-  walletLatestVersion: string;
+  keyvaultCurrentVersion: string;
+  keyvaultLatestVersion: string;
+  isLoadingKeyvault: boolean;
+  keyvaultError: string;
 
   accounts: [];
   isLoadingAccounts: boolean;
@@ -187,8 +189,11 @@ const mapStateToProps = (state: State) => ({
   walletStatus: wizardSelectors.getWalletStatus(state),
   isLoadingWallet: wizardSelectors.getIsLoading(state),
   walletErorr: wizardSelectors.getWalletError(state),
-  walletCurrentVersion: wizardSelectors.getWalletVersion(state),
-  walletLatestVersion: getLatestVersion(state),
+
+  keyvaultCurrentVersion: wizardSelectors.getWalletVersion(state),
+  keyvaultLatestVersion: keyvaultSelectors.getLatestVersion(state),
+  isLoadingKeyvault: keyvaultSelectors.getIsLoading(state),
+  keyvaultError: keyvaultSelectors.getError(state),
 
   accounts: accountsSelectors.getAccounts(state),
   isLoadingAccounts: accountsSelectors.getAccountsLoadingStatus(state),

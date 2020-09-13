@@ -46,9 +46,9 @@ const Button = styled.button`
   cursor:pointer;
 `;
 
-const ReactivatePopper = ({onMouseEnter, onMouseLeave, onClick}) => {
+const ReactivatePopper = ({onClick}) => {
   return (
-    <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <Wrapper>
       <Icon name={'report'} fontSize={'20px'} />
       <Text>{tooltipText}</Text>
       <Button onClick={() => onClick()}>Reactivate <Icon name={'chevron-right'} /></Button>
@@ -57,8 +57,6 @@ const ReactivatePopper = ({onMouseEnter, onMouseLeave, onClick}) => {
 };
 
 ReactivatePopper.propTypes = {
-  onMouseEnter: PropTypes.func,
-  onMouseLeave: PropTypes.func,
   onClick: PropTypes.func,
 };
 

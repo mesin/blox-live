@@ -18,23 +18,18 @@ const Wrapper = styled.div`
 const BoxWithTooltip = (props) => {
   const { isActive, walletNeedsUpdate, width, color, bigText, medText, tinyText, image, actions } = props;
   const { setModalDisplay } = actions;
-  const [showReactivationPopper, setReactivationPopperDisplay] = React.useState(false);
-
-  const onMouseEnter = () => setReactivationPopperDisplay(true);
-
-  const onMouseLeave = () => setReactivationPopperDisplay(false);
 
   const showReactivationModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: '', });
 
   const showUpdateModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: '', });
 
-  return ( // TODO: replace with new methods
-    <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+  return (
+    <Wrapper>
       <Box width={width} color={color} bigText={bigText}
         medText={medText} tinyText={tinyText} image={image}
       />
-      {showReactivationPopper && !isActive && (
-        <ReactivatePopper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={showReactivationModal} />
+      {!isActive && (
+        <ReactivatePopper onClick={showReactivationModal} />
       )}
       {walletNeedsUpdate && isActive && (
         <UpdatePopper onClick={showUpdateModal} />
