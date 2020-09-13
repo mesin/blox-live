@@ -30,6 +30,10 @@ import versionsSaga from '../Versions/saga';
 import * as versionsSelectors from '../Versions/selectors';
 import {loadBloxLiveVersion} from '../Versions/actions';
 
+import processRunnerSaga from '../ProcessRunner/saga';
+import * as processRunnerSelectors from '../ProcessRunner/selectors';
+import { processClearState } from '../ProcessRunner/actions';
+
 import {useInjectSaga} from '../../utils/injectSaga';
 
 const wizardKey = 'wizard';
@@ -37,6 +41,7 @@ const accountsKey = 'accounts';
 const walletKey = 'keyvaultManagement';
 const organizationKey = 'organization';
 const versionsKey = 'versions';
+const processRunnerKey = 'processRunner';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -68,11 +73,12 @@ const EntryPage = (props: Props) => {
     eventLogs,
     isLoadingEventLogs,
     eventLogsError,
-
     callLoadBloxLiveVersion,
     bloxLiveLatestVersion,
     isLoadingBloxLiveVersion,
     bloxLiveVersionError,
+    processRunnerData,
+    callProcessClearState,
   } = props;
 
   useInjectSaga({key: wizardKey, saga: wizardSaga, mode: ''});
@@ -80,12 +86,17 @@ const EntryPage = (props: Props) => {
   useInjectSaga({key: walletKey, saga: walletSaga, mode: ''});
   useInjectSaga({key: organizationKey, saga: organizationSaga, mode: ''});
   useInjectSaga({key: versionsKey, saga: versionsSaga, mode: ''});
+  useInjectSaga({key: processRunnerKey, saga: processRunnerSaga, mode: ''});
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
     const didntLoadVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
+
+    if (processRunnerData) {
+      callProcessClearState();
+    }
 
     if (!walletLatestVersion && !walletErorr) {
       loadWalletLatestVersion();
@@ -167,6 +178,9 @@ type Props = {
   isLoadingBloxLiveVersion: boolean;
   bloxLiveVersionError: string;
   callLoadBloxLiveVersion: () => void;
+
+  processRunnerData: Record<string, any> | null,
+  callProcessClearState: () => void;
 };
 
 const mapStateToProps = (state: State) => ({
@@ -187,6 +201,8 @@ const mapStateToProps = (state: State) => ({
   bloxLiveLatestVersion: versionsSelectors.getLatestBloxLiveVersion(state),
   isLoadingBloxLiveVersion: versionsSelectors.getLatestBloxLiveVersionLoadingStatus(state),
   bloxLiveVersionError: versionsSelectors.getLatestBloxLiveVersionError(state),
+
+  processRunnerData: processRunnerSelectors.getData(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -194,7 +210,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAllAccounts: () => dispatch(loadAccounts()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
-  callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion())
+  callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion()),
+  callProcessClearState: () => dispatch(processClearState()),
 });
 
 type State = Record<string, any>;
