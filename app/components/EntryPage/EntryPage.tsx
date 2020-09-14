@@ -2,25 +2,24 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Switch, Route} from 'react-router-dom';
 import styled from 'styled-components';
+import electron from 'electron';
 
-import {Loader} from '../../common/components';
+import {Loader} from 'common/components';
 import Dashboard from '../Dashboard';
 import SettingsPage from '../SettingsPage';
 import Header from '../common/Header';
 
-import electron from 'electron';
-
 import {loadWallet} from '../Wizard/actions';
-import wizardSaga from '../Wizard/saga';
 import * as wizardSelectors from '../Wizard/selectors';
+import wizardSaga from '../Wizard/saga';
 
 import {loadAccounts} from '../Accounts/actions';
-import accountsSaga from '../Accounts/saga';
 import * as accountsSelectors from '../Accounts/selectors';
+import accountsSaga from '../Accounts/saga';
 
 import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
+import * as keyvaultSelectors from '../KeyVaultManagement/selectors';
 import walletSaga from '../KeyVaultManagement/saga';
-import {getLatestVersion} from '../KeyVaultManagement/selectors';
 
 import organizationSaga from '../Organization/saga';
 import * as organizationSelectors from '../Organization/selectors';
@@ -30,6 +29,10 @@ import versionsSaga from '../Versions/saga';
 import * as versionsSelectors from '../Versions/selectors';
 import {loadBloxLiveVersion} from '../Versions/actions';
 
+import processRunnerSaga from '../ProcessRunner/saga';
+import * as processRunnerSelectors from '../ProcessRunner/selectors';
+import { processClearState } from '../ProcessRunner/actions';
+
 import {useInjectSaga} from '../../utils/injectSaga';
 
 const wizardKey = 'wizard';
@@ -37,6 +40,7 @@ const accountsKey = 'accounts';
 const walletKey = 'keyvaultManagement';
 const organizationKey = 'organization';
 const versionsKey = 'versions';
+const processRunnerKey = 'processRunner';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -56,10 +60,12 @@ const EntryPage = (props: Props) => {
     callLoadWallet,
     loadWalletLatestVersion,
     walletStatus,
-    walletCurrentVersion,
-    walletLatestVersion,
     isLoadingWallet,
     walletErorr,
+    keyvaultCurrentVersion,
+    keyvaultLatestVersion,
+    isLoadingKeyvault,
+    keyvaultError,
     callLoadAllAccounts,
     accounts,
     isLoadingAccounts,
@@ -68,11 +74,12 @@ const EntryPage = (props: Props) => {
     eventLogs,
     isLoadingEventLogs,
     eventLogsError,
-
     callLoadBloxLiveVersion,
     bloxLiveLatestVersion,
     isLoadingBloxLiveVersion,
     bloxLiveVersionError,
+    processRunnerData,
+    callProcessClearState,
   } = props;
 
   useInjectSaga({key: wizardKey, saga: wizardSaga, mode: ''});
@@ -80,14 +87,19 @@ const EntryPage = (props: Props) => {
   useInjectSaga({key: walletKey, saga: walletSaga, mode: ''});
   useInjectSaga({key: organizationKey, saga: organizationSaga, mode: ''});
   useInjectSaga({key: versionsKey, saga: versionsSaga, mode: ''});
+  useInjectSaga({key: processRunnerKey, saga: processRunnerSaga, mode: ''});
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsErorr;
     const didntLoadEventLogs = !eventLogs && !isLoadingEventLogs && !eventLogsError;
-    const didntLoadVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
+    const didntLoadBloxLiveVersions = !bloxLiveLatestVersion && !isLoadingBloxLiveVersion && !bloxLiveVersionError;
+    const didntLoadKeyvaultVersion = !keyvaultLatestVersion && !isLoadingKeyvault && !keyvaultError;
 
-    if (!walletLatestVersion && !walletErorr) {
+    if (processRunnerData) {
+      callProcessClearState();
+    }
+    if (didntLoadKeyvaultVersion) {
       loadWalletLatestVersion();
     }
     if (didntLoadWallet) {
@@ -96,19 +108,15 @@ const EntryPage = (props: Props) => {
     if (didntLoadAccounts) {
       callLoadAllAccounts();
     }
-
     if (didntLoadEventLogs) {
       callLoadEventLogs();
     }
-
-    if (didntLoadVersions) {
+    if (didntLoadBloxLiveVersions) {
       callLoadBloxLiveVersion();
     }
-  }, [isLoadingWallet, isLoadingAccounts, walletLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
+  }, [isLoadingWallet, isLoadingAccounts, keyvaultLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
 
-  const walletNeedsUpdate = walletCurrentVersion !== walletLatestVersion;
-  console.log('walletCurrentVersion', walletCurrentVersion);
-  console.log('walletLatestVersion', walletLatestVersion);
+  const walletNeedsUpdate = keyvaultCurrentVersion !== keyvaultLatestVersion;
 
   const bloxLiveCurrentVersion = electron.remote.app.getVersion();
   const bloxLiveNeedsUpdate = bloxLiveCurrentVersion !== bloxLiveLatestVersion;
@@ -126,7 +134,7 @@ const EntryPage = (props: Props) => {
     bloxLiveNeedsUpdate
   };
 
-  if (isLoadingWallet || isLoadingAccounts || !walletLatestVersion || isLoadingEventLogs || isLoadingBloxLiveVersion) {
+  if (isLoadingWallet || isLoadingAccounts || !keyvaultLatestVersion || isLoadingEventLogs || isLoadingBloxLiveVersion) {
     return <Loader />;
   }
   return (
@@ -153,8 +161,10 @@ type Props = {
   callLoadWallet: () => void;
   loadWalletLatestVersion: () => void;
 
-  walletCurrentVersion: string;
-  walletLatestVersion: string;
+  keyvaultCurrentVersion: string;
+  keyvaultLatestVersion: string;
+  isLoadingKeyvault: boolean;
+  keyvaultError: string;
 
   accounts: [];
   isLoadingAccounts: boolean;
@@ -170,14 +180,20 @@ type Props = {
   isLoadingBloxLiveVersion: boolean;
   bloxLiveVersionError: string;
   callLoadBloxLiveVersion: () => void;
+
+  processRunnerData: Record<string, any> | null,
+  callProcessClearState: () => void;
 };
 
 const mapStateToProps = (state: State) => ({
   walletStatus: wizardSelectors.getWalletStatus(state),
   isLoadingWallet: wizardSelectors.getIsLoading(state),
   walletErorr: wizardSelectors.getWalletError(state),
-  walletCurrentVersion: wizardSelectors.getWalletVersion(state),
-  walletLatestVersion: getLatestVersion(state),
+
+  keyvaultCurrentVersion: wizardSelectors.getWalletVersion(state),
+  keyvaultLatestVersion: keyvaultSelectors.getLatestVersion(state),
+  isLoadingKeyvault: keyvaultSelectors.getIsLoading(state),
+  keyvaultError: keyvaultSelectors.getError(state),
 
   accounts: accountsSelectors.getAccounts(state),
   isLoadingAccounts: accountsSelectors.getAccountsLoadingStatus(state),
@@ -190,6 +206,8 @@ const mapStateToProps = (state: State) => ({
   bloxLiveLatestVersion: versionsSelectors.getLatestBloxLiveVersion(state),
   isLoadingBloxLiveVersion: versionsSelectors.getLatestBloxLiveVersionLoadingStatus(state),
   bloxLiveVersionError: versionsSelectors.getLatestBloxLiveVersionError(state),
+
+  processRunnerData: processRunnerSelectors.getData(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -197,7 +215,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAllAccounts: () => dispatch(loadAccounts()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
   callLoadEventLogs: () => dispatch(loadEventLogs()),
-  callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion())
+  callLoadBloxLiveVersion: () => dispatch(loadBloxLiveVersion()),
+  callProcessClearState: () => dispatch(processClearState()),
 });
 
 type State = Record<string, any>;

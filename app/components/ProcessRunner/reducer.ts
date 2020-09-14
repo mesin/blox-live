@@ -46,6 +46,11 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       break;
     case actionTypes.PROCESS_CLEAR_STATE:
     case LOGOUT:
+      draft.name = initialState.name;
+      draft.message = initialState.message;
+      draft.overallSteps = initialState.overallSteps;
+      draft.currentStep = initialState.currentStep;
+      draft.data = initialState.data;
       draft.isDone = initialState.isDone;
       draft.overallSteps = initialState.overallSteps;
       draft.currentStep = initialState.currentStep;

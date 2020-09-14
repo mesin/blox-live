@@ -3,20 +3,18 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import Store from '../../backend/common/store-manager/store';
-import BloxApi from '../../backend/common/communication-manager/blox-api';
-import AuthApi from '../../backend/common/communication-manager/auth-api';
+import Store from 'backend/common/store-manager/store';
+import BloxApi from 'backend/common/communication-manager/blox-api';
+import AuthApi from 'backend/common/communication-manager/auth-api';
 
 export default class Auth {
-  tokens: Record<string, any>;
-  userProfile: Record<string, any> | null;
-  auth: Record<string, any>;
+  idToken: string;
+  userProfile: Profile;
+  auth: Auth0ConfigObject;
   private readonly authApi: AuthApi;
 
   constructor() {
-    this.tokens = {
-      idToken: '',
-    };
+    this.idToken = '';
     this.userProfile = null;
     this.auth = {
       domain: process.env.AUTH0_DOMAIN || '',
@@ -30,9 +28,9 @@ export default class Auth {
 
   loginWithSocialApp = async (name: string) => {
     return new Promise((resolve, reject) => {
-      const onSuccess = (response) => {
+      const onSuccess = (response: Auth0Response) => {
         if (response.status === 200) {
-          const userProfile = jwtDecode(response.data.id_token);
+          const userProfile: Profile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
           resolve({
             idToken: response.data.id_token,
@@ -46,12 +44,12 @@ export default class Auth {
     });
   };
 
-  getAuthenticationURL = (socialAppName) => {
+  getAuthenticationURL = (socialAppName: string) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
     return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&prompt=login&redirect_uri=${redirectUri}`;
   };
 
-  loadAuthToken = async (callbackURL) => {
+  loadAuthToken = async (callbackURL: string) => {
     const { clientID, redirectUri } = this.auth;
     const urlParts = url.parse(callbackURL, true);
     const { query } = urlParts;
@@ -70,32 +68,41 @@ export default class Auth {
     }
   };
 
-  setSession = async (authResult, userProfile) => {
+  setSession = async (authResult: Auth0ResponseData, userProfile: Profile) => {
     const { id_token } = authResult;
-    this.tokens.idToken = id_token;
+    this.idToken = id_token;
     this.userProfile = userProfile;
     Store.getStore().init(userProfile.sub, authResult.id_token);
     BloxApi.init();
   };
 
-  isLoggedIn = () => {
-    const expiresAt = localStorage.getItem('expires_at');
-    return new Date().getTime() < Number(expiresAt);
-  };
-
-  getIdToken = () => this.tokens.idToken;
+  getIdToken = () => this.idToken;
 
   getProfile = (cb: CallBack) => cb(this.userProfile, null);
 
-  logout = async () => { // TODO: check https://auth0.com/docs/logout/log-users-out-of-idps
+  logout = async () => {
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
     Store.getStore().logout();
-    this.tokens = {
-      idToken: '',
-      profile: null,
-    };
+    this.idToken = '';
     this.userProfile = null;
   };
+}
+
+interface Auth0ConfigObject {
+  domain: string;
+  clientID: string;
+  redirectUri: string;
+  responseType: string;
+  scope: string;
+}
+
+interface Auth0Response {
+  status: number;
+  data: Auth0ResponseData
+}
+
+interface Auth0ResponseData {
+    id_token: string;
 }
 
 type Profile = Record<string, any> | null;

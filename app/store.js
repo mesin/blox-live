@@ -20,9 +20,7 @@ const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
 const middleware = [...getDefaultMiddleware({serializableCheck: false}), router, sagaMiddleware];
 
 const excludeLoggerEnvs = ['test', 'production'];
-const shouldIncludeLogger = !excludeLoggerEnvs.includes(
-  process.env.NODE_ENV || ''
-);
+const shouldIncludeLogger = !excludeLoggerEnvs.includes(process.env.NODE_ENV || '');
 
 if (shouldIncludeLogger) {
   const logger = createLogger({
@@ -32,7 +30,6 @@ if (shouldIncludeLogger) {
   middleware.push(logger);
 }
 
-// initialState?: DeepPartial<RootState>
 export const configuredStore = (initialState) => {
   const store = configureStore({
     reducer: rootReducer,

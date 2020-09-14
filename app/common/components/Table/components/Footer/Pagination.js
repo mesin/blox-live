@@ -111,9 +111,9 @@ const Pagination = ({paginationInfo, onPageClick}) => {
   };
 
   return (
-    paginationButtons.map(({type, title, icon, iconColor, color, reverse, clickable, withBorder}) => {
+    paginationButtons.map(({type, title, icon, iconColor, color, reverse, clickable, withBorder}, index) => {
       return reverse ? (
-        <Wrapper onClick={() => clickable ? onPaginationClick(type) : false}>
+        <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
           <Button color={color} withBorder={withBorder}>
             <Icon
               name={icon}
@@ -124,7 +124,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
           </Button>
         </Wrapper>
       ) : (
-        <Wrapper onClick={() => clickable ? onPaginationClick(type) : false}>
+        <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
           <Button color={color} withBorder={withBorder}>
             {title}
             <Icon

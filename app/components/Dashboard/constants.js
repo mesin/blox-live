@@ -16,4 +16,5 @@ export const MODAL_TYPES = {
   UPDATE: 'update',
   DEPOSIT_INFO: 'depositInfo',
   ADD_VALIDATOR: 'addValidator',
+  ACTIVE_VALIDATOR: 'activeValidator',
 };

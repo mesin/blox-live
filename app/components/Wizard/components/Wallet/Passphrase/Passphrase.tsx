@@ -26,11 +26,11 @@ const Passphrase = (props: Props) => {
   useInjectSaga({ key, saga, mode: '' });
 
   const onPassphraseClick = () => {
-    if (mnemonic) { return null; }
+    if (mnemonic || isLoading) { return; }
     keyvaultLoadMnemonic();
   };
 
-  const onSaveAndConfirmClick = async () => { // TODO: continue from here
+  const onSaveAndConfirmClick = async () => {
     if (canGenerateMnemonic()) {
       await keyvaultSaveMnemonic(duplicatedMnemonic, password);
       await !isButtonDisabled && setPage(page + 1);
@@ -56,19 +56,17 @@ const Passphrase = (props: Props) => {
   const onDuplicateMnemonicBlur = () => {
     if (mnemonic !== duplicatedMnemonic) {
       setDuplicatedMnemonicErrorDisplay(true);
+      return;
     }
-    else {
-      setDuplicatedMnemonicErrorDisplay(false);
-    }
+    setDuplicatedMnemonicErrorDisplay(false);
   };
 
   const onPasswordBlur = () => {
     if (password.length < 8) {
       setPasswordErrorDisplay(true);
+      return;
     }
-    else {
-      setPasswordErrorDisplay(false);
-    }
+    setPasswordErrorDisplay(false);
   };
 
   const onConfirmPasswordBlur = () => {
