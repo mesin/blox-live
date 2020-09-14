@@ -24,7 +24,7 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
         try {
           return await originalMethod.apply(this, args);
         } catch (error) {
-          return await handleCatchFunctionError(key, error, payload);
+          return handleCatchFunctionError(key, error, payload);
         }
       };
     } else {
@@ -40,7 +40,7 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
   };
 };
 
-async function handleCatchFunctionError(key: string, error: Error, payload: any) {
+function handleCatchFunctionError(key: string, error: Error, payload: any) {
   const logger = new Logger();
   const { handler } = catchDecoratorStore;
   const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
@@ -51,7 +51,7 @@ async function handleCatchFunctionError(key: string, error: Error, payload: any)
     return payload.localHandler.call(null, extendedError, this);
   }
   if (handler) {
-    const result = await handler.call(null, extendedError, this);
+    const result = handler.call(null, extendedError, this);
     catchDecoratorStore.setHandler(null);
     return result;
   }

@@ -55,15 +55,7 @@ export default class ProcessClass implements Subject {
     }
   }
 
-  private errorHandler = async (payload: any) => {
-    if (Array.isArray(this.fallbackActions)) {
-      const found = this.fallbackActions.find(step => step.method === this.action.method);
-      if (found) {
-        for (const fallbackAction of found.actions) {
-          await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
-        }
-      }
-    }
+  private errorHandler = (payload: any) => {
     this.error = new Error(payload.displayMessage);
     return { error: this.error };
   };
@@ -87,6 +79,14 @@ export default class ProcessClass implements Subject {
       const result = await action.instance[action.method].bind(action.instance)(extra);
       const { step = null } = { ...result };
       if (this.error) {
+        if (Array.isArray(this.fallbackActions)) {
+          const found = this.fallbackActions.find(step => step.method === this.action.method);
+          if (found) {
+            for (const fallbackAction of found.actions) {
+              await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
+            }
+          }
+        }
         this.notify({ step: { status: 'error' }, error: this.error });
         this.error = null;
         return;
