@@ -14,11 +14,6 @@ export default class ProcessClass implements Subject {
    * type, etc.).
    */
   observers: Observer[] = [];
-
-  constructor() {
-    catchDecoratorStore.setHandler(error => this.errorHandler(error));
-  }
-
   /**
    * The subscription management methods.
    */
@@ -65,6 +60,7 @@ export default class ProcessClass implements Subject {
   })
   async run(): Promise<void> {
     for (const [index, action] of this.actions.entries()) {
+      catchDecoratorStore.setHandler(error => this.errorHandler(error));
       this.action = action;
       this.state = index + 1;
       let extra = {
@@ -78,6 +74,7 @@ export default class ProcessClass implements Subject {
       }
       const result = await action.instance[action.method].bind(action.instance)(extra);
       const { step = null } = { ...result };
+      catchDecoratorStore.setHandler(null);
       if (this.error) {
         if (Array.isArray(this.fallbackActions)) {
           const found = this.fallbackActions.find(step => step.method === this.action.method);

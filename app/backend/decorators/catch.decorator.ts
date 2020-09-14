@@ -51,9 +51,7 @@ function handleCatchFunctionError(key: string, error: Error, payload: any) {
     return payload.localHandler.call(null, extendedError, this);
   }
   if (handler) {
-    const result = handler.call(null, extendedError, this);
-    catchDecoratorStore.setHandler(null);
-    return result;
+    return handler.call(null, extendedError, this);
   }
   throw new Error(displayMessage);
 }
