@@ -7,6 +7,7 @@ export default class ProcessClass implements Subject {
   readonly fallbackActions: Array<any>;
   state: number;
   action: any;
+  error: Error;
   /**
    * @type {Observer[]} List of subscribers. In real life, the list of
    * subscribers can be stored more comprehensively (categorized by event
@@ -63,9 +64,8 @@ export default class ProcessClass implements Subject {
         }
       }
     }
-    const error = new Error(payload.displayMessage);
-    this.notify({ step: { status: 'error' }, error });
-    return { error };
+    this.error = new Error(payload.displayMessage);
+    return { error: this.error };
   };
 
   @Catch({
@@ -81,11 +81,14 @@ export default class ProcessClass implements Subject {
           func: 'notify'
         }
       };
-      if (action.params) extra = { ...extra, ...action.params };
+      if (action.params) {
+        extra = { ...extra, ...action.params };
+      }
       const result = await action.instance[action.method].bind(action.instance)(extra);
-      const { error = null, step = null } = { ...result };
-      this.action.method = null;
-      if (error) {
+      const { step = null } = { ...result };
+      if (this.error) {
+        this.notify({ step: { status: 'error' }, error: this.error });
+        this.error = null;
         return;
       }
       delete result.step;
