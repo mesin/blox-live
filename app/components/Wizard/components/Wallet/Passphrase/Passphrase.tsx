@@ -56,19 +56,17 @@ const Passphrase = (props: Props) => {
   const onDuplicateMnemonicBlur = () => {
     if (mnemonic !== duplicatedMnemonic) {
       setDuplicatedMnemonicErrorDisplay(true);
+      return;
     }
-    else {
-      setDuplicatedMnemonicErrorDisplay(false);
-    }
+    setDuplicatedMnemonicErrorDisplay(false);
   };
 
   const onPasswordBlur = () => {
     if (password.length < 8) {
       setPasswordErrorDisplay(true);
+      return;
     }
-    else {
-      setPasswordErrorDisplay(false);
-    }
+    setPasswordErrorDisplay(false);
   };
 
   const onConfirmPasswordBlur = () => {
