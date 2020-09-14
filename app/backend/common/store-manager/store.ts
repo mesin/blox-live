@@ -146,8 +146,8 @@ export default class Store extends BaseStore {
     const userInputCryptoKey = this.createCryptoKey(password);
     const encryptedSavedCredentials = this.storage.get('credentials');
     try {
-      this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
-      return true;
+      const decryptedValue = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
+      return !!decryptedValue;
     } catch (e) {
       return false;
     }

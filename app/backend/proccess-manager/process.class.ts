@@ -7,17 +7,13 @@ export default class ProcessClass implements Subject {
   readonly fallbackActions: Array<any>;
   state: number;
   action: any;
+  error: Error;
   /**
    * @type {Observer[]} List of subscribers. In real life, the list of
    * subscribers can be stored more comprehensively (categorized by event
    * type, etc.).
    */
   observers: Observer[] = [];
-
-  constructor() {
-    catchDecoratorStore.setHandler(error => this.errorHandler(error));
-  }
-
   /**
    * The subscription management methods.
    */
@@ -54,18 +50,9 @@ export default class ProcessClass implements Subject {
     }
   }
 
-  private errorHandler = async (payload: any) => {
-    if (Array.isArray(this.fallbackActions)) {
-      const found = this.fallbackActions.find(step => step.method === this.action.method);
-      if (found) {
-        for (const fallbackAction of found.actions) {
-          await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
-        }
-      }
-    }
-    const error = new Error(payload.displayMessage);
-    this.notify({ step: { status: 'error' }, error });
-    return { error };
+  private errorHandler = (payload: any) => {
+    this.error = new Error(payload.displayMessage);
+    return { error: this.error };
   };
 
   @Catch({
@@ -73,6 +60,7 @@ export default class ProcessClass implements Subject {
   })
   async run(): Promise<void> {
     for (const [index, action] of this.actions.entries()) {
+      catchDecoratorStore.setHandler(error => this.errorHandler(error));
       this.action = action;
       this.state = index + 1;
       let extra = {
@@ -81,10 +69,23 @@ export default class ProcessClass implements Subject {
           func: 'notify'
         }
       };
-      if (action.params) extra = { ...extra, ...action.params };
+      if (action.params) {
+        extra = { ...extra, ...action.params };
+      }
       const result = await action.instance[action.method].bind(action.instance)(extra);
-      const { error = null, step = null } = { ...result };
-      if (error) {
+      const { step = null } = { ...result };
+      catchDecoratorStore.setHandler(null);
+      if (this.error) {
+        if (Array.isArray(this.fallbackActions)) {
+          const found = this.fallbackActions.find(step => step.method === this.action.method);
+          if (found) {
+            for (const fallbackAction of found.actions) {
+              await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
+            }
+          }
+        }
+        this.notify({ step: { status: 'error' }, error: this.error });
+        this.error = null;
         return;
       }
       delete result.step;
