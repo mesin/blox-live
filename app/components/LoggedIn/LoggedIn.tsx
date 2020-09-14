@@ -42,9 +42,6 @@ import {
 } from '../WebSockets/selectors';
 import webSocketSaga from '../WebSockets/saga';
 
-// auth
-import { logout } from '../CallbackPage/actions';
-
 import { allAccountsDeposited } from '../Accounts/service';
 
 const wizardKey = 'wizard';
@@ -58,22 +55,16 @@ const LoggedIn = (props: Props) => {
   const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
 
   const {
-    logoutUser, isFinishedWizard, callSetFinishedWizard, walletStatus,
+    isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet,
     accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
     websocket, webSocketError,
   } = props;
 
   useEffect(() => {
-    // TODO: handle loggedIn from localStorage with socket
-    const hasError = walletError || accountsError || webSocketError;
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
-
-    if (hasError) {
-      logoutUser();
-    }
 
     if (didntLoadWallet) {
       callLoadWallet();
