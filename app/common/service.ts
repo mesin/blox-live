@@ -5,7 +5,7 @@ import Store from 'backend/common/store-manager/store';
 const store = Store.getStore();
 
 export const saveLastConnection = () => {
-  const now = moment();
+  const now = moment().utc(true);
   store.set('lastConnection', now);
 };
 

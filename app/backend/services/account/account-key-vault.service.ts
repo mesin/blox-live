@@ -67,6 +67,7 @@ export default class AccountKeyVaultService extends KeyVaultCli {
   }
 
   async getDepositData(pubKey: string): Promise<any> {
+    console.log('pubKey', pubKey);
     if (!pubKey) {
       throw new Error('publicKey is empty');
     }

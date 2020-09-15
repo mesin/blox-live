@@ -5,6 +5,7 @@ import { notification } from 'antd';
 import { LOGIN_INIT, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
 import Auth from '../Auth';
+import { saveLastConnection } from 'common/service';
 
 const auth = new Auth();
 
@@ -17,7 +18,9 @@ function* onLoginSuccess(authResult) {
 
 function* onLoginFailure(error: Record<string, any>) {
   yield put(loginFailure(error.message));
-  notification.error({ message: 'Error', description: error.message });
+  if (error.message) {
+    notification.error({ message: 'Error', description: error.message });
+  }
   yield put(push('/login'));
 }
 
@@ -32,6 +35,7 @@ export function* startLogin(action) {
 }
 
 export function* startLogOut() {
+  yield saveLastConnection();
   yield call(auth.logout);
   yield put(push('/login'));
 }

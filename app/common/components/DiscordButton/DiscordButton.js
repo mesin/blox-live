@@ -1,25 +1,70 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Icon } from 'common/components';
+import { shell } from 'electron';
 
-const Wrapper = styled.a``;
+const Wrapper = styled.div``;
 
-const Button = styled.div``;
+const Button = styled.div`
+  width:50px;
+  height:50px;
+  color: white;
+  background: #7289da;
+  border-color: #7289da;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 2.6rem;
+  border-radius: 5.2rem 5.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: width 0.5s ease;
+  white-space: nowrap;
+  overflow:hidden;
+  cursor:pointer;
+  &:hover {
+    width: 174px;
+    & > .icon-discord-symbol {
+      opacity: 0;
+    }
+    & > .expanded {
+      opacity: 1;
+    }
+  }
+`;
 
-const Icon = styled.i``;
+const Expanded = styled.div`
+  opacity: 0;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 24px;
+  transition: opacity 0.25s ease;
+`;
 
-const Expanded = styled.div``;
+const ReachUsText = styled.span`
+  font-size: 14px;
+  font-weight: 900;
+  color:${({theme}) => theme.gray50};
+`;
 
-const TalkToUsIcon = styled.i``;
-
-const DiscordButton = () => { // work in progress
+const DiscordButton = () => {
   return (
-    <Wrapper href="#discord_link_here" target="_blank">
-      <Button class="btn btn-dark floating-btn">
-        <Icon class="icon fab fa-discord"></Icon>
-        <Expanded class="expanded">
-          <span>
-            <TalkToUsIcon class="far fa-comments"></TalkToUsIcon> Talk to us on Discord
-          </span>
+    <Wrapper onClick={() => shell.openExternal(process.env.DISCORD_INVITE)}>
+      <Button className="btn btn-dark floating-btn">
+        <Icon color={'gray50'} name={'discord-symbol'} fontSize={'24px'} />
+        <Expanded className="expanded">
+          <ReachUsText>Reach us on DISCORD</ReachUsText>
         </Expanded>
       </Button>
     </Wrapper>

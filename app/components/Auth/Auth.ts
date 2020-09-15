@@ -39,7 +39,7 @@ export default class Auth {
         }
         reject(new Error('Error in login'));
       };
-      const onFailure = () => reject(new Error('Authentication window closed'));
+      const onFailure = () => reject(new Error(''));
       createAuthWindow(this, name, onSuccess, onFailure);
     });
   };
