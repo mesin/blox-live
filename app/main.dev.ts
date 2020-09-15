@@ -45,14 +45,17 @@ const installExtensions = async () => {
 };
 
 const createWindow = async (downloadsDir) => {
+  const width = 1366;
+  const height = 790;
+
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1366,
-    height: 790,
+    width,
+    height,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -68,6 +71,8 @@ const createWindow = async (downloadsDir) => {
     //         preload: path.join(__dirname, 'dist/renderer.prod.js'),
     //       },
   });
+
+  mainWindow.setMinimumSize(width, height);
 
   mainWindow.webContents.openDevTools();
 
