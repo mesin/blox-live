@@ -54,7 +54,7 @@ export default class Store extends BaseStore {
 
   get = (key: string): any => {
     const value = this.storage.get(key) || this.baseStore.get(key);
-    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
+    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) { // TODO: write it in a different function
       return this.decrypt(this.cryptoKey, value);
     }
     return value;
