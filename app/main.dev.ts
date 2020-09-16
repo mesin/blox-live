@@ -16,8 +16,6 @@ import log from 'electron-log';
 import MenuBuilder from './menu';
 import Store from './backend/common/store-manager/store';
 
-// test
-console.log('zero init step....');
 // start set custom params
 const backendStore: Store = Store.getStore();
 const env = (backendStore.get('env') || 'production').toUpperCase();
