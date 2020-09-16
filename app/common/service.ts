@@ -1,4 +1,3 @@
-import { remote } from 'electron';
 import moment from 'moment';
 import Store from 'backend/common/store-manager/store';
 
@@ -12,10 +11,7 @@ export const saveLastConnection = () => {
 export const loadLastConnection = () => store.get('lastConnection');
 
 export const onWindowClose = () => {
-  remote.getCurrentWindow().on('close', () => {
-    saveLastConnection();
-  });
-  remote.app.on('window-all-closed', () => {
+  window.addEventListener('beforeunload', () => {
     saveLastConnection();
   });
 };
