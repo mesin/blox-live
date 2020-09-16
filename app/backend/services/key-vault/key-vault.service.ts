@@ -21,32 +21,32 @@ export default class KeyVaultService {
 
   async updateStorage(payload: any) {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'ethereum/storage', payload);
+    return await this.keyVaultApi.request(METHOD.POST, 'storage', payload);
   }
 
   async listAccounts() {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.LIST, 'ethereum/accounts');
+    return await this.keyVaultApi.request(METHOD.LIST, 'accounts');
   }
 
   async healthCheck() {
-    this.keyVaultApi.init();
+    this.keyVaultApi.init(false);
     return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
   }
 
   async getVersion() {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/version');
+    this.keyVaultApi.init(false);
+    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/test/version');
   }
 
   async getSlashingStorage() {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/storage/slashing');
+    return await this.keyVaultApi.request(METHOD.GET, 'storage/slashing');
   }
 
   async updateSlashingStorage(payload: any) {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'ethereum/storage/slashing', payload);
+    return await this.keyVaultApi.request(METHOD.POST, 'storage/slashing', payload);
   }
 
   @Step({
@@ -121,10 +121,11 @@ export default class KeyVaultService {
 
   @Step({
     name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
+    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
   })
   async updateVaultStorage(): Promise<void> {
-    await this.updateStorage({ data: this.store.get('keyVaultStorage') });
+    const network = this.store.get('network');
+    await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
   }
 
   @Step({
@@ -147,13 +148,13 @@ export default class KeyVaultService {
 
   @Step({
     name: 'Validating KeyVault final configuration...',
-    requiredConfig: ['publicIp']
+    requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async getKeyVaultStatus() {
     // check if the key vault is alive
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
-      await this.healthCheck();
+      await this.getVersion();
       return { isActive: true };
     } catch (e) {
       console.log(e);

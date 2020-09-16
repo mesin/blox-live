@@ -35,7 +35,7 @@ export default class AccountService {
 
   @Step({
     name: 'Create Blox Account',
-    requiredConfig: ['authToken']
+    requiredConfig: ['authToken', 'network']
   })
   @Catch({
     displayMessage: 'Create Blox Account failed'
@@ -45,6 +45,7 @@ export default class AccountService {
     if (!lastIndexedAccount) {
       throw new Error('No account to create');
     }
+    lastIndexedAccount.network = this.store.get('network');
     const account = await this.create(lastIndexedAccount);
     return { data: account };
   }

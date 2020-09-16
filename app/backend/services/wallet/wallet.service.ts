@@ -55,12 +55,13 @@ export default class WalletService {
 
   @Step({
     name: 'Syncing KeyVault with Blox...',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken', 'keyVaultVersion']
   })
   async syncVaultWithBlox(): Promise<void> {
     const payload = {
       url: `http://${this.store.get('publicIp')}:8200`,
-      accessToken: this.store.get('vaultRootToken')
+      accessToken: this.store.get('vaultRootToken'),
+      version: this.store.get('keyVaultVersion')
     };
     try {
       const ssh = await this.keyVaultSsh.getConnection();

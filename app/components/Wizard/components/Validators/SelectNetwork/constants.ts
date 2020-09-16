@@ -6,7 +6,7 @@ export const BUTTONS = [
     title: 'Test on TestNet',
     image: testNetImage,
     sticker: 'Free',
-    label: 'testNet',
+    label: 'test',
     isDisabled: false,
   },
   {

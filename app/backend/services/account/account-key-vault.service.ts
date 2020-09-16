@@ -13,42 +13,49 @@ export default class AccountKeyVaultService extends KeyVaultCli {
   }
 
   @Step({
-    name: 'Creating wallet...'
+    name: 'Creating wallet...',
+    requiredConfig: ['network']
   })
   @Catch({
     displayMessage: 'CLI Create Wallet failed'
   })
   async createWallet(): Promise<void> {
-    if (this.store.get('keyVaultStorage')) return;
+    const network = this.store.get('network');
+    if (this.store.get(`keyVaultStorage.${network}`)) return;
     const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set(`keyVaultStorage.${network}`, stdout.replace('\n', ''));
   }
 
   @Step({
     name: 'Create Account',
-    requiredConfig: ['seed', 'keyVaultStorage']
+    requiredConfig: ['seed', 'keyVaultStorage', 'network']
   })
   @Catch({
     displayMessage: 'CLI Create Account failed'
   })
   async createAccount(): Promise<void> {
+    const network = this.store.get('network');
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account create --seed=${this.store.get('seed')} --storage=${this.store.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account create --seed=${this.store.get('seed')} --storage=${this.store.get(`keyVaultStorage.${network}`)}`
     );
     if (stderr) {
       throw new Error(`Create account error: ${stderr}`);
     }
     console.log(stdout);
-    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set(`keyVaultStorage.${network}`, stdout.replace('\n', ''));
   }
 
   async listAccounts(): Promise<any> {
+    const network = this.store.get('network');
+    if (!network) {
+      throw new Error('Configuration settings network not found');
+    }
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account list --storage=${this.store.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account list --storage=${this.store.get(`keyVaultStorage.${network}`)}`
     );
     if (stderr) {
       throw new Error(`Get last created account error: ${stderr}`);
@@ -66,13 +73,13 @@ export default class AccountKeyVaultService extends KeyVaultCli {
     }
   }
 
-  async getDepositData(pubKey: string): Promise<any> {
+  async getDepositData(pubKey: string, network: string = 'test'): Promise<any> {
     if (!pubKey) {
       throw new Error('publicKey is empty');
     }
     const publicKeyWithoutPrefix = pubKey.replace(/^(0x)/, '');
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --storage=${this.store.get('keyVaultStorage')} --public-key=${publicKeyWithoutPrefix}`
+      `${this.executablePath} wallet account deposit-data --storage=${this.store.get(`keyVaultStorage.${network}`)} --public-key=${publicKeyWithoutPrefix}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
@@ -104,14 +111,18 @@ export default class AccountKeyVaultService extends KeyVaultCli {
   }
 
   async deleteLastIndexedAccount(): Promise<void> {
+    const network = this.store.get('network');
+    if (!network) {
+      throw new Error('Configuration settings network not found');
+    }
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account delete --storage=${this.store.get('keyVaultStorage')}`
+      `${this.executablePath} wallet account delete --storage=${this.store.get(`keyVaultStorage.${network}`)}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     console.log(stdout);
-    this.store.set('keyVaultStorage', stdout.replace('\n', ''));
+    this.store.set(`keyVaultStorage.${network}`, stdout.replace('\n', ''));
   }
 
   async generatePublicKey(): Promise<void> {
