@@ -8,8 +8,13 @@ import ModalTemplate from '../ModalTemplate';
 import { PasswordInput, Button } from 'common/components';
 import * as keyvaultActions from '../../KeyVaultManagement/actions';
 import * as selectors from '../../KeyVaultManagement/selectors';
+import saga from '../../KeyVaultManagement/saga';
+
+import { useInjectSaga } from 'utils/injectSaga';
 
 import image from '../../Wizard/assets/img-password.svg';
+
+const key = 'keyvault';
 
 const PasswordModal = (props) => {
   const { onClose, onClick, isPasswordValid, actions } = props;
@@ -20,13 +25,14 @@ const PasswordModal = (props) => {
   const [showWrongPasswordError, setWrongPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !password || password.length < 8 || showTooShortPasswordError;
 
+  useInjectSaga({ key, saga, mode: '' });
+
   React.useEffect(() => {
     if (isButtonClicked) {
       if (isPasswordValid) {
         setWrongPasswordErrorDisplay(false);
-        onClick();
+        onClick && onClick();
         keyvaultClearPasswordData();
-        onClose();
       }
       else {
         setWrongPasswordErrorDisplay(true);

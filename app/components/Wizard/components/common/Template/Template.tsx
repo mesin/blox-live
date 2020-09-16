@@ -48,13 +48,14 @@ const CloseButton = styled.div`
 const Template = (props: Props) => {
   const { component, bgImage, wizardActions, accountsActions, ...rest } = props;
   const { isFinishedWizard, addAnotherAccount, step } = rest;
-  const { setFinishedWizard } = wizardActions;
-  const { setAddAnotherAccount } = accountsActions;
+  const { clearAccountsData } = accountsActions;
+  const { setFinishedWizard, clearWizardData } = wizardActions;
   const addAdditionalAccount = !isFinishedWizard && addAnotherAccount && step === 2;
 
-  const onCloseClick = () => {
-    setFinishedWizard(true);
-    setAddAnotherAccount(false);
+  const onCloseClick = async () => {
+    await clearAccountsData();
+    await clearWizardData();
+    await setFinishedWizard(true);
   };
 
   return (

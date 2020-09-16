@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { CustomModal, Button, SuccessIcon, Confetti } from 'common/components';
+import { truncateText } from 'components/common/service';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -40,6 +41,7 @@ const ActiveValidatorModal = ({onClose, activeValidators}: Props) => {
   const [current, setCurrent] = React.useState(0);
   const last = activeValidators.length - 1;
   const setNext = () => current === last ? onClose() : setCurrent(current + 1);
+  const truncatedPublicKey = truncateText(activeValidators[current].publicKey, 36, 6);
   return (
     <CustomModal width={'700px'} height={'462px'} onClose={() => setNext()}>
       <InnerWrapper>
@@ -48,8 +50,8 @@ const ActiveValidatorModal = ({onClose, activeValidators}: Props) => {
         <Title>You Are A Validator</Title>
         <Row>
           <SmallText>
-            Your validator {activeValidators[current].publicKey} is now approved and activated tp <br />
-            start staking. Please note: All validators rely on the online <br />
+            Your validator {truncatedPublicKey} is now approved and activated <br />
+            to start staking. Please note: All validators rely on the online <br />
             connectivity and availability of KeyVault.
           </SmallText>
         </Row>

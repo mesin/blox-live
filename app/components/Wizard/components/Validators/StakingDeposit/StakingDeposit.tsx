@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { notification } from 'antd';
+import { shell } from 'electron';
 import { InfoWithTooltip } from 'common/components';
 import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
@@ -86,7 +87,9 @@ const StakingDeposit = (props: Props) => {
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
         simulate validator deposits on the proof-of-work enabled Beacon-chain.
-        <GoEthButton href={process.env.DISCORD_INVITE} target={'_blank'}>Need GoETH?</GoEthButton>
+        <GoEthButton onClick={() => shell.openExternal(process.env.DISCORD_GOETH_INVITE)}>
+          Need GoETH?
+        </GoEthButton>
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}

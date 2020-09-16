@@ -14,6 +14,20 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import Store from './backend/common/store-manager/store';
+
+// start set custom params
+const backendStore: Store = Store.getStore();
+const env = (backendStore.get('env') || 'production').toUpperCase();
+Object.keys(process.env).forEach(param => {
+  if (param.startsWith(`${env}_`)) {
+    const key = param.replace(`${env}_`, '');
+    process.env[key] = process.env[param];
+    delete process.env[`STAGE_${key}`];
+    delete process.env[`PRODUCTION_${key}`];
+  }
+});
+// end set custom params
 
 export default class AppUpdater {
   constructor() {
@@ -45,14 +59,17 @@ const installExtensions = async () => {
 };
 
 const createWindow = async (downloadsDir) => {
+  const width = 1366;
+  const height = 790;
+
   if (process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true') {
     await installExtensions();
   }
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1366,
-    height: 790,
+    width,
+    height,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -68,6 +85,8 @@ const createWindow = async (downloadsDir) => {
     //         preload: path.join(__dirname, 'dist/renderer.prod.js'),
     //       },
   });
+
+  mainWindow.setMinimumSize(width, height);
 
   mainWindow.webContents.openDevTools();
 

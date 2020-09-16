@@ -7,6 +7,7 @@ import { getAddAnotherAccount } from '../Accounts/selectors';
 
 import Header from '../common/Header';
 import ContentManager from './components/ContentManager';
+import { DiscordButton } from 'common/components';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -26,6 +27,7 @@ const Wizard = (props: Props) => {
     <Wrapper>
       <Header withMenu={withMenu} />
       <ContentManager {...contentManagerProps} />
+      <DiscordButton />
     </Wrapper>
   );
 };

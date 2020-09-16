@@ -8,12 +8,16 @@ import saga from '../../../../ProcessRunner/saga';
 import { loadDepositData } from '../../../actions';
 import { GenerateKeys, KeysGenerated } from './components';
 import { getNetwork } from '../../../selectors';
+import Store from 'backend/common/store-manager/store';
+
+const store: Store = Store.getStore();
 
 const key = 'processRunner';
 
 const CreateValidator = (props: Props) => {
   const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, error } = props;
   const { processSubscribe, processClearState } = actions;
+  const [showPasswordModal, setShowPasswordModal] = React.useState(false);
 
   useInjectSaga({ key, saga, mode: '' });
 
@@ -24,6 +28,12 @@ const CreateValidator = (props: Props) => {
   }, [isLoading, validatorData]);
 
   const onGenerateKeysClick = () => {
+    if (!store.isCryptoKeyStored()) {
+      setShowPasswordModal(true);
+      return;
+    }
+
+    setShowPasswordModal(false);
     if (error) {
       processClearState();
     }
@@ -41,7 +51,9 @@ const CreateValidator = (props: Props) => {
       {validatorData && !error ? (
         <KeysGenerated onClick={onContinueClick} validatorData={validatorData} />
       ) : (
-        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error} />
+        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error}
+          showPasswordModal={showPasswordModal} setShowPasswordModal={setShowPasswordModal}
+        />
       )}
     </>
   );
