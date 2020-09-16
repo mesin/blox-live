@@ -36,7 +36,7 @@ export default class KeyVaultService {
 
   async getVersion() {
     this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/test/version');
+    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${process.env.TEST_NETWORK}/version`);
   }
 
   async getSlashingStorage(network: string) {
@@ -52,7 +52,7 @@ export default class KeyVaultService {
       throw new Error('Configuration settings network not found');
     }
     this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}storage/slashing`, payload);
+    return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
   }
 
   @Step({
@@ -139,14 +139,14 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
   })
   async updateVaultMountsStorage(): Promise<void> {
-    // TODO get from env
-    const networks = ['test', 'launchtest'];
+    const keyVaultStorage = this.store.get('keyVaultStorage');
 
-    for (const network of networks) {
-      const storage = this.store.get(`keyVaultStorage.${network}`);
-      if (storage) {
-        this.store.set('network', network);
-        await this.updateStorage({ data: storage });
+    if (keyVaultStorage) {
+      for (const [network, storage] of Object.entries(keyVaultStorage)) {
+        if (storage) {
+          this.store.set('network', network);
+          await this.updateStorage({ data: storage });
+        }
       }
     }
   }
@@ -155,13 +155,12 @@ export default class KeyVaultService {
     name: 'Export slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async exportSlashingData(): Promise<any> {
-    // TODO get from env
-    const networks = ['test', 'launchtest'];
+  async importSlashingData(): Promise<any> {
+    const networks = [process.env.TEST_NETWORK, process.env.LAUNCHTEST_NETWORK];
 
     for (const network of networks) {
       const slashingData = await this.getSlashingStorage(network);
-      if (slashingData) {
+      if (Object.keys(slashingData.data).length) {
         this.store.set(`slashingData.${network}`, slashingData.data);
       }
     }
@@ -171,14 +170,14 @@ export default class KeyVaultService {
     name: 'Import slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken', 'slashingData']
   })
-  async importSlashingData(): Promise<any> {
-    // TODO get from env
-    const networks = ['test', 'launchtest'];
+  async exportSlashingData(): Promise<any> {
+    const slashingData = this.store.get('slashingData');
 
-    for (const network of networks) {
-      const slashingData = this.store.get(`slashingData.${network}`);
-      if (slashingData) {
-        await this.updateSlashingStorage(slashingData, network);
+    if (slashingData) {
+      for (const [network, storage] of Object.entries(slashingData)) {
+        if (storage) {
+          await this.updateSlashingStorage(storage, network);
+        }
       }
     }
   }

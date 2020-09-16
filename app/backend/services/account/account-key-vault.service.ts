@@ -73,7 +73,7 @@ export default class AccountKeyVaultService extends KeyVaultCli {
     }
   }
 
-  async getDepositData(pubKey: string, network: string = 'test'): Promise<any> {
+  async getDepositData(pubKey: string, network: string = process.env.TEST_NETWORK): Promise<any> {
     if (!pubKey) {
       throw new Error('publicKey is empty');
     }
@@ -93,7 +93,7 @@ export default class AccountKeyVaultService extends KeyVaultCli {
     } = depositData;
 
     const depositContractABI = require('./deposit_abi.json');
-    const depositTo = network === 'test' ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC';
+    const depositTo = network === process.env.TEST_NETWORK ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC';
     const web3 = new Web3(
       'https://goerli.infura.io/v3/d03b92aa81864faeb158166231b7f895'
     );

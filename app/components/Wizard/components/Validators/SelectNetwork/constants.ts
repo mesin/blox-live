@@ -6,7 +6,7 @@ export const BUTTONS = [
     title: 'Test on TestNet',
     image: testNetImage,
     sticker: 'Free',
-    label: 'test',
+    label: process.env.TEST_NETWORK,
     isDisabled: false,
   },
   {

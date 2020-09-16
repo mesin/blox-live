@@ -56,10 +56,10 @@ export default class AccountService {
   async deleteAllAccounts(): Promise<void> {
     await this.delete();
     this.store.delete('keyVaultStorage');
-    this.store.set('network', 'test');
+    this.store.set('network', process.env.TEST_NETWORK);
     await this.accountKeyVaultService.createWallet();
     await this.keyVaultService.updateVaultStorage();
-    this.store.set('network', 'launchtest');
+    this.store.set('network', process.env.LAUNCHTEST_NETWORK);
     await this.accountKeyVaultService.createWallet();
     await this.keyVaultService.updateVaultStorage();
   }

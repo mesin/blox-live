@@ -42,7 +42,7 @@ const Test = () => {
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
-  let [network, setNetwork] = useState(store.get('network') || 'test');
+  let [network, setNetwork] = useState(store.get('network'));
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -142,10 +142,19 @@ const Test = () => {
         }}>
           Set mnemonic phrase
         </button>
+        <h2>Select Network</h2>
+        <select value={network} onChange={(event) => {
+          setNetwork(event.target.value);
+          store.set('network', event.target.value);
+          console.log('network:', event.target.value)
+        }}>
+          <option value={process.env.TEST_NETWORK}>Test Network</option>
+          <option value={process.env.LAUNCHTEST_NETWORK}>Launch Test Network</option>
+        </select>
         <h3>Step 4. Account create</h3>
         <button
           onClick={async () => {
-            const accountCreateProcess = new AccountCreateProcess('test');
+            const accountCreateProcess = new AccountCreateProcess(network);
             const listener = new Listener(setProcessStatus);
             accountCreateProcess.subscribe(listener);
             try {
@@ -156,22 +165,7 @@ const Test = () => {
             console.log('+ Congratulations. Account Created');
           }}
         >
-          Account Create [test] Network
-        </button>
-        <button
-          onClick={async () => {
-            const accountCreateProcess = new AccountCreateProcess('launchtest');
-            const listener = new Listener(setProcessStatus);
-            accountCreateProcess.subscribe(listener);
-            try {
-              await accountCreateProcess.run();
-            } catch (e) {
-              setProcessStatus(e);
-            }
-            console.log('+ Congratulations. Account Created');
-          }}
-        >
-          Account Create [launchtest] Network
+          Account Create
         </button>
       </div>
       <p/>
@@ -238,11 +232,6 @@ const Test = () => {
         </button>
       </div>
       <p/>
-      <h1>Network</h1>
-      <select value={network} onChange={(event) => {setNetwork(event.target.value); store.set('network', event.target.value)}}>
-        <option value="test">Test Network</option>
-        <option value="launchtest">LaunchTest Network</option>
-      </select>
       <h2>Local Storage Only</h2>
       <div>
         <button onClick={async () => {
@@ -284,14 +273,9 @@ const Test = () => {
         <br/>
         <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key" />
         <button onClick={async () => {
-          await accountKeyVaultService.getDepositData(publicKey, 'test');
+          await accountKeyVaultService.getDepositData(publicKey, network);
         }}>
-          Get Account Deposit Data [test] Network
-        </button>
-        <button onClick={async () => {
-          await accountKeyVaultService.getDepositData(publicKey, 'launchtest');
-        }}>
-          Get Account Deposit Data [launchtest] Network
+          Get Account Deposit Data
         </button>
         <button onClick={async () => {
           await accountKeyVaultService.generatePublicKey();
@@ -362,12 +346,12 @@ const Test = () => {
         <button onClick={async () => {
           await keyVaultService.exportSlashingData();
         }}>
-          Get Slashing Storage
+          Export Slashing Data
         </button>
         <button onClick={async () => {
           await keyVaultService.importSlashingData();
         }}>
-          Update Slashing Storage
+          Import Slashing Data
         </button>
       </div>
       <p/>
