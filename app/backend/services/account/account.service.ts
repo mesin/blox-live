@@ -3,15 +3,18 @@ import AccountKeyVaultService from './account-key-vault.service';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { Catch, CatchClass, Step } from '../../decorators';
+import KeyVaultService from '../key-vault/key-vault.service';
 
 @CatchClass<AccountService>()
 export default class AccountService {
   private readonly store: Store;
   private readonly accountKeyVaultService: AccountKeyVaultService;
+  private readonly keyVaultService: KeyVaultService;
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
     this.accountKeyVaultService = new AccountKeyVaultService();
+    this.keyVaultService = new KeyVaultService();
   }
 
   async get() {
@@ -50,12 +53,14 @@ export default class AccountService {
     return { data: account };
   }
 
-  @Step({
-    name: 'Remove Blox Accounts',
-    requiredConfig: ['authToken']
-  })
-  async deleteBloxAccounts(): Promise<void> {
+  async deleteAllAccounts(): Promise<void> {
     await this.delete();
     this.store.delete('keyVaultStorage');
+    this.store.set('network', 'test');
+    await this.accountKeyVaultService.createWallet();
+    await this.keyVaultService.updateVaultStorage();
+    this.store.set('network', 'launchtest');
+    await this.accountKeyVaultService.createWallet();
+    await this.keyVaultService.updateVaultStorage();
   }
 }

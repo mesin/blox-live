@@ -8,7 +8,6 @@ import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import { Observer } from '../../backend/proccess-manager/observer.interface';
 import { Subject } from '../../backend/proccess-manager/subject.interface';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
-import CleanStorageProcess from '../../backend/proccess-manager/clean-storage.process';
 import SeedService from '../../backend/services/key-vault/seed.service';
 import AccountKeyVaultService from '../../backend/services/account/account-key-vault.service';
 import KeyVaultService from '../../backend/services/key-vault/key-vault.service';
@@ -41,6 +40,7 @@ const Test = () => {
   const store: Store = Store.getStore();
   const organizationService = new OrganizationService();
   let [cryptoKey, setCryptoKey] = useState('');
+  let [network, setNetwork] = useState(store.get('network') || 'test');
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -112,7 +112,7 @@ const Test = () => {
         <h3>Step 4. Account create</h3>
         <button
           onClick={async () => {
-            const accountCreateProcess = new AccountCreateProcess();
+            const accountCreateProcess = new AccountCreateProcess('test');
             const listener = new Listener(setProcessStatus);
             accountCreateProcess.subscribe(listener);
             try {
@@ -123,7 +123,22 @@ const Test = () => {
             console.log('+ Congratulations. Account Created');
           }}
         >
-          Account Create
+          Account Create [test] Network
+        </button>
+        <button
+          onClick={async () => {
+            const accountCreateProcess = new AccountCreateProcess('launchtest');
+            const listener = new Listener(setProcessStatus);
+            accountCreateProcess.subscribe(listener);
+            try {
+              await accountCreateProcess.run();
+            } catch (e) {
+              setProcessStatus(e);
+            }
+            console.log('+ Congratulations. Account Created');
+          }}
+        >
+          Account Create [launchtest] Network
         </button>
       </div>
       <p/>
@@ -182,21 +197,19 @@ const Test = () => {
         </button>
         <button
           onClick={async () => {
-            const cleanStorageProcess = new CleanStorageProcess();
-            const listener = new Listener(setProcessStatus);
-            cleanStorageProcess.subscribe(listener);
-            try {
-              await cleanStorageProcess.run();
-            } catch (e) {
-              setProcessStatus(e);
-            }
+            await accountService.deleteAllAccounts();
             console.log('+Clean Accounts from storage is done!');
           }}
         >
-          Clean Accounts from Storage
+          Delete Accounts from local/blox/vault-plugin
         </button>
       </div>
       <p/>
+      <h1>Network</h1>
+      <select value={network} onChange={(event) => {setNetwork(event.target.value); store.set('network', event.target.value)}}>
+        <option value="test">Test Network</option>
+        <option value="launchtest">LaunchTest Network</option>
+      </select>
       <h2>Local Storage Only</h2>
       <div>
         <button onClick={async () => {
@@ -238,9 +251,14 @@ const Test = () => {
         <br/>
         <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} placeholder="Public key" />
         <button onClick={async () => {
-          await accountKeyVaultService.getDepositData(publicKey);
+          await accountKeyVaultService.getDepositData(publicKey, 'test');
         }}>
-          Get Account Deposit Data
+          Get Account Deposit Data [test] Network
+        </button>
+        <button onClick={async () => {
+          await accountKeyVaultService.getDepositData(publicKey, 'launchtest');
+        }}>
+          Get Account Deposit Data [launchtest] Network
         </button>
         <button onClick={async () => {
           await accountKeyVaultService.generatePublicKey();
