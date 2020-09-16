@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link, ErrorMessage } from '../../../common';
 import { openExternalLink } from '../../../../../common/service';
+import PasswordModal from '../../../../../KeyVaultModals/Modals/PasswordModal';
 
 const Wrapper = styled.div``;
 
@@ -23,7 +24,7 @@ const LoaderText = styled.span`
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, onClick, error } = props;
+  const { isLoading, onClick, error, showPasswordModal, setShowPasswordModal } = props;
   return (
     <Wrapper>
       <Title>Create TestNet Validator</Title>
@@ -50,6 +51,7 @@ const GenerateKeys = (props: Props) => {
           {error}, please try again.
         </ErrorMessage>
       )}
+      {showPasswordModal && (<PasswordModal onClose={() => setShowPasswordModal(false)} />)}
     </Wrapper>
   );
 };
@@ -58,6 +60,8 @@ type Props = {
   isLoading: boolean;
   onClick: () => void;
   error: string;
+  showPasswordModal: boolean;
+  setShowPasswordModal: (arg0: boolean) => void;
 };
 
 export default GenerateKeys;

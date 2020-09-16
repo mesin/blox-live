@@ -75,7 +75,7 @@ const UpdateBanner = (props) => {
           Please update Blox Live to the latest app version for optimal staking experience.
         </Description>
       </TextWrapper>
-      <ButtonWrapper onClick={() => openExternalLink('https://www.bloxstaking.com/beta/ ')}>
+      <ButtonWrapper onClick={() => openExternalLink('download')}>
         <Button>
           Update Now
         </Button>

@@ -14,7 +14,7 @@ export default class Store extends BaseStore {
   private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
-  private cryptoKeyTTL: number = 15; // 15 minutes
+  private cryptoKeyTTL: number = 5; // 15 minutes
   private timer: any;
   private logger: Logger;
 
@@ -86,6 +86,8 @@ export default class Store extends BaseStore {
   logout = (): void => {
     this.baseStore.clear();
   };
+
+  isCryptoKeyStored = () => !!this.cryptoKey;
 
   @Catch()
   createCryptoKey(cryptoKey: string) {
