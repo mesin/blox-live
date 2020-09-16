@@ -95,6 +95,8 @@ export default class Store extends BaseStore {
     this.baseStore.clear();
   };
 
+  isCryptoKeyStored = () => !!this.cryptoKey;
+
   @Catch()
   createCryptoKey(cryptoKey: string) {
     return crypto.createHash('sha256').update(String(cryptoKey)).digest('base64').substr(0, 32);

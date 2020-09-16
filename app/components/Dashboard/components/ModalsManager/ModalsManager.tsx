@@ -23,6 +23,7 @@ const ModalsManager = (props: Props) => {
   const onPasswordModalClick = () => {
     setFinishedWizard(false);
     setAddAnotherAccount(true);
+    hideModal();
   };
 
   const hideModal = () => setModalDisplay({ show: false, type: '', text: '', });
