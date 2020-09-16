@@ -2,18 +2,21 @@ import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
-import { CatchClass, Step } from '../../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 import { Logger } from '../../common/logger/logger';
+import KeyManagerService from '../key-manager/key-manager.service';
 
 @CatchClass<WalletService>()
 export default class WalletService {
   private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
+  private readonly keyManagerService: KeyManagerService;
   private readonly logger: Logger;
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
+    this.keyManagerService = new KeyManagerService();
     this.logger = new Logger();
   }
 
@@ -32,6 +35,20 @@ export default class WalletService {
   async delete() {
     // TODO request to delete wallet and not organization
     await BloxApi.request(METHOD.DELETE, 'organizations');
+  }
+
+  @Step({
+    name: 'Creating wallet...',
+    requiredConfig: ['network']
+  })
+  @Catch({
+    displayMessage: 'CLI Create Wallet failed'
+  })
+  async createWallet(): Promise<void> {
+    const network = this.store.get('network');
+    if (this.store.get(`keyVaultStorage.${network}`)) return;
+    const storage = await this.keyManagerService.createWallet();
+    this.store.set(`keyVaultStorage.${network}`, storage);
   }
 
   @Step({
