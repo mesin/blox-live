@@ -52,9 +52,17 @@ export default class Store extends BaseStore {
     this.storage = new ElectronStore({ name: storeName });
   };
 
+  setEnv = (env: string): any => {
+    this.baseStore.set('env', env);
+  };
+
+  deleteEnv = (): any => {
+    this.baseStore.delete('env');
+  };
+
   get = (key: string): any => {
-    const value = this.storage.get(key) || this.baseStore.get(key);
-    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) { // TODO: write it in a different function
+    const value = (this.storage && this.storage.get(key)) || this.baseStore.get(key);
+    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
       return this.decrypt(this.cryptoKey, value);
     }
     return value;
