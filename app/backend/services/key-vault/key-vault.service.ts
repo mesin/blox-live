@@ -4,6 +4,7 @@ import VersionService from '../version/version.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
+import config from '../../common/config';
 
 @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
@@ -93,7 +94,7 @@ export default class KeyVaultService {
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     this.store.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
-      `curl -L "${process.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
+      `curl -L "${config.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
       {}
     );
   }

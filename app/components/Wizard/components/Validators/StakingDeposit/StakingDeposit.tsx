@@ -15,6 +15,7 @@ import { getAccounts, getDepositNeededStatus, getDepositToPublicKey } from '../.
 
 import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
+import config from 'backend/common/config';
 
 const Wrapper = styled.div`
   width:580px;
@@ -90,7 +91,7 @@ const StakingDeposit = (props: Props) => {
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
         simulate validator deposits on the proof-of-work enabled Beacon-chain.
-        <GoEthButton onClick={() => shell.openExternal(process.env.DISCORD_GOETH_INVITE)}>
+        <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
           Need GoETH?
         </GoEthButton>
       </Paragraph>
