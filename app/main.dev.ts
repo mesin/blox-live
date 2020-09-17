@@ -14,9 +14,10 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import Store from './backend/common/store-manager/store';
+// import Store from './backend/common/store-manager/store';
 
 // start set custom params
+/*
 const backendStore: Store = Store.getStore();
 const env = (backendStore.get('env') || 'production').toUpperCase();
 Object.keys(process.env).forEach(param => {
@@ -27,6 +28,7 @@ Object.keys(process.env).forEach(param => {
     delete process.env[`PRODUCTION_${key}`];
   }
 });
+*/
 // end set custom params
 
 export default class AppUpdater {
