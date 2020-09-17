@@ -42,6 +42,7 @@ const DepositData = (props: Props) => {
       {DEPOSIT_DATA.map((row, index) => {
         const { label, title, moreInfo, value } = row;
         const isTxData = label === DEPOSIT_DATA[1].label;
+        const isAmount = label === DEPOSIT_DATA[2].label;
         const valueText = isTxData ? depositData : value;
         return (
           <Row key={index}>
@@ -56,7 +57,7 @@ const DepositData = (props: Props) => {
             ) : (
               <ValueText>{valueText}</ValueText>
             )}
-            <CopyToClipboardIcon text={valueText} onCopy={onCopy} />
+            {!isAmount && <CopyToClipboardIcon text={valueText} onCopy={onCopy} />}
           </Row>
         );
       })}

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { shell } from 'electron';
-import { InfoWithTooltip } from 'common/components';
+import { InfoWithTooltip, Icon } from 'common/components';
 import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
@@ -18,6 +18,8 @@ import { getData } from '../../../../ProcessRunner/selectors';
 import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
 import config from 'backend/common/config';
+
+import tipImage from 'assets/images/info.svg';
 
 const Wrapper = styled.div`
   width:580px;
@@ -49,6 +51,21 @@ const CancelButton = styled(BigButton)`
   color:${({theme}) => theme.gray600};
   background-color:transparent;
   border:1px solid ${({theme}) => theme.gray400};
+`;
+
+const Tip = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  display:flex;
+  align-items:center;
+  margin-top:78px;
+  margin-bottom:8px;
+`;
+
+const TipImage = styled.img`
+  width:24px;
+  height:24px;
+  margin-right:7px;
 `;
 
 const StakingDeposit = (props: Props) => {
@@ -100,6 +117,7 @@ const StakingDeposit = (props: Props) => {
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
+      <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
       <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
