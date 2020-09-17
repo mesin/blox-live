@@ -50,7 +50,7 @@ export default class KeyManagerService {
 
   async getDepositData(publicKey: string, network: string): Promise<any> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --storage=${this.store.get(`keyVaultStorage.${network}`)} --public-key=${publicKey}`
+      `${this.executablePath} wallet account deposit-data --storage=${this.store.get(`keyVaultStorage.${network}`)} --public-key=${publicKey} --network=${network}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
