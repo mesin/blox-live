@@ -7,6 +7,7 @@ const initialState = {
   error: null,
   data: null,
   depositNeeded: false,
+  depositTo: '',
   addAnotherAccount: false,
 };
 
@@ -25,7 +26,8 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.isLoading = false;
         break;
       case actionTypes.SET_DEPOSIT_NEEDED:
-        draft.depositNeeded = action.payload;
+        draft.depositNeeded = action.payload.depositNeeded;
+        draft.depositTo = action.payload.publicKey;
         break;
       case actionTypes.ADD_ANOTHER_ACCOUNT:
         draft.addAnotherAccount = action.payload;
@@ -36,6 +38,8 @@ const accountsReducer = (state = initialState, action: Action) => produce(state,
         draft.error = initialState.error;
         draft.data = initialState.data;
         draft.addAnotherAccount = initialState.addAnotherAccount;
+        draft.depositNeeded = initialState.depositNeeded;
+        draft.depositTo = initialState.depositTo;
         break;
     }
   });

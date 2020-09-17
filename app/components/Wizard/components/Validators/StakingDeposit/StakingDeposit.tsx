@@ -10,13 +10,14 @@ import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
 
-import { clearAccountsData } from '../../../../Accounts/actions';
-import { getAccounts } from '../../../../Accounts/selectors';
+import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
+import { getAccounts, getDepositNeededStatus, getDepositToPublicKey } from '../../../../Accounts/selectors';
 
 import { getData } from '../../../../ProcessRunner/selectors';
 
 import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
+import config from 'backend/common/config';
 
 const Wrapper = styled.div`
   width:580px;
@@ -51,22 +52,28 @@ const CancelButton = styled(BigButton)`
 `;
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, isLoading, depositData, accountDataFromProcess, accountsFromApi, actions, callClearAccountsData } = props;
+  const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
+          isDepositNeeded, depositTo, callSetDepositNeeded } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
   useEffect(() => {
-    const needToLoadDepositData = !depositData && !isLoading && accountsFromApi && accountsFromApi.length > 0;
-    if (needToLoadDepositData) {
-      const { publicKey } = accountsFromApi[0];
-      loadDepositData(publicKey);
+    if (isDepositNeeded && depositTo) {
+      loadDepositData(depositTo);
+      callSetDepositNeeded(false, depositTo);
     }
-  }, [depositData, isLoading, accountsFromApi]);
+  }, [isDepositNeeded, depositTo]);
 
   const onMadeDepositButtonClick = async () => {
-    const accountId = accountDataFromProcess ?
-      accountDataFromProcess.id : accountsFromApi[0].id;
-    await updateAccountStatus(accountId);
-    await setPage(page + 1);
+    const accountFromApi: Record<string, any> = accountsFromApi.find((account) => account.publicKey === depositTo);
+    const currentAccount = accountDataFromProcess || accountFromApi;
+    if (currentAccount) {
+      await updateAccountStatus(currentAccount.id);
+      await callSetDepositNeeded(false, '');
+      await setPage(page + 1);
+    }
+    else {
+      notification.error({message: 'Account not found'});
+    }
   };
 
   const onDepositLaterButtonClick = async () => {
@@ -87,7 +94,7 @@ const StakingDeposit = (props: Props) => {
         validator deposit contract. The Blox test network uses the Goerli
         network to <br />
         simulate validator deposits on the proof-of-work enabled Beacon-chain.
-        <GoEthButton onClick={() => shell.openExternal(process.env.DISCORD_GOETH_INVITE)}>
+        <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
           Need GoETH?
         </GoEthButton>
       </Paragraph>
@@ -107,11 +114,14 @@ const mapStateToProps = (state: State) => ({
   depositData: selectors.getDepositData(state),
   accountDataFromProcess: getData(state),
   accountsFromApi: getAccounts(state),
+  isDepositNeeded: getDepositNeededStatus(state),
+  depositTo: getDepositToPublicKey(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(wizardActions, dispatch),
-  callClearAccountsData: () => dispatch(clearAccountsData())
+  callClearAccountsData: () => dispatch(clearAccountsData()),
+  callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
 });
 
 type Props = {
@@ -119,12 +129,14 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  isLoading: boolean;
   depositData: string;
-  accountDataFromProcess: Record<string, any> | null;
   accountsFromApi: { publicKey: string, id: number }[];
+  accountDataFromProcess: Record<string, any> | null;
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
+  callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
+  isDepositNeeded: boolean;
+  depositTo: string;
 };
 
 type State = Record<string, any>;

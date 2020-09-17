@@ -27,7 +27,7 @@ const AdditionalData = (props) => {
   };
 
   const onFinishSetupClick = () => {
-    callSetDepositNeeded(true);
+    callSetDepositNeeded(true, publicKey);
     callSetFinishedWizard(false);
   };
   if (status === 'pending') {
@@ -77,7 +77,7 @@ const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
   callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
   callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
-  callSetDepositNeeded: (depositNeeded) => dispatch(setDepositNeeded(depositNeeded)),
+  callSetDepositNeeded: (depositNeeded, publicKey) => dispatch(setDepositNeeded(depositNeeded, publicKey)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdditionalData);

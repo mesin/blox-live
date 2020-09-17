@@ -6,6 +6,7 @@ import { createLogoutWindow } from './Logout-Window';
 import Store from 'backend/common/store-manager/store';
 import BloxApi from 'backend/common/communication-manager/blox-api';
 import AuthApi from 'backend/common/communication-manager/auth-api';
+import config from 'backend/common/config';
 
 export default class Auth {
   idToken: string;
@@ -17,9 +18,9 @@ export default class Auth {
     this.idToken = '';
     this.userProfile = null;
     this.auth = {
-      domain: process.env.AUTH0_DOMAIN || '',
-      clientID: process.env.AUTH0_CLIENT_ID || '',
-      redirectUri: process.env.AUTH0_CALLBACK_URL,
+      domain: config.env.AUTH0_DOMAIN || '',
+      clientID: config.env.AUTH0_CLIENT_ID || '',
+      redirectUri: config.env.AUTH0_CALLBACK_URL,
       responseType: 'code',
       scope: 'openid profile email offline_access'
     };
