@@ -344,10 +344,9 @@ const Test = () => {
           Get Version
         </button>
         <button onClick={async () => {
-          const response = await keyVaultService.updateStorage({ data: store.get('keyVaultStorage') });
-          console.log(response.data.status);
+          await keyVaultService.updateVaultMountsStorage();
         }}>
-          Update Storage
+          Update Storage for both networks
         </button>
         <button onClick={async () => {
           await keyVaultService.exportSlashingData();
