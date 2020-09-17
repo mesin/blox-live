@@ -1,9 +1,10 @@
 import Http from './http';
+import config from '../config';
 
 class BloxApi extends Http {
   constructor() {
     super();
-    this.baseUrl = process.env.API_URL;
+    this.baseUrl = config.env.API_URL;
   }
 
   init = () => {

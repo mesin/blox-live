@@ -13,6 +13,7 @@ import saga from '../../KeyVaultManagement/saga';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import image from '../../Wizard/assets/img-password.svg';
+import config from 'backend/common/config';
 
 const key = 'keyvault';
 
@@ -77,7 +78,7 @@ const PasswordModal = (props) => {
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isPasswordValid}
         onBlur={onPasswordBlur} error={error}
       />
-      <a href={process.env.DISCORD_INVITE} target={'_blank'}>Forgot password?</a>
+      <a href={config.env.DISCORD_INVITE} target={'_blank'}>Forgot password?</a>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
     </ModalTemplate>
   );

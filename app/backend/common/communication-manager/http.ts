@@ -2,6 +2,7 @@ import Store from '../store-manager/store';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { Catch } from '../../decorators';
+import config from '../config';
 
 export default class Http {
   protected readonly store: Store;
@@ -12,9 +13,9 @@ export default class Http {
     this.store = Store.getStore(storePrefix);
     this.instance = axios.create();
     axiosRetry(this.instance, {
-      retries: +process.env.HTTP_RETRIES,
+      retries: +config.env.HTTP_RETRIES,
       retryDelay: (retryCount) => {
-        return retryCount * +process.env.HTTP_RETRY_DELAY;
+        return retryCount * +config.env.HTTP_RETRY_DELAY;
       }
     });
   }

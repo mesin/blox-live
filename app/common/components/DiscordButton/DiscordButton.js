@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Icon } from 'common/components';
 import { shell } from 'electron';
+import config from 'backend/common/config';
 
 const Wrapper = styled.div``;
 
@@ -60,7 +61,7 @@ const ReachUsText = styled.span`
 
 const DiscordButton = () => {
   return (
-    <Wrapper onClick={() => shell.openExternal(process.env.DISCORD_INVITE)}>
+    <Wrapper onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>
       <Button className="btn btn-dark floating-btn">
         <Icon color={'gray50'} name={'discord-symbol'} fontSize={'24px'} />
         <Expanded className="expanded">
