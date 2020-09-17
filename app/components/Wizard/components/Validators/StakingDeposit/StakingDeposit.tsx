@@ -13,8 +13,6 @@ import * as selectors from '../../../selectors';
 import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
 import { getAccounts, getDepositNeededStatus, getDepositToPublicKey } from '../../../../Accounts/selectors';
 
-import { getData } from '../../../../ProcessRunner/selectors';
-
 import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
 
@@ -51,8 +49,8 @@ const CancelButton = styled(BigButton)`
 `;
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountDataFromProcess, accountsFromApi,
-          actions, callClearAccountsData, isDepositNeeded, depositTo, callSetDepositNeeded } = props;
+  const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData,
+          isDepositNeeded, depositTo, callSetDepositNeeded } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
   useEffect(() => {
@@ -62,12 +60,16 @@ const StakingDeposit = (props: Props) => {
     }
   }, [isDepositNeeded, depositTo]);
 
-  const onMadeDepositButtonClick = async () => { // TODO: get account id
-    // const accountId = accountDataFromProcess ? accountDataFromProcess.id : accountsFromApi[0].id;
-    // debugger;
-    // await updateAccountStatus(depositTo);
-    // await callSetDepositNeeded(false, '');
-    await setPage(page + 1);
+  const onMadeDepositButtonClick = async () => {
+    const currentAccount: Record<string, any> = accountsFromApi.find((account) => account.publicKey === depositTo);
+    if (currentAccount) {
+      await updateAccountStatus(currentAccount.id);
+      await callSetDepositNeeded(false, '');
+      await setPage(page + 1);
+    }
+    else {
+      notification.error({message: 'Account not found'});
+    }
   };
 
   const onDepositLaterButtonClick = async () => {
@@ -106,7 +108,6 @@ const StakingDeposit = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
-  accountDataFromProcess: getData(state),
   accountsFromApi: getAccounts(state),
   isDepositNeeded: getDepositNeededStatus(state),
   depositTo: getDepositToPublicKey(state),
@@ -124,7 +125,6 @@ type Props = {
   step: number;
   setStep: (page: number) => void;
   depositData: string;
-  accountDataFromProcess: Record<string, any> | null;
   accountsFromApi: { publicKey: string, id: number }[];
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
