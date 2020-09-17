@@ -6,4 +6,6 @@ export const getAccountsError = (state: Record<string, any>) => state.accounts &
 
 export const getDepositNeededStatus = (state: Record<string, any>) => state.accounts && state.accounts.depositNeeded;
 
+export const getDepositToPublicKey = (state: Record<string, any>) => state.accounts && state.accounts.depositTo;
+
 export const getAddAnotherAccount = (state: Record<string, any>) => state.accounts && state.accounts.addAnotherAccount;
