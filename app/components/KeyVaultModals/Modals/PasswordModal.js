@@ -14,7 +14,6 @@ import saga from '../../KeyVaultManagement/saga';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import image from '../../Wizard/assets/img-password.svg';
-import config from 'backend/common/config';
 
 const key = 'keyvault';
 
