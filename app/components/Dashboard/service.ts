@@ -80,14 +80,11 @@ const fixNumOfDigits = (summary) => {
 export const normalizeEventLogs = (events) => {
   const normalizedEvents = events.map((event) => {
     const {
-      createdAt,
       orgId,
       publicKey,
       type,
     } = event;
     const newEvent = { ...event };
-
-    newEvent.createdAt = moment(createdAt).format('MMMM DD, YYYY');
     newEvent.description = {
       type,
       orgId,
