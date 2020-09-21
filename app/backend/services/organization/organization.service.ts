@@ -15,4 +15,8 @@ export default class OrganizationService {
   async getEventLogs() {
     return await BloxApi.request(METHOD.GET, 'organizations/event-logs');
   }
+
+  async reportCrash(payload: any) {
+    return await BloxApi.request(METHOD.POST, 'organizations/crash-report', payload);
+  }
 }
