@@ -43,7 +43,6 @@ const CreateValidator = (props: Props) => {
   };
 
   const onContinueClick = () => {
-    console.log('publicKey', validatorData.publicKey);
     callSetDepositNeeded(true, validatorData.publicKey);
     setPage(page + 1);
   };

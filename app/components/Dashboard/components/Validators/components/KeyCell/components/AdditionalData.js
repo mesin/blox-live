@@ -2,12 +2,10 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Spinner } from 'common/components';
 import * as actionsFromDashboard from '../../../../../actions';
 import { MODAL_TYPES } from '../../../../../constants';
 
 import { loadDepositData, setFinishedWizard } from '../../../../../../Wizard/actions';
-import { getIsLoading } from '../../../../../../Wizard/selectors';
 
 import { setDepositNeeded } from '../../../../../../Accounts/actions';
 
@@ -17,7 +15,7 @@ import Date from './Date';
 
 const AdditionalData = (props) => {
   const { publicKey, status, createdAt, dashboardActions,
-          callLoadDepositData, callSetFinishedWizard, isLoading, callSetDepositNeeded
+          callLoadDepositData, callSetFinishedWizard, callSetDepositNeeded
         } = props;
   const { setModalDisplay } = dashboardActions;
 
@@ -35,7 +33,6 @@ const AdditionalData = (props) => {
       <>
         <WarningText>Waiting for approval</WarningText>
         <BlueButton onClick={() => onDepositInfoButtonClick()}>Deposit Info</BlueButton>
-        {isLoading && <Spinner width={'10px'} />}
       </>
     );
   }
@@ -66,12 +63,7 @@ AdditionalData.propTypes = {
   callLoadDepositData: PropTypes.func,
   callSetFinishedWizard: PropTypes.func,
   callSetDepositNeeded: PropTypes.func,
-  isLoading: PropTypes.bool,
 };
-
-const mapStateToProps = (state) => ({
-  isLoading: getIsLoading(state),
-});
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
@@ -80,4 +72,4 @@ const mapDispatchToProps = (dispatch) => ({
   callSetDepositNeeded: (depositNeeded, publicKey) => dispatch(setDepositNeeded(depositNeeded, publicKey)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdditionalData);
+export default connect(null, mapDispatchToProps)(AdditionalData);

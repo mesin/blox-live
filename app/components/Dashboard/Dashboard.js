@@ -8,7 +8,7 @@ import { DiscordButton } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100%;
   background-color: ${({ theme }) => theme.gray50};
   display: flex;
   flex-direction: column;

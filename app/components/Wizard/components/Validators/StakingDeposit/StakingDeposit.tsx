@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { shell } from 'electron';
-import { InfoWithTooltip, Icon } from 'common/components';
+import { InfoWithTooltip } from 'common/components';
 import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
@@ -105,12 +105,9 @@ const StakingDeposit = (props: Props) => {
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
-        To start staking on our Testnet, you are required to stake 32 GoEth
+        To start staking on beacon chain Testnet, you are required to stake 32 GoEth
         <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
-        <br />
-        validator deposit contract. The Blox test network uses the Goerli
-        network to <br />
-        simulate validator deposits on the proof-of-work enabled Beacon-chain.
+        validator deposit contract.
         <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
           Need GoETH?
         </GoEthButton>
@@ -128,7 +125,6 @@ const StakingDeposit = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
   accountDataFromProcess: getData(state),
   accountsFromApi: getAccounts(state),

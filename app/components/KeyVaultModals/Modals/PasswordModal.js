@@ -10,8 +10,9 @@ import { PasswordInput, Button } from 'common/components';
 import * as keyvaultActions from '../../KeyVaultManagement/actions';
 import * as selectors from '../../KeyVaultManagement/selectors';
 import saga from '../../KeyVaultManagement/saga';
-
 import { useInjectSaga } from 'utils/injectSaga';
+
+import config from 'backend/common/config';
 
 import image from '../../Wizard/assets/img-password.svg';
 
@@ -78,7 +79,7 @@ const PasswordModal = (props) => {
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isPasswordValid}
         onBlur={onPasswordBlur} error={error}
       />
-      <span onClick={() => shell.openExternal(process.env.DISCORD_INVITE)}>Forgot password?</span>
+      <span onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</span>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
     </ModalTemplate>
   );
