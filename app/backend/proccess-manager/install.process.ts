@@ -3,14 +3,12 @@ import AwsService from '../services/aws/aws.service';
 import WalletService from '../services/wallet/wallet.service';
 import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
-import AccountKeyVaultService from '../services/account/account-key-vault.service';
 import Store from '../common/store-manager/store';
 
 export default class InstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
   private readonly keyVaultService: KeyVaultService;
   private readonly walletService: WalletService;
-  private readonly accountKeyVaultService: AccountKeyVaultService;
   public readonly actions: Array<any>;
 
   constructor({ accessKeyId, secretAccessKey }) {
@@ -26,7 +24,6 @@ export default class InstallProcess extends ProcessClass {
 
     this.keyVaultService = new KeyVaultService();
     this.awsService = new AwsService();
-    this.accountKeyVaultService = new AccountKeyVaultService();
     this.walletService = new WalletService();
     this.actions = [
       { instance: this.awsService, method: 'setAWSCredentials' },
@@ -38,9 +35,7 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'runScripts' },
-      { instance: this.accountKeyVaultService, method: 'createWallet' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
-      { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.walletService, method: 'syncVaultWithBlox' },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
     ];

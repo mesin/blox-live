@@ -1,12 +1,13 @@
 import testNetImage from '../../../assets/img-validator-test-net.svg';
 import mainNetImage from '../../../assets/img-validator-main-net.svg';
+import config from '../../../../../backend/common/config';
 
 export const BUTTONS = [
   {
     title: 'Test on TestNet',
     image: testNetImage,
     sticker: 'Free',
-    label: 'testNet',
+    label: config.env.TEST_NETWORK,
     isDisabled: false,
   },
   {
