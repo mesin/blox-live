@@ -20,7 +20,6 @@ export const normalizeAccountsData = (accounts) => {
       status,
     } = account;
     const newAccount = { ...account };
-
     newAccount.key = {
       publicKey,
       activationTime,
@@ -94,7 +93,7 @@ export const normalizeEventLogs = (events) => {
   });
 
   normalizedEvents.sort((a, b) => {
-    return a.createdAt - b.createdAt ? 1 : -1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return normalizedEvents;
 };

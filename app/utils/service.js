@@ -49,3 +49,9 @@ export const lastDateFormat = (utcDate) => {
   // more than 48 hours
   return moment(utcDate).format('MMMM DD, YYYY');
 };
+
+export const parseVersion = (v) => {
+  const chars = v.split('-')[0].replace('v', '').split('.');
+  // eslint-disable-next-line radix
+  return parseInt(`${chars[0]}${chars[1]}${chars[2]}`) || 0;
+};
