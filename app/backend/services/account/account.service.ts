@@ -6,6 +6,7 @@ import KeyVaultService from '../key-vault/key-vault.service';
 import KeyManagerService from '../key-manager/key-manager.service';
 import Web3 from 'web3';
 import WalletService from '../wallet/wallet.service';
+import config from '../../common/config';
 
 @CatchClass<AccountService>()
 export default class AccountService {
@@ -86,7 +87,7 @@ export default class AccountService {
     }
   }
 
-  async getDepositData(pubKey: string, network: string = process.env.TEST_NETWORK): Promise<any> {
+  async getDepositData(pubKey: string, network: string = config.env.TEST_NETWORK): Promise<any> {
     if (!pubKey) {
       throw new Error('publicKey is empty');
     }
@@ -100,7 +101,7 @@ export default class AccountService {
     } = depositData;
 
     const depositContractABI = require('./deposit_abi.json');
-    const depositTo = network === process.env.TEST_NETWORK ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC';
+    const depositTo = network === config.env.TEST_NETWORK ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC';
     const web3 = new Web3(
       'https://goerli.infura.io/v3/d03b92aa81864faeb158166231b7f895'
     );

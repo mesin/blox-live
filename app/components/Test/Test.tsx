@@ -15,6 +15,7 @@ import WalletService from '../../backend/services/wallet/wallet.service';
 import VersionService from '../../backend/services/version/version.service';
 import OrganizationService from '../../backend/services/organization/organization.service';
 import { Link } from 'react-router-dom/esm/react-router-dom';
+import config from '../../backend/common/config';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -41,7 +42,7 @@ const Test = () => {
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
-  let [network, setNetwork] = useState(process.env.TEST_NETWORK);
+  let [network, setNetwork] = useState(config.env.TEST_NETWORK);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -153,8 +154,8 @@ const Test = () => {
           store.set('network', event.target.value);
           console.log('network:', event.target.value);
         }}>
-          <option value={process.env.TEST_NETWORK}>Test Network</option>
-          <option value={process.env.LAUNCHTEST_NETWORK}>Launch Test Network</option>
+          <option value={config.env.TEST_NETWORK}>Test Network</option>
+          <option value={config.env.LAUNCHTEST_NETWORK}>Launch Test Network</option>
         </select>
         <h3>Step 4. Account create</h3>
         <button

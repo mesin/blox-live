@@ -6,6 +6,7 @@ import * as processRunnerActions from '../../../../ProcessRunner/actions';
 import * as selectors from '../../../../ProcessRunner/selectors';
 import saga from '../../../../ProcessRunner/saga';
 import { loadDepositData } from '../../../actions';
+import { setDepositNeeded } from '../../../../Accounts/actions';
 import { GenerateKeys, KeysGenerated } from './components';
 import { getNetwork } from '../../../selectors';
 import Store from 'backend/common/store-manager/store';
@@ -15,7 +16,7 @@ const store: Store = Store.getStore();
 const key = 'processRunner';
 
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, error } = props;
+  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, callSetDepositNeeded, error } = props;
   const { processSubscribe, processClearState } = actions;
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
 
@@ -43,6 +44,8 @@ const CreateValidator = (props: Props) => {
   };
 
   const onContinueClick = () => {
+    console.log('publicKey', validatorData.publicKey);
+    callSetDepositNeeded(true, validatorData.publicKey);
     setPage(page + 1);
   };
 
@@ -69,6 +72,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(processRunnerActions, dispatch),
   callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
+  callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
 });
 
 type Props = {
@@ -81,6 +85,7 @@ type Props = {
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
   callLoadDepositData: (publicKey: string) => void;
+  callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
   error: string;
 };
 

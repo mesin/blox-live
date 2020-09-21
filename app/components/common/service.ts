@@ -1,4 +1,5 @@
 import { shell } from 'electron';
+import config from 'backend/common/config';
 
 export const truncateText = (value, fromStartIndex, fromEndIndex) => {
   if (value == null || !value.length) {
@@ -8,5 +9,5 @@ export const truncateText = (value, fromStartIndex, fromEndIndex) => {
 };
 
 export const openExternalLink = async (url) => {
-  await shell.openExternal(`${process.env.WEBSITE_URL}/${url}`);
+  await shell.openExternal(`${config.env.WEBSITE_URL}/${url}`);
 };

@@ -1,9 +1,11 @@
 import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import VersionService from '../version/version.service';
+import WalletService from '../wallet/wallet.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
+import config from '../../common/config';
 
 @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
@@ -11,12 +13,14 @@ export default class KeyVaultService {
   private readonly keyVaultSsh: KeyVaultSsh;
   private readonly keyVaultApi: KeyVaultApi;
   private readonly versionService: VersionService;
+  private readonly walletService: WalletService;
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
     this.versionService = new VersionService();
     this.keyVaultApi = resolveKeyVaultApi(storePrefix);
+    this.walletService = new WalletService(storePrefix);
   }
 
   async updateStorage(payload: any) {
@@ -36,7 +40,7 @@ export default class KeyVaultService {
 
   async getVersion() {
     this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${process.env.TEST_NETWORK}/version`);
+    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
   }
 
   async getSlashingStorage(network: string) {
@@ -99,7 +103,7 @@ export default class KeyVaultService {
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     this.store.set('keyVaultVersion', keyVaultVersion);
     await ssh.execCommand(
-      `curl -L "${process.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
+      `curl -L "${config.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
       {}
     );
   }
@@ -156,7 +160,7 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const networks = [process.env.TEST_NETWORK, process.env.LAUNCHTEST_NETWORK];
+    const networks = [config.env.TEST_NETWORK, config.env.LAUNCHTEST_NETWORK];
 
     for (const network of networks) {
       const slashingData = await this.getSlashingStorage(network);
@@ -191,6 +195,10 @@ export default class KeyVaultService {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
       await this.getVersion();
+      const { status } = await this.walletService.health();
+      if (status !== 'active') {
+        throw new Error('wallet health check: status is not active');
+      }
       return { isActive: true };
     } catch (e) {
       console.log(e);
