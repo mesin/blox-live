@@ -25,32 +25,38 @@ export default class KeyVaultService {
 
   async updateStorage(payload: any) {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'ethereum/storage', payload);
+    return await this.keyVaultApi.request(METHOD.POST, 'storage', payload);
   }
 
   async listAccounts() {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.LIST, 'ethereum/accounts');
+    return await this.keyVaultApi.request(METHOD.LIST, 'accounts');
   }
 
   async healthCheck() {
-    this.keyVaultApi.init();
+    this.keyVaultApi.init(false);
     return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
   }
 
   async getVersion() {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/version');
+    this.keyVaultApi.init(false);
+    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
   }
 
-  async getSlashingStorage() {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.GET, 'ethereum/storage/slashing');
+  async getSlashingStorage(network: string) {
+    if (!network) {
+      throw new Error('Configuration settings network not found');
+    }
+    this.keyVaultApi.init(false);
+    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
   }
 
-  async updateSlashingStorage(payload: any) {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'ethereum/storage/slashing', payload);
+  async updateSlashingStorage(payload: any, network: string) {
+    if (!network) {
+      throw new Error('Configuration settings network not found');
+    }
+    this.keyVaultApi.init(false);
+    return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
   }
 
   @Step({
@@ -125,39 +131,70 @@ export default class KeyVaultService {
 
   @Step({
     name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
+    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
   })
   async updateVaultStorage(): Promise<void> {
-    await this.updateStorage({ data: this.store.get('keyVaultStorage') });
+    const network = this.store.get('network');
+    await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+  }
+
+  @Step({
+    name: 'Updating server storage...',
+    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
+  })
+  async updateVaultMountsStorage(): Promise<void> {
+    const keyVaultStorage = this.store.get('keyVaultStorage');
+
+    if (keyVaultStorage) {
+      for (const [network, storage] of Object.entries(keyVaultStorage)) {
+        if (storage) {
+          this.store.set('network', network);
+          await this.updateStorage({ data: storage });
+        }
+      }
+    }
   }
 
   @Step({
     name: 'Export slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async exportSlashingData(): Promise<any> {
-    const slashingData = await this.getSlashingStorage();
-    this.store.set('slashingData', slashingData.data);
+  async importSlashingData(): Promise<any> {
+    const networks = [config.env.TEST_NETWORK, config.env.LAUNCHTEST_NETWORK];
+
+    for (const network of networks) {
+      const slashingData = await this.getSlashingStorage(network);
+      if (Object.keys(slashingData.data).length) {
+        this.store.set(`slashingData.${network}`, slashingData.data);
+      }
+    }
   }
 
   @Step({
     name: 'Import slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken', 'slashingData']
   })
-  async importSlashingData(): Promise<any> {
+  async exportSlashingData(): Promise<any> {
     const slashingData = this.store.get('slashingData');
-    await this.updateSlashingStorage(slashingData);
+
+    if (slashingData) {
+      for (const [network, storage] of Object.entries(slashingData)) {
+        if (storage) {
+          await this.updateSlashingStorage(storage, network);
+        }
+      }
+    }
   }
 
   @Step({
     name: 'Validating KeyVault final configuration...',
-    requiredConfig: ['publicIp']
+    requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async getKeyVaultStatus() {
     // check if the key vault is alive
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
-      await this.healthCheck();
+      await this.getVersion();
       const { status } = await this.walletService.health();
       if (status !== 'active') {
         throw new Error('wallet health check: status is not active');

@@ -2,18 +2,21 @@ import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import Store from '../../common/store-manager/store';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
-import { CatchClass, Step } from '../../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 import { Logger } from '../../common/logger/logger';
+import KeyManagerService from '../key-manager/key-manager.service';
 
 @CatchClass<WalletService>()
 export default class WalletService {
   private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
+  private readonly keyManagerService: KeyManagerService;
   private readonly logger: Logger;
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
     this.keyVaultSsh = new KeyVaultSsh(storePrefix);
+    this.keyManagerService = new KeyManagerService();
     this.logger = new Logger();
   }
 
@@ -39,6 +42,20 @@ export default class WalletService {
   }
 
   @Step({
+    name: 'Creating wallet...',
+    requiredConfig: ['network']
+  })
+  @Catch({
+    displayMessage: 'CLI Create Wallet failed'
+  })
+  async createWallet(): Promise<void> {
+    const network = this.store.get('network');
+    if (this.store.get(`keyVaultStorage.${network}`)) return;
+    const storage = await this.keyManagerService.createWallet();
+    this.store.set(`keyVaultStorage.${network}`, storage);
+  }
+
+  @Step({
     name: 'Remove blox wallet',
     requiredConfig: ['authToken']
   })
@@ -59,12 +76,13 @@ export default class WalletService {
 
   @Step({
     name: 'Syncing KeyVault with Blox...',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
+    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken', 'keyVaultVersion']
   })
   async syncVaultWithBlox(): Promise<void> {
     const payload = {
       url: `http://${this.store.get('publicIp')}:8200`,
-      accessToken: this.store.get('vaultRootToken')
+      accessToken: this.store.get('vaultRootToken'),
+      version: this.store.get('keyVaultVersion')
     };
     try {
       const ssh = await this.keyVaultSsh.getConnection();
