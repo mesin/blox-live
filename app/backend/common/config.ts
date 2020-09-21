@@ -21,7 +21,9 @@ export default class Config {
       DISCORD_INVITE: 'https://discord.com/invite/VgHDdAP',
       DISCORD_GOETH_INVITE: 'https://discord.gg/wXxuQwY',
       HTTP_RETRIES: 3,
-      HTTP_RETRY_DELAY: 1000
+      HTTP_RETRY_DELAY: 1000,
+      TEST_NETWORK: 'test',
+      LAUNCHTEST_NETWORK: 'launchtest'
     }
   };
 

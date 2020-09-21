@@ -13,16 +13,15 @@ import saga from '../../saga';
 import * as accountSelectors from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
 
-import SeedService from 'backend/services/key-vault/seed.service';
-
 import { InfoWithTooltip } from 'common/components';
 import ButtonWithIcon from './ButtonWithIcon';
 
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
 import mainNetImg from 'components/Wizard/assets/img-validator-main-net.svg';
+import Store from '../../../../backend/common/store-manager/store';
 
-const seedService = new SeedService();
+const store: Store = Store.getStore();
 
 const Wrapper = styled.div`
   width: 100%;
@@ -77,7 +76,7 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
-    const hasSeed = !!seedService.getSeed();
+    const hasSeed = !!store.get('seed');
 
     if (hasWallet) {
       if (hasSeed) {
