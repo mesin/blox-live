@@ -10,8 +10,6 @@ export const getWalletVersion = (state) => state.wizard && state.wizard.wallet &
 
 export const getDepositData = (state) => state.wizard && state.wizard.depositData;
 
-export const getIsLoadingDepositData = (state) => state.wizard.isLoadingDepositData;
-
 export const getWizardFinishedStatus = (state) => state.wizard.isFinished;
 
 export const getNetwork = (state) => state.wizard && state.wizard.network;

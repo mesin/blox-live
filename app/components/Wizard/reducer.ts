@@ -10,7 +10,6 @@ const initialState = {
   account: null,
   depositData: null,
   isFinished: false,
-  isLoadingDepositData: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -44,15 +43,10 @@ const wizardReducer = (state = initialState, action: Action) => produce(state, (
       draft.error = action.payload;
       break;
 
-    case actionTypes.LOAD_DEPOSIT_DATA:
-      draft.isLoadingDepositData = true;
-      break;
     case actionTypes.LOAD_DEPOSIT_DATA_SUCCESS:
-      draft.isLoadingDepositData = false;
       draft.depositData = action.payload;
       break;
     case actionTypes.LOAD_DEPOSIT_DATA_FAILURE:
-      draft.isLoadingDepositData = false;
       draft.error = action.payload;
       break;
 
