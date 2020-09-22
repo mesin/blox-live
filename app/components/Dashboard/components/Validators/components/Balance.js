@@ -7,11 +7,9 @@ const Wrapper = styled.div`
   display:flex;
 `;
 
-// balance !== null
-
 const Balance = ({ balance }) => (
-  <Wrapper>{true ? (
-    <EtherNumber fontSize={'14px'} color={'gray800'} value={4234324.432423432} maximumFractionDigits={5} />
+  <Wrapper>{balance !== null ? (
+    <EtherNumber fontSize={'14px'} color={'gray800'} value={balance} />
   ) : 'N/A'}
   </Wrapper>
 );

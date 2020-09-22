@@ -18,14 +18,12 @@ const Wrapper = styled.div`
   display:flex;
 `;
 
-// change !== null
-
 const Change = ({ change }) => {
   const color = getChangeColor(change);
   return (
     <Wrapper color={color}>
-      {true ?
-        (<EtherNumber value={Number(5.574389574)} fontSize={'14px'} color={color} maximumFractionDigits={9} />)
+      {change !== null ?
+        (<EtherNumber value={Number(change)} fontSize={'14px'} color={color} />)
         : 'N/A'
       }
 
