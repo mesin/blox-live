@@ -25,6 +25,7 @@ const LoaderText = styled.span`
 
 const GenerateKeys = (props: Props) => {
   const { isLoading, onClick, error, showPasswordModal, setShowPasswordModal } = props;
+  const onClose = () => setShowPasswordModal(false);
   return (
     <Wrapper>
       <Title>Create TestNet Validator</Title>
@@ -51,7 +52,7 @@ const GenerateKeys = (props: Props) => {
           {error}, please try again.
         </ErrorMessage>
       )}
-      {showPasswordModal && (<PasswordModal onClose={() => setShowPasswordModal(false)} />)}
+      {showPasswordModal && (<PasswordModal onClick={onClose} onClose={onClose} />)}
     </Wrapper>
   );
 };

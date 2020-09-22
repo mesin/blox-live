@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, FailureIcon } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Wrapper, DiscordText } from '..';
+import { Title, Description, Wrapper } from '..';
 
 import image from '../../Wizard/assets/img-key-vault-inactive.svg';
-import discordLogo from 'assets/images/discord-logo.svg';
 import { reportCrash } from '../../common/service';
 
 const FailureModal = ({title, onClick, onClose}) => {
@@ -23,7 +22,6 @@ const FailureModal = ({title, onClick, onClose}) => {
           await reportCrash();
           onClick();
         }}>Contact Blox</Button> <br />
-        <DiscordText>Or reach us on <img src={discordLogo} /></DiscordText>
       </Wrapper>
     </ModalTemplate>
   );

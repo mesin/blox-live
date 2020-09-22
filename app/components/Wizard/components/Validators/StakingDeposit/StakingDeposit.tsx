@@ -19,6 +19,8 @@ import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
 import config from 'backend/common/config';
 
+import tipImage from 'assets/images/info.svg';
+
 const Wrapper = styled.div`
   width:580px;
 `;
@@ -49,6 +51,21 @@ const CancelButton = styled(BigButton)`
   color:${({theme}) => theme.gray600};
   background-color:transparent;
   border:1px solid ${({theme}) => theme.gray400};
+`;
+
+const Tip = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  display:flex;
+  align-items:center;
+  margin-top:78px;
+  margin-bottom:8px;
+`;
+
+const TipImage = styled.img`
+  width:24px;
+  height:24px;
+  margin-right:7px;
 `;
 
 const StakingDeposit = (props: Props) => {
@@ -88,18 +105,16 @@ const StakingDeposit = (props: Props) => {
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
-        To start staking on our Testnet, you are required to stake 32 GoEth
+        To start staking on beacon chain Testnet, you are required to stake 32 GoEth
         <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
-        <br />
-        validator deposit contract. The Blox test network uses the Goerli
-        network to <br />
-        simulate validator deposits on the proof-of-work enabled Beacon-chain.
+        validator deposit contract.
         <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
           Need GoETH?
         </GoEthButton>
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
+      <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
       <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
@@ -110,7 +125,6 @@ const StakingDeposit = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
   accountDataFromProcess: getData(state),
   accountsFromApi: getAccounts(state),

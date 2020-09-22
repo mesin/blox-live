@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
 import {Switch, Route} from 'react-router-dom';
 import styled from 'styled-components';
-import electron from 'electron';
 
 import {Loader} from 'common/components';
 import Dashboard from '../Dashboard';
@@ -34,6 +33,9 @@ import * as processRunnerSelectors from '../ProcessRunner/selectors';
 import { processClearState } from '../ProcessRunner/actions';
 
 import {useInjectSaga} from '../../utils/injectSaga';
+
+import { version } from '../../package.json';
+import {parseVersion} from '../../utils/service';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -117,9 +119,7 @@ const EntryPage = (props: Props) => {
   }, [isLoadingWallet, isLoadingAccounts, keyvaultLatestVersion, isLoadingEventLogs, isLoadingBloxLiveVersion]);
 
   const walletNeedsUpdate = keyvaultCurrentVersion !== keyvaultLatestVersion;
-
-  const bloxLiveCurrentVersion = electron.remote.app.getVersion();
-  const bloxLiveNeedsUpdate = bloxLiveCurrentVersion !== bloxLiveLatestVersion;
+  const bloxLiveNeedsUpdate = parseVersion(version) !== parseVersion(bloxLiveLatestVersion);
 
   const otherProps = {
     walletNeedsUpdate,

@@ -51,7 +51,7 @@ const ActiveValidatorModal = ({onClose, activeValidators}: Props) => {
         <Row>
           <SmallText>
             Your validator {truncatedPublicKey} is now approved and activated <br />
-            to start staking. Please note: All validators rely on the online <br />
+            to start staking. Please note: all validators rely on the online <br />
             connectivity and availability of KeyVault.
           </SmallText>
         </Row>
