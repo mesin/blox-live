@@ -19,7 +19,7 @@ const KeyCell = ({ value }) => {
   return (
     <Wrapper>
       <Left>
-        <AddressKey>{truncateText(publicKey, 31, 6)}</AddressKey>
+        <AddressKey>{truncateText(publicKey, 6, 6)}</AddressKey>
         <AdditionalDataWrapper>
           <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt} />
         </AdditionalDataWrapper>
