@@ -28,7 +28,6 @@ EtherNumber.propTypes = {
   value: PropTypes.number,
   color: PropTypes.string,
   fontSize: PropTypes.string,
-  maximumFractionDigits: PropTypes.number,
 };
 
 export default EtherNumber;
