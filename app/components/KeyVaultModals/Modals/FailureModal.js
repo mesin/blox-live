@@ -8,6 +8,10 @@ import image from '../../Wizard/assets/img-key-vault-inactive.svg';
 import { reportCrash } from '../../common/service';
 
 const FailureModal = ({title, onClick, onClose}) => {
+  const contactSupport = async () => {
+    await reportCrash();
+    onClick();
+  };
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Wrapper>
@@ -18,10 +22,7 @@ const FailureModal = ({title, onClick, onClose}) => {
         Please contact our support team to resolve this issue.
       </Description>
       <Wrapper>
-        <Button onClick={async () => {
-          await reportCrash();
-          onClick();
-        }}>Contact Blox</Button> <br />
+        <Button onClick={contactSupport}>Contact Blox</Button> <br />
       </Wrapper>
     </ModalTemplate>
   );
