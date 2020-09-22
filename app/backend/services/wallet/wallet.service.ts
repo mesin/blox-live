@@ -106,7 +106,8 @@ export default class WalletService {
   async reSyncVaultWithBlox(): Promise<void> {
     const payload = {
       url: `http://${this.store.get('publicIp')}:8200`,
-      accessToken: this.store.get('vaultRootToken')
+      accessToken: this.store.get('vaultRootToken'),
+      version: this.store.get('keyVaultVersion')
     };
     try {
       const ssh = await this.keyVaultSsh.getConnection();
