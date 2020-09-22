@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+import { Icon } from 'common/components';
 
 const Wrapper = styled.div`
   width: ${({ width }) => width};
@@ -34,11 +35,15 @@ const BigText = styled.div`
   height: 100%;
   font-size: 42px;
   font-weight: 500;
+  display:flex;
+  align-items:baseline;
 `;
 
 const MediumText = styled.div`
   font-size: 20px;
   font-weight: 500;
+  display:flex;
+  align-items:flex-end;
 `;
 
 const TinyText = styled.div`
@@ -54,13 +59,23 @@ const Image = styled.img`
 `;
 
 const Box = (props) => {
-  const { width, color, bigText, medText, tinyText, image } = props;
+  const { name, width, color, bigText, medText, tinyText, image } = props;
   return (
     <Wrapper width={width} color={color}>
       <InnerWrapper>
         <MainTextWrapper>
-          <BigText>{bigText}</BigText>
-          <MediumText>{medText}</MediumText>
+          <BigText>
+            {medText && name !== 'change' && (
+              <Icon name={'eth-icon-colors'} fontSize={'29px'} color={color} />
+            )}
+            {bigText}
+          </BigText>
+          {medText && (
+            <MediumText>
+              {medText}
+              {name === 'change' && '%'}
+            </MediumText>
+          )}
         </MainTextWrapper>
         <TinyText>{tinyText}</TinyText>
       </InnerWrapper>
@@ -70,6 +85,7 @@ const Box = (props) => {
 };
 
 Box.propTypes = {
+  name: PropTypes.string,
   width: PropTypes.string,
   color: PropTypes.string,
   bigText: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

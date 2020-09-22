@@ -6,7 +6,7 @@ import UpdateBanner from './components/UpdateBanner';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 400px;
+  height: auto;
   margin-bottom: 40px;
 `;
 

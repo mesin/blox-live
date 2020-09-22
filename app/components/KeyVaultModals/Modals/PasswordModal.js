@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -17,6 +18,14 @@ import config from 'backend/common/config';
 import image from '../../Wizard/assets/img-password.svg';
 
 const key = 'keyvault';
+
+const Link = styled.span`
+  cursor:pointer;
+  color:${({theme}) => theme.primary900};
+  &:hover {
+    color:${({theme}) => theme.primary600};
+  }
+`;
 
 const PasswordModal = (props) => {
   const { onClose, onClick, isPasswordValid, actions } = props;
@@ -79,7 +88,7 @@ const PasswordModal = (props) => {
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isPasswordValid}
         onBlur={onPasswordBlur} error={error}
       />
-      <span onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</span>
+      <Link onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</Link>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
     </ModalTemplate>
   );

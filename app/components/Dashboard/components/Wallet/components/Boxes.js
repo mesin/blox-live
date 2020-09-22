@@ -18,12 +18,12 @@ const Boxes = (props) => {
   return (
     <Wrapper>
       {boxes.map((box, index) => {
-        const { width, color, bigText, medText, tinyText } = box;
+        const { name, width, color, bigText, medText, tinyText } = box;
         if (index === boxes.length - 1) {
           return (<BoxWithPopper {...box} key={index} {...props} />);
         }
         return (
-          <Box key={`box${index}`} width={width} color={color}
+          <Box key={`box${index}`} name={name} width={width} color={color}
             bigText={bigText} medText={medText} tinyText={tinyText}
           />
         );
