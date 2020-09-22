@@ -128,11 +128,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
-  logoutUser: () => dispatch(logout()),
 });
 
 interface Props extends RouteComponentProps {
-  logoutUser: () => void;
   isFinishedWizard: boolean;
   callSetFinishedWizard: (arg0: boolean) => void;
 

@@ -4,10 +4,11 @@ import styled from 'styled-components';
 import { Wallet, Validators, ModalsManager } from './components';
 import { summarizeAccounts, normalizeAccountsData, normalizeEventLogs } from './service';
 import EventLogs from './components/EventLogs';
+import { DiscordButton } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100%;
   background-color: ${({ theme }) => theme.gray50};
   display: flex;
   flex-direction: column;
@@ -25,6 +26,7 @@ const Dashboard = (props) => {
       <Validators accounts={normalizedAccounts} />
       <EventLogs events={normalizedEventLogs} />
       <ModalsManager />
+      <DiscordButton />
     </Wrapper>
   );
 };

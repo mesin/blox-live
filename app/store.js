@@ -1,6 +1,5 @@
 import {
   configureStore,
-  getDefaultMiddleware,
 } from '@reduxjs/toolkit';
 import { createHashHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
@@ -17,7 +16,7 @@ const reduxSagaMonitorOptions = {};
 
 const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
 
-const middleware = [...getDefaultMiddleware({serializableCheck: false}), router, sagaMiddleware];
+const middleware = [router, sagaMiddleware];
 
 const excludeLoggerEnvs = ['test', 'production'];
 const shouldIncludeLogger = !excludeLoggerEnvs.includes(process.env.NODE_ENV || '');
@@ -30,7 +29,7 @@ if (shouldIncludeLogger) {
   middleware.push(logger);
 }
 
-export const configuredStore = (initialState) => {
+export const configuredStore = (initialState) => { // TODO: remove configureStore from redux/toolkit
   const store = configureStore({
     reducer: rootReducer,
     middleware,
