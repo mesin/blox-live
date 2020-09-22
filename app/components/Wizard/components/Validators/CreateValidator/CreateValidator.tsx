@@ -8,6 +8,7 @@ import saga from '../../../../ProcessRunner/saga';
 import { loadDepositData } from '../../../actions';
 import { setDepositNeeded } from '../../../../Accounts/actions';
 import { GenerateKeys, KeysGenerated } from './components';
+import { getNetwork } from '../../../selectors';
 import Store from 'backend/common/store-manager/store';
 
 const store: Store = Store.getStore();
@@ -63,7 +64,8 @@ const CreateValidator = (props: Props) => {
 const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   validatorData: selectors.getData(state),
-  error: selectors.getError(state)
+  error: selectors.getError(state),
+  network: getNetwork(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -74,6 +76,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 
 type Props = {
   page: number;
+  network: string;
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;

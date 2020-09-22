@@ -21,7 +21,7 @@ const trimWholeNumber = (floatingNumber: number) => {
 export const trimDecimalNumber = (floatingNumber: number) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
   const trimmedDecimal = (floatingNumber % 1).toFixed(2).substring(2);
-  return floatingNumber > 0 ? `.${trimmedDecimal}` : trimmedDecimal;
+  return floatingNumber >= 0 ? `.${trimmedDecimal}` : trimmedDecimal;
 };
 export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
   return [

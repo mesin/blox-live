@@ -2,11 +2,11 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
-import SeedService from 'backend/services/key-vault/seed.service';
 import VersionService from 'backend/services/version/version.service';
 import Store from 'backend/common/store-manager/store';
+import KeyManagerService from '../../backend/services/key-manager/key-manager.service';
 
-const seedService = new SeedService();
+const keyManagerService = new KeyManagerService();
 const versionService = new VersionService();
 const store: Store = Store.getStore();
 
@@ -31,7 +31,7 @@ function* validatePassword(action) {
 
 function* startLoadingMnemonic() {
   try {
-    const mnemonicPhrase = yield call([seedService, 'mnemonicGenerate']);
+    const mnemonicPhrase = yield call([keyManagerService, 'mnemonicGenerate']);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
   } catch (error) {
     yield put(actions.keyvaultLoadMnemonicFailure(error));
@@ -43,7 +43,8 @@ function* startSavingMnemonic(action) {
   const { payload } = action;
   const { mnemonic, password } = payload;
   try {
-    yield call([seedService, 'storeMnemonic'], mnemonic);
+    const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
+    store.set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
     yield put(actions.keyvaultReplacePassword(password));
   } catch (error) {

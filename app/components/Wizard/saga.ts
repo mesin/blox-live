@@ -2,13 +2,11 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { notification } from 'antd';
 import { LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS } from './actionTypes';
 import * as actions from './actions';
-import AccountKeyVaultService from '../../backend/services/account/account-key-vault.service';
 import WalletService from '../../backend/services/wallet/wallet.service';
 import AccountService from '../../backend/services/account/account.service';
 
 const walletService = new WalletService();
 const accountService = new AccountService();
-const accountKeyVaultService = new AccountKeyVaultService();
 
 function* onAccountStatusUpdateSuccess() {
   yield put(actions.updateAccountStatusSuccess());
@@ -49,7 +47,7 @@ function* loadWallet() {
 function* loadDepositData(action) {
   const { payload } = action;
   try {
-    const response = yield call([accountKeyVaultService, 'getDepositData'], payload);
+    const response = yield call([accountService, 'getDepositData'], payload);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);

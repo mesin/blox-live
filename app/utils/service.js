@@ -24,21 +24,32 @@ export const precentageCalculator = (current, overall) => {
 };
 
 export const lastDateFormat = (utcDate) => {
-  if (moment(utcDate).isAfter(moment().subtract(24, 'hours'))) {
-    // less than 24 hours
-    if (moment(utcDate).isAfter(moment().subtract(1, 'minutes'))) {
+  const minutesPassed = Math.abs(moment(utcDate).diff(moment(), 'minutes'));
+  const hoursPassed = Math.abs(moment(utcDate).diff(moment(), 'hours'));
+
+  if (hoursPassed < 24) {
+    if (minutesPassed < 1) {
       return 'Less than a minute ago';
     }
-    if (moment(utcDate).isAfter(moment().subtract(2, 'minutes'))) {
+    if (minutesPassed < 2) {
       return 'About a minute ago';
     }
-
-    const minutesPassed = Math.abs(moment(utcDate).diff(moment(), 'minutes'));
-    return `${minutesPassed} minutes ago`;
-  } if (moment(utcDate).isAfter(moment().subtract(48, 'hours'))) {
+    if (hoursPassed < 1) {
+      return `${minutesPassed} minutes ago`;
+    }
+    if (hoursPassed === 1) {
+      return 'about an hour ago';
+    }
+    return `about ${hoursPassed} hours ago`;
+  }
+  if (hoursPassed >= 24 || hoursPassed < 48) {
     // more than 24h but less than 48h
     return moment(utcDate).format('MMMM DD, YYYY HH:MM');
   }
-    // more than 48 hours
-    return moment(utcDate).format('MMMM DD, YYYY');
+  // more than 48 hours
+  return moment(utcDate).format('MMMM DD, YYYY');
+};
+
+export const parseVersion = (v) => {
+  return v.replace(/\D/g, '');
 };

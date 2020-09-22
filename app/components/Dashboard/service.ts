@@ -20,7 +20,6 @@ export const normalizeAccountsData = (accounts) => {
       status,
     } = account;
     const newAccount = { ...account };
-
     newAccount.key = {
       publicKey,
       activationTime,
@@ -80,14 +79,11 @@ const fixNumOfDigits = (summary) => {
 export const normalizeEventLogs = (events) => {
   const normalizedEvents = events.map((event) => {
     const {
-      createdAt,
       orgId,
       publicKey,
       type,
     } = event;
     const newEvent = { ...event };
-
-    newEvent.createdAt = moment(createdAt).format('MMMM DD, YYYY');
     newEvent.description = {
       type,
       orgId,
@@ -97,7 +93,7 @@ export const normalizeEventLogs = (events) => {
   });
 
   normalizedEvents.sort((a, b) => {
-    return a.createdAt - b.createdAt ? 1 : -1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return normalizedEvents;
 };
