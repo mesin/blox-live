@@ -31,19 +31,17 @@ const EventLogs = ({events}) => {
     return <Wrapper />;
   }
 
-  return (!pagedEvents || pagedEvents.length === 0) ?
-    (
-      <Wrapper>
-        <Title>Latest Events</Title>
-        There are no events to show at the moment</Wrapper>
-)
-   : (
-     <Wrapper>
-       <Title>Latest Events</Title>
-       {<Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false}
-         isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />}
-     </Wrapper>
-  );
+ return (
+   <Wrapper>
+     <Title>Latest Events</Title>
+     {(pagedEvents && pagedEvents.length > 0) ?
+        (
+          <Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false}
+            isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />
+) :
+     ('There are no events to show at the moment')}
+   </Wrapper>
+ );
 };
 
 EventLogs.propTypes = {

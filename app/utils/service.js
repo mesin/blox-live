@@ -51,7 +51,5 @@ export const lastDateFormat = (utcDate) => {
 };
 
 export const parseVersion = (v) => {
-  const chars = v.split('-')[0].replace('v', '').split('.');
-  // eslint-disable-next-line radix
-  return parseInt(`${chars[0]}${chars[1]}${chars[2]}`) || 0;
+  return v.replace(/\D/g, '');
 };
