@@ -10,7 +10,6 @@ const KeyVaultReactivation = ({onClose}: Props) => {
   const [step, setStep] = useState(1);
   const move1StepForward = () => setStep(step + 1);
   const move2StepsForward = () => setStep(step + 2);
-  const contactSupport = () => { move1StepForward(); };
   switch (step) {
     case 1:
       return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
@@ -29,7 +28,7 @@ const KeyVaultReactivation = ({onClose}: Props) => {
     case 6:
       return <SuccessModal title={'Reactivating your KeyVault'} onClose={onClose} text={successText} />;
     case 7:
-      return <FailureModal title={'Troubleshooting Failed'} onClick={contactSupport} onClose={onClose} />;
+      return <FailureModal title={'Troubleshooting Failed'} onClick={move1StepForward} onClose={onClose} />;
     case 8:
       return <ThankYouModal onClose={onClose} />;
     default:
