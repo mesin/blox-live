@@ -53,3 +53,15 @@ export const lastDateFormat = (utcDate) => {
 export const parseVersion = (v) => {
   return v.replace(/\D/g, '');
 };
+
+export const generateLocaleStringConfig = (number) => {
+  const minimumFractionDigits = 2;
+  let maximumFractionDigits = 9;
+  if (number >= 10) {
+    maximumFractionDigits = 5;
+  }
+  return ({
+    minimumFractionDigits,
+    maximumFractionDigits
+  });
+};

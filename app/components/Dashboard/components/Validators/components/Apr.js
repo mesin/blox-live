@@ -18,7 +18,7 @@ const Wrapper = styled.div`
 `;
 
 const Apr = ({change}) => {
-  const percentage = calculateAPR();
+  const percentage = calculateAPR(change);
   return (
     <Wrapper change={Number(change)}>{percentage !== null ? `${(percentage).toFixed(2)}%` : 'N/A'}</Wrapper>
   );
