@@ -11,7 +11,7 @@ export default class Store extends BaseStore {
   private static instances: any = {};
   private storage: ElectronStore;
   private readonly prefix: string;
-  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
+  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken', 'keyVaultStorage.*'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
@@ -60,16 +60,36 @@ export default class Store extends BaseStore {
     this.baseStore.delete('env');
   };
 
+  isEncryptedKey = (key: string): boolean => {
+    const keyToCheck = key.replace(/\..*/, '.*');
+    return this.encryptedKeys.includes(keyToCheck);
+  };
+
+  exists = (key: string): boolean => {
+    const value = (this.storage && this.storage.get(key)) || this.baseStore.get(key);
+    return !!value;
+  };
+
   get = (key: string): any => {
     const value = (this.storage && this.storage.get(key)) || this.baseStore.get(key);
-    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
-      return this.decrypt(this.cryptoKey, value);
+    if (value && this.isEncryptedKey(key)) {
+      if (!this.cryptoKey) {
+        throw new Error('Crypto key is null');
+      }
+      try {
+        return this.decrypt(this.cryptoKey, value);
+      } catch (e) {
+        this.set(key, value);
+      }
     }
     return value;
   };
 
   set = (key: string, value: any): void => {
-    if (this.cryptoKey && value && this.encryptedKeys.includes(key)) {
+    if (value && this.isEncryptedKey(key)) {
+      if (!this.cryptoKey) {
+        throw new Error('Crypto key is null');
+      }
       this.storage.set(key, this.encrypt(this.cryptoKey, value));
     } else {
       this.storage.set(key, value);
@@ -113,7 +133,6 @@ export default class Store extends BaseStore {
     }
   }
 
-  @Catch()
   encrypt(cryptoKey: string, value: string): any {
     const str = Buffer.from(JSON.stringify(value)).toString('base64');
     const cipher = crypto.createCipheriv(this.cryptoAlgorithm, cryptoKey, null);
@@ -121,7 +140,6 @@ export default class Store extends BaseStore {
     return encrypted.toString('hex');
   }
 
-  @Catch()
   decrypt(cryptoKey: string, value: any): any {
     const decipher = crypto.createDecipheriv(this.cryptoAlgorithm, cryptoKey, null);
     const encryptedText = Buffer.from(value, 'hex');
@@ -142,7 +160,10 @@ export default class Store extends BaseStore {
   setNewPassword(cryptoKey: string) {
     const oldDecryptedKeys = {};
     this.encryptedKeys.forEach((encryptedKey) => {
-      oldDecryptedKeys[encryptedKey] = this.get(encryptedKey);
+      // TODO handle encrypted objects
+      if (this.exists(encryptedKey)) {
+        oldDecryptedKeys[encryptedKey] = this.get(encryptedKey);
+      }
     });
     this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax

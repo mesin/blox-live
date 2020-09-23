@@ -140,7 +140,7 @@ export default class KeyVaultService {
 
   @Step({
     name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage']
+    requiredConfig: ['keyVaultStorage']
   })
   async updateVaultMountsStorage(): Promise<void> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
@@ -149,7 +149,7 @@ export default class KeyVaultService {
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
           this.store.set('network', network);
-          await this.updateStorage({ data: storage });
+          await this.updateVaultStorage();
         }
       }
     }

@@ -20,7 +20,7 @@ export default class AwsService {
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
 
-    if (!this.ec2 && this.store.get('credentials')) {
+    if (!this.ec2 && this.store.exists('credentials')) {
       this.setAWSCredentials();
     }
   }
@@ -55,7 +55,7 @@ export default class AwsService {
     requiredConfig: ['uuid']
   })
   async createEc2KeyPair() {
-    if (this.store.get('keyPair')) return;
+    if (this.store.exists('keyPair')) return;
 
     const {
       KeyPairId: pairId,
@@ -70,7 +70,7 @@ export default class AwsService {
     name: 'Enabling connection using Elastic IP...'
   })
   async createElasticIp() {
-    if (this.store.get('addressId')) return;
+    if (this.store.exists('addressId')) return;
 
     const {
       AllocationId: addressId,
@@ -85,7 +85,7 @@ export default class AwsService {
     requiredConfig: ['uuid']
   })
   async createSecurityGroup() {
-    if (this.store.get('securityGroupId')) return;
+    if (this.store.exists('securityGroupId')) return;
 
     const vpcList = await this.ec2.describeVpcs().promise();
     const vpc = vpcList?.Vpcs![0].VpcId;
@@ -123,7 +123,7 @@ export default class AwsService {
     requiredConfig: ['uuid', 'securityGroupId', 'addressId']
   })
   async createInstance() {
-    if (this.store.get('instanceId')) return;
+    if (this.store.exists('instanceId')) return;
 
     const data = await this.ec2.runInstances({
       ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1

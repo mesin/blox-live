@@ -76,7 +76,7 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
-    const hasSeed = !!store.get('seed');
+    const hasSeed = store.exists('seed');
 
     if (hasWallet) {
       if (hasSeed) {
