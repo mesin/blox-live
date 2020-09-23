@@ -11,7 +11,7 @@ export default class Store extends BaseStore {
   private static instances: any = {};
   private storage: ElectronStore;
   private readonly prefix: string;
-  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken', 'keyVaultStorage.*'];
+  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
   private cryptoKeyTTL: number = 15; // 15 minutes
