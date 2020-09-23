@@ -160,12 +160,16 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const networks = [config.env.TEST_NETWORK, config.env.LAUNCHTEST_NETWORK];
+    const keyVaultStorage = this.store.get('keyVaultStorage');
 
-    for (const network of networks) {
-      const slashingData = await this.getSlashingStorage(network);
-      if (Object.keys(slashingData.data).length) {
-        this.store.set(`slashingData.${network}`, slashingData.data);
+    if (keyVaultStorage) {
+      for (const [network, storage] of Object.entries(keyVaultStorage)) {
+        if (storage) {
+          const slashingData = await this.getSlashingStorage(network);
+          if (Object.keys(slashingData.data).length) {
+            this.store.set(`slashingData.${network}`, slashingData.data);
+          }
+        }
       }
     }
   }
