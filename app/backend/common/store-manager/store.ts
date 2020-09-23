@@ -168,6 +168,7 @@ export default class Store extends BaseStore {
         oldDecryptedKeys[encryptedKey] = this.get(encryptedKey);
       }
     });
+
     this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(oldDecryptedKeys)) {
