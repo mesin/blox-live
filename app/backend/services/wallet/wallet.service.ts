@@ -50,7 +50,7 @@ export default class WalletService {
   })
   async createWallet(): Promise<void> {
     const network = this.store.get('network');
-    if (this.store.get(`keyVaultStorage.${network}`)) return;
+    if (this.store.exists(`keyVaultStorage.${network}`)) return;
     const storage = await this.keyManagerService.createWallet();
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
@@ -106,7 +106,8 @@ export default class WalletService {
   async reSyncVaultWithBlox(): Promise<void> {
     const payload = {
       url: `http://${this.store.get('publicIp')}:8200`,
-      accessToken: this.store.get('vaultRootToken')
+      accessToken: this.store.get('vaultRootToken'),
+      version: this.store.get('keyVaultVersion')
     };
     try {
       const ssh = await this.keyVaultSsh.getConnection();

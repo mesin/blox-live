@@ -49,7 +49,7 @@ const Test = () => {
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
   if (!isRendered) {
-    if (store.get('env')) {
+    if (store.exists('env')) {
       setEnv(store.get('env'));
     } else {
       setEnv('production');
@@ -91,7 +91,7 @@ const Test = () => {
         <button
           onClick={async () => {
             store.setCryptoKey(cryptoKey);
-            if (store.get('credentials')) {
+            if (store.exists('credentials')) {
               const credentials: any = store.get('credentials');
               setAccessKeyId(credentials.accessKeyId);
               setSecretAccessKey(credentials.secretAccessKey);

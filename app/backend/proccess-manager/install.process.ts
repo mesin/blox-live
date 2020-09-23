@@ -14,7 +14,7 @@ export default class InstallProcess extends ProcessClass {
   constructor({ accessKeyId, secretAccessKey }) {
     super();
     const store: Store = Store.getStore();
-    if (!store.get('uuid')) {
+    if (!store.exists('uuid')) {
       store.set('uuid', uuidv4());
     }
     store.set('credentials', {
