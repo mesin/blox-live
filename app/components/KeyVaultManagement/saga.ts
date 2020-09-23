@@ -42,11 +42,11 @@ function* startLoadingMnemonic() {
 function* startSavingMnemonic(action) {
   const { payload } = action;
   const { mnemonic, password } = payload;
+  yield put(actions.keyvaultReplacePassword(password));
   try {
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
     store.set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
-    yield put(actions.keyvaultReplacePassword(password));
   } catch (error) {
     yield put(actions.keyvaultSaveMnemonicFailure(error));
     notification.error({ message: 'Error', description: error.message });

@@ -140,10 +140,17 @@ export default class Store extends BaseStore {
 
   @Catch()
   setNewPassword(cryptoKey: string) {
+    if (!this.cryptoKey) {
+      this.setCryptoKey('temp');
+    }
     const oldDecryptedKeys = {};
-    this.encryptedKeys.forEach((encryptedKey) => {
-      oldDecryptedKeys[encryptedKey] = this.get(encryptedKey);
+    this.encryptedKeys.forEach((key) => {
+      if (key !== 'seed') {
+        const decryptedValue = this.get(key);
+        oldDecryptedKeys[key] = decryptedValue;
+      }
     });
+
     this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(oldDecryptedKeys)) {
