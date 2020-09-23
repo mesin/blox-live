@@ -158,6 +158,9 @@ export default class Store extends BaseStore {
 
   @Catch()
   setNewPassword(cryptoKey: string) {
+    if (!this.cryptoKey) {
+      this.setCryptoKey('temp');
+    }
     const oldDecryptedKeys = {};
     this.encryptedKeys.forEach((encryptedKey) => {
       // TODO handle encrypted objects
