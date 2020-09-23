@@ -74,7 +74,7 @@ const PasswordModal = (props) => {
       return 'The password is too short';
     }
     if (showWrongPasswordError) {
-      return 'Wrong password';
+      return 'Wrong Password. Please try again';
     }
     return '';
   };
