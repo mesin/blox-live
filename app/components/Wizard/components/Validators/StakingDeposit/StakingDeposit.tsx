@@ -115,7 +115,7 @@ const StakingDeposit = (props: Props) => {
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
       <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
-      <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>Need help?</Link>
+      <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
         <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
