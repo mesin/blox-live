@@ -79,7 +79,7 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
           );
         })}
         <Row>
-          <Link onClick={() => openExternalLink('guides/how-to-make-the-staking-deposit')}>
+          <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>
             Need help?
           </Link>
         </Row>

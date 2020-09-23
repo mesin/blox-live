@@ -41,7 +41,7 @@ const CloudProvider = (props: Props) => {
         must be installed on our available cloud providers. <br />
         This ensures your private keys are secured and available for a safe and <br />
         reliable staking experience.&nbsp;
-        <Link onClick={() => openExternalLink('guides/why-blox-needs-an-access-point-to-my-servers')}>
+        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-1')}>
           Why does Blox need access to my server?
         </Link>
       </Paragraph>

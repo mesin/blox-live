@@ -34,7 +34,7 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link onClick={() => openExternalLink('guides/what-is-a-validator-key')}>What is a validator key?</Link>
+        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-4')}>What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
         <BigButton isDisabled={isLoading} onClick={onClick}>

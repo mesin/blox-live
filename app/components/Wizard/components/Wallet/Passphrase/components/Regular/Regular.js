@@ -76,7 +76,7 @@ const Regular = (props) => {
       <Title>Backup Passphrase</Title>
       <Paragraph>
         Validator keys can be retrieved only with your unique mnemonic backup passphrase.
-        This 24-word passphrase <BoldText>must be stored safely</BoldText> to withdrawal
+        This 24-word passphrase <BoldText>must be stored safely</BoldText> to withdraw
         your funds.
       </Paragraph>
       <Warning text={'Do not share your backup passphrase with anyone.'} />

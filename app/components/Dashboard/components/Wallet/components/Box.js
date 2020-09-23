@@ -65,10 +65,11 @@ const Box = (props) => {
       <InnerWrapper>
         <MainTextWrapper>
           <BigText>
+            {bigText < 0 && '-'}
             {medText && name !== 'change' && (
               <Icon name={'eth-icon-colors'} fontSize={'29px'} color={color} />
             )}
-            {bigText}
+            {bigText < 0 ? Math.abs(bigText) : bigText}
           </BigText>
           {medText && (
             <MediumText>

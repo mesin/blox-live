@@ -15,12 +15,17 @@ const getNumberColor = (number: number) => {
 
 const trimWholeNumber = (floatingNumber: number) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
-  return floatingNumber > 0 ? Math.floor(floatingNumber) : Math.ceil(floatingNumber);
+  const number = floatingNumber > 0 ? Math.floor(floatingNumber) : Math.ceil(floatingNumber);
+  const formattedNumber = number.toLocaleString();
+  return formattedNumber;
 };
 
-export const trimDecimalNumber = (floatingNumber: number) => {
+export const trimDecimalNumber = (floatingNumber: number, isPrecentage: boolean) => {
   if (Number.isNaN(floatingNumber)) { return 'N/A'; }
-  const trimmedDecimal = (floatingNumber % 1).toFixed(2).substring(2);
+  let toFixed = 5;
+  if (floatingNumber >= 10 || isPrecentage) { toFixed = 2; }
+
+  const trimmedDecimal = (floatingNumber % 1).toFixed(toFixed).substring(2);
   return floatingNumber >= 0 ? `.${trimmedDecimal}` : trimmedDecimal;
 };
 export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
@@ -30,7 +35,7 @@ export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
       width: '290px',
       color: 'gray800',
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.balance),
-      medText: !summary ? '' : `${trimDecimalNumber(summary.balance)}`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.balance, false)}`,
       tinyText: 'Total Balance',
     },
     {
@@ -38,7 +43,7 @@ export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
       width: '260px',
       color: !summary ? 'gray800' : getNumberColor(summary.sinceStart),
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.sinceStart),
-      medText: !summary ? '' : `${trimDecimalNumber(summary.sinceStart)}`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.sinceStart, false)}`,
       tinyText: 'Since Start',
     },
     {
@@ -46,7 +51,7 @@ export const getBoxes = (isActive: boolean, summary: Record<string, any>) => {
       width: '220px',
       color: !summary ? 'gray800' : getNumberColor(summary.totalChange),
       bigText: !summary ? 'N/A' : trimWholeNumber(summary.totalChange),
-      medText: !summary ? '' : `${trimDecimalNumber(summary.totalChange)}`,
+      medText: !summary ? '' : `${trimDecimalNumber(summary.totalChange, true)}`,
       tinyText: 'Change',
     },
     {
