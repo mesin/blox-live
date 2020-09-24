@@ -105,7 +105,7 @@ const StakingDeposit = (props: Props) => {
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
-        To start staking on beacon chain Testnet, you are required to stake 32 GoEth
+        To start staking on beacon chain Testnet, you are required to stake 32 GoETH
         <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
         validator deposit contract.
         <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
