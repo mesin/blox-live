@@ -4,8 +4,6 @@ import styled from 'styled-components';
 import { ClickAwayListener } from '@material-ui/core';
 import { Icon, DropDown, Modal } from '../../../../../common/components';
 import { useInjectSaga } from '../../../../../utils/injectSaga';
-
-import { deleteAccount } from '../../../../Accounts/actions';
 import saga from '../../../../Accounts/saga';
 
 const Wrapper = styled.div`

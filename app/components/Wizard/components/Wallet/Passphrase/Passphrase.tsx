@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
-import { keyvaultLoadMnemonic, keyvaultSaveMnemonic } from '../../../../KeyvaultManagement/actions';
-import { getMnemonic, getIsLoading } from '../../../../KeyvaultManagement/selectors';
-import saga from '../../../../KeyvaultManagement/saga';
+import * as keyvaultActions from '../../../../KeyVaultManagement/actions';
+import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
+import saga from '../../../../KeyVaultManagement/saga';
 
-const key = 'KeyvaultManagement';
+const key = 'keyvaultManagement';
 
 const Passphrase = (props: Props) => {
-  const { page, setPage, mnemonic, isLoading } = props;
+  const { page, setPage, mnemonic, isLoading, actions } = props;
+  const { keyvaultLoadMnemonic, keyvaultSaveMnemonic } = actions;
   const [showBackup, toggleBackupDisplay] = useState(false);
   const [duplicatedMnemonic, setDuplicatedMnemonic] = useState('');
   const [password, setPassword] = useState('');
@@ -24,22 +26,20 @@ const Passphrase = (props: Props) => {
   useInjectSaga({ key, saga, mode: '' });
 
   const onPassphraseClick = () => {
-    const { loadMnemonic } = props;
-    if (mnemonic) { return null; }
-    loadMnemonic();
+    if (mnemonic || isLoading) { return; }
+    keyvaultLoadMnemonic();
   };
 
   const onSaveAndConfirmClick = async () => {
-    const { saveMnemonic } = props;
     if (canGenerateMnemonic()) {
-      await saveMnemonic(duplicatedMnemonic, password);
+      await keyvaultSaveMnemonic(duplicatedMnemonic, password);
       await !isButtonDisabled && setPage(page + 1);
     }
   };
 
   const onDownloadClick = () => {
     if (!mnemonic) { return null; }
-    writeToTxtFile('passphrase', mnemonic);
+    writeToTxtFile('Blox Secret Backup Passphrase', mnemonic);
   };
 
   const showBackupScreen = () => mnemonic && toggleBackupDisplay(true);
@@ -56,19 +56,17 @@ const Passphrase = (props: Props) => {
   const onDuplicateMnemonicBlur = () => {
     if (mnemonic !== duplicatedMnemonic) {
       setDuplicatedMnemonicErrorDisplay(true);
+      return;
     }
-    else {
-      setDuplicatedMnemonicErrorDisplay(false);
-    }
+    setDuplicatedMnemonicErrorDisplay(false);
   };
 
   const onPasswordBlur = () => {
     if (password.length < 8) {
       setPasswordErrorDisplay(true);
+      return;
     }
-    else {
-      setPasswordErrorDisplay(false);
-    }
+    setPasswordErrorDisplay(false);
   };
 
   const onConfirmPasswordBlur = () => {
@@ -106,9 +104,8 @@ type Props = {
   page: Page;
   setPage: (page: Page) => void;
   mnemonic: string;
-  loadMnemonic: () => void;
   isLoading: boolean;
-  saveMnemonic: (mnemonic: string, password: string) => void;
+  actions: Record<string, any>;
 };
 
 const mapStateToProps = (state) => ({
@@ -117,8 +114,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loadMnemonic: () => dispatch(keyvaultLoadMnemonic()),
-  saveMnemonic: (mnemonic, password) => dispatch(keyvaultSaveMnemonic(mnemonic, password)),
+  actions: bindActionCreators(keyvaultActions, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Passphrase);

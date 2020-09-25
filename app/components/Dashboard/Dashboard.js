@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { KeyVaultReactivation } from '..';
-import { Wallet, Validators } from './components';
-import { summarizeAccounts, normalizeAccountsData } from './service';
+import { Wallet, Validators, ModalsManager } from './components';
+import { summarizeAccounts, normalizeAccountsData, normalizeEventLogs } from './service';
+import EventLogs from './components/EventLogs';
+import { DiscordButton } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 70px);
+  height: 100%;
   background-color: ${({ theme }) => theme.gray50};
   display: flex;
   flex-direction: column;
@@ -15,22 +16,27 @@ const Wrapper = styled.div`
 `;
 
 const Dashboard = (props) => {
-  const { walletStatus, accounts } = props;
-  const [showReactivationModal, setReactivationModalDisplay] = useState(false);
+  const { walletStatus, accounts, eventLogs, walletNeedsUpdate, bloxLiveNeedsUpdate } = props;
   const accountsSummary = accounts && summarizeAccounts(accounts);
   const normalizedAccounts = accounts && normalizeAccountsData(accounts);
+  const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
   return (
     <Wrapper>
-      <Wallet isActive={walletStatus === 'active'} summary={accountsSummary} setReactivationModalDisplay={setReactivationModalDisplay} />
+      <Wallet isActive={walletStatus === 'active'} isNeedUpdate={bloxLiveNeedsUpdate} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
-      {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
+      <EventLogs events={normalizedEventLogs} />
+      <ModalsManager />
+      <DiscordButton />
     </Wrapper>
   );
 };
 
 Dashboard.propTypes = {
+  walletNeedsUpdate: PropTypes.bool,
   walletStatus: PropTypes.string,
   accounts: PropTypes.array,
+  eventLogs: PropTypes.array,
+  bloxLiveNeedsUpdate: PropTypes.bool,
 };
 
 export default Dashboard;

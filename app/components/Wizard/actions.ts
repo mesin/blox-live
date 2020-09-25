@@ -31,8 +31,8 @@ export const generateValidatorKeyFailure = (error: Record<string, any>) => ({
   payload: error,
 });
 
-export const loadDepositData = () => (
-  { type: actionTypes.LOAD_DEPOSIT_DATA }
+export const loadDepositData = (publicKey: string) => (
+  { type: actionTypes.LOAD_DEPOSIT_DATA, payload: publicKey }
 );
 
 export const loadDepositDataSuccess = (payload: Record<string, any>) => ({
@@ -62,4 +62,8 @@ export const updateAccountStatusFailure = (error: Record<string, any>) => ({
 export const setFinishedWizard = (isFinished: boolean) => ({
   type: actionTypes.SET_FINISHED_WIZARD,
   payload: isFinished,
+});
+
+export const clearWizardData = () => ({
+  type: actionTypes.CLEAR_DATA,
 });

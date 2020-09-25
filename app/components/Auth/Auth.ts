@@ -1,52 +1,38 @@
-import keytar from 'keytar';
-import os from 'os';
 import url from 'url';
 import jwtDecode from 'jwt-decode';
-import axios, { AxiosRequestConfig } from 'axios';
-
-import { SOCIAL_APPS } from '../../common/constants';
+import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-
-import { onAxiosInterceptorSuccess, onAxiosInterceptorFailure } from './service';
-import BaseStoreService from '../../backend/store-manager/base-store.service';
-
+import Store from 'backend/common/store-manager/store';
+import BloxApi from 'backend/common/communication-manager/blox-api';
+import AuthApi from 'backend/common/communication-manager/auth-api';
+import config from 'backend/common/config';
 
 export default class Auth {
-  tokens: Record<string, any>;
-  userProfile: Record<string, any> | null;
-  auth: Record<string, any>;
-  keytar: Record<string, any>;
-  private readonly baseStoreService: BaseStoreService;
+  idToken: string;
+  userProfile: Profile;
+  auth: Auth0ConfigObject;
+  private readonly authApi: AuthApi;
 
   constructor() {
-    this.tokens = {
-      accessToken: '',
-      idToken: '',
-      refreshToken: ''
-    };
+    this.idToken = '';
     this.userProfile = null;
     this.auth = {
-      domain: process.env.AUTH0_DOMAIN || '',
-      clientID: process.env.AUTH0_CLIENT_ID || '',
-      redirectUri: process.env.AUTH0_CALLBACK_URL,
+      domain: config.env.AUTH0_DOMAIN || '',
+      clientID: config.env.AUTH0_CLIENT_ID || '',
+      redirectUri: config.env.AUTH0_CALLBACK_URL,
       responseType: 'code',
       scope: 'openid profile email offline_access'
     };
-    this.keytar = {
-      service: 'bloxstaking-openid-oauth',
-      account: os.userInfo().username
-    };
-    this.baseStoreService = new BaseStoreService();
+    this.authApi = new AuthApi();
   }
 
   loginWithSocialApp = async (name: string) => {
     return new Promise((resolve, reject) => {
-      const callBack = (response) => {
+      const onSuccess = (response: Auth0Response) => {
         if (response.status === 200) {
-          const userProfile = jwtDecode(response.data.id_token);
+          const userProfile: Profile = jwtDecode(response.data.id_token);
           this.setSession(response.data, userProfile);
-          this.interceptIdToken(response.data.id_token);
           resolve({
             idToken: response.data.id_token,
             idTokenPayload: userProfile
@@ -54,66 +40,20 @@ export default class Auth {
         }
         reject(new Error('Error in login'));
       };
-      createAuthWindow(this, name, callBack);
+      const onFailure = () => reject(new Error(''));
+      createAuthWindow(this, name, onSuccess, onFailure);
     });
   };
 
-  checkIfTokensExist = async () => {
-    return new Promise((resolve, reject) => {
-      const callBack = (response) => {
-        if (response.status === 200) {
-          const userProfile = jwtDecode(response.data.id_token);
-          this.setSession(response.data, userProfile);
-          this.interceptIdToken(response.data.id_token);
-          resolve({
-            idToken: response.data.id_token,
-            idTokenPayload: userProfile
-          });
-        }
-        reject(new Error(response));
-      };
-      this.loadRefreshToken(callBack);
-    });
-  };
-
-  getAuthenticationURL = (socialAppName) => {
+  getAuthenticationURL = (socialAppName: string) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
-    const authUrl = `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&redirect_uri=${redirectUri}&prompt=select_account`;
-    return authUrl;
+    return `https://${domain}/authorize?scope=${scope}&response_type=${responseType}&client_id=${clientID}&connection=${SOCIAL_APPS[socialAppName].connection}&prompt=login&redirect_uri=${redirectUri}`;
   };
 
-  loadRefreshToken = async (callBack) => {
-    const { domain, clientID } = this.auth;
-    const { service, account } = this.keytar;
-    const refreshToken = await keytar.getPassword(service, account);
-    if (refreshToken) {
-      const refreshUrl = `https://${domain}/oauth/token`;
-      const config: AxiosRequestConfig = {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        data: {
-          grant_type: 'refresh_token',
-          client_id: clientID,
-          refresh_token: refreshToken
-        }
-      };
-      try {
-        const response = await axios(refreshUrl, config);
-        return callBack(response);
-      } catch (error) {
-        await this.logout();
-        return callBack(Error(error));
-      }
-    } else {
-      return callBack(Error('No available refresh token.'));
-    }
-  };
-
-  loadAuthToken = async (callbackURL) => {
-    const { domain, clientID, redirectUri } = this.auth;
+  loadAuthToken = async (callbackURL: string) => {
+    const { clientID, redirectUri } = this.auth;
     const urlParts = url.parse(callbackURL, true);
     const { query } = urlParts;
-
     const exchangeOptions = {
       grant_type: 'authorization_code',
       client_id: clientID,
@@ -121,75 +61,49 @@ export default class Auth {
       redirect_uri: redirectUri
     };
 
-    const tokenUrl = `https://${domain}/oauth/token`;
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json'
-      },
-      data: JSON.stringify(exchangeOptions)
-    };
-
     try {
-      const response = await axios(tokenUrl, config);
-      return response;
+      return await this.authApi.request('POST', 'token', JSON.stringify(exchangeOptions), null, true);
     } catch (error) {
       await this.logout();
       return Error(error);
     }
   };
 
-  setSession = async (authResult, userProfile) => {
-    const { access_token, id_token, refresh_token } = authResult;
-    this.tokens.accessToken = access_token;
-    this.tokens.idToken = id_token;
-    this.tokens.refreshToken = refresh_token;
+  setSession = async (authResult: Auth0ResponseData, userProfile: Profile) => {
+    const { id_token } = authResult;
+    this.idToken = id_token;
     this.userProfile = userProfile;
-    this.baseStoreService.set('currentUserId', userProfile.sub);
-    this.baseStoreService.set('authToken', authResult.id_token);
-    console.log('SET SESSION', authResult, userProfile);
-    console.log('electronStore===>', this.baseStoreService);
-    if (refresh_token) {
-      await keytar.setPassword(
-        this.keytar.service,
-        this.keytar.account,
-        refresh_token
-      );
-    }
+    Store.getStore().init(userProfile.sub, authResult.id_token);
+    BloxApi.init();
   };
 
-  isLoggedIn = () => {
-    const expiresAt = localStorage.getItem('expires_at');
-    return new Date().getTime() < Number(expiresAt);
-  };
+  getIdToken = () => this.idToken;
 
-  getAccessToken = () => this.tokens.accessToken; // TODO: add electron-storage
+  getProfile = (cb: CallBack) => cb(this.userProfile, null);
 
-  getIdToken = () => this.tokens.idToken;
-
-  getProfile = (cb: CallBack) => {
-    // TODO: get /userinfo in case userProfile is null
-    return cb(this.userProfile, null);
-  };
-
-  interceptIdToken = (idToken: string) => {
-    axios.interceptors.request.use(
-      (config: AxiosRequestConfig) => onAxiosInterceptorSuccess(config, idToken), onAxiosInterceptorFailure
-    );
-  };
-
-  logout = async () => { // check the keytar
-    const { service, account } = this.keytar;
-    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}`);
-    await keytar.deletePassword(service, account);
-    this.baseStoreService.clear();
-    this.tokens = {
-      accessToken: null,
-      profile: null,
-      refreshToken: null
-    };
+  logout = async () => {
+    await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
+    Store.getStore().logout();
+    this.idToken = '';
     this.userProfile = null;
   };
+}
+
+interface Auth0ConfigObject {
+  domain: string;
+  clientID: string;
+  redirectUri: string;
+  responseType: string;
+  scope: string;
+}
+
+interface Auth0Response {
+  status: number;
+  data: Auth0ResponseData
+}
+
+interface Auth0ResponseData {
+    id_token: string;
 }
 
 type Profile = Record<string, any> | null;

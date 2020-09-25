@@ -1,7 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ProcessLoader } from 'common/components';
-import { Title, Paragraph, BigButton, Link } from '../../../common';
+
+import { Spinner } from 'common/components';
+import { Title, Paragraph, BigButton, Link, ErrorMessage } from '../../../common';
+import { openExternalLink } from '../../../../../common/service';
+import PasswordModal from '../../../../../KeyVaultModals/Modals/PasswordModal';
 
 const Wrapper = styled.div``;
 
@@ -11,10 +14,18 @@ const ButtonWrapper = styled.div`
 
 const LoaderWrapper = styled.div`
   max-width:500px;
+  display:flex;
+`;
+
+const LoaderText = styled.span`
+  margin-left: 11px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.primary900};
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, message, onClick } = props;
+  const { isLoading, onClick, error, showPasswordModal, setShowPasswordModal } = props;
+  const onClose = () => setShowPasswordModal(false);
   return (
     <Wrapper>
       <Title>Create TestNet Validator</Title>
@@ -23,26 +34,35 @@ const GenerateKeys = (props: Props) => {
         <br />
         Testnet validator. These keys will be generated securely using KeyVault.{' '}
         <br />
-        <Link href="/">What is a validator key?</Link>
+        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-4')}>What is a validator key?</Link>
       </Paragraph>
       <ButtonWrapper>
-        <BigButton onClick={onClick}>
+        <BigButton isDisabled={isLoading} onClick={onClick}>
           Generate Validator Keys
         </BigButton>
       </ButtonWrapper>
       {isLoading && (
         <LoaderWrapper>
-          <ProcessLoader text={message} />
+          <Spinner width="17px" />
+          <LoaderText>Generating Validator Keys...</LoaderText>
         </LoaderWrapper>
       )}
+      {error && (
+        <ErrorMessage>
+          {error}, please try again.
+        </ErrorMessage>
+      )}
+      {showPasswordModal && (<PasswordModal onClick={onClose} onClose={onClose} />)}
     </Wrapper>
   );
 };
 
 type Props = {
   isLoading: boolean;
-  message: string;
   onClick: () => void;
+  error: string;
+  showPasswordModal: boolean;
+  setShowPasswordModal: (arg0: boolean) => void;
 };
 
 export default GenerateKeys;

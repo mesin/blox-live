@@ -1,11 +1,11 @@
 {
   "name": "blox-live",
   "productName": "blox-live-desktop-app",
-  "version": "0.2.581",
+  "version": "0.10.0-rc.5",
   "description": "Blox live, desktop app for managing staking accounts",
   "main": "./main.prod.js",
   "author": {
-    "name": "Blox Staking Maintainers",
+    "name": "Blox Staking",
     "email": "support@bloxstaking.com",
     "url": "https://www.bloxstaking.com/"
   },
@@ -15,7 +15,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "keytar": "^6.0.1",
+    "got": "11.5.2",
     "web3": "^1.2.11"
   }
 }

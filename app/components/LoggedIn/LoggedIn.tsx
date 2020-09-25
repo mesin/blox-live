@@ -11,6 +11,7 @@ import EntryPage from '../EntryPage';
 import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
+import { onWindowClose } from 'common/service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -28,6 +29,7 @@ import {
   getAccounts,
   getAccountsLoadingStatus,
   getAccountsError,
+  getAddAnotherAccount
 } from '../Accounts/selectors';
 import accountsSaga from '../Accounts/saga';
 
@@ -40,8 +42,7 @@ import {
 } from '../WebSockets/selectors';
 import webSocketSaga from '../WebSockets/saga';
 
-// auth
-import { logout } from '../CallbackPage/actions';
+import { allAccountsDeposited } from '../Accounts/service';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -54,22 +55,16 @@ const LoggedIn = (props: Props) => {
   const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
 
   const {
-    logoutUser, isFinishedWizard, callSetFinishedWizard, walletStatus,
-    isLoadingWallet, walletError, callLoadWallet, accounts, isLoadingAccounts,
-    accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
+    isFinishedWizard, callSetFinishedWizard, walletStatus,
+    isLoadingWallet, walletError, callLoadWallet,
+    accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
     websocket, webSocketError,
   } = props;
 
   useEffect(() => {
-    // TODO: handle loggedIn from localStorage with socket
-    const hasError = walletError || accountsError || webSocketError;
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
-
-    if (hasError) {
-      logoutUser();
-    }
 
     if (didntLoadWallet) {
       callLoadWallet();
@@ -82,10 +77,13 @@ const LoggedIn = (props: Props) => {
     }
 
     if (walletStatus && accounts && websocket) {
-      if ((walletStatus === 'active' || walletStatus === 'offline') && accounts.length > 0) {
+      if ((walletStatus === 'active' || walletStatus === 'offline') &&
+          accounts.length > 0 && allAccountsDeposited(accounts) &&
+          !addAnotherAccount) {
         callSetFinishedWizard(true);
       }
       toggleLoadingAll(true);
+      onWindowClose();
     }
   }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isFinishedWizard]);
 
@@ -115,6 +113,7 @@ const mapStateToProps = (state: State) => ({
   accounts: getAccounts(state),
   isLoadingAccounts: getAccountsLoadingStatus(state),
   accountsError: getAccountsError(state),
+  addAnotherAccount: getAddAnotherAccount(state),
 
   // websocket
   websocket: getIsConnected(state),
@@ -129,11 +128,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
-  logoutUser: () => dispatch(logout()),
 });
 
 interface Props extends RouteComponentProps {
-  logoutUser: () => void;
   isFinishedWizard: boolean;
   callSetFinishedWizard: (arg0: boolean) => void;
 
@@ -148,6 +145,7 @@ interface Props extends RouteComponentProps {
   isLoadingAccounts: boolean;
   accountsError: string;
   callLoadAccounts: () => void;
+  addAnotherAccount: boolean;
 
   // websocket
   isWebsocketLoading: boolean;

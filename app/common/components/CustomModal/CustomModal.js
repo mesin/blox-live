@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => theme.gray80060};
+  z-index:50;
 `;
 
 const Content = styled.div`
@@ -38,24 +39,21 @@ const CustomModal = (props) => {
   return (
     <Wrapper>
       <Content width={width} height={height}>
-        <CloseButton>
-          <Icon name="close" onClick={onClose} fontSize="32px" />
-        </CloseButton>
+        {onClose && (
+          <CloseButton>
+            <Icon name="close" onClick={onClose} fontSize="32px" />
+          </CloseButton>
+        )}
         {children}
       </Content>
     </Wrapper>
   );
 };
 
-CustomModal.defaultProps = {
-  padding: '0px',
-};
-
 CustomModal.propTypes = {
   children: PropTypes.node,
   width: PropTypes.string,
   height: PropTypes.string,
-  padding: PropTypes.string,
   onClose: PropTypes.func,
 };
 

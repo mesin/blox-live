@@ -8,6 +8,7 @@ import { CONNECT_WEB_SOCKET, SUBSCRIBE_TO_EVENT } from './actionTypes';
 import * as actions from './actions';
 import { getIdToken } from '../CallbackPage/selectors';
 // import { getWebsocket } from './selectors';
+import config from 'backend/common/config';
 
 function* onSuccess() {
   yield put(actions.connectToWebSocketsSuccess());
@@ -21,7 +22,7 @@ function* onFailure(error) {
 export function* connectToWebsocket() {
   const idToken = yield select(getIdToken);
   try {
-    yield io(process.env.API_URL, {
+    yield io(config.env.API_URL, {
       reconnection: true,
       transports: ['websocket'],
       query: { authorization: `Bearer ${idToken}` },
@@ -60,7 +61,7 @@ function createSocketChannel(ws, payload) {
 function* connectWebSocketChannel(action) {
   const { payload } = action;
   const idToken = yield select(getIdToken);
-  const ws = yield io(process.env.API_URL, {
+  const ws = yield io(config.env.API_URL, {
     reconnection: true,
     transports: ['websocket'],
     query: { authorization: `Bearer ${idToken}` },

@@ -1,7 +1,6 @@
 import { notification } from 'antd';
 
-export const initApp = (isLoggedIn, auth) => {
-  isLoggedIn && auth.interceptIdToken();
+export const initApp = () => {
   const placement = 'bottomRight';
   notification.config({ placement });
 };

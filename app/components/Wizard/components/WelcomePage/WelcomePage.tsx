@@ -3,21 +3,25 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
-import { InfoWithTooltip } from 'common/components';
-import { KeyVaultReactivation } from '../../..';
-import { useInjectSaga } from '../../../../utils/injectSaga';
-import * as wizardActions from '../../actions';
-import * as selectors from '../../selectors';
-import saga from '../../saga';
-import ButtonWithIcon from './ButtonWithIcon';
+import { useInjectSaga } from 'utils/injectSaga';
 
-import SeedService from 'backend/key-vault/seed.service';
+import { KeyVaultReactivation } from '../../..';
+import * as wizardActions from '../../actions';
+import * as wizardSelectors from '../../selectors';
+import saga from '../../saga';
+
+import * as accountSelectors from '../../../Accounts/selectors';
+import { allAccountsDeposited } from '../../../Accounts/service';
+
+import { InfoWithTooltip } from 'common/components';
+import ButtonWithIcon from './ButtonWithIcon';
 
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
 import mainNetImg from 'components/Wizard/assets/img-validator-main-net.svg';
+import Store from '../../../../backend/common/store-manager/store';
 
-const seedService = new SeedService();
+const store: Store = Store.getStore();
 
 const Wrapper = styled.div`
   width: 100%;
@@ -36,6 +40,7 @@ const Left = styled.div`
   color: ${({ theme }) => theme.gray50};
   font-size: 54px;
   font-weight: 500;
+  line-height: 76px
   text-align: center;
 `;
 
@@ -59,8 +64,8 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, wallet, isLoading } = props;
-  const { loadWallet } = actions;
+  const { setPage, setStep, step, actions, wallet, accounts, isLoading, isDepositNeeded, addAnotherAccount } = props;
+  const { loadWallet, setFinishedWizard } = actions;
 
   useInjectSaga({ key, saga, mode: '' });
   const [showStep2, setStep2Status] = useState(false);
@@ -71,15 +76,26 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
-    const hasSeed = !!seedService.getSeed();
+    const hasSeed = store.exists('seed');
 
     if (hasWallet) {
       if (hasSeed) {
+        if (addAnotherAccount) {
+          redirectToCreateAccount();
+          return;
+        }
+        if (!allAccountsDeposited(accounts)) {
+          if (isDepositNeeded) {
+            redirectToDepositPage();
+            return;
+          }
+          setFinishedWizard(true);
+          return;
+        }
         setStep2Status(true);
+        return;
       }
-      else {
-        jumpToPassPhrasePage();
-      }
+      redirectToPassPhrasePage();
     }
   }, [isLoading]);
 
@@ -90,25 +106,32 @@ const WelcomePage = (props: Props) => {
       setReactivationModalDisplay(true);
     }
     else if (wallet.status === 'active') {
-      setStep(step + 1);
-      setPage(5);
+      redirectToCreateAccount();
     }
   };
 
-  const jumpToPassPhrasePage = () => setPage(3);
+  const redirectToPassPhrasePage = () => setPage(3);
+
+  const redirectToCreateAccount = () => {
+    setStep(step + 1);
+    setPage(5);
+  };
+
+  const redirectToDepositPage = () => {
+    setStep(step + 1);
+    setPage(7);
+  };
 
   return (
     <Wrapper>
-      <Left>Start Staking With Blox!</Left>
+      <Left>
+        Start Your <br />Staking Journey
+      </Left>
       <Right>
         <IntroText>
-          Never surrender your private keys with non-custodial staking. <br />
-          This one-time wizard will guide you through creating your <br />
-          KeyVault
+          This one-time wizard will guide you through creating your KeyVault
           <InfoWithTooltip title={toolTipText} placement="bottom" />
-          and validator client. <br /> <br />
-          Your KeyVault securely manages private keys and must <br />
-          maintain online connectivity.
+          and validator client.
         </IntroText>
         <ButtonWithIcon title="Step 1" subTitle="KeyVault Setup" image={keyVaultImg}
           isDisabled={showStep2} onClick={onStep1Click} isLoading={isLoading}
@@ -123,8 +146,11 @@ const WelcomePage = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
-  wallet: selectors.getWallet(state),
+  isLoading: wizardSelectors.getIsLoading(state),
+  wallet: wizardSelectors.getWallet(state),
+  accounts: accountSelectors.getAccounts(state),
+  isDepositNeeded: accountSelectors.getDepositNeededStatus(state),
+  addAnotherAccount: accountSelectors.getAddAnotherAccount(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -137,7 +163,10 @@ type Props = {
   step: number;
   actions: Record<string, any>;
   wallet: Record<string, any>;
+  accounts: [];
   isLoading: boolean;
+  isDepositNeeded: boolean;
+  addAnotherAccount: boolean;
 };
 
 type State = Record<string, any>;

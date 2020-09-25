@@ -2,9 +2,10 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
 
-import { LOGIN_INIT, CHECK_IF_TOKEN_EXIST, LOGOUT } from './actionTypes';
+import { LOGIN_INIT, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
 import Auth from '../Auth';
+import { saveLastConnection } from 'common/service';
 
 const auth = new Auth();
 
@@ -17,12 +18,9 @@ function* onLoginSuccess(authResult) {
 
 function* onLoginFailure(error: Record<string, any>) {
   yield put(loginFailure(error.message));
-  notification.error({ message: 'Error', description: error.message });
-  yield put(push('/login'));
-}
-
-function* onCheckIfTokenExistFailure(error: Record<string, any>) {
-  yield put(loginFailure(error.message));
+  if (error.message) {
+    notification.error({ message: 'Error', description: error.message });
+  }
   yield put(push('/login'));
 }
 
@@ -36,22 +34,13 @@ export function* startLogin(action) {
   }
 }
 
-export function* checkIfTokenExist() {
-  try {
-    const authResult = yield call(auth.checkIfTokensExist);
-    yield call(onLoginSuccess, authResult);
-  } catch (error) {
-    yield error && call(onCheckIfTokenExistFailure, error);
-  }
-}
-
 export function* startLogOut() {
+  yield saveLastConnection();
   yield call(auth.logout);
   yield put(push('/login'));
 }
 
 export default function* userData() {
-  yield takeLatest(CHECK_IF_TOKEN_EXIST, checkIfTokenExist);
   yield takeLatest(LOGIN_INIT, startLogin);
   yield takeLatest(LOGOUT, startLogOut);
 }

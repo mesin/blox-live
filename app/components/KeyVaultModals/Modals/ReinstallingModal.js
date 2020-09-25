@@ -11,13 +11,12 @@ import * as selectors from '../../ProcessRunner/selectors';
 import saga from '../../ProcessRunner/saga';
 import { precentageCalculator } from 'utils/service';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
-
 const key = 'processRunner';
 
 const ReinstallingModal = (props) => {
-  const { move1StepForward, move2StepsForward, onClose, isLoading, reinstallMessage, isDone, isServerActive, processName,
-         actions, overallSteps, currentStep
+  const { title, description, move1StepForward, move2StepsForward, onClose,
+          isLoading, reinstallMessage, isDone, isServerActive, processName,
+          actions, overallSteps, currentStep, image
         } = props;
   const { processSubscribe, processClearState } = actions;
   const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
@@ -37,17 +36,20 @@ const ReinstallingModal = (props) => {
 
   return (
     <ModalTemplate onClose={onClose} image={image}>
-      <Title>Reinstalling KeyVault</Title>
+      <Title>{title}</Title>
       <Wrapper>
-        <Description>KeyVault still inactive. Starting the reinstall process.</Description>
+        {description && <Description>{description}</Description>}
         <ProcessLoader text={reinstallMessage} precentage={loaderPrecentage} />
       </Wrapper>
-      <SmallText>This process is automated and only takes a few minutes.</SmallText>
+      <SmallText withWarning />
     </ModalTemplate>
   );
 };
 
 ReinstallingModal.propTypes = {
+  image: PropTypes.string,
+  title: PropTypes.string,
+  description: PropTypes.string,
   processName: PropTypes.string,
   move1StepForward: PropTypes.func,
   move2StepsForward: PropTypes.func,

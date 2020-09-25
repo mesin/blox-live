@@ -70,17 +70,17 @@ const ButtonWrapper = styled.div`
 
 const Regular = (props) => {
   const { mnemonic, isLoading, onPassphraseClick, onNextButtonClick, onDownloadClick } = props;
-  const isButtonDisabled = !mnemonic;
+  const isDisabled = !mnemonic || isLoading;
   return (
     <Wrapper>
       <Title>Backup Passphrase</Title>
       <Paragraph>
         Validator keys can be retrieved only with your unique mnemonic backup passphrase.
-        This 24-word passphrase <BoldText>must be stored safely</BoldText> to withdrawal
+        This 24-word passphrase <BoldText>must be stored safely</BoldText> to withdraw
         your funds.
       </Paragraph>
       <Warning text={'Do not share your backup passphrase with anyone.'} />
-      <Box onClick={onPassphraseClick} clickable={mnemonic === ''}>
+      <Box onClick={onPassphraseClick} clickable={!isDisabled}>
         {isLoading && !mnemonic && <Spinner />}
         {mnemonic !== '' ? mnemonic : (
           <InnerBoxWrapper>
@@ -89,9 +89,9 @@ const Regular = (props) => {
           </InnerBoxWrapper>
         )}
       </Box>
-      <DownloadButton onClick={onDownloadClick} isDisabled={!mnemonic}>Download backup passphrase</DownloadButton>
+      <DownloadButton onClick={onDownloadClick} isDisabled={isDisabled}>Download backup passphrase</DownloadButton>
       <ButtonWrapper>
-        <Button isDisabled={isButtonDisabled} onClick={onNextButtonClick}>Next</Button>
+        <Button isDisabled={isDisabled} onClick={onNextButtonClick}>Next</Button>
       </ButtonWrapper>
     </Wrapper>
   );

@@ -1,5 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
 const initialState = {
   name: '',
@@ -21,6 +22,7 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isLoading = true;
       draft.name = payload.name;
       draft.message = payload.defaultMessage;
+      draft.error = '';
       break;
     case actionTypes.PROCESS_OBSERVE:
       draft.message = payload.message;
@@ -43,9 +45,16 @@ const processRunnerReducer = (state = initialState, action: Action) => produce(s
       draft.isDone = true;
       break;
     case actionTypes.PROCESS_CLEAR_STATE:
+    case LOGOUT:
+      draft.name = initialState.name;
+      draft.message = initialState.message;
+      draft.overallSteps = initialState.overallSteps;
+      draft.currentStep = initialState.currentStep;
+      draft.data = initialState.data;
       draft.isDone = initialState.isDone;
       draft.overallSteps = initialState.overallSteps;
       draft.currentStep = initialState.currentStep;
+      draft.isServerActive = initialState.isServerActive;
       break;
   }
 });

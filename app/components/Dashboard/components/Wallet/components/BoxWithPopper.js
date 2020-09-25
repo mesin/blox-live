@@ -1,8 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
 import Box from './Box';
-import Popper from './Popper';
+import ReactivatePopper from './ReactivatePopper';
+import UpdatePopper from './UpdatePopper';
+import * as dashboardActions from '../../../actions';
+import { MODAL_TYPES } from '../../../constants';
 
 const Wrapper = styled.div`
   position:relative;
@@ -10,41 +16,42 @@ const Wrapper = styled.div`
 `;
 
 const BoxWithTooltip = (props) => {
-  const { isActive, width, color, bigText, medText, tinyText, image, setReactivationModalDisplay } = props;
-  const [showPopper, setPopperDisplay] = React.useState(false);
+  const { isActive, walletNeedsUpdate, width, color, bigText, medText, tinyText, image, actions } = props;
+  const { setModalDisplay } = actions;
 
-  const onMouseEnter = () => {
-    setPopperDisplay(true);
-  };
+  const showReactivationModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: '', });
 
-  const onMouseLeave = () => {
-    setPopperDisplay(false);
-  };
+  const showUpdateModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: '', });
 
-  return ( // TODO: add // !isActive && to 34 line code
-    <Wrapper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      <Box
-        width={width}
-        color={color}
-        bigText={bigText}
-        medText={medText}
-        tinyText={tinyText}
-        image={image}
+  return (
+    <Wrapper>
+      <Box width={width} color={color} bigText={bigText}
+        medText={medText} tinyText={tinyText} image={image}
       />
-      {showPopper && <Popper onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={setReactivationModalDisplay} />}
+      {!isActive && (
+        <ReactivatePopper onClick={showReactivationModal} />
+      )}
+      {walletNeedsUpdate && isActive && (
+        <UpdatePopper onClick={showUpdateModal} />
+      )}
     </Wrapper>
   );
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(dashboardActions, dispatch),
+});
+
 BoxWithTooltip.propTypes = {
   isActive: PropTypes.bool,
+  walletNeedsUpdate: PropTypes.bool,
   width: PropTypes.string,
   color: PropTypes.string,
   bigText: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   medText: PropTypes.string,
   tinyText: PropTypes.string,
   image: PropTypes.string,
-  setReactivationModalDisplay: PropTypes.func,
+  actions: PropTypes.object,
 };
 
-export default BoxWithTooltip;
+export default connect(null, mapDispatchToProps)(BoxWithTooltip);

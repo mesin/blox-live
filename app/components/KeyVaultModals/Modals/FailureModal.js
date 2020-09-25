@@ -2,12 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, FailureIcon } from 'common/components';
 import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Wrapper, DiscordText } from '..';
+import { Title, Description, Wrapper } from '..';
 
 import image from '../../Wizard/assets/img-key-vault-inactive.svg';
-import discordLogo from 'assets/images/discord-logo.svg';
+import { reportCrash } from '../../common/service';
 
 const FailureModal = ({title, onClick, onClose}) => {
+  const contactSupport = async () => {
+    await reportCrash();
+    onClick();
+  };
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Wrapper>
@@ -18,8 +22,7 @@ const FailureModal = ({title, onClick, onClose}) => {
         Please contact our support team to resolve this issue.
       </Description>
       <Wrapper>
-        <Button onClick={onClick}>Contact Blox</Button> <br />
-        <DiscordText>Or reach us on <img src={discordLogo} /></DiscordText>
+        <Button onClick={contactSupport}>Contact Blox</Button> <br />
       </Wrapper>
     </ModalTemplate>
   );

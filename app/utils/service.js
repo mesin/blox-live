@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const isActive = (to, pathname) => {
   const hasSubDir = to.lastIndexOf('/') > 0 && pathname.lastIndexOf('/') > 0;
   if (hasSubDir) {
@@ -14,4 +16,52 @@ export const isActive = (to, pathname) => {
 
 export const isEmptyObject = (obj) => Object.entries(obj).length === 0 && obj.constructor === Object;
 
-export const precentageCalculator = (current, overall) => ((current / overall) * 100).toFixed(0);
+export const precentageCalculator = (current, overall) => {
+  if (current === 0 || overall === 0) {
+    return 0;
+  }
+  return Number(((current / overall) * 100).toFixed(0), 2);
+};
+
+export const lastDateFormat = (utcDate) => {
+  const minutesPassed = Math.abs(moment(utcDate).diff(moment(), 'minutes'));
+  const hoursPassed = Math.abs(moment(utcDate).diff(moment(), 'hours'));
+
+  if (hoursPassed < 24) {
+    if (minutesPassed < 1) {
+      return 'Less than a minute ago';
+    }
+    if (minutesPassed < 2) {
+      return 'About a minute ago';
+    }
+    if (hoursPassed < 1) {
+      return `${minutesPassed} minutes ago`;
+    }
+    if (hoursPassed === 1) {
+      return 'about an hour ago';
+    }
+    return `about ${hoursPassed} hours ago`;
+  }
+  if (hoursPassed >= 24 || hoursPassed < 48) {
+    // more than 24h but less than 48h
+    return moment(utcDate).format('MMMM DD, YYYY HH:MM');
+  }
+  // more than 48 hours
+  return moment(utcDate).format('MMMM DD, YYYY');
+};
+
+export const parseVersion = (v) => {
+  return v.replace(/\D/g, '');
+};
+
+export const generateLocaleStringConfig = (number) => {
+  const minimumFractionDigits = 2;
+  let maximumFractionDigits = 9;
+  if (number >= 10) {
+    maximumFractionDigits = 5;
+  }
+  return ({
+    minimumFractionDigits,
+    maximumFractionDigits
+  });
+};

@@ -5,6 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { dependencies as externals } from '../app/package.json';
+import dotenv from 'dotenv';
 
 // TODO: add ts-loader and implement js
 export default {
@@ -16,16 +17,16 @@ export default {
         test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-        },
-      },
-    ],
+          loader: 'babel-loader'
+        }
+      }
+    ]
   },
 
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2',
+    libraryTarget: 'commonjs2'
   },
 
   /**
@@ -33,19 +34,11 @@ export default {
    */
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
-    modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
+    modules: [path.join(__dirname, '..', 'app'), 'node_modules']
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production',
-      AUTH0_DOMAIN: 'blox-infra.eu.auth0.com',
-      AUTH0_CLIENT_ID: 'NsZvhkQvZOWwXT2rcA1RWGgA7YxxhsJZ',
-      AUTH0_LOGOUT_URL: 'http://localhost',
-      AUTH0_CALLBACK_URL: 'http://localhost/callback',
-      API_URL: 'https://api.stage.bloxstaking.com',
-    }),
-
-    new webpack.NamedModulesPlugin(),
-  ],
+    new webpack.EnvironmentPlugin(dotenv.config({ path: path.join(__dirname, '..', '/.env') }).parsed),
+    new webpack.NamedModulesPlugin()
+  ]
 };

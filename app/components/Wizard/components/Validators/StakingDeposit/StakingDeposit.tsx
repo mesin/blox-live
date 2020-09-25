@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import { notification } from 'antd';
+import { shell } from 'electron';
 import { InfoWithTooltip } from 'common/components';
+import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
-import { updateAccountStatus, setFinishedWizard, loadWallet } from '../../../actions';
-import { loadAccounts } from '../../../../Accounts/actions';
+import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
+
+import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
+import { getAccounts, getDepositNeededStatus, getDepositToPublicKey } from '../../../../Accounts/selectors';
+
 import { getData } from '../../../../ProcessRunner/selectors';
+
 import { DepositData } from './components';
+import { openExternalLink } from '../../../../common/service';
+import config from 'backend/common/config';
+
+import tipImage from 'assets/images/info.svg';
 
 const Wrapper = styled.div`
   width:580px;
@@ -41,47 +53,69 @@ const CancelButton = styled(BigButton)`
   border:1px solid ${({theme}) => theme.gray400};
 `;
 
-let toolTipText = 'GoETH are test tokens needed in order to participate in the Goerli Test Network.';
-toolTipText += 'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!';
+const Tip = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  display:flex;
+  align-items:center;
+  margin-top:78px;
+  margin-bottom:8px;
+`;
+
+const TipImage = styled.img`
+  width:24px;
+  height:24px;
+  margin-right:7px;
+`;
 
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountData,
-          callUpdateAccountStatus, callLoadWallet, callLoadAccounts, callSetFinishedWizard,
-        } = props;
+  const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
+          isDepositNeeded, depositTo, callSetDepositNeeded } = props;
+  const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
-  const onButtonClick = async () => {
-    await callLoadWallet();
-    await callLoadAccounts();
-    await callSetFinishedWizard(true);
-    await setPage(page + 1);
-  };
+  useEffect(() => {
+    if (isDepositNeeded && depositTo) {
+      loadDepositData(depositTo);
+      callSetDepositNeeded(false, depositTo);
+    }
+  }, [isDepositNeeded, depositTo]);
 
   const onMadeDepositButtonClick = async () => {
-    await callUpdateAccountStatus(accountData.id);
-    await onButtonClick();
+    const accountFromApi: Record<string, any> = accountsFromApi.find((account) => account.publicKey === depositTo);
+    const currentAccount = accountDataFromProcess || accountFromApi;
+    if (currentAccount) {
+      await updateAccountStatus(currentAccount.id);
+      await callSetDepositNeeded(false, '');
+      await setPage(page + 1);
+    }
+    else {
+      notification.error({message: 'Account not found'});
+    }
   };
 
   const onDepositLaterButtonClick = async () => {
-    await onButtonClick();
+    await clearWizardData();
+    await callClearAccountsData();
+    await setFinishedWizard(true);
   };
+
+  const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
   return (
     <Wrapper>
       <Title>TestNet Staking Deposit</Title>
       <Paragraph>
-        To start staking on our Testnet, you are required to stake 32 GoEth
-        <InfoWithTooltip title={toolTipText} placement="bottom" /> into the
-        <br />
-        validator deposit contract. The Blox test network uses the Goerli
-        network to <br />
-        simulate validator deposits on the proof-of-work enabled Beacon-chain.
-        <GoEthButton href={'https://discord.gg/Kw5eFh'} target={'_blank'}>Need GoETH?</GoEthButton>
+        To start staking on beacon chain Testnet, you are required to stake <br />
+        32 GoETH <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
+        validator deposit contract.
+        <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
+          Need GoETH?
+        </GoEthButton>
       </Paragraph>
 
-      {depositData && <DepositData depositData={depositData} />}
-      <Link href={'https://www.bloxstaking.com/blox-guide-how-do-i-submit-my-staking-deposit'}>
-        Need help?
-      </Link>
+      {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
+      <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
+      <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
       <ButtonsWrapper>
         <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
         <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
@@ -91,16 +125,17 @@ const StakingDeposit = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
   depositData: selectors.getDepositData(state),
-  accountData: getData(state),
+  accountDataFromProcess: getData(state),
+  accountsFromApi: getAccounts(state),
+  isDepositNeeded: getDepositNeededStatus(state),
+  depositTo: getDepositToPublicKey(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callUpdateAccountStatus: (accountId: string) => dispatch(updateAccountStatus(accountId)),
-  callSetFinishedWizard: (status) => dispatch(setFinishedWizard(status)),
-  callLoadWallet: () => dispatch(loadWallet()),
-  callLoadAccounts: () => dispatch(loadAccounts()),
+  actions: bindActionCreators(wizardActions, dispatch),
+  callClearAccountsData: () => dispatch(clearAccountsData()),
+  callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
 });
 
 type Props = {
@@ -108,13 +143,14 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  isLoading: boolean;
-  depositData: Record<string, any> | null;
-  accountData: Record<string, any> | null;
-  callUpdateAccountStatus: (accountId: string) => void;
-  callSetFinishedWizard: (status: boolean) => void;
-  callLoadWallet: () => void;
-  callLoadAccounts: () => void;
+  depositData: string;
+  accountsFromApi: { publicKey: string, id: number }[];
+  accountDataFromProcess: Record<string, any> | null;
+  actions: Record<string, any> | null;
+  callClearAccountsData: () => void;
+  callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
+  isDepositNeeded: boolean;
+  depositTo: string;
 };
 
 type State = Record<string, any>;

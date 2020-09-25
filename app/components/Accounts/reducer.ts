@@ -1,14 +1,18 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
+import { LOGOUT } from '../CallbackPage/actionTypes';
 
 const initialState = {
   isLoading: false,
   error: null,
   data: null,
+  depositNeeded: false,
+  depositTo: '',
+  addAnotherAccount: false,
 };
 
-const accountsReducer = (state = initialState, action: Action) =>
-  produce(state, (draft) => {
+/* eslint-disable default-case, no-param-reassign */
+const accountsReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.LOAD_ACCOUNTS:
         draft.isLoading = true;
@@ -21,15 +25,21 @@ const accountsReducer = (state = initialState, action: Action) =>
         draft.error = action.payload;
         draft.isLoading = false;
         break;
-
-      case actionTypes.DELETE_ACCOUNT:
-        draft.isLoading = true;
+      case actionTypes.SET_DEPOSIT_NEEDED:
+        draft.depositNeeded = action.payload.depositNeeded;
+        draft.depositTo = action.payload.publicKey;
         break;
-      case actionTypes.DELETE_ACCOUNT_SUCCESS:
-        draft.isLoading = false;
+      case actionTypes.ADD_ANOTHER_ACCOUNT:
+        draft.addAnotherAccount = action.payload;
         break;
-      case actionTypes.DELETE_ACCOUNT_FAILURE:
-        draft.isLoading = false;
+      case actionTypes.CLEAR_DATA:
+      case LOGOUT:
+        draft.isLoading = initialState.isLoading;
+        draft.error = initialState.error;
+        draft.data = initialState.data;
+        draft.addAnotherAccount = initialState.addAnotherAccount;
+        draft.depositNeeded = initialState.depositNeeded;
+        draft.depositTo = initialState.depositTo;
         break;
     }
   });

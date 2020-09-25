@@ -1,15 +1,10 @@
 import {
   configureStore,
-  getDefaultMiddleware,
-  // Action,
-  // DeepPartial,
 } from '@reduxjs/toolkit';
 import { createHashHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
-// import { ThunkAction } from 'redux-thunk';
-// eslint-disable-next-line import/no-cycle
 import createRootReducer from './rootReducer';
 
 export const history = createHashHistory();
@@ -21,12 +16,10 @@ const reduxSagaMonitorOptions = {};
 
 const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions);
 
-const middleware = [...getDefaultMiddleware(), router, sagaMiddleware];
+const middleware = [router, sagaMiddleware];
 
 const excludeLoggerEnvs = ['test', 'production'];
-const shouldIncludeLogger = !excludeLoggerEnvs.includes(
-  process.env.NODE_ENV || ''
-);
+const shouldIncludeLogger = !excludeLoggerEnvs.includes(process.env.NODE_ENV || '');
 
 if (shouldIncludeLogger) {
   const logger = createLogger({
@@ -36,8 +29,7 @@ if (shouldIncludeLogger) {
   middleware.push(logger);
 }
 
-// initialState?: DeepPartial<RootState>
-export const configuredStore = (initialState) => {
+export const configuredStore = (initialState) => { // TODO: remove configureStore from redux/toolkit
   const store = configureStore({
     reducer: rootReducer,
     middleware,

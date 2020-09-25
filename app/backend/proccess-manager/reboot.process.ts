@@ -1,6 +1,6 @@
-import AwsService from '../aws/aws.service';
+import AwsService from '../services/aws/aws.service';
 import ProcessClass from './process.class';
-import KeyVaultService from '../key-vault/key-vault.service';
+import KeyVaultService from '../services/key-vault/key-vault.service';
 
 export default class RebootProcess extends ProcessClass {
   private readonly awsService: AwsService;

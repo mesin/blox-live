@@ -1,18 +1,18 @@
-import AwsService from '../aws/aws.service';
-import AccountService from '../account/account.service';
+import AwsService from '../services/aws/aws.service';
 import ProcessClass from './process.class';
+import WalletService from '../services/wallet/wallet.service';
 
 export default class UninstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
-  private readonly accountService: AccountService;
+  private readonly walletService: WalletService;
   public readonly actions: Array<any>;
 
   constructor() {
     super();
     this.awsService = new AwsService();
-    this.accountService = new AccountService();
+    this.walletService = new WalletService();
     this.actions = [
-      { instance: this.accountService, method: 'deleteBloxAccount' },
+      { instance: this.walletService, method: 'removeBloxWallet' },
       { instance: this.awsService, method: 'uninstallItems' }
     ];
   }
