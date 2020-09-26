@@ -21,5 +21,9 @@ jobs:
         with:
           node-version: '12.x'
 
-      - run: yarn install
-      - run: yarn package-win
+    - run: yarn install
+    - run: yarn package-win
+      with:
+        # GitHub token, automatically provided to the action
+        # (No need to define this secret in the repo settings)
+        github_token: ${{ secrets.github_token }}
