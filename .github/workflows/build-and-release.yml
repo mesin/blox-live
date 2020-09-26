@@ -20,7 +20,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-          github_token: ${{ secrets.github_token }}
 
       - run: yarn install
       - run: yarn package-win
+        env:
+          GH_TOKEN: ${{ secrets.github_token }}
