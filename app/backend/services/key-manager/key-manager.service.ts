@@ -78,7 +78,9 @@ export default class KeyManagerService {
   }
 
   async mnemonicGenerate(): Promise<string> {
+    console.log('----> mnem:', `${this.executablePath} mnemonic generate`);
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
+    console.log('---->!!!', stdout, stderr);
     if (stderr) {
       throw new Error(stderr);
     }
