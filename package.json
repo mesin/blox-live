@@ -288,6 +288,7 @@
     "electron-log": "^4.2.2",
     "electron-store": "^6.0.0",
     "electron-updater": "^4.3.1",
+    "form-data": "3.0.0",
     "history": "4.7.2",
     "immer": "^7.0.5",
     "invariant": "^2.2.4",
