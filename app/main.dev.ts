@@ -73,8 +73,8 @@ const createWindow = async (downloadsDir) => {
   });
 
   mainWindow.setMinimumSize(width, height);
-
-  mainWindow.webContents.openDevTools();
+  // disable dev tools for beta release
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(`file://${__dirname}/app.html?dwldir=${downloadsDir}`);
 
