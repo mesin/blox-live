@@ -13,33 +13,68 @@
 
 </div>
 
-## Install
+## Blox Staking - Desktop App
+Blox is an open-source, fully non-custodial staking platform for Ethereum 2.0. The platform serves as an easy and accessible way to stake Ether and earn rewards on Eth2, while ensuring participants retain complete control over their private keys. Our goal at Blox is to simplify staking while ensuring Ethereum stays fair and decentralized. 
 
-- **If you have installation or compilation issues with this project, please see [our debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
+### Download
+Download the app from https://www.bloxstaking.com/download
 
-First, clone the repo via git and install dependencies:
+### Compatibility
+- macOS
+- Windows (soon)
+
+## Development
+
+BloxStaking app development run smoothly with [Yarn](https://classic.yarnpkg.com/)
+
+### Install
 
 ```bash
-git clone --depth 1 --single-branch https://github.com/electron-react-boilerplate/electron-react-boilerplate.git your-project-name
-cd your-project-name
 yarn
 ```
 
-## Starting Development
+### Build
 
-Start the app in the `dev` environment. This starts the renderer process in [**hot-module-replacement**](https://webpack.js.org/guides/hmr-react/) mode and starts a webpack dev server that sends hot updates to the renderer process:
+```bash
+yarn build
+```
+
+### Run development version
 
 ```bash
 yarn dev
 ```
 
-## Packaging for Production
+### Create packages
 
-To package apps for the local platform:
+BloxStaking desktop app can run on MacOs and Windows(soon). You can create a package from your development enviroment. 
+
+#### Pacakage for MacOS release
 
 ```bash
-yarn package
+yarn package-mac
 ```
+
+#### Pacakage for Windows release
+
+```bash
+yarn package-win
+```
+You can find the release files under release directory.
+
+## Tech Stack
+
+- <a href="https://www.electronjs.org">ElectronJS</a> To create a cross desktop app for all operating systems.
+- <a href="https://expressjs.com/">Express</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://babeljs.io/">Babel</a> - For development purpose and build file creation
+- <a href="https://reactjs.org/">React 16.8</a> - To handle front end tasks in scale
+- <a href="https://reacttraining.com/react-router/web/guides/quick-start">React Router</a> - For application navigation and routing
+- <a href="https://redux.js.org/">Redux</a> and <a href="https://redux-saga.js.org/">Redux Saga</a> - A UI state management and middleware to handle async operations
+- <a href="https://github.com/axios/axios">Axios</a> - Promise based HTTP client
+- <a href="https://styled-components.com/">Styled Components</a> - A CSS-in-JS library to make styling more dynamic and easy
+- <a href="https://github.com/auth0/auth0.js#readme">Auth0 JS</a> - To authenticate and authorize users in the app
+- <a href="https://www.typescriptlang.org/">TypeScript</a> and <a href="https://eslint.org/">ESlint</a> - For better development experience, linting errors, type checking, auto complete and more
+- <a href="https://jestjs.io/">Jest JS</a> and <a href="https://reactjs.org/docs/test-renderer.html">React Test Renderer</a> - Testing tools for React applications
+- <a href="https://coveralls.io/">Coveralls</a> - Code testing coverage 
 
 ## Docs (TBD)
 
@@ -57,30 +92,11 @@ See our [docs and guides here](https://www.bloxstaking.com/blox-blog/)
 
 GPL © [Blox Live](https://github.com/bloxapp/blox-live)
 
-[github-actions-status]: https://github.com/bloxapp/blox-live/workflows/Test/badge.svg?branch=stage
-[github-actions-url]: https://github.com/bloxapp/blox-live/actions
-[github-tag-image]: https://img.shields.io/github/v/tag/bloxapp/blox-live.svg?label=version
-[github-tag-url]: https://github.com/bloxapp/blox-live.svg/releases/latest
-[david-image]: https://david-dm.org/bloxapp/blox-live/stage/status.svg
-[david-url]: https://david-dm.org/bloxapp/blox-live/stage
-[david-dev-image]: https://david-dm.org/bloxapp/blox-live/stage/dev-status.svg
-[david-dev-url]: https://david-dm.org/bloxapp/blox-live/stage?type=dev
-
-<p>
-  Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a> for rapid application development (HMR).
-</p>
-
-<br>
-
-<div align="center">
-  <a href="https://facebook.github.io/react/"><img src="./internals/img/react-padded-90.png" /></a>
-  <a href="https://webpack.github.io/"><img src="./internals/img/webpack-padded-90.png" /></a>
-  <a href="https://redux.js.org/"><img src="./internals/img/redux-padded-90.png" /></a>
-  <a href="https://github.com/ReactTraining/react-router"><img src="./internals/img/react-router-padded-90.png" /></a>
-  <a href="https://eslint.org/"><img src="./internals/img/eslint-padded-90.png" /></a>
-  <a href="https://facebook.github.io/jest/"><img src="./internals/img/jest-padded-90.png" /></a>
-  <a href="https://yarnpkg.com/"><img src="./internals/img/yarn-padded-90.png" /></a>
-</div>
-
-<hr />
-<br />
+[github-actions-status]: https://github.com/bloxapp/blox-live/workflows/Test/badge.svg?branch=stage	
+[github-actions-url]: https://github.com/bloxapp/blox-live/actions	
+[github-tag-image]: https://img.shields.io/github/v/tag/bloxapp/blox-live.svg?label=version	
+[github-tag-url]: https://github.com/bloxapp/blox-live.svg/releases/latest	
+[david-image]: https://david-dm.org/bloxapp/blox-live/stage/status.svg	
+[david-url]: https://david-dm.org/bloxapp/blox-live/stage	
+[david-dev-image]: https://david-dm.org/bloxapp/blox-live/stage/dev-status.svg	
+[david-dev-url]: https://david-dm.org/bloxapp/blox-live/stage?type=dev	
