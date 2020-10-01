@@ -15,7 +15,7 @@
 
 ## Download
 
-Download the app from http://bloxstaking.com/donwload
+Download the app from https://www.bloxstaking.com/download
 
 
 ## Docs (TBD)
