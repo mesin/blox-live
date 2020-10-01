@@ -16,7 +16,7 @@
 ## Blox Staking - Desktop App
 
 ### Download
-- Download the app from https://www.bloxstaking.com/download
+Download the app from https://www.bloxstaking.com/download
 
 ### Compatibility
 - macOS
