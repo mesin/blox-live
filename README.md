@@ -14,6 +14,7 @@
 </div>
 
 ## Blox Staking - Desktop App
+Blox is an open-source, fully non-custodial staking platform for Ethereum 2.0. The platform serves as an easy and accessible way to stake Ether and earn rewards on Eth2, while ensuring participants retain complete control over their private keys. Our goal at Blox is to simplify staking while ensuring Ethereum stays fair and decentralized. 
 
 ### Download
 Download the app from https://www.bloxstaking.com/download
