@@ -42,12 +42,3 @@ GPL © [Blox Live](https://github.com/bloxapp/blox-live)
 [david-url]: https://david-dm.org/bloxapp/blox-live/stage	
 [david-dev-image]: https://david-dm.org/bloxapp/blox-live/stage/dev-status.svg	
 [david-dev-url]: https://david-dm.org/bloxapp/blox-live/stage?type=dev	
-
-<p>	
-  Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/redux">Redux</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.github.io/docs/">Webpack</a> and <a href="https://github.com/gaearon/react-hot-loader">React Hot Loader</a> for rapid application development (HMR).	
-</p>	
-
-<br>	
-
-<hr />	
-<br />
