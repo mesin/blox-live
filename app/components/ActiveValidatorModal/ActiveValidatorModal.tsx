@@ -41,7 +41,7 @@ const ActiveValidatorModal = ({onClose, activeValidators}: Props) => {
   const [current, setCurrent] = React.useState(0);
   const last = activeValidators.length - 1;
   const setNext = () => current === last ? onClose() : setCurrent(current + 1);
-  const truncatedPublicKey = truncateText(activeValidators[current].publicKey, 36, 6);
+  const truncatedPublicKey = truncateText(activeValidators[current].publicKey, 6, 6);
   return (
     <CustomModal width={'700px'} height={'462px'} onClose={() => setNext()}>
       <InnerWrapper>
