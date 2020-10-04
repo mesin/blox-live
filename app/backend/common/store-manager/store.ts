@@ -26,13 +26,12 @@ export default class Store extends BaseStore {
 
   static getStore = (prefix: string = '') => {
     if (!Store.instances[prefix]) {
-      console.log('USE EXISTED STORE', prefix);
       Store.instances[prefix] = new Store(prefix);
       // Temp solution to init prefix storage
       if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
         const userId = Store.instances[''].get('currentUserId');
         const authToken = Store.instances[''].get('authToken');
-        const cryptoKey = Store.instances[''].cryptoKey;
+        const cryptoKey = Store.instances[''].get('cryptoKey');
         if (cryptoKey) {
           Store.instances[prefix].cryptoKey = cryptoKey;
         }
@@ -52,7 +51,11 @@ export default class Store extends BaseStore {
     }
     this.baseStore.set('currentUserId', userId);
     this.baseStore.set('authToken', authToken);
-    const storeName = `${this.baseStoreName}${userId ? `-${userId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
+    const storeNamePrefix = crypto.createHash('sha256')
+      .update(`${userId ? `-${userId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`)
+      .digest('base64')
+      .substr(0, 32);
+    const storeName = `blox-${storeNamePrefix}`;
     this.storage = new ElectronStore({ name: storeName });
   };
 

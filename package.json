@@ -52,8 +52,8 @@
     ],
     "extraFiles": [
       {
-        "from": "resources/mac/bin",
-        "to": "Resources/bin",
+        "from": "resources/${os}/bin",
+        "to": "resources/bin",
         "filter": [
           "**/*"
         ]

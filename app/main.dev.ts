@@ -24,6 +24,7 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let devtools: BrowserWindow | null = null;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -52,6 +53,7 @@ const createWindow = async (downloadsDir) => {
     await installExtensions();
   }
 
+  devtools = new BrowserWindow();
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -73,8 +75,8 @@ const createWindow = async (downloadsDir) => {
   });
 
   mainWindow.setMinimumSize(width, height);
-  // disable dev tools for beta release
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
 
   mainWindow.loadURL(`file://${__dirname}/app.html?dwldir=${downloadsDir}`);
 
