@@ -21,7 +21,6 @@ export default class KeyManagerService {
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
-    console.log(stdout);
     return stdout.replace('\n', '');
   }
 
@@ -32,7 +31,6 @@ export default class KeyManagerService {
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
-    console.log(stdout);
     return stdout.replace('\n', '');
   }
 
@@ -44,7 +42,6 @@ export default class KeyManagerService {
       throw new Error(`Get last created account error: ${stderr}`);
     }
     const accounts = stdout ? JSON.parse(stdout) : [];
-    console.log(accounts);
     return accounts;
   }
 
@@ -65,7 +62,6 @@ export default class KeyManagerService {
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
-    console.log(stdout);
     return stdout.replace('\n', '');
   }
 
@@ -78,9 +74,7 @@ export default class KeyManagerService {
   }
 
   async mnemonicGenerate(): Promise<string> {
-    console.log('----> mnem:', `${this.executablePath} mnemonic generate`);
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
-    console.log('---->!!!', stdout, stderr);
     if (stderr) {
       throw new Error(stderr);
     }

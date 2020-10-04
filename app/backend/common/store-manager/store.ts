@@ -25,9 +25,7 @@ export default class Store extends BaseStore {
   }
 
   static getStore = (prefix: string = '') => {
-    console.log('---> STORE prefix', prefix);
     if (!Store.instances[prefix]) {
-      console.log('USE EXISTED STORE', prefix);
       Store.instances[prefix] = new Store(prefix);
       // Temp solution to init prefix storage
       if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
@@ -58,9 +56,7 @@ export default class Store extends BaseStore {
       .digest('base64')
       .substr(0, 32);
     const storeName = `blox-${storeNamePrefix}`;
-    console.log('INIT SUB STORE', storeName);
     this.storage = new ElectronStore({ name: storeName });
-    console.log('INIT STORAGE', this.storage);
   };
 
   setEnv = (env: string): any => {
