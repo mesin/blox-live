@@ -29,7 +29,6 @@ jobs:
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
 
       - name: Build/release Electron app
-      - run: yarn install
-      - run: yarn package-win
+        run: yarn install && yarn package-win
         env:
           GH_TOKEN: ${{ secrets.github_token }}
