@@ -77,17 +77,9 @@ const fixNumOfDigits = (summary) => {
 
 export const normalizeEventLogs = (events) => {
   const normalizedEvents = events.map((event) => {
-    const {
-      orgId,
-      publicKey,
-      type,
-    } = event;
+    const { orgId, publicKey, type } = event;
     const newEvent = { ...event };
-    newEvent.description = {
-      type,
-      orgId,
-      publicKey: publicKey !== null ? publicKey : '',
-    };
+    newEvent.description = { type, orgId, publicKey: publicKey !== null ? publicKey : '' };
     return newEvent;
   });
 

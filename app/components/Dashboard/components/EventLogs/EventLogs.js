@@ -1,9 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import tableColumns from './tableColumns';
-import Table from '../../../../common/components/Table';
-import {handlePageClick} from '../../../../common/components/Table/service';
-import PropTypes from 'prop-types';
+import Table from 'common/components/Table';
+import { handlePageClick } from 'common/components/Table/service';
 
 const Wrapper = styled.div`
   width: 100%;
