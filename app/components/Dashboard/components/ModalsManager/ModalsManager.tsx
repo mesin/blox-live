@@ -10,7 +10,7 @@ import * as actionsFromAccounts from '../../../Accounts/actions';
 
 import * as selectors from '../../selectors';
 import { getDepositData } from '../../../Wizard/selectors';
-import { getActiveValidators } from '../../../Organization/selectors';
+import { getActiveValidators } from '../../../EventLogs/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
