@@ -56,7 +56,7 @@ export default class Store extends BaseStore {
       .update(`${userId ? `-${userId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`)
       .digest('base64')
       .substr(0, 32);
-    const storeName = `blox-${storeNamePrefix}`;
+    const storeName = `blox-${this.prefix}${storeNamePrefix}`;
     this.storage = new ElectronStore({ name: storeName });
   };
 
