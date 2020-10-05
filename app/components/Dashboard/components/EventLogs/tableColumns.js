@@ -5,7 +5,7 @@ export default [
   {
     key: 'createdAt',
     title: '',
-    width: '14%',
+    width: '18%',
     valueRender: (createdAt) => <Date createdAt={createdAt} />,
   },
   {
@@ -17,7 +17,7 @@ export default [
   {
     key: 'description',
     title: '',
-    width: '60%',
+    width: '56%',
     valueRender: (description) => <Description value={description} />,
   },
 ];

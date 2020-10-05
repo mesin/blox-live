@@ -40,7 +40,7 @@ const EventLogs = ({events}) => {
         (
           <Table columns={tableColumns} data={pagedEvents} isLoading={false}
             isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />
-) :
+        ) :
      ('There are no events to show at the moment')}
    </Wrapper>
  );
