@@ -31,7 +31,8 @@ export default class Store extends BaseStore {
       if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
         const userId = Store.instances[''].get('currentUserId');
         const authToken = Store.instances[''].get('authToken');
-        const cryptoKey = Store.instances[''].get('cryptoKey');
+        // eslint-disable-next-line prefer-destructuring
+        const cryptoKey = Store.instances[''].cryptoKey;
         if (cryptoKey) {
           Store.instances[prefix].cryptoKey = cryptoKey;
         }
