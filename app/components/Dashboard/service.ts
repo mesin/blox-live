@@ -75,7 +75,7 @@ const fixNumOfDigits = (summary) => {
   return newObject;
 };
 
-export const normalizeEventLogs = (events) => {
+export const normalizeEventLogs = (events) => { // TODO: fix and move to EventLogs component
   const normalizedEvents = events.map((event) => {
     const { orgId, publicKey, type } = event;
     const newEvent = { ...event };
@@ -87,8 +87,4 @@ export const normalizeEventLogs = (events) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return normalizedEvents;
-};
-
-export const calculateAPR = (change) => {
-  return change !== undefined ? ((change / initialBalance) * 100) : null;
 };

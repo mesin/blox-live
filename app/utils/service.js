@@ -44,10 +44,10 @@ export const lastDateFormat = (utcDate) => {
   }
   if (hoursPassed >= 24 || hoursPassed < 48) {
     // more than 24h but less than 48h
-    return moment(utcDate).format('MMMM DD, YYYY HH:MM');
+    return moment(utcDate).format('MMM DD, YYYY HH:MM');
   }
   // more than 48 hours
-  return moment(utcDate).format('MMMM DD, YYYY');
+  return moment(utcDate).format('MMM DD, YYYY');
 };
 
 export const generateLocaleStringConfig = (number) => {

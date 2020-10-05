@@ -38,7 +38,7 @@ const EventLogs = ({events}) => {
      <Title>Latest Events</Title>
      {(pagedEvents && pagedEvents.length > 0) ?
         (
-          <Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false}
+          <Table columns={tableColumns} data={pagedEvents} isLoading={false}
             isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />
 ) :
      ('There are no events to show at the moment')}
