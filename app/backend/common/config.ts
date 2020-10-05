@@ -16,7 +16,6 @@ export default class Config {
     default: {
       AUTH0_LOGOUT_URL: 'https://localhost:1212',
       AUTH0_CALLBACK_URL: 'file:///callback*',
-      VAULT_GITHUB_URL: 'https://raw.githubusercontent.com/bloxapp/key-vault',
       WEBSITE_URL: 'https://www.bloxstaking.com',
       DISCORD_INVITE: 'https://discord.com/invite/VgHDdAP',
       DISCORD_GOETH_INVITE: 'https://discord.gg/wXxuQwY',
