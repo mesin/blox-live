@@ -50,10 +50,6 @@ export const lastDateFormat = (utcDate) => {
   return moment(utcDate).format('MMMM DD, YYYY');
 };
 
-export const parseVersion = (v) => {
-  return v.replace(/\D/g, '');
-};
-
 export const generateLocaleStringConfig = (number) => {
   const minimumFractionDigits = 2;
   let maximumFractionDigits = 9;

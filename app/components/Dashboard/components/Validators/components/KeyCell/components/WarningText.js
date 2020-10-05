@@ -5,6 +5,7 @@ const WarningText = styled.span`
   color: ${({ theme }) => theme.warning900};
   font-size: 12px;
   font-weight: 500;
+  margin-right:8px;
 `;
 
 export default WarningText;

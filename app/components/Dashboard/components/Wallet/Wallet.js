@@ -8,7 +8,7 @@ import DateAndTime from '../DateAndTime';
 const Wrapper = styled.div`
   width: 100%;
   height: auto;
-  margin-bottom: 40px;
+  margin-bottom:36px;
 `;
 
 const Wallet = (props) => {

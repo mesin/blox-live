@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 
 const AdditionalDataWrapper = styled.div`
-  width:200px;
+  width:250px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
 `;
 
 export default AdditionalDataWrapper;

@@ -25,7 +25,10 @@ const EtherNumber = ({value, color, fontSize}) => {
 };
 
 EtherNumber.propTypes = {
-  value: PropTypes.number,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+  ]),
   color: PropTypes.string,
   fontSize: PropTypes.string,
 };

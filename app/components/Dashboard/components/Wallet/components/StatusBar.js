@@ -8,13 +8,12 @@ const Wrapper = styled.div`
   padding: 0px 16px;
   display: flex;
   align-items: center;
-  background-color: ${({ theme, isActive }) =>
-    isActive ? theme.accent2400 : theme.destructive600};
+  background-color: ${({ theme, isActive }) => isActive ? theme.accent2400 : theme.destructive600};
   color: ${({ theme }) => theme.gray50};
   font-size: 14px;
   font-weight: 900;
   border-radius: 4px;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 `;
 
 const StatusBar = (props) => {

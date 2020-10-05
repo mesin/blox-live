@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import PropTypes from 'prop-types';
-import { Icon } from '../../../../../../../common/components';
+import { Icon } from 'common/components';
 
 const Wrapper = styled.div`
   width: 100%;

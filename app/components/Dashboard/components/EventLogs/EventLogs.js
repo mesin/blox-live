@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 const Wrapper = styled.div`
   width: 100%;
-  color: ${({theme}) => theme.gray600}
+  color: ${({theme}) => theme.gray600};
 `;
 
 const Title = styled.h1`
@@ -15,6 +15,8 @@ const Title = styled.h1`
   font-weight: 500;
   line-height: 1.69;
   color: ${({theme}) => theme.gray800};
+  margin-top:0px;
+  margin-bottom:20px;
 `;
 
 const EventLogs = ({events}) => {

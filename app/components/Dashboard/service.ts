@@ -28,7 +28,6 @@ export const normalizeAccountsData = (accounts) => {
     };
 
     newAccount.change = handleChange(currentBalance);
-    delete newAccount.publicKey;
     delete newAccount.activationTime;
     delete newAccount.date;
 
