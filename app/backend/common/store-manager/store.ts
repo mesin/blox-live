@@ -3,6 +3,7 @@ import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
+import getPlatform from '../../../get-platform';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -50,13 +51,13 @@ export default class Store extends BaseStore {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
-    this.baseStore.set('currentUserId', userId);
+    let currentUserId = userId;
+    this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    const storeNamePrefix = crypto.createHash('sha256')
-      .update(`${userId ? `-${userId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`)
-      .digest('base64')
-      .substr(0, 32);
-    const storeName = `blox-${this.prefix}${storeNamePrefix}`;
+    if (getPlatform() === 'win') {
+      currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
+    }
+    const storeName = `${this.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
     this.storage = new ElectronStore({ name: storeName });
   };
 
