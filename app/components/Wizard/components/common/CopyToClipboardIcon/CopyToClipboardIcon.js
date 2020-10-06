@@ -5,15 +5,15 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Icon } from 'common/components';
 
 const IconWrapper = styled.div`
-  width: 20px;
-  height: 20px;
+  width: ${({size}) => size};
+  height: ${({size}) => size};
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 const CopyToClipboardIcon = (props) => {
-  const { onCopy, text } = props;
+  const { onCopy, text, fontSize } = props;
   const [clicked, setClicked] = useState(false);
 
   const onCopyClick = () => {
@@ -23,11 +23,11 @@ const CopyToClipboardIcon = (props) => {
 
   return (
     <CopyToClipboard text={text} onCopy={onCopyClick}>
-      <IconWrapper>
+      <IconWrapper size={fontSize}>
         <Icon
           name="copy"
           color={clicked ? 'gray400' : 'primary900'}
-          fontSize="20px"
+          fontSize={fontSize}
           onClick={() => false}
         />
       </IconWrapper>
@@ -35,9 +35,14 @@ const CopyToClipboardIcon = (props) => {
   );
 };
 
+CopyToClipboardIcon.defaultProps = {
+  fontSize: '20px',
+};
+
 CopyToClipboardIcon.propTypes = {
   onCopy: PropTypes.func,
   text: PropTypes.string,
+  fontSize: PropTypes.string,
 };
 
 export default CopyToClipboardIcon;
