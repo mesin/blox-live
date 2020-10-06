@@ -3,6 +3,7 @@ import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
+import getPlatform from '../../../get-platform';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -26,12 +27,12 @@ export default class Store extends BaseStore {
 
   static getStore = (prefix: string = '') => {
     if (!Store.instances[prefix]) {
-      console.log('USE EXISTED STORE', prefix);
       Store.instances[prefix] = new Store(prefix);
       // Temp solution to init prefix storage
       if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
         const userId = Store.instances[''].get('currentUserId');
         const authToken = Store.instances[''].get('authToken');
+        // eslint-disable-next-line prefer-destructuring
         const cryptoKey = Store.instances[''].cryptoKey;
         if (cryptoKey) {
           Store.instances[prefix].cryptoKey = cryptoKey;
@@ -50,9 +51,13 @@ export default class Store extends BaseStore {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
-    this.baseStore.set('currentUserId', userId);
+    let currentUserId = userId;
+    this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    const storeName = `${this.baseStoreName}${userId ? `-${userId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
+    if (getPlatform() === 'win') {
+      currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
+    }
+    const storeName = `${this.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
     this.storage = new ElectronStore({ name: storeName });
   };
 

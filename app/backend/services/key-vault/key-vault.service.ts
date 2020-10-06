@@ -51,6 +51,15 @@ export default class KeyVaultService {
     return await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
   }
 
+  async getContainerId() {
+    const ssh = await this.keyVaultSsh.getConnection();
+    const { stdout: containerId, stderr: error } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=key_vault"', {});
+    if (error) {
+      throw new Error('Could not reach Docker Container');
+    }
+    return containerId;
+  }
+
   async updateSlashingStorage(payload: any, network: string) {
     if (!network) {
       throw new Error('Configuration settings network not found');
@@ -72,10 +81,6 @@ export default class KeyVaultService {
     await ssh.execCommand('sudo yum install docker -y', {});
     await ssh.execCommand('sudo service docker start', {});
     await ssh.execCommand('sudo usermod -a -G docker ec2-user', {});
-    await ssh.execCommand(
-      'sudo curl -L "https://github.com/docker/compose/releases/download/1.26.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose',
-      {}
-    );
   }
 
   @Step({
@@ -93,33 +98,49 @@ export default class KeyVaultService {
     name: 'Running docker container...'
   })
   async runDockerContainer(): Promise<void> {
-    const ssh = await this.keyVaultSsh.getConnection();
-    const { stdout, stderr } = await ssh.execCommand('docker ps -a | grep bloxstaking', {});
-    if (stderr) {
-      console.log(stderr);
+    const containerId = await this.getContainerId();
+    if (containerId) {
+      return;
     }
-    const runAlready = stdout.includes('bloxstaking') && !stdout.includes('Exited');
-    if (runAlready) return;
+
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
-    this.store.set('keyVaultVersion', keyVaultVersion);
-    await ssh.execCommand(
-      `curl -L "${config.env.VAULT_GITHUB_URL}/${keyVaultVersion}/docker-compose.yml" -o docker-compose.yml && UNSEAL=false docker-compose up -d vault-image`,
+    const envKey = (this.store.get('env') || 'production');
+    const dockerHubImage = envKey === 'production' ?
+      `bloxstaking/key-vault:${keyVaultVersion}` :
+      `bloxstaking/key-vault-rc:${keyVaultVersion}`;
+
+    const dockerCMD = 'docker run -d --cap-add=IPC_LOCK --name=key_vault ' +
+     '-v $(pwd)/data:/data ' +
+     '-v $(pwd)/policies:/policies ' +
+     '-p 8200:8200 ' +
+     "-e VAULT_ADDR='http://127.0.0.1:8200' " +
+     "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
+     "-e VAULT_CLIENT_TIMEOUT='30s' " +
+     "-e TESTNET_GENESIS_TIME='2020-08-04 13:00:08 UTC' " +
+     "-e LAUNCHTESTNET_GENESIS_TIME='2020-09-29 12:00:13 UTC' " +
+     `'${dockerHubImage}'`;
+
+    const ssh = await this.keyVaultSsh.getConnection();
+    const { stderr: error } = await ssh.execCommand(
+      dockerCMD,
       {}
     );
+
+    if (error) {
+      throw new Error('Failed to run Key Vault docker container');
+    }
+    this.store.set('keyVaultVersion', keyVaultVersion);
   }
 
   @Step({
     name: 'Running KeyVault...'
   })
   async runScripts(): Promise<void> {
-    const ssh = await this.keyVaultSsh.getConnection();
-    const { stdout: containerId, stderr: error } = await ssh.execCommand('docker ps -aq -f "status=running" -f "name=vault"', {});
-    if (error) {
-      console.log(error);
-    }
+    const containerId = await this.getContainerId();
     if (!containerId) {
       throw new Error('Key Vault docker container not found');
     }
+    const ssh = await this.keyVaultSsh.getConnection();
     const { stderr } = await ssh.execCommand(
       `docker exec -t ${containerId} sh -c "/bin/sh /vault/config/vault-init.sh; /bin/sh /vault/config/vault-unseal.sh; /bin/sh /vault/config/vault-plugin.sh"`,
       {}
