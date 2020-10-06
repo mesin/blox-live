@@ -2,9 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import { notification } from 'antd';
 import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
-import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
+import { CopyToClipboardIcon } from '../Wizard/components/common';
 import { DEPOSIT_DATA } from '../Wizard/components/Validators/StakingDeposit/constants';
-import { openExternalLink } from '../common/service';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -42,7 +41,7 @@ const ValueText = styled.span`
 `;
 
 const CloseButton = styled.div`
-  margin-top:80px;
+  margin-top:110px;
   color: ${({ theme }) => theme.primary900};
   cursor:pointer;
   &:hover {
@@ -60,6 +59,7 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
         {DEPOSIT_DATA.map((row, index) => {
           const { label, title, moreInfo, value } = row;
           const isTxData = label === DEPOSIT_DATA[1].label;
+          const isAmount = label === DEPOSIT_DATA[2].label;
           const valueText = isTxData ? depositData : value;
           return (
             <Row key={index}>
@@ -74,15 +74,10 @@ const DepositInfoModal = ({onClose, depositData}: Props) => {
               ) : (
                 <ValueText>{valueText}</ValueText>
               )}
-              <CopyToClipboardIcon text={valueText} onCopy={onCopy} />
+              {!isAmount && <CopyToClipboardIcon text={valueText} onCopy={onCopy} />}
             </Row>
           );
         })}
-        <Row>
-          <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>
-            Need help?
-          </Link>
-        </Row>
         <CloseButton onClick={onClose}>Close</CloseButton>
       </InnerWrapper>
     </CustomModal>
