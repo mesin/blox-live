@@ -21,6 +21,7 @@ const Title = styled.h1`
 const Row = styled.div`
   max-width:100%;
   display:flex;
+  align-items:center;
   text-align:left;
   margin-bottom:25px;
 `;

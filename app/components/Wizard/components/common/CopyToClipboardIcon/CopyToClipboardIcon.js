@@ -36,7 +36,7 @@ const CopyToClipboardIcon = (props) => {
 };
 
 CopyToClipboardIcon.defaultProps = {
-  fontSize: '20px',
+  fontSize: '16px',
 };
 
 CopyToClipboardIcon.propTypes = {
