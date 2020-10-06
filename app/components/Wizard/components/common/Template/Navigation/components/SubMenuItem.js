@@ -12,12 +12,12 @@ const Wrapper = styled.div`
   &:after {
     content: '';
     position: absolute;
-    width: 2px;
-    height: 23px;
+    width: 1px;
+    height: 19px;
     background-color: ${({ theme }) => theme.gray80015};
-    top: 0px;
+    top: 3px;
     left: 11px;
-    display: ${({ number }) => (number > 1 ? 'block' : 'none')};
+    display: ${({ showHorizontalLine }) => showHorizontalLine ? 'block' : 'none'};
   }
 `;
 
@@ -39,7 +39,7 @@ const Circle = styled.div`
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  border: 2px solid ${({ theme }) => theme.gray80015};
+  border: 1px solid ${({ theme }) => theme.gray400};
   border-radius: 50%;
   font-weight: 500;
   position: relative;
@@ -49,22 +49,32 @@ const Circle = styled.div`
     width: 10px;
     height: 10px;
     background-color: ${({ theme, isActive }) => isActive ? theme.primary900 : 'transparent'};
-    top: 1px;
-    left: 1px;
+    top: 2px;
+    left: 2px;
     border-radius: 50%;
     animation: ${circleAnimation} 1s;
   }
 `;
 
+const Text = styled.span`
+  color:${({isActive, isDone, theme}) => {
+    if (isDone) { return theme.gray400; }
+    if (isActive) { return theme.primary900; }
+    return theme.gray800;
+  }};
+  font-weight: ${({isActive}) => isActive ? '400' : '300'};
+`;
+
 const SubMenuItem = ({ text, number, page }) => {
   const isActive = page === number;
   const isDone = page > number;
+  const showHorizontalLine = number !== 1 && number !== 5;
   return (
-    <Wrapper number={number}>
+    <Wrapper showHorizontalLine={showHorizontalLine}>
       <Circle isActive={isActive} isDone={isDone}>
-        {isDone && <Icon name="check" color="gray80015" />}
+        {isDone && <Icon name="check" color="gray400" />}
       </Circle>
-      {text}
+      <Text isDone={isDone} isActive={isActive}>{text}</Text>
     </Wrapper>
   );
 };

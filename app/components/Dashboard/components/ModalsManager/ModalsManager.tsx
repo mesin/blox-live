@@ -21,6 +21,7 @@ const ModalsManager = (props: Props) => {
   const { setFinishedWizard } = wizardActions;
 
   const onPasswordModalClick = () => {
+    console.log('onPasswordModalClick');
     setFinishedWizard(false);
     setAddAnotherAccount(true);
     hideModal();
