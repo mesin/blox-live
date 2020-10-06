@@ -109,7 +109,8 @@ export default class KeyVaultService {
       `bloxstaking/key-vault:${keyVaultVersion}` :
       `bloxstaking/key-vault-rc:${keyVaultVersion}`;
 
-    const dockerCMD = 'docker run -d --cap-add=IPC_LOCK --name=key_vault ' +
+    const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
+     `docker pull  ${dockerHubImage} && docker run -d --cap-add=IPC_LOCK --name=key_vault ` +
      '-v $(pwd)/data:/data ' +
      '-v $(pwd)/policies:/policies ' +
      '-p 8200:8200 ' +
@@ -126,10 +127,10 @@ export default class KeyVaultService {
       {}
     );
 
+    this.store.set('keyVaultVersion', keyVaultVersion);
     if (error) {
       throw new Error('Failed to run Key Vault docker container');
     }
-    this.store.set('keyVaultVersion', keyVaultVersion);
   }
 
   @Step({
