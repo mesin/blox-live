@@ -6,7 +6,7 @@ import { Icon } from '../../../../../common/components';
 const Wrapper = styled.div`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
-  margin-bottom: 32px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,8 +21,8 @@ const SuccessIcon = ({ size, fontSize }) => (
 );
 
 SuccessIcon.defaultProps = {
-  size: '70px',
-  fontSize: '60px',
+  size: '60px',
+  fontSize: '50px',
 };
 
 SuccessIcon.propTypes = {

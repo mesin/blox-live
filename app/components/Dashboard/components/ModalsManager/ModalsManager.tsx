@@ -20,8 +20,7 @@ const ModalsManager = (props: Props) => {
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
 
-  const onPasswordModalClick = () => {
-    console.log('onPasswordModalClick');
+  const onAddValidatorPasswordSuccess = () => {
     setFinishedWizard(false);
     setAddAnotherAccount(true);
     hideModal();
@@ -41,7 +40,7 @@ const ModalsManager = (props: Props) => {
         }
         return null;
       case MODAL_TYPES.ADD_VALIDATOR:
-        return <PasswordModal onClick={onPasswordModalClick} onClose={() => hideModal()} />;
+        return <PasswordModal onClick={onAddValidatorPasswordSuccess} onClose={() => hideModal()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
         if (activeValidators.length > 0) {
           return <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;
