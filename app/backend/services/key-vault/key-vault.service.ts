@@ -110,7 +110,7 @@ export default class KeyVaultService {
       `bloxstaking/key-vault-rc:${keyVaultVersion}`;
 
     const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
-     `docker pull  ${dockerHubImage} && docker run -d --cap-add=IPC_LOCK --name=key_vault ` +
+     `docker pull  ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
      '-v $(pwd)/data:/data ' +
      '-v $(pwd)/policies:/policies ' +
      '-p 8200:8200 ' +
