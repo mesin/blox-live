@@ -34,7 +34,7 @@ const ContentManager = ({page}) => {
       return (
         <>
           <Image src={image2} />
-          <SubTitle>Select IAM Service</SubTitle>
+          <SubTitle>Add User</SubTitle>
           <Text>
             On the <b>&apos;Identity and Access Management&apos;</b> page, click on <b>&apos;Users:&apos;</b> to
             create a new IAM user, and then click on <b>&apos;Add User&apos;</b> at the top.

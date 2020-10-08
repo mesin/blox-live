@@ -37,7 +37,7 @@ const GuideButton = styled.span`
 `;
 
 const PasswordInputsWrapper = styled.div`
-  width:55%;
+  width:570px;
   height: 100px;
   display: flex;
   justify-content:space-between;
@@ -95,7 +95,7 @@ const CreateServer = (props) => {
         <PasswordInput name={'accessKeyId'} title={'Access Key ID'}
           onChange={setAccessKeyId} value={accessKeyId} isDisabled={isPasswordInputDisabled}
         />
-        <PasswordInput name={'secretAccessKey'} title={'Secret Access Key'}
+        <PasswordInput name={'secretAccessKey'} title={'Secret Access Key'} width={'320px'}
           onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isPasswordInputDisabled}
         />
       </PasswordInputsWrapper>

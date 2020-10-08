@@ -10,7 +10,7 @@ interface SocialApps {
   github: Record<string, string>;
 }
 
-export const SortType = {
+export const SORT_TYPE: Record<string, string> = {
   ASCENDING: 'ascending',
   DESCENDING: 'descending'
 };
