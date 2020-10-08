@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   font-size: 14px;
+  align-items:center;
 `;
 
 const Text = styled.div`

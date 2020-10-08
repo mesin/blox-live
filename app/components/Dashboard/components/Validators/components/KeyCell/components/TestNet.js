@@ -11,6 +11,7 @@ const TestNet = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  margin-left:4px;
 `;
 
 export default TestNet;

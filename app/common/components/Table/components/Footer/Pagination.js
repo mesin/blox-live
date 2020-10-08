@@ -9,7 +9,6 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  cursor: pointer;
   :hover {
     color: ${({theme, color}) => (color && theme.primary700) || '#ffffff'};
   }
@@ -26,6 +25,7 @@ const Button = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({theme, color}) => theme[color]};
+  cursor:${({clickable}) => clickable ? 'pointer' : 'default'};
 `;
 
 export const PaginationAction = {
@@ -114,7 +114,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
     paginationButtons.map(({type, title, icon, iconColor, color, reverse, clickable, withBorder}, index) => {
       return reverse ? (
         <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
-          <Button color={color} withBorder={withBorder}>
+          <Button color={color} withBorder={withBorder} clickable={clickable}>
             <Icon
               name={icon}
               color={iconColor}
@@ -125,7 +125,7 @@ const Pagination = ({paginationInfo, onPageClick}) => {
         </Wrapper>
       ) : (
         <Wrapper key={index} onClick={() => clickable ? onPaginationClick(type) : false}>
-          <Button color={color} withBorder={withBorder}>
+          <Button color={color} withBorder={withBorder} clickable={clickable}>
             {title}
             <Icon
               name={icon}

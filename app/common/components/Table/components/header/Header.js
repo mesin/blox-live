@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Sorting from './Sorting';
 
-const EmptyWrapper = styled.div``;
-
 const Wrapper = styled.div`
   width: 100%;
   height: 50px;
@@ -19,39 +17,38 @@ const Cell = styled.div`
   height: 100%;
   display: flex;
   align-items: center;
-  padding-right: ${({padding_right}) => padding_right};
+  justify-content:${({justifyContent}) => justifyContent || 'flex-start'};
 `;
 
-const Header = ({columns, isHeader, selectedSorting, sortType, onSortClick}) => {
-  return isHeader ? (
+const Header = ({columns, selectedSorting, sortType, onSortClick}) => {
+  return (
     <Wrapper>
       {columns.map((column) => {
-        const {key, title, width, isSort} = column;
-        return isSort
+        const {key, title, width, justifyContent, compareFunction} = column;
+        return compareFunction
           ? (
-            <Cell width={width} key={key}>
+            <Cell width={width} key={key} justifyContent={justifyContent}>
               {title}
-              <Sorting sortKey={key} selectedSorting={selectedSorting} sortType={sortType} onSortClick={onSortClick} />
+              <Sorting sortKey={key} selectedSorting={selectedSorting} sortType={sortType}
+                onSortClick={onSortClick} compareFunction={compareFunction} />
             </Cell>
           )
           : (
-            <Cell width={width} key={key}>
+            <Cell width={width} key={key} justifyContent={justifyContent}>
               {title}
             </Cell>
           );
       })}
     </Wrapper>
-  ) : (
-    <EmptyWrapper />
   );
 };
 
 Header.propTypes = {
   columns: PropTypes.array,
-  isHeader: PropTypes.bool,
   selectedSorting: PropTypes.string,
   sortType: PropTypes.string,
-  onSortClick: PropTypes.func
+  onSortClick: PropTypes.func,
+  compareFunction: PropTypes.func,
 };
 
 export default Header;

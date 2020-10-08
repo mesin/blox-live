@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import {calculateAPR} from '../../../service';
 
 const getChangeColor = (change, theme) => {
   if (change > 0) {
@@ -18,7 +17,7 @@ const Wrapper = styled.div`
 `;
 
 const Apr = ({change}) => {
-  const percentage = calculateAPR(change);
+  const percentage = change ? Number(change) : null;
   return (
     <Wrapper change={Number(change)}>{percentage !== null ? `${(percentage).toFixed(2)}%` : 'N/A'}</Wrapper>
   );
