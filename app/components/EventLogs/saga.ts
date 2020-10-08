@@ -3,8 +3,8 @@ import { notification } from 'antd';
 
 import { LOAD_EVENT_LOGS } from './actionTypes';
 import * as actions from './actions';
-import OrganizationService from '../../backend/services/organization/organization.service';
 import { normalizedActiveValidators } from './service';
+import OrganizationService from 'backend/services/organization/organization.service';
 
 import { setModalDisplay } from '../Dashboard/actions';
 import { MODAL_TYPES } from '../Dashboard/constants';
@@ -22,6 +22,7 @@ export function* startLoadingEventLogs() {
 
 function* onLoadingEventLogsSuccess(response: Record<string, any>) {
   const activeValidators = normalizedActiveValidators(response);
+  console.log('activeValidators', activeValidators);
   if (activeValidators.length > 0) {
     yield put(actions.showActiveValidatorsPopup(activeValidators));
     yield put(setModalDisplay({show: true, type: MODAL_TYPES.ACTIVE_VALIDATOR, text: ''}));

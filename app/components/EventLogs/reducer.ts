@@ -10,7 +10,7 @@ export const initialState: State = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const organizationReducer = (state = initialState, action: Action) => produce(state, (draft) => {
+const eventLogsReducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
     case actionTypes.LOAD_EVENT_LOGS:
       draft.isLoading = true;
@@ -22,6 +22,9 @@ const organizationReducer = (state = initialState, action: Action) => produce(st
     case actionTypes.LOAD_EVENT_LOGS_FAILURE:
       draft.error = action.payload;
       draft.isLoading = false;
+      break;
+    case actionTypes.SHOW_ACTIVE_VALIDATORS_POP_UP:
+      draft.activeValidators = action.payload;
       break;
     case LOGOUT:
       draft.data = initialState.data;
@@ -43,4 +46,4 @@ type Action = {
   payload: any;
 };
 
-export default organizationReducer;
+export default eventLogsReducer;
