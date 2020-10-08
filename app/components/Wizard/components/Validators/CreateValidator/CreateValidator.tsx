@@ -23,7 +23,7 @@ const CreateValidator = (props: Props) => {
   useInjectSaga({ key, saga, mode: '' });
 
   useEffect(() => {
-    if (!isLoading && validatorData) {
+    if (!isLoading && validatorData) { // TODO: replace with isDone
       callLoadDepositData(validatorData.publicKey);
     }
   }, [isLoading, validatorData]);
@@ -33,8 +33,8 @@ const CreateValidator = (props: Props) => {
       setShowPasswordModal(true);
       return;
     }
-
     setShowPasswordModal(false);
+
     if (error) {
       processClearState();
     }
