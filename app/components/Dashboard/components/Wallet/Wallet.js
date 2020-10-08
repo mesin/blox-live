@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { Boxes, StatusBar } from './components';
 import UpdateBanner from './components/UpdateBanner';
+import DateAndTime from '../DateAndTime';
 
 const Wrapper = styled.div`
   width: 100%;
   height: auto;
-  margin-bottom: 40px;
+  margin-bottom:36px;
 `;
 
 const Wallet = (props) => {
@@ -15,6 +16,7 @@ const Wallet = (props) => {
   return (
     <Wrapper>
       <UpdateBanner isNeedUpdate={isNeedUpdate} />
+      <DateAndTime />
       <StatusBar isActive={isActive} />
       <Boxes isActive={isActive} {...rest} />
     </Wrapper>

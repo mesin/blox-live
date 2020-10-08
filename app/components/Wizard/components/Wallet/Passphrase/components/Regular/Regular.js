@@ -26,18 +26,20 @@ const Box = styled.div`
   height: 114px;
   padding:24px;
   margin:25px 0px 10px 0px;
-  background-image:url(${bgImage});
+  background-image:${({mnemonic}) => mnemonic ? 'none' : `url(${bgImage})`};
   background-size:cover;
   background-repeat:no-repeat;
+  border: ${({theme, mnemonic}) => mnemonic ? `solid 1px ${theme.gray300}` : ''};
+  background-color: ${({theme}) => theme.gray100};
   display:flex;
   align-items:center;
   justify-content:center;
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 500;
   text-align: center;
   color: ${({theme}) => theme.primary900};
   border-radius:8px;
-  cursor:${({clickable}) => clickable ? 'pointer' : 'default'};
+  cursor:${({mnemonic}) => mnemonic ? 'text' : 'pointer'};
 `;
 
 const InnerBoxWrapper = styled.div`
@@ -80,7 +82,7 @@ const Regular = (props) => {
         your funds.
       </Paragraph>
       <Warning text={'Do not share your backup passphrase with anyone.'} />
-      <Box onClick={onPassphraseClick} clickable={!isDisabled}>
+      <Box mnemonic={mnemonic} onClick={onPassphraseClick}>
         {isLoading && !mnemonic && <Spinner />}
         {mnemonic !== '' ? mnemonic : (
           <InnerBoxWrapper>

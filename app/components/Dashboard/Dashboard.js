@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.gray50};
   display: flex;
   flex-direction: column;
-  padding: 44px 94px;
+  padding: 36px 94px 64px 94px;
 `;
 
 const Dashboard = (props) => {
