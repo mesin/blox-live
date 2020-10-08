@@ -8,8 +8,7 @@ const { isPackaged, getAppPath } = remote.app;
 
 const binariesPath =
   IS_PROD && isPackaged
-    ? path.join(path.dirname(getAppPath()), '..', './Resources', './bin')
+    ? path.join(path.dirname(getAppPath()), '..', './resources', './bin')
     : path.join(root, './resources', getPlatform(), './bin');
 
-const binariesPathTrimmed = binariesPath.replace(/ /g, '\\ ');
-export const execPath = path.resolve(path.join(binariesPathTrimmed, './keyvault-cli'));
+export const execPath = `"${binariesPath}/keyvault-cli"`;
