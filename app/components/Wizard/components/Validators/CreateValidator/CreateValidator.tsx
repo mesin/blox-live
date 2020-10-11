@@ -1,32 +1,26 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { useInjectSaga } from 'utils/injectSaga';
-import * as processRunnerActions from '../../../../ProcessRunner/actions';
-import * as selectors from '../../../../ProcessRunner/selectors';
-import saga from '../../../../ProcessRunner/saga';
+
 import { loadDepositData } from '../../../actions';
 import { setDepositNeeded } from '../../../../Accounts/actions';
-import { GenerateKeys, KeysGenerated } from './components';
 import { getNetwork } from '../../../selectors';
+
+import { GenerateKeys, KeysGenerated } from './components';
 import Store from 'backend/common/store-manager/store';
+import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
 const store: Store = Store.getStore();
 
-const key = 'processRunner';
-
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, callSetDepositNeeded, error } = props;
-  const { processSubscribe, processClearState } = actions;
+  const { isLoading, isDone, processData, error, startProcess, clearProcessState } = useProcessRunner();
+  const { page, setPage, callLoadDepositData, callSetDepositNeeded } = props;
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
 
-  useInjectSaga({ key, saga, mode: '' });
-
   useEffect(() => {
-    if (!isLoading && validatorData) { // TODO: replace with isDone
-      callLoadDepositData(validatorData.publicKey);
+    if (isDone && processData) {
+      callLoadDepositData(processData.publicKey);
     }
-  }, [isLoading, validatorData]);
+  }, [isLoading, processData]);
 
   const onGenerateKeysClick = () => {
     if (!store.isCryptoKeyStored()) {
@@ -36,22 +30,22 @@ const CreateValidator = (props: Props) => {
     setShowPasswordModal(false);
 
     if (error) {
-      processClearState();
+      clearProcessState();
     }
     if (!isLoading) {
-      processSubscribe('createAccount', 'Generating Validator Keys...');
+      startProcess('createAccount', 'Generating Validator Keys...', null);
     }
   };
 
   const onContinueClick = () => {
-    callSetDepositNeeded(true, validatorData.publicKey);
+    callSetDepositNeeded(true, processData.publicKey);
     setPage(page + 1);
   };
 
   return (
     <>
-      {validatorData && !error ? (
-        <KeysGenerated onClick={onContinueClick} validatorData={validatorData} />
+      {processData && !error ? (
+        <KeysGenerated onClick={onContinueClick} validatorData={processData} />
       ) : (
         <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error}
           showPasswordModal={showPasswordModal} setShowPasswordModal={setShowPasswordModal}
@@ -62,14 +56,10 @@ const CreateValidator = (props: Props) => {
 };
 
 const mapStateToProps = (state: State) => ({
-  isLoading: selectors.getIsLoading(state),
-  validatorData: selectors.getData(state),
-  error: selectors.getError(state),
   network: getNetwork(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  actions: bindActionCreators(processRunnerActions, dispatch),
   callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
   callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
 });
@@ -80,12 +70,8 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  isLoading: boolean;
-  actions: Record<string, any>;
-  validatorData: Record<string, any> | null;
   callLoadDepositData: (publicKey: string) => void;
   callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
-  error: string;
 };
 
 type State = Record<string, any>;

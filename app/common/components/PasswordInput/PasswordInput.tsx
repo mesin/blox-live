@@ -1,6 +1,5 @@
 import React from 'react';
-import styled, { withTheme } from 'styled-components';
-import defaultTheme from 'theme';
+import styled from 'styled-components';
 import Icon from '../Icon';
 import { INPUT_TYPES, ICON_FONT_SIZE } from './constants';
 
@@ -50,7 +49,7 @@ const IconWrapper = styled.div`
 `;
 
 const PasswordInput = (props: Props) => {
-  const { name, width, title, onChange, value, isDisabled, isValid, error, theme, ...rest } = props;
+  const { name, width, title, onChange, value, isDisabled, isValid, error, ...rest } = props;
   const [type, setType] = React.useState(INPUT_TYPES.PASSWORD);
   const eyeIconColor = type === INPUT_TYPES.PASSWORD ? 'gray400' : 'gray800';
 
@@ -86,7 +85,6 @@ type Props = {
   isDisabled: boolean;
   isValid: boolean;
   error: string;
-  theme: typeof defaultTheme;
 };
 
-export default withTheme(PasswordInput);
+export default PasswordInput;

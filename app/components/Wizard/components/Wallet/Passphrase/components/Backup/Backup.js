@@ -68,7 +68,7 @@ const Backup = (props) => {
         creating/removing a validator.
       </Paragraph>
 
-      <TextArea value={duplicatedMnemonic} onChange={handleChange} onBlur={onDuplicateMnemonicBlur}
+      <TextArea value={duplicatedMnemonic} onChange={handleChange} onBlur={onDuplicateMnemonicBlur} autoFocus
         placeholder={'Separate each word with a space'} error={showDuplicatedMnemonicError ? 'Passphrase not correct' : ''}
       />
 
