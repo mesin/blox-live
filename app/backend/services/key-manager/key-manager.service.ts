@@ -24,14 +24,24 @@ export default class KeyManagerService {
     return stdout.replace('\n', '');
   }
 
-  async createAccount(seed: string, storage: string): Promise<string> {
+  async createAccount(seed: string, index: number): Promise<string> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account create --seed=${seed} --storage=${storage}`
+      `${this.executablePath} wallet account create --seed=${seed} --index=${index} --accumulate=true`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     return stdout.replace('\n', '');
+  }
+
+  async getAccount(seed: string, index: number): Promise<string> {
+    const { stdout, stderr } = await this.executor(
+      `${this.executablePath} wallet account create --seed=${seed} --index=${index} --response-type=object`
+    );
+    if (stderr) {
+      throw new Error(`Cli error: ${stderr}`);
+    }
+    return stdout ? JSON.parse(stdout) : {};
   }
 
   async listAccounts(storage: string): Promise<any> {

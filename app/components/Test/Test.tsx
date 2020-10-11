@@ -256,7 +256,7 @@ const Test = () => {
           Create Account
         </button>
         <button onClick={async () => {
-          await accountService.listAccounts();
+          console.log(await accountService.listAccounts());
         }}>
           List Accounts
         </button>

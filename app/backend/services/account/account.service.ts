@@ -43,32 +43,58 @@ export default class AccountService {
 
   @Step({
     name: 'Create Blox Account',
-    requiredConfig: ['authToken', 'network']
+    requiredConfig: ['seed', 'authToken', 'network']
   })
   @Catch({
     displayMessage: 'Create Blox Account failed'
   })
   async createBloxAccount(): Promise<any> {
-    const lastIndexedAccount = await this.getLastIndexedAccount();
-    if (!lastIndexedAccount) {
-      throw new Error('No account to create');
-    }
-    lastIndexedAccount.network = this.store.get('network');
+    const network = this.store.get('network');
+    const index: number = await this.getNextIndex();
+    const lastIndexedAccount = await this.keyManagerService.getAccount(this.store.get('seed'), index);
+    lastIndexedAccount['network'] = network;
     const account = await this.create(lastIndexedAccount);
+    if (account.error && account.error instanceof Error) return;
+    this.store.set(`index.${network}`, index.toString());
     return { data: account };
   }
 
   @Step({
     name: 'Create Account',
-    requiredConfig: ['seed', 'keyVaultStorage', 'network']
+    requiredConfig: ['seed', 'network']
   })
   @Catch({
     displayMessage: 'CLI Create Account failed'
   })
   async createAccount(): Promise<void> {
     const network = this.store.get('network');
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), this.store.get(`keyVaultStorage.${network}`));
+    const index: number = await this.getNextIndex();
+    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index);
     this.store.set(`keyVaultStorage.${network}`, storage);
+  }
+
+  async getNextIndex(): Promise<number> {
+    const network = this.store.get('network');
+    if (!network) {
+      throw new Error('Configuration settings network not found');
+    }
+    const index = this.store.get(`index.${network}`);
+    let nextIndex = 0;
+    if (index) {
+      nextIndex = +index + 1;
+    } else {
+      if (this.store.get(`keyVaultStorage.${network}`)) {
+        const lastIndexedAccount = await this.getLastIndexedAccount();
+        if (lastIndexedAccount) {
+          const lastIndex = +lastIndexedAccount['name'].replace('account-', '');
+          this.store.set(`index.${network}`, lastIndex.toString());
+          nextIndex = lastIndex + 1;
+        } else {
+          this.store.set(`index.${network}`, (nextIndex-1).toString());
+        }
+      }
+    }
+    return nextIndex;
   }
 
   async listAccounts(): Promise<any> {
@@ -123,7 +149,8 @@ export default class AccountService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    const storage = await this.keyManagerService.deleteLastIndexedAccount(this.store.get(`keyVaultStorage.${network}`));
+    const index: number = await this.getNextIndex();
+    const storage = index == 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
 
@@ -145,6 +172,7 @@ export default class AccountService {
           this.store.set('network', network);
           await this.walletService.createWallet();
           await this.keyVaultService.updateVaultStorage();
+          this.store.delete(`index.${network}`);
         }
       }
     }
