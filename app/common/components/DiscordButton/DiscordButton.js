@@ -4,9 +4,7 @@ import { Icon } from 'common/components';
 import { shell } from 'electron';
 import config from 'backend/common/config';
 
-const Wrapper = styled.div``;
-
-const Button = styled.div`
+const Wrapper = styled.div`
   width:50px;
   height:50px;
   color: white;
@@ -15,6 +13,7 @@ const Button = styled.div`
   position: fixed;
   bottom: 10px;
   left: 10px;
+  z-index:60;
   font-size: 2.6rem;
   border-radius: 5.2rem 5.2rem;
   display: flex;
@@ -61,13 +60,11 @@ const ReachUsText = styled.span`
 
 const DiscordButton = () => {
   return (
-    <Wrapper onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>
-      <Button className="btn btn-dark floating-btn">
-        <Icon color={'gray50'} name={'discord-symbol'} fontSize={'24px'} />
-        <Expanded className="expanded">
-          <ReachUsText>Reach us on DISCORD</ReachUsText>
-        </Expanded>
-      </Button>
+    <Wrapper className="btn btn-dark floating-btn" onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>
+      <Icon color={'gray50'} name={'discord-symbol'} fontSize={'24px'} />
+      <Expanded className="expanded">
+        <ReachUsText>Reach us on DISCORD</ReachUsText>
+      </Expanded>
     </Wrapper>
   );
 };

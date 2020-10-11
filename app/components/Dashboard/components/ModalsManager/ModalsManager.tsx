@@ -10,7 +10,7 @@ import * as actionsFromAccounts from '../../../Accounts/actions';
 
 import * as selectors from '../../selectors';
 import { getDepositData } from '../../../Wizard/selectors';
-import { getActiveValidators } from '../../../Organization/selectors';
+import { getActiveValidators } from '../../../EventLogs/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
@@ -20,7 +20,7 @@ const ModalsManager = (props: Props) => {
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
 
-  const onPasswordModalClick = () => {
+  const onAddValidatorPasswordSuccess = () => {
     setFinishedWizard(false);
     setAddAnotherAccount(true);
     hideModal();
@@ -40,7 +40,7 @@ const ModalsManager = (props: Props) => {
         }
         return null;
       case MODAL_TYPES.ADD_VALIDATOR:
-        return <PasswordModal onClick={onPasswordModalClick} onClose={() => hideModal()} />;
+        return <PasswordModal onClick={onAddValidatorPasswordSuccess} onClose={() => hideModal()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
         if (activeValidators.length > 0) {
           return <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;

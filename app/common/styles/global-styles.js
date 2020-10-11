@@ -10,6 +10,11 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    & > * {
+      -webkit-font-smoothing: antialised;
+      backface-visibility: hidden;
+      -webkit-font-smoothing: subpixel-antialiased;
+    }
   }
 
   body.fontLoaded {

@@ -1,7 +1,6 @@
 import produce from 'immer';
 import * as actionTypes from './actionTypes';
 import {State, Action} from './types';
-import {LOGOUT} from '../CallbackPage/actionTypes';
 
 export const initialState: State = {
   isLoading: false,
@@ -13,10 +12,6 @@ export const initialState: State = {
     createdAt: '',
   },
   error: '',
-  isLoadingEventLogs: false,
-  eventLogsError: null,
-  eventLogs: null,
-  activeValidators: [],
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -45,25 +40,6 @@ const organizationReducer = (state = initialState, action: Action) => produce(st
     case actionTypes.UPDATE_ORGANIZATION_FAILURE:
       draft.isUpdateLoading = false;
       draft.error = action.payload;
-      break;
-    case actionTypes.LOAD_EVENT_LOGS:
-      draft.isLoadingEventLogs = true;
-      break;
-    case actionTypes.LOAD_EVENT_LOGS_SUCCESS:
-      draft.eventLogs = action.payload;
-      draft.isLoadingEventLogs = false;
-      break;
-    case actionTypes.LOAD_EVENT_LOGS_FAILURE:
-      draft.eventLogsError = action.payload;
-      draft.isLoadingEventLogs = false;
-      break;
-    case actionTypes.SHOW_ACTIVE_VALIDATORS_POP_UP:
-      draft.activeValidators = action.payload;
-      break;
-    case LOGOUT:
-      draft.isLoadingEventLogs = initialState.isLoadingEventLogs;
-      draft.eventLogs = initialState.eventLogs;
-      draft.eventLogsError = initialState.eventLogsError;
       break;
   }
 });

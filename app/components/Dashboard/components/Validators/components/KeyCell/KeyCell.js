@@ -8,7 +8,7 @@ import { AddressKey, AdditionalData, AdditionalDataWrapper, Left, Right, TestNet
 import { truncateText } from '../../../../../common/service';
 
 const Wrapper = styled.div`
-  width: 85%;
+  width: 90%;
   display: flex;
 `;
 
@@ -19,7 +19,7 @@ const KeyCell = ({ value }) => {
   return (
     <Wrapper>
       <Left>
-        <AddressKey>{truncateText(publicKey, 6, 6)}</AddressKey>
+        <AddressKey>{truncateText(publicKey, 24, 6)}</AddressKey>
         <AdditionalDataWrapper>
           <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt} />
         </AdditionalDataWrapper>

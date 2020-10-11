@@ -15,7 +15,7 @@ const KeyWrapper = styled.div`
   background-color: ${({theme}) => theme.gray100};
   display:flex;
   align-items:center;
-  padding:24px 16px;
+  padding:16px;
   margin-bottom:16px;
 `;
 

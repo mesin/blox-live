@@ -8,10 +8,6 @@ export type State = {
     createdAt: Date | string;
   };
   error: string;
-  eventLogs: any;
-  isLoadingEventLogs: boolean;
-  eventLogsError: string;
-  activeValidators: [],
 };
 
 export type Action = {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SmallModal, WelcomeModal, RestartingModal, PasswordModal,
+import { WelcomeModal, RestartingModal, PasswordModal,
          SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals/Modals';
 
 import inactiveImage from '../Wizard/assets/img-key-vault-inactive.svg';
@@ -32,7 +32,7 @@ const KeyVaultReactivation = ({onClose}: Props) => {
     case 8:
       return <ThankYouModal onClose={onClose} />;
     default:
-      return <SmallModal onClick={move1StepForward} onClose={onClose} />;
+      return <WelcomeModal onClick={move1StepForward} onClose={onClose} />;
   }
 };
 

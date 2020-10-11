@@ -1,13 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import tableColumns from './tableColumns';
-import Table from '../../../../common/components/Table';
-import {handlePageClick} from '../../../../common/components/Table/service';
-import PropTypes from 'prop-types';
+import Table from 'common/components/Table';
+import { handlePageClick } from 'common/components/Table/service';
 
 const Wrapper = styled.div`
   width: 100%;
-  color: ${({theme}) => theme.gray600}
+  color: ${({theme}) => theme.gray600};
 `;
 
 const Title = styled.h1`
@@ -15,6 +15,8 @@ const Title = styled.h1`
   font-weight: 500;
   line-height: 1.69;
   color: ${({theme}) => theme.gray800};
+  margin-top:0px;
+  margin-bottom:20px;
 `;
 
 const EventLogs = ({events}) => {
@@ -36,9 +38,9 @@ const EventLogs = ({events}) => {
      <Title>Latest Events</Title>
      {(pagedEvents && pagedEvents.length > 0) ?
         (
-          <Table columns={tableColumns} data={pagedEvents} isHeader={false} isLoading={false}
+          <Table columns={tableColumns} data={pagedEvents} isLoading={false}
             isPagination paginationInfo={paginationInfo} onPageClick={onPageClick} />
-) :
+        ) :
      ('There are no events to show at the moment')}
    </Wrapper>
  );
