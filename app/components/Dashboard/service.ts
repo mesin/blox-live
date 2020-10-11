@@ -28,7 +28,6 @@ export const normalizeAccountsData = (accounts) => {
     };
 
     newAccount.change = handleChange(currentBalance);
-    delete newAccount.publicKey;
     delete newAccount.activationTime;
     delete newAccount.date;
 
@@ -76,19 +75,11 @@ const fixNumOfDigits = (summary) => {
   return newObject;
 };
 
-export const normalizeEventLogs = (events) => {
+export const normalizeEventLogs = (events) => { // TODO: fix and move to EventLogs component
   const normalizedEvents = events.map((event) => {
-    const {
-      orgId,
-      publicKey,
-      type,
-    } = event;
+    const { orgId, publicKey, type } = event;
     const newEvent = { ...event };
-    newEvent.description = {
-      type,
-      orgId,
-      publicKey: publicKey !== null ? publicKey : '',
-    };
+    newEvent.description = { type, orgId, publicKey: publicKey !== null ? publicKey : '' };
     return newEvent;
   });
 
@@ -96,8 +87,4 @@ export const normalizeEventLogs = (events) => {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
   return normalizedEvents;
-};
-
-export const calculateAPR = (change) => {
-  return change !== undefined ? ((change / initialBalance) * 100) : null;
 };

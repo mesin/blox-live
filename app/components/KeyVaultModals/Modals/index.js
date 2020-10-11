@@ -1,4 +1,3 @@
-export { default as SmallModal } from './SmallModal';
 export { default as WelcomeModal } from './WelcomeModal';
 export { default as PasswordModal } from './PasswordModal';
 export { default as RestartingModal } from './RestartingModal';

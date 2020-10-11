@@ -23,7 +23,8 @@ const Row = styled.div`
 `;
 
 const Cell = styled.div`
-  padding-right: 15px;
+  display: flex;
+  justify-content:${({justifyContent}) => justifyContent || 'flex-start'};
 `;
 
 const NoDataRow = styled.div`
@@ -46,8 +47,8 @@ const Body = ({ data, columns }) => (
           .replace(/,/gi, ' ');
         return (
           <Row key={dataIndex} gridTemplateColumns={gridTemplateColumns}>
-            {columns.map((column, columnIndex) => (
-              <Cell key={columnIndex}>
+            {columns.map((column, index) => (
+              <Cell key={index} justifyContent={column.justifyContent}>
                 {column.valueRender(item[column.key])}
               </Cell>
             ))}

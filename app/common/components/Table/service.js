@@ -1,4 +1,4 @@
-import {SortType} from '../../constants';
+import { SORT_TYPE } from 'common/constants';
 
 export const normalizeCellsWidth = (columns) => columns.map((column) => column.width);
 
@@ -7,27 +7,27 @@ export const stringifyCellsWidth = (columnsWidth) => columnsWidth.toString().rep
 export const handlePageClick = (data, offset, setPagedData, setPaginationInfo, pageSize) => {
   if (data) {
     setPagedData(data.slice(offset, Math.min(offset + pageSize, data.length)));
-    setPaginationInfo({
-      offset,
-      pageSize,
-      total: data.length,
-    });
+    setPaginationInfo({ offset, pageSize, total: data.length });
   }
 };
 
-export const handleSortClick = (data, sortKey, setSelectedSort, setSortType, sortType, setPagedAccounts, paginationInfo) => {
-  if (data) {
-    setSelectedSort(sortKey);
-    setSortType(sortType === SortType.ASCENDING ? SortType.DESCENDING : SortType.ASCENDING);
-
-    data.sort((a, b) => {
-      if (sortType === SortType.DESCENDING) {
-        return a.selectedSort < b.selectedSort ? -1 : 1;
-      }
-      return a.selectedSort < b.selectedSort ? 1 : -1;
-    });
-
-    const size = Math.min(paginationInfo.offset + paginationInfo.pageSize, data.length);
-    setPagedAccounts(data.slice(paginationInfo.offset, size));
+const compareStrings = (key, a, b, direction) => {
+  if (direction === SORT_TYPE.DESCENDING) {
+    return a[key] < b[key] ? -1 : 1;
   }
+  return a[key] < b[key] ? 1 : -1;
+};
+
+const compareNumbers = (key, a, b, direction) => {
+  if (direction === SORT_TYPE.DESCENDING) {
+    return Number(a[key]) < Number(b[key]) ? -1 : 1;
+  }
+  return Number(a[key]) < Number(b[key]) ? 1 : -1;
+};
+
+export const compareFunction = (key, a, b, direction, type) => {
+  if (type === 'string') {
+    return compareStrings(key, a, b, direction);
+  }
+  return compareNumbers(key, a, b, direction);
 };
