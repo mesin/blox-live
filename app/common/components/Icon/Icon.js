@@ -6,7 +6,7 @@ const Regular = styled.i`
   font-size: ${({ fontSize }) => fontSize || '12px'};
   display: flex;
   align-items: center;
-  color: ${({ theme, color }) => (color && theme[color]) || '#ffffff'};
+  color: ${({ theme, color, }) => (color && theme[color]) || '#ffffff'};
 `;
 
 const Clickable = styled(Regular)`
@@ -19,8 +19,8 @@ const Clickable = styled(Regular)`
   }
 `;
 
-const Icon = ({ name, color, fontSize, onClick, isDisabled }) =>
-  onClick ? (
+const Icon = ({ name, color, fontSize, onClick, isDisabled }) => onClick ?
+  (
     <Clickable
       className={`icon-${name}`}
       color={color}

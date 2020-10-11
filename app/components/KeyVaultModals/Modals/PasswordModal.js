@@ -63,8 +63,6 @@ const PasswordModal = (props) => {
 
   const onPasswordFocus = () => clearErrors();
 
-  // const onInputTypeChange = () => clearErrors();
-
   const onKeyDown = (e) => {
     if (e.key === 'Enter') {
       onButtonClick();
@@ -101,7 +99,7 @@ const PasswordModal = (props) => {
       <Title>Enter your password</Title>
       <Description>Critical actions require an extra layer of security.</Description>
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isPasswordValid}
-        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown}
+        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown} autoFocus
       />
       <Link onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</Link>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
