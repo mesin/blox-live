@@ -8,16 +8,17 @@ import { shell } from 'electron';
 import { Title, Description } from '..';
 import ModalTemplate from '../ModalTemplate';
 import { PasswordInput, Button } from 'common/components';
-import * as keyvaultActions from '../../KeyVaultManagement/actions';
-import * as selectors from '../../KeyVaultManagement/selectors';
-import saga from '../../KeyVaultManagement/saga';
+
+import * as passwordActions from '../../PasswordHandler/actions';
+import * as selectors from '../../PasswordHandler/selectors';
+import saga from '../../PasswordHandler/saga';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import config from 'backend/common/config';
 
 import image from '../../Wizard/assets/img-password.svg';
 
-const key = 'keyvault';
+const key = 'password';
 
 const Link = styled.span`
   cursor:pointer;
@@ -29,7 +30,7 @@ const Link = styled.span`
 
 const PasswordModal = (props) => {
   const { onClose, onClick, isPasswordValid, actions } = props;
-  const { keyvaultCheckPasswordValidation, keyvaultClearPasswordData } = actions;
+  const { checkPasswordValidation, clearPasswordData } = actions;
   const [password, setPassword] = useState('');
   const [isButtonClicked, setButtonClicked] = useState(false);
   const [showTooShortPasswordError, setTooShortPasswordErrorDisplay] = useState(false);
@@ -53,7 +54,7 @@ const PasswordModal = (props) => {
   const onPasswordValid = () => {
     setWrongPasswordErrorDisplay(false);
     onClick && onClick();
-    keyvaultClearPasswordData();
+    clearPasswordData();
   };
 
   const onPasswordBlur = () => {
@@ -72,7 +73,7 @@ const PasswordModal = (props) => {
   const onButtonClick = () => {
     if (!isButtonDisabled) {
       setButtonClicked(true);
-      keyvaultCheckPasswordValidation(password);
+      checkPasswordValidation(password);
     }
   };
 
@@ -119,7 +120,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(keyvaultActions, dispatch),
+  actions: bindActionCreators(passwordActions, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PasswordModal);

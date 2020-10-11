@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from './components';
 import { PasswordModal } from '../KeyVaultModals/Modals';
 
-const DepositInfoModalFlow = ({onClose, depositData}: Props) => {
+const DepositInfoModal = ({onClose, depositData}: Props) => {
   const [step, setStep] = useState(1);
   const moveStepForward = () => setStep(step + 1);
   switch (step) {
@@ -20,4 +20,4 @@ type Props = {
   onClose: () => void;
 };
 
-export default DepositInfoModalFlow;
+export default DepositInfoModal;
