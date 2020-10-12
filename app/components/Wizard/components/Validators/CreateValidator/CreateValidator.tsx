@@ -24,7 +24,8 @@ const CreateValidator = (props: Props) => {
 
   useEffect(() => {
     if (!isLoading && validatorData) { // TODO: replace with isDone
-      callLoadDepositData(validatorData.publicKey);
+      const accountIndex = +validatorData.name.replace('account-', '');
+      callLoadDepositData(validatorData.publicKey, accountIndex);
     }
   }, [isLoading, validatorData]);
 
@@ -70,7 +71,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(processRunnerActions, dispatch),
-  callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
+  callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
   callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
 });
 
@@ -83,7 +84,7 @@ type Props = {
   isLoading: boolean;
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
-  callLoadDepositData: (publicKey: string) => void;
+  callLoadDepositData: (publicKey: string, accountIndex: number) => void;
   callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
   error: string;
 };

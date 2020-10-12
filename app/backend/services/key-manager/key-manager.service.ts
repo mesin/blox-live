@@ -55,24 +55,14 @@ export default class KeyManagerService {
     return accounts;
   }
 
-  async getDepositData(publicKey: string, network: string): Promise<any> {
+  async getDepositData(seed: string, index: number, publicKey: string, network: string): Promise<any> {
     const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account deposit-data --storage=${this.store.get(`keyVaultStorage.${network}`)} --public-key=${publicKey} --network=${network}`
+      `${this.executablePath} wallet account deposit-data --seed=${seed} --index=${index} --public-key=${publicKey} --network=${network}`
     );
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
     return stdout ? JSON.parse(stdout) : {};
-  }
-
-  async deleteLastIndexedAccount(storage: string): Promise<string> {
-    const { stdout, stderr } = await this.executor(
-      `${this.executablePath} wallet account delete --storage=${storage}`
-    );
-    if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
-    }
-    return stdout.replace('\n', '');
   }
 
   async generatePublicKey(seed: string, index: number): Promise<void> {

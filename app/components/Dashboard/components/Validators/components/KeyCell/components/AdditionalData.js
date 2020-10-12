@@ -14,13 +14,13 @@ import BlueButton from './BlueButton';
 import Date from './Date';
 
 const AdditionalData = (props) => {
-  const { publicKey, status, createdAt, dashboardActions,
+  const { publicKey, status, createdAt, dashboardActions, accountIndex,
           callLoadDepositData, callSetFinishedWizard, callSetDepositNeeded
         } = props;
   const { setModalDisplay } = dashboardActions;
 
   const onDepositInfoButtonClick = async () => {
-    await callLoadDepositData(publicKey);
+    await callLoadDepositData(publicKey, accountIndex);
     await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
   };
 
@@ -57,6 +57,7 @@ const AdditionalData = (props) => {
 
 AdditionalData.propTypes = {
   publicKey: PropTypes.string,
+  accountIndex: PropTypes.number,
   status: PropTypes.string,
   createdAt: PropTypes.string,
   dashboardActions: PropTypes.object,
@@ -67,7 +68,7 @@ AdditionalData.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
-  callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
+  callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
   callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
   callSetDepositNeeded: (depositNeeded, publicKey) => dispatch(setDepositNeeded(depositNeeded, publicKey)),
 });
