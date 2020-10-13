@@ -17,8 +17,9 @@ const CreateValidator = (props: Props) => {
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
 
   useEffect(() => {
-    if (isDone && processData) {
-      callLoadDepositData(processData.publicKey);
+    if (isDone) {
+      const accountIndex = +processData.name.replace('account-', '');
+      callLoadDepositData(processData.publicKey, accountIndex);
     }
   }, [isLoading, processData]);
 
@@ -38,7 +39,8 @@ const CreateValidator = (props: Props) => {
   };
 
   const onContinueClick = () => {
-    callSetDepositNeeded(true, processData.publicKey);
+    const accountIndex = +processData.name.replace('account-', '');
+    callSetDepositNeeded(true, processData.publicKey, accountIndex);
     setPage(page + 1);
   };
 
@@ -60,8 +62,8 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  callLoadDepositData: (publicKey) => dispatch(loadDepositData(publicKey)),
-  callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
+  callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
+  callSetDepositNeeded: (isNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(isNeeded, publicKey, accountIndex)),
 });
 
 type Props = {
@@ -70,8 +72,9 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  callLoadDepositData: (publicKey: string) => void;
-  callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
+  processData: Record<string, any> | null;
+  callLoadDepositData: (publicKey: string, accountIndex: number) => void;
+  callSetDepositNeeded: (arg0: boolean, publicKey: string, index: number) => void;
 };
 
 type State = Record<string, any>;
