@@ -66,6 +66,6 @@ jobs:
           max_attempts: '2'
           windows_certs: ${{ secrets.windows_certs }}
           windows_certs_password: ${{ secrets.windows_certs_password }}
-        run: yarn install && yarn package-win
+#        run: yarn install && yarn package-win
         env:
           GH_TOKEN: ${{ secrets.github_token }}
