@@ -1,3 +1,6 @@
+import path from 'path';
+
+import openAboutWindow from 'about-window';
 import {
   app,
   Menu,
@@ -193,22 +196,6 @@ export default class MenuBuilder {
   buildDefaultTemplate() {
     const templateDefault = [
       {
-        label: '&File',
-        submenu: [
-          {
-            label: '&Open',
-            accelerator: 'Ctrl+O',
-          },
-          {
-            label: '&Close',
-            accelerator: 'Ctrl+W',
-            click: () => {
-              this.mainWindow.close();
-            },
-          },
-        ],
-      },
-      {
         label: '&View',
         submenu:
           process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true'
@@ -252,6 +239,13 @@ export default class MenuBuilder {
       {
         label: 'Help',
         submenu: [
+          {
+            label: 'About Blox Staking',
+            click: () => openAboutWindow({
+              icon_path: path.join(__dirname, './icon.png'),
+              copyright: 'Copyright (c) 2020 Blox',
+            }),
+          },
           {
             label: 'Learn More',
             click() {

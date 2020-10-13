@@ -27,7 +27,12 @@ export default class Store extends BaseStore {
 
   static getStore = (prefix: string = '') => {
     if (!Store.instances[prefix]) {
-      Store.instances[prefix] = new Store(prefix);
+      let configStore = new Store(prefix);
+      const env = configStore.baseStore.get('env');
+      if (env && env !== 'production') {
+        configStore = new Store(`${env}${prefix}`);
+      }
+      Store.instances[prefix] = configStore;
       // Temp solution to init prefix storage
       if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
         const userId = Store.instances[''].get('currentUserId');
@@ -133,7 +138,6 @@ export default class Store extends BaseStore {
 
   @Catch()
   unsetCryptoKey() {
-    console.log('UNSET crypto key');
     this.logger.error('unsetCryptoKey');
     this.cryptoKey = null;
     if (this.timer) {
