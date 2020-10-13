@@ -38,7 +38,7 @@ type Props = {
   description: string;
   move1StepForward: () => void;
   move2StepsForward: () => void;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export default ReinstallingModal;

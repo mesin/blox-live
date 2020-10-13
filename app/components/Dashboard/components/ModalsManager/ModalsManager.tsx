@@ -35,17 +35,11 @@ const ModalsManager = (props: Props) => {
       case MODAL_TYPES.UPDATE:
         return <KeyVaultUpdate onClose={() => hideModal()} />;
       case MODAL_TYPES.DEPOSIT_INFO:
-        if (depositData) {
-          return <DepositInfoModal depositData={depositData} onClose={() => hideModal()} />;
-        }
-        return null;
+          return depositData && <DepositInfoModal depositData={depositData} onClose={() => hideModal()} />;
       case MODAL_TYPES.ADD_VALIDATOR:
         return <PasswordModal onClick={onAddValidatorPasswordSuccess} onClose={() => hideModal()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
-        if (activeValidators.length > 0) {
-          return <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;
-        }
-        return null;
+        return activeValidators.length > 0 && <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;
       default:
         return null;
     }

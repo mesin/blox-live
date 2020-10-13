@@ -35,7 +35,7 @@ const RestartingModal = (props: Props) => {
 type Props = {
   move1StepForward: () => void;
   move2StepsForward: () => void;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export default RestartingModal;
