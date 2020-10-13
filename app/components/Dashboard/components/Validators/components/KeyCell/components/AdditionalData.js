@@ -15,7 +15,7 @@ import Date from './Date';
 
 const AdditionalData = (props) => {
   const { publicKey, status, createdAt, dashboardActions, accountIndex,
-          callLoadDepositData, callSetFinishedWizard, callSetDepositNeeded
+          callLoadDepositData, callSetDepositNeeded // callSetFinishedWizard
         } = props;
   const { setModalDisplay } = dashboardActions;
 
@@ -24,9 +24,9 @@ const AdditionalData = (props) => {
     await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
   };
 
-  const onFinishSetupClick = () => {
-    callSetDepositNeeded(true, publicKey);
-    callSetFinishedWizard(false);
+  const onFinishSetupClick = async () => {
+    await callSetDepositNeeded(true, publicKey, accountIndex);
+    await setModalDisplay({ show: true, type: MODAL_TYPES.FINISH_SETUP, text: '', });
   };
   if (status === 'pending') {
     return (
@@ -62,15 +62,15 @@ AdditionalData.propTypes = {
   createdAt: PropTypes.string,
   dashboardActions: PropTypes.object,
   callLoadDepositData: PropTypes.func,
-  callSetFinishedWizard: PropTypes.func,
+  // callSetFinishedWizard: PropTypes.func,
   callSetDepositNeeded: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
   callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
-  callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
-  callSetDepositNeeded: (depositNeeded, publicKey) => dispatch(setDepositNeeded(depositNeeded, publicKey)),
+  // callSetFinishedWizard: (isFinished) => dispatch(setFinishedWizard(isFinished)),
+  callSetDepositNeeded: (depositNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(depositNeeded, publicKey, accountIndex)),
 });
 
 export default connect(null, mapDispatchToProps)(AdditionalData);

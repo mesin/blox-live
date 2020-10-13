@@ -19,7 +19,6 @@ const CreateValidator = (props: Props) => {
   const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, callSetDepositNeeded, error } = props;
   const { processSubscribe, processClearState } = actions;
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
-
   useInjectSaga({ key, saga, mode: '' });
 
   useEffect(() => {
@@ -45,7 +44,8 @@ const CreateValidator = (props: Props) => {
   };
 
   const onContinueClick = () => {
-    callSetDepositNeeded(true, validatorData.publicKey);
+    const accountIndex = +validatorData.name.replace('account-', '');
+    callSetDepositNeeded(true, validatorData.publicKey, accountIndex);
     setPage(page + 1);
   };
 
@@ -72,7 +72,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(processRunnerActions, dispatch),
   callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
-  callSetDepositNeeded: (isNeeded, publicKey) => dispatch(setDepositNeeded(isNeeded, publicKey)),
+  callSetDepositNeeded: (isNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(isNeeded, publicKey, accountIndex)),
 });
 
 type Props = {
@@ -85,7 +85,7 @@ type Props = {
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
   callLoadDepositData: (publicKey: string, accountIndex: number) => void;
-  callSetDepositNeeded: (arg0: boolean, publicKey: string) => void;
+  callSetDepositNeeded: (arg0: boolean, publicKey: string, index: number) => void;
   error: string;
 };
 
