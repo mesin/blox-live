@@ -46,10 +46,10 @@
       "dist/",
       "node_modules/",
       "app.html",
+      "app.icns",
       "main.prod.js",
       "main.prod.js.map",
-      "package.json",
-      "resources/icon.*"
+      "package.json"
     ],
     "extraFiles": [
       {
