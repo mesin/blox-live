@@ -5,8 +5,6 @@ import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '../../..
 import { PasswordModal } from '../../../KeyVaultModals/Modals';
 import ActiveValidatorModal from '../../../ActiveValidatorModal';
 import * as actionsFromDashboard from '../../actions';
-import * as actionsFromWizard from '../../../Wizard/actions';
-import * as actionsFromAccounts from '../../../Accounts/actions';
 
 import * as selectors from '../../selectors';
 import { getDepositData } from '../../../Wizard/selectors';
@@ -15,31 +13,21 @@ import { getActiveValidators } from '../../../EventLogs/selectors';
 import { MODAL_TYPES } from '../../constants';
 
 const ModalsManager = (props: Props) => {
-  const { dashboardActions, accountsActions, wizardActions, showModal, modalType, depositData, activeValidators } = props;
-  const { setModalDisplay } = dashboardActions;
-  const { setAddAnotherAccount } = accountsActions;
-  const { setFinishedWizard } = wizardActions;
-
-  const onAddValidatorPasswordSuccess = () => {
-    setFinishedWizard(false);
-    setAddAnotherAccount(true);
-    hideModal();
-  };
-
-  const hideModal = () => setModalDisplay({ show: false, type: '', text: '', });
+  const { dashboardActions, showModal, modalType, onSuccess, depositData, activeValidators } = props;
+  const { clearModalDisplayData } = dashboardActions;
 
   if (showModal) {
     switch (modalType) {
+      case MODAL_TYPES.PASSWORD:
+        return <PasswordModal onClick={onSuccess} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.REACTIVATION:
-        return <KeyVaultReactivation onClose={() => hideModal()} />;
+        return <KeyVaultReactivation onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.UPDATE:
-        return <KeyVaultUpdate onClose={() => hideModal()} />;
+        return <KeyVaultUpdate onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.DEPOSIT_INFO:
-          return depositData && <DepositInfoModal depositData={depositData} onClose={() => hideModal()} />;
-      case MODAL_TYPES.ADD_VALIDATOR:
-        return <PasswordModal onClick={onAddValidatorPasswordSuccess} onClose={() => hideModal()} />;
+          return depositData && <DepositInfoModal depositData={depositData} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
-        return activeValidators.length > 0 && <ActiveValidatorModal onClose={() => hideModal()} activeValidators={activeValidators} />;
+        return activeValidators.length > 0 && <ActiveValidatorModal onClose={() => clearModalDisplayData()} activeValidators={activeValidators} />;
       default:
         return null;
     }
@@ -51,22 +39,20 @@ const mapStateToProps = (state) => ({
   showModal: selectors.getModalDisplayStatus(state),
   modalType: selectors.getModalType(state),
   modalText: selectors.getModalText(state),
+  onSuccess: selectors.getModalOnSuccess(state),
   depositData: getDepositData(state),
   activeValidators: getActiveValidators(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
-  accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
-  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
 });
 
 type Props = {
   dashboardActions: Record<string, any>;
-  accountsActions: Record<string, any>;
-  wizardActions: Record<string, any>;
   showModal: boolean;
   modalType: string;
+  onSuccess: () => void;
   depositData: string;
   activeValidators: [{ publicKey: string }],
 };

@@ -12,9 +12,9 @@ export const STATUSES = {
 };
 
 export const MODAL_TYPES = {
+  PASSWORD: 'password',
   REACTIVATION: 'reactivation',
   UPDATE: 'update',
   DEPOSIT_INFO: 'depositInfo',
-  ADD_VALIDATOR: 'addValidator',
   ACTIVE_VALIDATOR: 'activeValidator',
 };
