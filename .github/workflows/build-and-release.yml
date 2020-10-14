@@ -32,7 +32,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           mkdir -p ~/private_keys/
-          echo '${{ secrets.windows_certs }}' | base64 -d -o ~/private_keys/CSC_LINK.p12
+          '${{ secrets.windows_certs }}' | Out-File encoded.txt | certutil -decode .\test.txt ~/private_keys/decoded.p12
 
 
       - name: Build/release Electron app for mac
@@ -70,7 +70,7 @@ jobs:
           release: 'true'
 
           max_attempts: '2'
-          windows_certs: '~/private_keys/CSC_LINK.p12'
+          windows_certs: '~/private_keys/decoded.p12'
           windows_certs_password: ${{ secrets.windows_certs_password }}
 #        run: yarn install && yarn package-win
         env:
