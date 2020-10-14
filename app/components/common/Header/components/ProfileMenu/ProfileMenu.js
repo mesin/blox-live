@@ -57,7 +57,7 @@ const Separator = styled.div`
 `;
 
 const canViewTestPage = (profile) => {
-  return profile && profile.email && profile.email.endsWith('@blox.io');
+  return true;
 };
 
 const ProfileMenu = forwardRef(
