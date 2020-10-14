@@ -70,7 +70,7 @@ jobs:
           release: 'true'
 
           max_attempts: '2'
-          windows_certs: '~/private_keys/CSC_LINK.txt'
+          windows_certs: '~/private_keys/CSC_LINK.p12'
           windows_certs_password: ${{ secrets.windows_certs_password }}
 #        run: yarn install && yarn package-win
         env:
