@@ -83,14 +83,14 @@ export default class AccountService {
     if (index) {
       nextIndex = +index + 1;
     } else if (this.store.get(`keyVaultStorage.${network}`)) {
-        const lastIndexedAccount = await this.getLastIndexedAccount();
-        if (lastIndexedAccount) {
-          const lastIndex = +lastIndexedAccount.name.replace('account-', '');
-          this.store.set(`index.${network}`, lastIndex.toString());
-          nextIndex = lastIndex + 1;
-        } else {
-          this.store.set(`index.${network}`, (nextIndex - 1).toString());
-        }
+      const lastIndexedAccount = await this.getLastIndexedAccount();
+      if (lastIndexedAccount) {
+        const lastIndex = +lastIndexedAccount.name.replace('account-', '');
+        this.store.set(`index.${network}`, lastIndex.toString());
+        nextIndex = lastIndex + 1;
+      } else {
+        this.store.set(`index.${network}`, (nextIndex - 1).toString());
+      }
     }
     return nextIndex;
   }
