@@ -78,8 +78,9 @@ export default class AccountService {
       throw new Error('Configuration settings network not found');
     }
     let index = 0;
-    const accounts = await this.keyVaultService.listAccounts();
-    if (accounts && accounts instanceof Array && accounts.length > 0) {
+    const response = await this.keyVaultService.listAccounts();
+    const accounts = response.data.accounts;
+    if (accounts && accounts instanceof Array && response.data.accounts.length > 0) {
       index = +accounts[0].name.replace('account-', '') + 1;
     }
     this.store.set(`index.${network}`, (index - 1).toString());
