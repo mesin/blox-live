@@ -50,12 +50,11 @@ export default class AccountService {
   })
   async createBloxAccount(): Promise<any> {
     const network = this.store.get('network');
-    const index: number = await this.getNextIndex();
+    const index: number = +this.store.get(`index.${network}`) + 1;
     const lastIndexedAccount = await this.keyManagerService.getAccount(this.store.get('seed'), index);
     lastIndexedAccount['network'] = network;
     const account = await this.create(lastIndexedAccount);
     if (account.error && account.error instanceof Error) return;
-    this.store.set(`index.${network}`, index.toString());
     return { data: account };
   }
 
@@ -78,21 +77,13 @@ export default class AccountService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    const index = this.store.get(`index.${network}`);
-    let nextIndex = 0;
-    if (index) {
-      nextIndex = +index + 1;
-    } else if (this.store.get(`keyVaultStorage.${network}`)) {
-      const lastIndexedAccount = await this.getLastIndexedAccount();
-      if (lastIndexedAccount) {
-        const lastIndex = +lastIndexedAccount.name.replace('account-', '');
-        this.store.set(`index.${network}`, lastIndex.toString());
-        nextIndex = lastIndex + 1;
-      } else {
-        this.store.set(`index.${network}`, (nextIndex - 1).toString());
-      }
+    let index = 0;
+    const accounts = await this.keyVaultService.listAccounts();
+    if (accounts && accounts instanceof Array && accounts.length > 0) {
+      index = +accounts[0].name.replace('account-', '') + 1;
     }
-    return nextIndex;
+    this.store.set(`index.${network}`, (index - 1).toString());
+    return index;
   }
 
   async listAccounts(): Promise<any> {
@@ -147,10 +138,9 @@ export default class AccountService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    const index: number = await this.getNextIndex() - 2;
-    const storage = index <= 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
+    const index: number = +this.store.get(`index.${network}`);
+    const storage = index < 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
     this.store.set(`keyVaultStorage.${network}`, storage);
-    this.store.set(`index.${network}`, index.toString());
   }
 
   async generatePublicKeys(): Promise<void> {
