@@ -5,10 +5,13 @@ import styled from 'styled-components';
 
 import { useInjectSaga } from 'utils/injectSaga';
 
-import { KeyVaultReactivation } from '../../..';
+import * as actionsFromDashboard from '../../../Dashboard/actions';
+import { MODAL_TYPES } from '../../../Dashboard/constants';
+
 import * as wizardActions from '../../actions';
 import * as wizardSelectors from '../../selectors';
 import saga from '../../saga';
+import usePasswordHandler from '../../../PasswordHandler/usePasswordHandler';
 
 import * as accountSelectors from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
@@ -16,10 +19,11 @@ import { allAccountsDeposited } from '../../../Accounts/service';
 import { InfoWithTooltip } from 'common/components';
 import ButtonWithIcon from './ButtonWithIcon';
 
+import Store from '../../../../backend/common/store-manager/store';
+
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
 import mainNetImg from 'components/Wizard/assets/img-validator-main-net.svg';
-import Store from '../../../../backend/common/store-manager/store';
 
 const store: Store = Store.getStore();
 
@@ -64,12 +68,13 @@ toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, wallet, accounts, isLoading, isDepositNeeded, addAnotherAccount } = props;
+  const { setPage, setStep, step, actions, dashboardActions, wallet, accounts, isLoading, isDepositNeeded, addAnotherAccount } = props;
   const { loadWallet, setFinishedWizard } = actions;
+  const { setModalDisplay } = dashboardActions;
 
+  const { checkIfPasswordIsNeeded } = usePasswordHandler();
   useInjectSaga({ key, saga, mode: '' });
   const [showStep2, setStep2Status] = useState(false);
-  const [showReactivationModal, setReactivationModalDisplay] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !wallet) {
@@ -103,7 +108,8 @@ const WelcomePage = (props: Props) => {
 
   const onStep2Click = () => {
     if (wallet.status === 'offline') {
-      setReactivationModalDisplay(true);
+      const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: ''});
+      checkIfPasswordIsNeeded(onSuccess);
     }
     else if (wallet.status === 'active') {
       redirectToCreateAccount();
@@ -140,7 +146,6 @@ const WelcomePage = (props: Props) => {
           isDisabled={!showStep2} onClick={onStep2Click}
         />
       </Right>
-      {showReactivationModal && <KeyVaultReactivation onClose={() => setReactivationModalDisplay(false)} />}
     </Wrapper>
   );
 };
@@ -155,6 +160,7 @@ const mapStateToProps = (state: State) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(wizardActions, dispatch),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch)
 });
 
 type Props = {
@@ -162,6 +168,7 @@ type Props = {
   setStep: (step: number) => void;
   step: number;
   actions: Record<string, any>;
+  dashboardActions: Record<string, any>;
   wallet: Record<string, any>;
   accounts: [];
   isLoading: boolean;

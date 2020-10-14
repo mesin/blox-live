@@ -59,7 +59,7 @@ const Modal = ({onClose, depositData}: Props) => {
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
         <Title>Deposit Info</Title>
-        {DEPOSIT_DATA.map((row, index) => {
+        {depositData && DEPOSIT_DATA.map((row, index) => {
           const { label, title, moreInfo, value } = row;
           const isTxData = label === DEPOSIT_DATA[1].label;
           const valueText = isTxData ? depositData : value;

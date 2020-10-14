@@ -35,7 +35,7 @@ const ReinstallingModal = (props: Props) => {
 type Props = {
   image: string;
   title: string;
-  description: string;
+  description?: string;
   move1StepForward: () => void;
   move2StepsForward: () => void;
   onClose?: () => void;

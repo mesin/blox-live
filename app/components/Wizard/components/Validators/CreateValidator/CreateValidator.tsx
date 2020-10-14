@@ -5,37 +5,33 @@ import { loadDepositData } from '../../../actions';
 import { setDepositNeeded } from '../../../../Accounts/actions';
 import { getNetwork } from '../../../selectors';
 
-import { GenerateKeys, KeysGenerated } from './components';
-import Store from 'backend/common/store-manager/store';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
+import usePasswordHandler from '../../../../PasswordHandler/usePasswordHandler';
 
-const store: Store = Store.getStore();
+import { GenerateKeys, KeysGenerated } from './components';
 
 const CreateValidator = (props: Props) => {
   const { isLoading, isDone, processData, error, startProcess, clearProcessState } = useProcessRunner();
+  const { checkIfPasswordIsNeeded } = usePasswordHandler();
   const { page, setPage, callLoadDepositData, callSetDepositNeeded } = props;
-  const [showPasswordModal, setShowPasswordModal] = React.useState(false);
 
   useEffect(() => {
-    if (isDone) {
+    if (isDone && processData && !error) {
       const accountIndex = +processData.name.replace('account-', '');
       callLoadDepositData(processData.publicKey, accountIndex);
     }
-  }, [isLoading, processData]);
+  }, [isLoading, processData, error]);
 
   const onGenerateKeysClick = () => {
-    if (!store.isCryptoKeyStored()) {
-      setShowPasswordModal(true);
-      return;
-    }
-    setShowPasswordModal(false);
-
-    if (error) {
-      clearProcessState();
-    }
-    if (!isLoading) {
-      startProcess('createAccount', 'Generating Validator Keys...', null);
-    }
+    const onSuccess = () => {
+      if (error) {
+        clearProcessState();
+      }
+      if (!isLoading) {
+        startProcess('createAccount', 'Generating Validator Keys...', null);
+      }
+    };
+    checkIfPasswordIsNeeded(onSuccess);
   };
 
   const onContinueClick = () => {
@@ -49,9 +45,7 @@ const CreateValidator = (props: Props) => {
       {processData && !error ? (
         <KeysGenerated onClick={onContinueClick} validatorData={processData} />
       ) : (
-        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error}
-          showPasswordModal={showPasswordModal} setShowPasswordModal={setShowPasswordModal}
-        />
+        <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error} />
       )}
     </>
   );

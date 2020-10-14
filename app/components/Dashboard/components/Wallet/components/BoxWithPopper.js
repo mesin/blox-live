@@ -9,6 +9,7 @@ import ReactivatePopper from './ReactivatePopper';
 import UpdatePopper from './UpdatePopper';
 import * as dashboardActions from '../../../actions';
 import { MODAL_TYPES } from '../../../constants';
+import usePasswordHandler from '../../../../PasswordHandler/usePasswordHandler';
 
 const Wrapper = styled.div`
   position:relative;
@@ -18,10 +19,17 @@ const Wrapper = styled.div`
 const BoxWithTooltip = (props) => {
   const { isActive, walletNeedsUpdate, width, color, bigText, medText, tinyText, image, actions } = props;
   const { setModalDisplay } = actions;
+  const { checkIfPasswordIsNeeded } = usePasswordHandler();
 
-  const showReactivationModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: '', });
+  const showReactivationModal = () => {
+    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: ''});
+    checkIfPasswordIsNeeded(onSuccess);
+  };
 
-  const showUpdateModal = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: '', });
+  const showUpdateModal = () => {
+    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: ''});
+    checkIfPasswordIsNeeded(onSuccess);
+  };
 
   return (
     <Wrapper>
