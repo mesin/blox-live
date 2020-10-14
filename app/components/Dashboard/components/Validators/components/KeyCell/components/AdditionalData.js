@@ -3,10 +3,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as actionsFromDashboard from '../../../../../actions';
+import * as actionsFromWizard from '../../../../../../Wizard/actions';
+
 import { MODAL_TYPES } from '../../../../../constants';
-
-import { loadDepositData } from '../../../../../../Wizard/actions';
-
 import { setDepositNeeded } from '../../../../../../Accounts/actions';
 
 import WarningText from './WarningText';
@@ -14,20 +13,27 @@ import BlueButton from './BlueButton';
 import Date from './Date';
 
 const AdditionalData = (props) => {
-  const { publicKey, status, createdAt, dashboardActions, accountIndex,
-          callLoadDepositData, callSetDepositNeeded
-        } = props;
+  const { publicKey, status, createdAt, dashboardActions, wizardActions,
+          accountIndex, callSetDepositNeeded } = props;
   const { setModalDisplay } = dashboardActions;
+  const { loadDepositData, setFinishedWizard } = wizardActions;
 
-  const onDepositInfoButtonClick = async () => {
-    await callLoadDepositData(publicKey, accountIndex);
-    await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
+  const onDepositInfoButtonClick = () => {
+    const onPasswordSuccess = async () => {
+      await loadDepositData(publicKey, accountIndex);
+      await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
+    };
+    setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
   };
 
   const onFinishSetupClick = async () => {
-    await callSetDepositNeeded(true, publicKey, accountIndex);
-    await setModalDisplay({ show: true, type: MODAL_TYPES.FINISH_SETUP, text: '', });
+    const onPasswordSuccess = async () => {
+      await callSetDepositNeeded(true, publicKey, accountIndex);
+      await setFinishedWizard(false);
+    };
+    setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
   };
+
   if (status === 'pending') {
     return (
       <>
@@ -61,13 +67,13 @@ AdditionalData.propTypes = {
   status: PropTypes.string,
   createdAt: PropTypes.string,
   dashboardActions: PropTypes.object,
-  callLoadDepositData: PropTypes.func,
+  wizardActions: PropTypes.object,
   callSetDepositNeeded: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
-  callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
+  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
   callSetDepositNeeded: (depositNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(depositNeeded, publicKey, accountIndex)),
 });
 

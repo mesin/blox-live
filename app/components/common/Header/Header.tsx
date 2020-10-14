@@ -82,7 +82,8 @@ const AddValidatorButton = styled.button`
 
 const Header = (props: Props) => {
   const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location,
-          dashboardActions, accountsActions, wizardActions, } = props;
+          dashboardActions, accountsActions, wizardActions } = props;
+
   const { setModalDisplay, clearModalDisplayData } = dashboardActions;
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
@@ -102,9 +103,7 @@ const Header = (props: Props) => {
 
   const onAddValidatorClick = () => {
     if (walletStatus === 'active') {
-      setModalDisplay({
-        show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onAddValidatorPasswordSuccess
-      });
+      setModalDisplay({show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onAddValidatorPasswordSuccess});
       return;
     }
     const text = 'Your KeyVault is inactive. Please reactivate your KeyVault before creating a new validator.';
