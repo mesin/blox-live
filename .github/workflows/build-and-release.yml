@@ -32,7 +32,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
         run: |
           mkdir -p ~/private_keys/
-          echo '${{ secrets.windows_certs }}' > ~/private_keys/CSC_LINK.txt
+          echo '${{ secrets.windows_certs }}' > ~/private_keys/CSC_LINK.p12
 
 
       - name: Build/release Electron app for mac
