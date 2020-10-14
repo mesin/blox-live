@@ -13,6 +13,9 @@ import { getUserData } from '../../CallbackPage/selectors';
 import { getWizardFinishedStatus, getWalletStatus } from '../../Wizard/selectors';
 
 import * as actionsFromDashboard from '../../Dashboard/actions';
+import * as actionsFromWizard from '../../Wizard/actions';
+import * as actionsFromAccounts from '../../Accounts/actions';
+
 import { MODAL_TYPES } from '../../Dashboard/constants';
 
 import imageSrc from 'assets/images/staking-logo.svg';
@@ -79,11 +82,21 @@ const AddValidatorButton = styled.button`
 `;
 
 const Header = (props: Props) => {
-  const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location, dashboardActions } = props;
-  const { setModalDisplay } = dashboardActions;
+  const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location,
+          dashboardActions, accountsActions, wizardActions } = props;
+
+  const { setModalDisplay, clearModalDisplayData } = dashboardActions;
+  const { setAddAnotherAccount } = accountsActions;
+  const { setFinishedWizard } = wizardActions;
   const [isProfileMenuOpen, toggleProfileMenuOpenDisplay] = useState(false);
   const isInDashboardPage = location.pathname === '/' && isFinishedWizard;
   const hideTopNav = true;
+
+  const onAddValidatorPasswordSuccess = () => {
+    setFinishedWizard(false);
+    setAddAnotherAccount(true);
+    clearModalDisplayData();
+  };
 
   const handleProfileClickAway = () => {
     toggleProfileMenuOpenDisplay(false);
@@ -91,7 +104,7 @@ const Header = (props: Props) => {
 
   const onAddValidatorClick = () => {
     if (walletStatus === 'active') {
-      setModalDisplay({show: true, type: MODAL_TYPES.ADD_VALIDATOR, text: ''});
+      setModalDisplay({show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onAddValidatorPasswordSuccess});
       return;
     }
     const text = 'Your KeyVault is inactive. Please reactivate your KeyVault before creating a new validator.';
@@ -133,6 +146,8 @@ interface Props extends RouteComponentProps {
   isFinishedWizard: boolean;
   walletStatus: string;
   dashboardActions: Record<string, any>;
+  accountsActions: Record<string, any>;
+  wizardActions: Record<string, any>;
 }
 
 const mapStateToProps = (state) => ({
@@ -143,7 +158,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   logoutUser: () => dispatch(logout()),
-  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch)
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
+  accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
+  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Header));
