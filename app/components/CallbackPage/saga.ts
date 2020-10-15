@@ -1,8 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
-import os from 'os';
-import { version } from 'package.json';
 
 import { LOGIN_INIT, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
@@ -10,11 +8,14 @@ import Auth from '../Auth';
 import { saveLastConnection } from 'common/service';
 import { updateUserInfo } from 'components/User/actions';
 
+import { version } from 'package.json';
+import { getOsVersion } from 'utils/service';
+
 const auth = new Auth();
 
 function* onLoginSuccess(authResult) {
   const { idToken, idTokenPayload } = authResult;
-  const userInfo = { os: `${os.type()} ${os.release()}`, appVersion: version };
+  const userInfo = { os: getOsVersion(), appVersion: version };
   yield put(updateUserInfo(userInfo));
   yield put(setIdToken(idToken));
   yield put(loginSuccess(idTokenPayload));
