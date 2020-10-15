@@ -1,4 +1,7 @@
 import moment from 'moment';
+import os from 'os';
+import macOsRelease from 'macos-release';
+import windowsRelease from 'windows-release';
 
 export const isActive = (to, pathname) => {
   const hasSubDir = to.lastIndexOf('/') > 0 && pathname.lastIndexOf('/') > 0;
@@ -60,4 +63,16 @@ export const generateLocaleStringConfig = (number) => {
     minimumFractionDigits,
     maximumFractionDigits
   });
+};
+
+export const getOsVersion = () => {
+  const type = os.type();
+  const release = os.release();
+  if (type === 'Darwin') {
+    return `${type} ${macOsRelease().name} ${macOsRelease().version}`;
+  }
+  if (type === 'Windows_NT') {
+    return `${type} ${windowsRelease()}`;
+  }
+  return `${type} ${release}`;
 };

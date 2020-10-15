@@ -297,6 +297,7 @@
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.19",
     "lottie-web-react": "^1.0.3",
+    "macos-release": "^2.4.1",
     "moment": "^2.27.0",
     "node-ssh": "^10.0.2",
     "prop-types": "^15.7.2",
@@ -315,6 +316,7 @@
     "source-map-support": "^0.5.19",
     "styled-components": "^5.1.1",
     "uuid": "^8.3.0",
+    "windows-release": "^4.0.0",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
   },
