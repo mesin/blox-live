@@ -60,9 +60,6 @@ const CreateServer = (props) => {
   useInjectSaga({ key: passwordKey, saga: passwordSaga, mode: '' });
 
   React.useEffect(() => {
-    if (error) {
-      clearProcessState();
-    }
     if (!isLoading && isDone && !error) {
       clearProcessState();
       setPage(page + 1);
