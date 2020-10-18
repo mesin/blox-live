@@ -18,7 +18,8 @@ export const normalizeAccountsData = (accounts) => {
       createdAt,
       currentBalance,
       status,
-      name
+      name,
+      network
     } = account;
     const newAccount = { ...account };
     newAccount.key = {
@@ -26,17 +27,14 @@ export const normalizeAccountsData = (accounts) => {
       activationTime,
       createdAt: moment(createdAt).format('MMMM DD, YYYY'),
       status,
-      accountIndex: +name.replace('account-', '')
+      accountIndex: +name.replace('account-', ''),
+      network
     };
 
     newAccount.change = handleChange(currentBalance);
     delete newAccount.activationTime;
     delete newAccount.date;
 
-    newAccount.misc = {
-      accountId: id,
-      wallet: '',
-    };
     return newAccount;
   });
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 
 import WelcomePage from '../WelcomePage';
@@ -6,8 +7,11 @@ import { Template } from '../common';
 import * as WalletPages from '../Wallet';
 import * as ValidatorPages from '../Validators';
 
+import { getNetwork } from '../../selectors';
+
 import walletImage from 'components/Wizard/assets/img-key-vault.svg';
-import validatorImage from 'components/Wizard/assets/img-validator-test-net.svg';
+import testnetValidatorImage from 'components/Wizard/assets/img-validator-test-net.svg';
+import mainnetValidatorImage from 'components/Wizard/assets/img-validator-main-net.svg';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,7 +19,9 @@ const Wrapper = styled.div`
 `;
 
 const switcher = (props: Props) => {
-  const { page } = props;
+  const { page, network } = props;
+  const validatorImage = network === 'test' ? testnetValidatorImage : mainnetValidatorImage;
+
   switch (page) {
     case 0:
       return <WelcomePage {...props} />;
@@ -74,11 +80,16 @@ const switcher = (props: Props) => {
 
 const ContentManager = (props: Props) => <Wrapper>{switcher(props)}</Wrapper>;
 
+const mapStateToProps = (state: any) => ({
+  network: getNetwork(state),
+});
+
 type Props = {
   page: number;
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
+  network: string;
 };
 
-export default ContentManager;
+export default connect(mapStateToProps)(ContentManager);

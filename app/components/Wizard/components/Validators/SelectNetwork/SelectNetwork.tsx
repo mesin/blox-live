@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { setNetworkType } from '../../../actions';
 import { Title, SubTitle, Paragraph } from '../../common';
 import CustomButton from './CustomButton';
-import { BUTTONS } from './constants';
+import { NETWORKS } from '../constants';
 
 const Wrapper = styled.div`
   width:650px;
@@ -36,19 +36,20 @@ const Validators = (props: Props) => (
     </Paragraph>
     <SubTitle>How would you like to start?</SubTitle>
     <ButtonsWrapper>
-      {BUTTONS.map((button, index) => {
-        const { title, label, image, sticker, isDisabled } = button;
-        return (
-          <CustomButton
-            key={index}
-            sticker={sticker}
-            title={title}
-            image={image}
-            isDisabled={isDisabled}
-            onClick={() => !isDisabled && onClick({ ...props }, label)}
-          />
-        );
-      })}
+      <CustomButton
+        sticker={NETWORKS.test.sticker}
+        title={NETWORKS.test.title}
+        image={NETWORKS.test.image}
+        isDisabled={NETWORKS.test.isDisabled}
+        onClick={() => !NETWORKS.test.isDisabled && onClick({ ...props }, NETWORKS.test.label)}
+      />
+      <CustomButton
+        sticker={NETWORKS.zinken.sticker}
+        title={NETWORKS.zinken.title}
+        image={NETWORKS.zinken.image}
+        isDisabled={NETWORKS.zinken.isDisabled}
+        onClick={() => !NETWORKS.zinken.isDisabled && onClick({ ...props }, NETWORKS.zinken.label)}
+      />
     </ButtonsWrapper>
   </Wrapper>
 );

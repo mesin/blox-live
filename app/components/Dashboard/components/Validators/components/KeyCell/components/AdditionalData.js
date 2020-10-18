@@ -14,13 +14,13 @@ import Date from './Date';
 
 const AdditionalData = (props) => {
   const { publicKey, status, createdAt, dashboardActions, wizardActions,
-          accountIndex, callSetDepositNeeded } = props;
+          accountIndex, callSetDepositNeeded, network } = props;
   const { setModalDisplay } = dashboardActions;
   const { loadDepositData, setFinishedWizard } = wizardActions;
 
   const onDepositInfoButtonClick = () => {
     const onPasswordSuccess = async () => {
-      await loadDepositData(publicKey, accountIndex);
+      await loadDepositData(publicKey, accountIndex, network);
       await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
     };
     setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
@@ -28,7 +28,7 @@ const AdditionalData = (props) => {
 
   const onFinishSetupClick = async () => {
     const onPasswordSuccess = async () => {
-      await callSetDepositNeeded(true, publicKey, accountIndex);
+      await callSetDepositNeeded({isNeeded: true, publicKey, accountIndex, network});
       await setFinishedWizard(false);
     };
     setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
@@ -64,6 +64,7 @@ const AdditionalData = (props) => {
 AdditionalData.propTypes = {
   publicKey: PropTypes.string,
   accountIndex: PropTypes.number,
+  network: PropTypes.string,
   status: PropTypes.string,
   createdAt: PropTypes.string,
   dashboardActions: PropTypes.object,
@@ -74,7 +75,7 @@ AdditionalData.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
   wizardActions: bindActionCreators(actionsFromWizard, dispatch),
-  callSetDepositNeeded: (depositNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(depositNeeded, publicKey, accountIndex)),
+  callSetDepositNeeded: (payload) => dispatch(setDepositNeeded(payload)),
 });
 
 export default connect(null, mapDispatchToProps)(AdditionalData);

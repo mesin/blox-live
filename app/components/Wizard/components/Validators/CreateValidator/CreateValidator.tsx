@@ -16,7 +16,8 @@ const store: Store = Store.getStore();
 const key = 'processRunner';
 
 const CreateValidator = (props: Props) => {
-  const { page, setPage, actions, isLoading, validatorData, callLoadDepositData, callSetDepositNeeded, error } = props;
+  const { page, setPage, actions, isLoading, selectedNetwork,
+          validatorData, callLoadDepositData, callSetDepositNeeded, error } = props;
   const { processSubscribe, processClearState } = actions;
   const [showPasswordModal, setShowPasswordModal] = React.useState(false);
   useInjectSaga({ key, saga, mode: '' });
@@ -24,7 +25,7 @@ const CreateValidator = (props: Props) => {
   useEffect(() => {
     if (!isLoading && validatorData) { // TODO: replace with isDone
       const accountIndex = +validatorData.name.replace('account-', '');
-      callLoadDepositData(validatorData.publicKey, accountIndex);
+      callLoadDepositData(validatorData.publicKey, accountIndex, validatorData.network);
     }
   }, [isLoading, validatorData]);
 
@@ -44,8 +45,9 @@ const CreateValidator = (props: Props) => {
   };
 
   const onContinueClick = () => {
+    const { publicKey, network } = validatorData;
     const accountIndex = +validatorData.name.replace('account-', '');
-    callSetDepositNeeded(true, validatorData.publicKey, accountIndex);
+    callSetDepositNeeded({isNeeded: true, publicKey, accountIndex, network});
     setPage(page + 1);
   };
 
@@ -56,6 +58,7 @@ const CreateValidator = (props: Props) => {
       ) : (
         <GenerateKeys onClick={onGenerateKeysClick} isLoading={isLoading} error={error}
           showPasswordModal={showPasswordModal} setShowPasswordModal={setShowPasswordModal}
+          network={selectedNetwork}
         />
       )}
     </>
@@ -66,13 +69,13 @@ const mapStateToProps = (state: State) => ({
   isLoading: selectors.getIsLoading(state),
   validatorData: selectors.getData(state),
   error: selectors.getError(state),
-  network: getNetwork(state)
+  selectedNetwork: getNetwork(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(processRunnerActions, dispatch),
-  callLoadDepositData: (publicKey, accountIndex) => dispatch(loadDepositData(publicKey, accountIndex)),
-  callSetDepositNeeded: (isNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(isNeeded, publicKey, accountIndex)),
+  callLoadDepositData: (publicKey, accountIndex, network) => dispatch(loadDepositData(publicKey, accountIndex, network)),
+  callSetDepositNeeded: (payload: DepositNeededPayload) => dispatch(setDepositNeeded(payload)),
 });
 
 type Props = {
@@ -84,9 +87,16 @@ type Props = {
   isLoading: boolean;
   actions: Record<string, any>;
   validatorData: Record<string, any> | null;
-  callLoadDepositData: (publicKey: string, accountIndex: number) => void;
-  callSetDepositNeeded: (arg0: boolean, publicKey: string, index: number) => void;
+  callLoadDepositData: (publicKey: string, accountIndex: number, network: string) => void;
+  callSetDepositNeeded: (payload: DepositNeededPayload) => void;
   error: string;
+};
+
+type DepositNeededPayload = {
+  isNeeded: boolean;
+  publicKey: string;
+  accountIndex: number;
+  network: string;
 };
 
 type State = Record<string, any>;

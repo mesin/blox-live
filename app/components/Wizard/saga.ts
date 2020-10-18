@@ -46,9 +46,9 @@ function* loadWallet() {
 
 function* loadDepositData(action) {
   const { payload } = action;
-  const { publicKey, accountIndex } = payload;
+  const { publicKey, accountIndex, network } = payload;
   try {
-    const response = yield call([accountService, 'getDepositData'], publicKey, accountIndex);
+    const response = yield call([accountService, 'getDepositData'], publicKey, accountIndex, network);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);

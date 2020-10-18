@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { InfoWithTooltip } from 'common/components';
 import { Title, SubTitle, Paragraph, BigButton, SuccessIcon } from '../../../common';
+import { NETWORKS } from '../../constants';
 
 const Wrapper = styled.div``;
 
@@ -29,14 +30,14 @@ publicKeyTooltip += 'including proposing blocks and attesting to others. The val
 let withdrawalKeyTooltip = 'The withdrawal public key is used to incorporate data into an Ethereum staking deposit,';
 withdrawalKeyTooltip += 'which will later be used for identifying the entity that is allowed to withdraw Ether using the Withdrawal Private Key.';
 
-const KeysGenerated = (props: Props) => {
+const KeysGenerated = (props: Props) => { // TODO: handle network name
   const { onClick, validatorData } = props;
   return (
     <Wrapper>
       <SuccessIcon />
       <Title color="accent2400">Your Keys Were Created!</Title>
       <Paragraph>
-        Your new Testnet validator keys were created and are now secured inside <br />
+        Your new {NETWORKS[validatorData.network].name} validator keys were created and are now secured inside <br />
         your KeyVault. Validator will be visible on Etherscan only after deposit.
       </Paragraph>
       <SubTitle>
