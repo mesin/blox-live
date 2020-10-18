@@ -13,8 +13,8 @@ export const BUTTONS = [
   {
     title: 'Stake on MainNet',
     image: mainNetImage,
-    sticker: 'Coming Soon',
-    label: 'mainNet',
-    isDisabled: true,
+    sticker: 'Zinken',
+    label: config.env.ZINKEN_NETWORK,
+    isDisabled: false,
   },
 ];
