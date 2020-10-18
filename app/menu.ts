@@ -1,6 +1,3 @@
-import path from 'path';
-
-import openAboutWindow from 'about-window';
 import {
   app,
   Menu,
@@ -239,13 +236,6 @@ export default class MenuBuilder {
       {
         label: 'Help',
         submenu: [
-          {
-            label: 'About Blox Staking',
-            click: () => openAboutWindow({
-              icon_path: path.join(__dirname, './icon.png'),
-              copyright: 'Copyright (c) 2020 Blox',
-            }),
-          },
           {
             label: 'Learn More',
             click() {
