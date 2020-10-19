@@ -15,15 +15,15 @@ const ModalsManager = (props: Props) => {
   const { dashboardActions, showModal, modalType, onSuccess, activeValidators } = props;
   const { clearModalDisplayData } = dashboardActions;
 
-  const onPasswordModalSuccess = () => {
-    onSuccess();
+  const onPasswordSuccess = () => {
     clearModalDisplayData();
+    onSuccess();
   };
 
   if (showModal) {
     switch (modalType) {
       case MODAL_TYPES.PASSWORD:
-        return <PasswordModal onClick={onPasswordModalSuccess} onClose={() => clearModalDisplayData()} />;
+        return <PasswordModal onClick={onPasswordSuccess} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.REACTIVATION:
         return <KeyVaultReactivation onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.UPDATE:

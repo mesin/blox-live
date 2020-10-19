@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link, ErrorMessage } from '../../../common';
 import { openExternalLink } from '../../../../../common/service';
-import PasswordModal from '../../../../../KeyVaultModals/Modals/PasswordModal';
 import { NETWORKS } from '../../constants';
 
 const Wrapper = styled.div``;
@@ -25,8 +24,8 @@ const LoaderText = styled.span`
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, network, onClick, error, showPasswordModal, setShowPasswordModal } = props;
-  const onClose = () => setShowPasswordModal(false);
+  const { isLoading, onClick, error, network } = props;
+  console.log('network', network);
   return (
     <Wrapper>
       <Title>Create {NETWORKS[network].name} Validator</Title>
@@ -53,7 +52,6 @@ const GenerateKeys = (props: Props) => {
           {error}, please try again.
         </ErrorMessage>
       )}
-      {showPasswordModal && (<PasswordModal onClick={onClose} onClose={onClose} />)}
     </Wrapper>
   );
 };
@@ -62,9 +60,7 @@ type Props = {
   isLoading: boolean;
   onClick: () => void;
   error: string;
-  showPasswordModal: boolean;
-  setShowPasswordModal: (arg0: boolean) => void;
-  network: string;
+  network: string
 };
 
 export default GenerateKeys;

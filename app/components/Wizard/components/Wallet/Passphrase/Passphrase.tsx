@@ -4,12 +4,21 @@ import { connect } from 'react-redux';
 
 import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
-import * as keyvaultActions from '../../../../KeyVaultManagement/actions';
+
+import * as actionsFromPassword from '../../../../PasswordHandler/actions';
+import * as actionsFromKeyvault from '../../../../KeyVaultManagement/actions';
 import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
+import saga from '../../../../KeyVaultManagement/saga';
+
+import { useInjectSaga } from 'utils/injectSaga';
+
+const key = 'keyvaultManagement';
 
 const Passphrase = (props: Props) => {
-  const { page, setPage, mnemonic, isLoading, actions } = props;
-  const { keyvaultLoadMnemonic, keyvaultSaveMnemonic, keyvaultReplacePassword } = actions;
+  const { page, setPage, mnemonic, isLoading, keyvaultActions, passwordActions } = props;
+  const { keyvaultLoadMnemonic, keyvaultSaveMnemonic } = keyvaultActions;
+  const { replacePassword } = passwordActions;
+
   const [showBackup, toggleBackupDisplay] = useState(false);
   const [duplicatedMnemonic, setDuplicatedMnemonic] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +28,8 @@ const Passphrase = (props: Props) => {
   const [showConfirmPasswordError, setConfirmPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !mnemonic;
 
+  useInjectSaga({key, saga, mode: ''});
+
   const onPassphraseClick = () => {
     if (mnemonic || isLoading) { return; }
     keyvaultLoadMnemonic();
@@ -27,7 +38,7 @@ const Passphrase = (props: Props) => {
   const onSaveAndConfirmClick = async () => {
     const canGenerate = canGenerateMnemonic();
     if (canGenerate) {
-      await keyvaultReplacePassword(password);
+      await replacePassword(password);
       await keyvaultSaveMnemonic(duplicatedMnemonic);
       await !isButtonDisabled && setPage(page + 1);
     }
@@ -101,7 +112,8 @@ type Props = {
   setPage: (page: Page) => void;
   mnemonic: string;
   isLoading: boolean;
-  actions: Record<string, any>;
+  keyvaultActions: Record<string, any>;
+  passwordActions: Record<string, any>;
 };
 
 const mapStateToProps = (state) => ({
@@ -110,7 +122,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(keyvaultActions, dispatch),
+  keyvaultActions: bindActionCreators(actionsFromKeyvault, dispatch),
+  passwordActions: bindActionCreators(actionsFromPassword, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Passphrase);

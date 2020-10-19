@@ -12,18 +12,18 @@
   "typescript.format.enable": false,
 
   "search.exclude": {
-    ".git": true,
     ".eslintcache": true,
+    ".git": true,
+    "*.{css,sass,scss}.d.ts": true,
     "app/dist": true,
     "app/main.prod.js": true,
     "app/main.prod.js.map": true,
     "bower_components": true,
     "dll": true,
-    "release": true,
     "node_modules": true,
     "npm-debug.log.*": true,
+    "release": true,
     "test/**/__snapshots__": true,
-    "yarn.lock": true,
-    "*.{css,sass,scss}.d.ts": true
+    "yarn.lock": true
   }
 }

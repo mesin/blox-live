@@ -9,7 +9,7 @@ const initialState = {
 };
 
 /* eslint-disable default-case, no-param-reassign */
-const dashboardReducer = (state = initialState, action: Action) => produce(state, (draft) => {
+const modalDisplayReducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
     case actionTypes.SET_MODAL_DISPLAY:
       draft.type = action.payload.type;
@@ -30,4 +30,4 @@ type Action = {
   payload: any;
 };
 
-export default dashboardReducer;
+export default modalDisplayReducer;

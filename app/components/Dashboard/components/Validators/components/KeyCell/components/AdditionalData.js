@@ -2,6 +2,9 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+import usePasswordHandler from '../../../../../../PasswordHandler/usePasswordHandler';
+
 import * as actionsFromDashboard from '../../../../../actions';
 import * as actionsFromWizard from '../../../../../../Wizard/actions';
 
@@ -18,12 +21,14 @@ const AdditionalData = (props) => {
   const { setModalDisplay } = dashboardActions;
   const { loadDepositData, setFinishedWizard } = wizardActions;
 
+  const { checkIfPasswordIsNeeded } = usePasswordHandler();
+
   const onDepositInfoButtonClick = () => {
     const onPasswordSuccess = async () => {
       await loadDepositData(publicKey, accountIndex, network);
       await setModalDisplay({ show: true, type: MODAL_TYPES.DEPOSIT_INFO, text: '', });
     };
-    setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
+    checkIfPasswordIsNeeded(onPasswordSuccess);
   };
 
   const onFinishSetupClick = async () => {
@@ -31,7 +36,7 @@ const AdditionalData = (props) => {
       await callSetDepositNeeded({isNeeded: true, publicKey, accountIndex, network});
       await setFinishedWizard(false);
     };
-    setModalDisplay({ show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onPasswordSuccess});
+    checkIfPasswordIsNeeded(onPasswordSuccess);
   };
 
   if (status === 'pending') {
