@@ -16,6 +16,7 @@ import VersionService from '../../backend/services/version/version.service';
 import OrganizationService from '../../backend/services/organization/organization.service';
 import { Link } from 'react-router-dom/esm/react-router-dom';
 import config from '../../backend/common/config';
+import { reportCrash } from '../common/service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -296,6 +297,11 @@ const Test = () => {
       <p/>
       <h2>Blox API</h2>
       <div>
+        <button onClick={async () => {
+          await reportCrash();
+        }}>
+          Report crash
+        </button>
         <button onClick={async () => {
           console.log(await walletService.get());
         }}>

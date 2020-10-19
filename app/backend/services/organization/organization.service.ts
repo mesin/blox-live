@@ -17,6 +17,6 @@ export default class OrganizationService {
   }
 
   async reportCrash(payload: any) {
-    return await BloxApi.request(METHOD.POST, 'organizations/crash-report', payload);
+    return await BloxApi.request(METHOD.POST, 'organizations/crash-report', payload); // , { 'Content-Type': 'multipart/form-data' }
   }
 }
