@@ -19,9 +19,9 @@ export const keyvaultLoadMnemonicFailure = (error: Record<string, any>) => ({
   payload: error,
 });
 
-export const keyvaultSaveMnemonic = (mnemonic: string, password: string) => ({
+export const keyvaultSaveMnemonic = (mnemonic: string) => ({
   type: actionTypes.KEYVAULT_SAVE_MNEMONIC,
-  payload: {mnemonic, password},
+  payload: { mnemonic },
 });
 
 export const keyvaultSaveMnemonicSuccess = () => ({

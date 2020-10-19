@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { useInjectSaga } from 'utils/injectSaga';
 
 import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
 import * as keyvaultActions from '../../../../KeyVaultManagement/actions';
 import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
-import saga from '../../../../KeyVaultManagement/saga';
-
-const key = 'keyvaultManagement';
 
 const Passphrase = (props: Props) => {
   const { page, setPage, mnemonic, isLoading, actions } = props;
-  const { keyvaultLoadMnemonic, keyvaultSaveMnemonic } = actions;
+  const { keyvaultLoadMnemonic, keyvaultSaveMnemonic, keyvaultReplacePassword } = actions;
   const [showBackup, toggleBackupDisplay] = useState(false);
   const [duplicatedMnemonic, setDuplicatedMnemonic] = useState('');
   const [password, setPassword] = useState('');
@@ -23,16 +19,16 @@ const Passphrase = (props: Props) => {
   const [showConfirmPasswordError, setConfirmPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !mnemonic;
 
-  useInjectSaga({ key, saga, mode: '' });
-
   const onPassphraseClick = () => {
     if (mnemonic || isLoading) { return; }
     keyvaultLoadMnemonic();
   };
 
   const onSaveAndConfirmClick = async () => {
-    if (canGenerateMnemonic()) {
-      await keyvaultSaveMnemonic(duplicatedMnemonic, password);
+    const canGenerate = canGenerateMnemonic();
+    if (canGenerate) {
+      await keyvaultReplacePassword(password);
+      await keyvaultSaveMnemonic(duplicatedMnemonic);
       await !isButtonDisabled && setPage(page + 1);
     }
   };
