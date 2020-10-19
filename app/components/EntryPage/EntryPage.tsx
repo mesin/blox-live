@@ -16,19 +16,15 @@ import { keyvaultLoadLatestVersion } from '../KeyVaultManagement/actions';
 import * as keyvaultSelectors from '../KeyVaultManagement/selectors';
 import walletSaga from '../KeyVaultManagement/saga';
 
-import processRunnerSaga from '../ProcessRunner/saga';
-import * as processRunnerSelectors from '../ProcessRunner/selectors';
-import { processClearState } from '../ProcessRunner/actions';
-
 import useAccounts from 'components/Accounts/useAccounts';
 import useVersions from 'components/Versions/useVersions';
 import useEventLogs from 'components/EventLogs/useEventLogs';
+import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 
 const wizardKey = 'wizard';
 const walletKey = 'keyvaultManagement';
-const processRunnerKey = 'processRunner';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -55,24 +51,22 @@ const EntryPage = (props: Props) => {
     keyvaultLatestVersion,
     isLoadingKeyvault,
     keyvaultError,
-    processRunnerData,
-    callProcessClearState,
   } = props;
 
   useInjectSaga({key: wizardKey, saga: wizardSaga, mode: ''});
   useInjectSaga({key: walletKey, saga: walletSaga, mode: ''});
-  useInjectSaga({key: processRunnerKey, saga: processRunnerSaga, mode: ''});
 
   const { accounts, isLoadingAccounts } = useAccounts();
   const { bloxLiveNeedsUpdate, isLoadingBloxLiveVersion } = useVersions();
   const { eventLogs, isLoadingEventLogs } = useEventLogs();
+  const { processData, error, clearProcessState } = useProcessRunner();
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
     const didntLoadKeyvaultVersion = !keyvaultLatestVersion && !isLoadingKeyvault && !keyvaultError;
 
-    if (processRunnerData) {
-      callProcessClearState();
+    if (processData || error) {
+      clearProcessState();
     }
     if (didntLoadKeyvaultVersion) {
       loadWalletLatestVersion();
@@ -130,9 +124,6 @@ type Props = {
 
   bloxLiveNeedsUpdate: boolean;
   isLoadingBloxLiveVersion: boolean;
-
-  processRunnerData: Record<string, any> | null,
-  callProcessClearState: () => void;
 };
 
 const mapStateToProps = (state: State) => ({
@@ -144,14 +135,11 @@ const mapStateToProps = (state: State) => ({
   keyvaultLatestVersion: keyvaultSelectors.getLatestVersion(state),
   isLoadingKeyvault: keyvaultSelectors.getIsLoading(state),
   keyvaultError: keyvaultSelectors.getError(state),
-
-  processRunnerData: processRunnerSelectors.getData(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
-  callProcessClearState: () => dispatch(processClearState()),
 });
 
 type State = Record<string, any>;

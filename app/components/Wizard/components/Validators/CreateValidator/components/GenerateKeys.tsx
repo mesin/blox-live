@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Spinner } from 'common/components';
 import { Title, Paragraph, BigButton, Link, ErrorMessage } from '../../../common';
 import { openExternalLink } from '../../../../../common/service';
-import PasswordModal from '../../../../../KeyVaultModals/Modals/PasswordModal';
+import { NETWORKS } from '../../constants';
 
 const Wrapper = styled.div``;
 
@@ -24,15 +24,15 @@ const LoaderText = styled.span`
 `;
 
 const GenerateKeys = (props: Props) => {
-  const { isLoading, onClick, error, showPasswordModal, setShowPasswordModal } = props;
-  const onClose = () => setShowPasswordModal(false);
+  const { isLoading, onClick, error, network } = props;
+  console.log('network', network);
   return (
     <Wrapper>
-      <Title>Create TestNet Validator</Title>
+      <Title>Create {NETWORKS[network].name} Validator</Title>
       <Paragraph>
         Now we must generate your secure validator keys to begin creating your{' '}
         <br />
-        Testnet validator. These keys will be generated securely using KeyVault.{' '}
+        {NETWORKS[network].name} validator. These keys will be generated securely using KeyVault.{' '}
         <br />
         <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-4')}>What is a validator key?</Link>
       </Paragraph>
@@ -52,7 +52,6 @@ const GenerateKeys = (props: Props) => {
           {error}, please try again.
         </ErrorMessage>
       )}
-      {showPasswordModal && (<PasswordModal onClick={onClose} onClose={onClose} />)}
     </Wrapper>
   );
 };
@@ -61,8 +60,7 @@ type Props = {
   isLoading: boolean;
   onClick: () => void;
   error: string;
-  showPasswordModal: boolean;
-  setShowPasswordModal: (arg0: boolean) => void;
+  network: string
 };
 
 export default GenerateKeys;

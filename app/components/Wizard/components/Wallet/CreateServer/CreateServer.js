@@ -7,19 +7,14 @@ import styled from 'styled-components';
 import { ProcessLoader, Button, PasswordInput } from 'common/components';
 import { Title, Paragraph, ErrorMessage } from '../../common';
 import { useInjectSaga } from 'utils/injectSaga';
-import { precentageCalculator } from 'utils/service';
 
-import * as actionsFromProcessRunner from '../../../../ProcessRunner/actions';
-import * as selectors from '../../../../ProcessRunner/selectors';
-import processRunnerSaga from '../../../../ProcessRunner/saga';
-
-import * as actionsFromKeyvault from '../../../../KeyVaultManagement/actions';
-import keyvaultSaga from '../../../../KeyVaultManagement/saga';
+import * as actionsFromPassword from '../../../../PasswordHandler/actions';
+import passwordSaga from '../../../../PasswordHandler/saga';
+import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
 import Guide from '../Guide';
 
-const processRunnerKey = 'processRunner';
-const keyvaultKey = 'keyvault';
+const passwordKey = 'password';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -51,34 +46,31 @@ const ProgressWrapper = styled.div`
 `;
 
 const CreateServer = (props) => {
-  const { page, setPage, isLoading, isDone, processName, error, installMessage, processRunnerActions, keyvaultActions, overallSteps, currentStep } = props;
-  const { processSubscribe, processClearState } = processRunnerActions;
-  const { keyvaultSavePassword } = keyvaultActions;
+  const { isLoading, isDone, error, processName, processMessage,
+          loaderPrecentage, startProcess, clearProcessState } = useProcessRunner();
+
+  const { page, setPage, passwordActions } = props;
+  const { savePassword } = passwordActions;
   const [accessKeyId, setAccessKeyId] = React.useState('');
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(true);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || (isDone && !error);
   const isPasswordInputDisabled = isLoading || isDone;
-  const loaderPrecentage = precentageCalculator(currentStep, overallSteps);
 
-  useInjectSaga({ key: processRunnerKey, saga: processRunnerSaga, mode: '' });
-  useInjectSaga({ key: keyvaultKey, saga: keyvaultSaga, mode: '' });
+  useInjectSaga({ key: passwordKey, saga: passwordSaga, mode: '' });
 
   React.useEffect(() => {
-    if (error) {
-      processClearState();
-    }
     if (!isLoading && isDone && !error) {
-      processClearState();
+      clearProcessState();
       setPage(page + 1);
     }
   }, [isLoading, isDone, error]);
 
   const onClick = async () => {
-    if (!isButtonDisabled && !installMessage && !processName) {
-      keyvaultSavePassword('temp');
+    if (!isButtonDisabled && !processMessage && !processName) {
+      savePassword('temp');
       const credentials = { accessKeyId, secretAccessKey };
-      await processSubscribe('install', 'Checking KeyVault configuration...', credentials);
+      await startProcess('install', 'Checking KeyVault configuration...', credentials);
     }
   };
 
@@ -92,7 +84,7 @@ const CreateServer = (props) => {
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
       <PasswordInputsWrapper>
-        <PasswordInput name={'accessKeyId'} title={'Access Key ID'}
+        <PasswordInput name={'accessKeyId'} title={'Access Key ID'} autoFocus
           onChange={setAccessKeyId} value={accessKeyId} isDisabled={isPasswordInputDisabled}
         />
         <PasswordInput name={'secretAccessKey'} title={'Secret Access Key'} width={'320px'}
@@ -100,9 +92,9 @@ const CreateServer = (props) => {
         />
       </PasswordInputsWrapper>
       <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
-      {isLoading && installMessage && !error && (
+      {isLoading && processMessage && !error && (
         <ProgressWrapper>
-          <ProcessLoader text={installMessage} precentage={loaderPrecentage} />
+          <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
         </ProgressWrapper>
       )}
       {error && (
@@ -115,33 +107,14 @@ const CreateServer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  processName: selectors.getName(state),
-  installMessage: selectors.getMessage(state),
-  isLoading: selectors.getIsLoading(state),
-  isDone: selectors.getIsDone(state),
-  overallSteps: selectors.getOverallSteps(state),
-  currentStep: selectors.getCurrentStep(state),
-  error: selectors.getError(state),
-});
-
 const mapDispatchToProps = (dispatch) => ({
-  processRunnerActions: bindActionCreators(actionsFromProcessRunner, dispatch),
-  keyvaultActions: bindActionCreators(actionsFromKeyvault, dispatch),
+  passwordActions: bindActionCreators(actionsFromPassword, dispatch),
 });
 
 CreateServer.propTypes = {
   page: PropTypes.number,
   setPage: PropTypes.func,
-  processRunnerActions: PropTypes.object,
-  keyvaultActions: PropTypes.object,
-  isLoading: PropTypes.bool,
-  isDone: PropTypes.bool,
-  processName: PropTypes.string,
-  installMessage: PropTypes.string,
-  overallSteps: PropTypes.number,
-  currentStep: PropTypes.number,
-  error: PropTypes.string,
+  passwordActions: PropTypes.object,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateServer);
+export default connect(null, mapDispatchToProps)(CreateServer);

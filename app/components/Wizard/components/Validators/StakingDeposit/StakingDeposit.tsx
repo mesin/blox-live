@@ -9,9 +9,11 @@ import { INTRO_TOOLTIP_TEXT } from './constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
+import { NETWORKS } from '../constants';
 
 import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
-import { getAccounts, getDepositNeededStatus, getDepositToPublicKey, getDepositToIndex } from '../../../../Accounts/selectors';
+import { getAccounts, getDepositNeededStatus, getDepositToPublicKey,
+         getDepositToIndex, getDepositToNetwork } from '../../../../Accounts/selectors';
 
 import { getData } from '../../../../ProcessRunner/selectors';
 
@@ -70,23 +72,25 @@ const TipImage = styled.img`
 
 const StakingDeposit = (props: Props) => {
   const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
-          isDepositNeeded, depositTo, callSetDepositNeeded, depositToIndex } = props;
+          isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
   useEffect(() => {
-    if (isDepositNeeded && depositTo) {
-      loadDepositData(depositTo, depositToIndex);
-      callSetDepositNeeded(false, depositTo, depositToIndex);
+    if (isDepositNeeded && publicKey) {
+      loadDepositData(publicKey, accountIndex, network);
+      callSetDepositNeeded({isNeeded: false, publicKey, accountIndex, network});
     }
-  }, [isDepositNeeded, depositTo]);
+  }, [isDepositNeeded, publicKey]);
 
   const onMadeDepositButtonClick = async () => {
-    const accountFromApi: Record<string, any> = accountsFromApi.find((account) => account.publicKey === depositTo);
+    const accountFromApi: Record<string, any> = accountsFromApi.find(
+      (account) => (account.publicKey === publicKey && account.network === network)
+    );
     const currentAccount = accountDataFromProcess || accountFromApi;
     if (currentAccount) {
-      await updateAccountStatus(currentAccount.id);
-      await callSetDepositNeeded(false, '', -1);
       await setPage(page + 1);
+      await updateAccountStatus(currentAccount.id);
+      await callSetDepositNeeded({ isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
     }
     else {
       notification.error({message: 'Account not found'});
@@ -95,22 +99,25 @@ const StakingDeposit = (props: Props) => {
 
   const onDepositLaterButtonClick = async () => {
     await clearWizardData();
-    await callClearAccountsData();
     await setFinishedWizard(true);
+    await callClearAccountsData();
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
   return (
     <Wrapper>
-      <Title>TestNet Staking Deposit</Title>
+      <Title>{NETWORKS[network].name} Staking Deposit</Title>
       <Paragraph>
-        To start staking on beacon chain Testnet, you are required to stake 32 GoETH
-        <InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
+        To start staking on beacon chain {NETWORKS[network].name}, you are required to stake <br />
+        32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
         validator deposit contract.
-        <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
-          Need GoETH?
-        </GoEthButton>
+        {network === 'test' && (
+          <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
+            Need GoETH?
+          </GoEthButton>
+        )}
+
       </Paragraph>
 
       {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
@@ -129,14 +136,15 @@ const mapStateToProps = (state: State) => ({
   accountDataFromProcess: getData(state),
   accountsFromApi: getAccounts(state),
   isDepositNeeded: getDepositNeededStatus(state),
-  depositTo: getDepositToPublicKey(state),
-  depositToIndex: getDepositToIndex(state),
+  publicKey: getDepositToPublicKey(state),
+  accountIndex: getDepositToIndex(state),
+  network: getDepositToNetwork(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(wizardActions, dispatch),
   callClearAccountsData: () => dispatch(clearAccountsData()),
-  callSetDepositNeeded: (isNeeded, publicKey, accountIndex) => dispatch(setDepositNeeded(isNeeded, publicKey, accountIndex)),
+  callSetDepositNeeded: (payload: DepositNeededPayload) => dispatch(setDepositNeeded(payload)),
 });
 
 type Props = {
@@ -145,14 +153,22 @@ type Props = {
   step: number;
   setStep: (page: number) => void;
   depositData: string;
-  accountsFromApi: { publicKey: string, id: number }[];
+  accountsFromApi: { publicKey: string, id: number, network: string }[];
   accountDataFromProcess: Record<string, any> | null;
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
-  callSetDepositNeeded: (arg0: boolean, publicKey: string, index: number) => void;
+  callSetDepositNeeded: (payload: DepositNeededPayload) => void;
   isDepositNeeded: boolean;
-  depositTo: string;
-  depositToIndex: number;
+  publicKey: string;
+  accountIndex: number;
+  network: string;
+};
+
+type DepositNeededPayload = {
+  isNeeded: boolean;
+  publicKey: string;
+  accountIndex: number;
+  network: string;
 };
 
 type State = Record<string, any>;

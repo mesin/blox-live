@@ -15,7 +15,7 @@ import { getWizardFinishedStatus, getWalletStatus } from '../../Wizard/selectors
 import * as actionsFromDashboard from '../../Dashboard/actions';
 import * as actionsFromWizard from '../../Wizard/actions';
 import * as actionsFromAccounts from '../../Accounts/actions';
-
+import usePasswordHandler from '../../PasswordHandler/usePasswordHandler';
 import { MODAL_TYPES } from '../../Dashboard/constants';
 
 import imageSrc from 'assets/images/staking-logo.svg';
@@ -85,6 +85,7 @@ const Header = (props: Props) => {
   const { withMenu, profile, logoutUser, isFinishedWizard, walletStatus, location,
           dashboardActions, accountsActions, wizardActions } = props;
 
+  const { checkIfPasswordIsNeeded } = usePasswordHandler();
   const { setModalDisplay, clearModalDisplayData } = dashboardActions;
   const { setAddAnotherAccount } = accountsActions;
   const { setFinishedWizard } = wizardActions;
@@ -104,7 +105,7 @@ const Header = (props: Props) => {
 
   const onAddValidatorClick = () => {
     if (walletStatus === 'active') {
-      setModalDisplay({show: true, type: MODAL_TYPES.PASSWORD, text: '', onSuccess: onAddValidatorPasswordSuccess});
+      checkIfPasswordIsNeeded(onAddValidatorPasswordSuccess);
       return;
     }
     const text = 'Your KeyVault is inactive. Please reactivate your KeyVault before creating a new validator.';

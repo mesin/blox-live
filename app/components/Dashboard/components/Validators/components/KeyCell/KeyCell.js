@@ -15,20 +15,21 @@ const Wrapper = styled.div`
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
 const KeyCell = ({ value }) => {
-  const { publicKey, createdAt, status, accountIndex } = value;
+  const { publicKey, createdAt, status, accountIndex, network } = value;
   return (
     <Wrapper>
       <Left>
         <AddressKey>{truncateText(publicKey, 24, 6)}</AddressKey>
         <AdditionalDataWrapper>
-          <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt} accountIndex={accountIndex} />
+          <AdditionalData publicKey={publicKey} status={status} createdAt={createdAt}
+            accountIndex={accountIndex} network={network} />
         </AdditionalDataWrapper>
       </Left>
       <Right>
         <CopyToClipboard text={publicKey} onCopy={onCopy}>
           <Icon name="copy" color="gray800" fontSize="16px" onClick={() => false} />
         </CopyToClipboard>
-        <TestNet>TestNet</TestNet>
+        {network === 'test' && <TestNet>TestNet</TestNet>}
       </Right>
     </Wrapper>
   );

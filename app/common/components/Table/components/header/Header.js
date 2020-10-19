@@ -48,7 +48,6 @@ Header.propTypes = {
   selectedSorting: PropTypes.string,
   sortType: PropTypes.string,
   onSortClick: PropTypes.func,
-  compareFunction: PropTypes.func,
 };
 
 export default Header;

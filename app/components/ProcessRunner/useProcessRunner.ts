@@ -6,34 +6,17 @@ import saga from './saga';
 import { useInjectSaga } from 'utils/injectSaga';
 import { precentageCalculator } from 'utils/service';
 
-type Steps = {
-  overallSteps: number;
-  currentStep: number;
-};
-
-type Props = {
-  processMessage: string;
-  isLoading: boolean;
-  isDone: boolean;
-  isServerActive: boolean;
-  processData: Record<string, any>;
-  error: string;
-};
-
-type StartProcess = (name: string, defaultMessage: string, credentials: Record<string, any> | null) => void;
-type ClearProcess = () => void;
-
 const {
-  getMessage, getIsLoading, getIsDone, getIsServerActive,
+  getName, getMessage, getIsLoading, getIsDone, getIsServerActive,
   getOverallSteps, getCurrentStep, getError, getData
 } = selectors;
 
-const dispatch = useDispatch();
-
 const useProcessRunner = () => {
   useInjectSaga({key: 'processRunner', saga, mode: ''});
+  const dispatch = useDispatch();
 
   const props: Props = {
+    processName: useSelector(getName, shallowEqual),
     processMessage: useSelector(getMessage, shallowEqual),
     isLoading: useSelector(getIsLoading, shallowEqual),
     isDone: useSelector(getIsDone, shallowEqual),
@@ -56,5 +39,23 @@ const useProcessRunner = () => {
 
   return { ...props, loaderPrecentage, startProcess, clearProcessState };
 };
+
+type Steps = {
+  overallSteps: number;
+  currentStep: number;
+};
+
+type Props = {
+  processName: string;
+  processMessage: string;
+  isLoading: boolean;
+  isDone: boolean;
+  isServerActive: boolean;
+  processData: Record<string, any>;
+  error: string;
+};
+
+type StartProcess = (name: string, defaultMessage: string, credentials: Record<string, any> | null) => void;
+type ClearProcess = () => void;
 
 export default useProcessRunner;

@@ -60,7 +60,7 @@ const ModalTemplate = ({onClose, image, children}: Props) => {
 type Props = {
   onClose: () => void;
   image: string;
-  children: () => void;
+  children: React.ReactNode;
 };
 
 export default ModalTemplate;
