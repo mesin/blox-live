@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WelcomeModal, RestartingModal, SuccessModal,
-         ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals/Modals';
+         ReinstallingModal, FailureModal, ThankYouModal } from '../KeyVaultModals';
 
 import inactiveImage from '../Wizard/assets/img-key-vault-inactive.svg';
 

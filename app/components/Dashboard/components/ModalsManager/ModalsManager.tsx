@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '../../..';
-import { PasswordModal } from '../../../KeyVaultModals/Modals';
+import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal, AccountRecovery } from '../../..';
+import { PasswordModal } from '../../../KeyVaultModals';
 import ActiveValidatorModal from '../../../ActiveValidatorModal';
 import * as actionsFromDashboard from '../../actions';
 
@@ -32,6 +32,9 @@ const ModalsManager = (props: Props) => {
         return <DepositInfoModal onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
         return activeValidators.length > 0 && <ActiveValidatorModal onClose={() => clearModalDisplayData()} activeValidators={activeValidators} />;
+      case MODAL_TYPES.DEVICE_SWITCH:
+      case MODAL_TYPES.FORGOT_PASSWORD:
+        return <AccountRecovery onClose={() => clearModalDisplayData()} type={modalType} />;
       default:
         return null;
     }

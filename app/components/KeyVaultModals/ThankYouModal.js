@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'common/components';
-import ModalTemplate from '../ModalTemplate';
-import { Title, Description } from '..';
+import { Button, ModalTemplate } from 'common/components';
+import { Title, Description } from 'common/components/ModalTemplate/components';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
+import image from '../Wizard/assets/img-key-vault-inactive.svg';
 
 const ThankYouModal = ({onClose}) => {
   return (

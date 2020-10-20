@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { ProcessLoader } from 'common/components';
-import { Title, Description, SmallText, Wrapper } from '..';
-import ModalTemplate from '../ModalTemplate';
+import { ProcessLoader, ModalTemplate } from 'common/components';
+import { Title, Description, SmallText, Wrapper } from 'common/components/ModalTemplate/components';
 
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 

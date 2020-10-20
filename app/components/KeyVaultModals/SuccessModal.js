@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { SuccessIcon, Button } from 'common/components';
-import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Wrapper } from '..';
-import { loadWallet } from '../../Wizard/actions';
+import { SuccessIcon, Button, ModalTemplate } from 'common/components';
+import { Title, Description, Wrapper } from 'common/components/ModalTemplate/components';
+import { loadWallet } from '../Wizard/actions';
 
-import image from '../../Wizard/assets/img-key-vault.svg';
+import image from '../Wizard/assets/img-key-vault.svg';
 
 const SuccessModal = ({onClose, callLoadWallet, title, text}) => {
   const loadWalletAndClose = () => {
