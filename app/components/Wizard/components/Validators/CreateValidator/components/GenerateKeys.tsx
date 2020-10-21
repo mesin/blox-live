@@ -25,7 +25,6 @@ const LoaderText = styled.span`
 
 const GenerateKeys = (props: Props) => {
   const { isLoading, onClick, error, network } = props;
-  console.log('network', network);
   return (
     <Wrapper>
       <Title>Create {NETWORKS[network].name} Validator</Title>
