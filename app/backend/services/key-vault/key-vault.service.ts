@@ -96,7 +96,8 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Running docker container...'
+    name: 'Running docker container...',
+    requiredConfig: ['publicIp']
   })
   async runDockerContainer(): Promise<void> {
     const containerId = await this.getContainerId();
@@ -118,8 +119,7 @@ export default class KeyVaultService {
       '-v $(pwd)/policies:/policies ' +
       '-p 8200:8200 ' +
       '-e UNSEAL=true ' +
-      "-e VAULT_ADDR='http://127.0.0.1:8200' " +
-      "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
+      `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
       "-e VAULT_CLIENT_TIMEOUT='30s' ";
 
     if (networksList.test) {

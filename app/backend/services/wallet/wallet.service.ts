@@ -80,7 +80,7 @@ export default class WalletService {
   })
   async syncVaultWithBlox(): Promise<void> {
     const payload = {
-      url: `http://${this.store.get('publicIp')}:8200`,
+      url: `https://${this.store.get('publicIp')}`,
       accessToken: this.store.get('vaultRootToken'),
       version: this.store.get('keyVaultVersion')
     };
@@ -105,7 +105,7 @@ export default class WalletService {
   })
   async reSyncVaultWithBlox(): Promise<void> {
     const payload = {
-      url: `http://${this.store.get('publicIp')}:8200`,
+      url: `https://${this.store.get('publicIp')}`,
       accessToken: this.store.get('vaultRootToken'),
       version: this.store.get('keyVaultVersion')
     };
