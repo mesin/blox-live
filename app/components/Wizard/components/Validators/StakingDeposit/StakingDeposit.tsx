@@ -5,11 +5,10 @@ import styled from 'styled-components';
 import { notification } from 'antd';
 import { shell } from 'electron';
 import { InfoWithTooltip } from 'common/components';
-import { INTRO_TOOLTIP_TEXT } from './constants';
+import { INTRO_TOOLTIP_TEXT, NETWORKS } from '../constants';
 import { Title, Paragraph, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
-import { NETWORKS } from '../constants';
 
 import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
 import { getAccounts, getDepositNeededStatus, getDepositToPublicKey,
@@ -120,7 +119,7 @@ const StakingDeposit = (props: Props) => {
 
       </Paragraph>
 
-      {depositData && <DepositData depositData={depositData} onCopy={onCopy} />}
+      {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
       <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
       <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
       <ButtonsWrapper>

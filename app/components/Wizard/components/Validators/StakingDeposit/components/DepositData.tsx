@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import { generateDepositDataInfo } from '../../service';
+
 import { InfoWithTooltip, Tooltip } from 'common/components';
 import { CopyToClipboardIcon } from '../../../common';
-import { DEPOSIT_DATA } from '../constants';
 import { truncateText } from '../../../../../common/service';
 
 const Wrapper = styled.div`
@@ -36,13 +38,14 @@ const ValueText = styled.div`
 `;
 
 const DepositData = (props: Props) => {
-  const { depositData, onCopy } = props;
+  const { depositData, onCopy, network } = props;
+  const depositDataInfo = generateDepositDataInfo(network, depositData);
   return (
     <Wrapper>
-      {DEPOSIT_DATA.map((row, index) => {
+      {depositDataInfo.map((row, index) => {
         const { label, title, moreInfo, value } = row;
-        const isTxData = label === DEPOSIT_DATA[1].label;
-        const isAmount = label === DEPOSIT_DATA[2].label;
+        const isTxData = label === depositDataInfo[1].label;
+        const isAmount = label === depositDataInfo[2].label;
         const valueText = isTxData ? depositData : value;
         return (
           <Row key={index}>
@@ -68,6 +71,7 @@ const DepositData = (props: Props) => {
 type Props = {
   depositData: string;
   onCopy: () => void;
+  network: string;
 };
 
 export default DepositData;
