@@ -1,9 +1,9 @@
-import { Migration } from '../migrate';
+// import { Migration } from '../backend/migrate';
 
-export const up: Migration = async ({ name }) => {
+export const up = async ({ name }) => {
   console.log('up is done', name);
 };
 
-export const down: Migration = async ({ name }) => {
+export const down = async ({ name }) => {
   console.log('down is done', name);
 };

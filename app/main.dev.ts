@@ -14,7 +14,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import { Migrate } from './migrate';
+// import { Migrate } from './backend/migrate';
 
 export default class AppUpdater {
   constructor() {
@@ -47,9 +47,9 @@ const installExtensions = async () => {
 };
 
 const createWindow = async (downloadsDir) => {
-  console.log('start test migrate');
-  await Migrate.run();
-  console.log('end test migration');
+  // console.log('start test migrate');
+  // await Migrate.run();
+  // console.log('end test migration');
 
   const width = 1366;
   const height = 790;
