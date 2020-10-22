@@ -13,7 +13,7 @@ class KeyVaultApi extends Http {
         throw new Error('Configuration settings network not found');
       }
     }
-    this.instance.defaults.baseURL = `http://${this.store.get('publicIp')}:8200/v1/${isNetworkRequired ? `ethereum/${network}` : ''}`;
+    this.instance.defaults.baseURL = `https://${this.store.get('publicIp')}:8200/v1/${isNetworkRequired ? `ethereum/${network}` : ''}`;
     this.instance.defaults.headers.common['Authorization'] = `Bearer ${this.store.get('vaultRootToken')}`;
   };
 }

@@ -73,6 +73,13 @@ const createWindow = async (downloadsDir) => {
     //         preload: path.join(__dirname, 'dist/renderer.prod.js'),
     //       },
   });
+  /*
+  mainWindow.webContents.session.setCertificateVerifyProc((request, callback) => {
+    const { hostname } = request;
+    console.log('------->', hostname);
+    callback(0);
+  });
+  */
 
   mainWindow.setMinimumSize(width, height);
   // mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
@@ -109,7 +116,6 @@ const createWindow = async (downloadsDir) => {
 /**
  * Add event listeners...
  */
-
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
@@ -119,6 +125,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('ready', () => {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
   createWindow(app.getPath('downloads'));
 });
 

@@ -20,6 +20,6 @@ export default class KeyVaultSsh {
   };
 
   buildCurlCommand = (data: any): string => {
-    return `curl -s -o /dev/null -w "%{http_code}" --header "Content-Type: application/json" --header "Authorization: Bearer ${data.authToken}" --request ${data.method} ${data.data ? `--data '${JSON.stringify(data.data)}'` : ''} ${data.route}`;
+    return `curl -s -o /dev/null -w "%{http_code}" --insecure --header "Content-Type: application/json" --header "Authorization: Bearer ${data.authToken}" --request ${data.method} ${data.data ? `--data '${JSON.stringify(data.data)}'` : ''} ${data.route}`;
   };
 }

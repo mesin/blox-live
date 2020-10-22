@@ -1,4 +1,5 @@
 import Store from '../store-manager/store';
+import https from 'https';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { Catch } from '../../decorators';
@@ -11,7 +12,11 @@ export default class Http {
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
-    this.instance = axios.create();
+    this.instance = axios.create({
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })
+    });
     axiosRetry(this.instance, {
       retries: +config.env.HTTP_RETRIES,
       retryDelay: (retryCount) => {
