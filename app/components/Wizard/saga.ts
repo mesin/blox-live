@@ -26,8 +26,8 @@ function* onLoadWalletFailure(error) {
   notification.error({ message: 'Error', description: error.message});
 }
 
-function* onLoadDepositDataSuccess(depositData, network) {
-  yield put(actions.loadDepositDataSuccess({depositData, network}));
+function* onLoadDepositDataSuccess(depositData) {
+  yield put(actions.loadDepositDataSuccess(depositData));
 }
 
 function* onLoadDepositDataFailure(error) {
@@ -49,7 +49,7 @@ function* loadDepositData(action) {
   const { publicKey, accountIndex, network } = payload;
   try {
     const response = yield call([accountService, 'getDepositData'], publicKey, accountIndex, network);
-    yield call(onLoadDepositDataSuccess, response, network);
+    yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
     yield error && call(onLoadDepositDataFailure, error);
   }
