@@ -103,31 +103,33 @@ const StakingDeposit = (props: Props) => {
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
+  if (network) {
+    return (
+      <Wrapper>
+        <Title>{NETWORKS[network].name} Staking Deposit</Title>
+        <Paragraph>
+          To start staking on beacon chain {NETWORKS[network].name}, you are required to stake <br />
+          32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
+          validator deposit contract.
+          {network === 'test' && (
+            <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
+              Need GoETH?
+            </GoEthButton>
+          )}
 
-  return (
-    <Wrapper>
-      <Title>{NETWORKS[network].name} Staking Deposit</Title>
-      <Paragraph>
-        To start staking on beacon chain {NETWORKS[network].name}, you are required to stake <br />
-        32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
-        validator deposit contract.
-        {network === 'test' && (
-          <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
-            Need GoETH?
-          </GoEthButton>
-        )}
+        </Paragraph>
 
-      </Paragraph>
-
-      {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
-      <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
-      <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
-      <ButtonsWrapper>
-        <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
-        <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
-      </ButtonsWrapper>
-    </Wrapper>
-  );
+        {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
+        <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
+        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
+        <ButtonsWrapper>
+          <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
+          <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
+        </ButtonsWrapper>
+      </Wrapper>
+    );
+  }
+  return null;
 };
 
 const mapStateToProps = (state: State) => ({

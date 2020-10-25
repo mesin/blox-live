@@ -123,6 +123,7 @@ export default class AccountService {
 
     const depositContractABI = require('./deposit_abi.json');
     const depositTo = network === config.env.TEST_NETWORK ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x99F0Ec06548b086E46Cb0019C78D0b9b9F36cD53';
+    const coin = network === config.env.TEST_NETWORK ? 'GoETH' : 'ETH';
 
     const web3 = new Web3(
       'https://goerli.infura.io/v3/d03b92aa81864faeb158166231b7f895'
@@ -136,8 +137,14 @@ export default class AccountService {
     );
 
     const data = depositMethod.encodeABI();
-    console.log(data);
-    return data;
+    return {
+      txHash: data,
+      network,
+      accountIndex: index,
+      publicKey,
+      depositTo,
+      coin
+    };
   }
 
   async deleteLastIndexedAccount(): Promise<void> {

@@ -10,7 +10,7 @@ import { openExternalLink } from '../common/service';
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
 import { generateDepositDataInfo } from '../Wizard/components/Validators/service';
 import * as wizardActions from '../Wizard/actions';
-import { getDepositData, getNetwork } from '../Wizard/selectors';
+import { getDepositData } from '../Wizard/selectors';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -58,10 +58,10 @@ const CloseButton = styled.div`
 
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
-const DepositInfoModal = ({onClose, depositData, network, actions}: Props) => {
+const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
   const { clearDepositData } = actions;
 
-  const depositDataInfo = generateDepositDataInfo(network, depositData);
+  const depositDataInfo = depositData && generateDepositDataInfo(depositData);
 
   const onCloseClick = () => {
     clearDepositData();
@@ -72,10 +72,11 @@ const DepositInfoModal = ({onClose, depositData, network, actions}: Props) => {
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
         <Title>Deposit Info</Title>
-        {depositData && depositDataInfo.map((row, index) => {
+        {depositData && depositDataInfo && depositDataInfo.map((row, index) => {
           const { label, title, moreInfo, value } = row;
           const isTxData = label === depositDataInfo[1].label;
-          const valueText = isTxData ? depositData : value;
+          const isAmount = label === depositDataInfo[2].label;
+          const valueText = isTxData ? depositDataInfo[1].value : value;
           return (
             <Row key={index}>
               <KeyText>
@@ -89,7 +90,7 @@ const DepositInfoModal = ({onClose, depositData, network, actions}: Props) => {
               ) : (
                 <ValueText>{valueText}</ValueText>
               )}
-              <CopyToClipboardIcon text={valueText} onCopy={onCopy} />
+              {!isAmount && <CopyToClipboardIcon text={valueText} onCopy={onCopy} />}
             </Row>
           );
         })}
@@ -113,7 +114,6 @@ type Props = {
 
 const mapStateToProps = (state) => ({
   depositData: getDepositData(state),
-  network: getNetwork(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

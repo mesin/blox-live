@@ -38,15 +38,15 @@ const ValueText = styled.div`
 `;
 
 const DepositData = (props: Props) => {
-  const { depositData, onCopy, network } = props;
-  const depositDataInfo = generateDepositDataInfo(network, depositData);
+  const { depositData, onCopy } = props;
+  const depositDataInfo = depositData && generateDepositDataInfo(depositData);
   return (
     <Wrapper>
       {depositDataInfo.map((row, index) => {
         const { label, title, moreInfo, value } = row;
         const isTxData = label === depositDataInfo[1].label;
         const isAmount = label === depositDataInfo[2].label;
-        const valueText = isTxData ? depositData : value;
+        const valueText = isTxData ? depositDataInfo[1].value : value;
         return (
           <Row key={index}>
             <KeyText>
