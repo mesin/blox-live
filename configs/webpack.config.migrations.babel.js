@@ -7,7 +7,7 @@ import glob from 'glob';
 import merge from 'webpack-merge';
 import baseConfig from './webpack.config.base';
 
-const migrationFiles = glob.sync('./app/migrations/*');
+const migrationFiles = glob.sync('./app/backend/migrations/*');
 const migrationEntries = migrationFiles.reduce((acc, migrationFile) => {
     const entryName = migrationFile.substring(
       migrationFile.lastIndexOf('/') + 1,
