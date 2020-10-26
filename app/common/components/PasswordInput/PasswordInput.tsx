@@ -76,15 +76,16 @@ const PasswordInput = (props: Props) => {
 };
 
 type Props = {
+  autoFocus?: any
   name: string;
   title: string;
-  width: string;
+  width?: string;
   onChange: (value: string) => void;
-  type: string;
+  type?: string;
   value: string;
   isDisabled: boolean;
-  isValid: boolean;
-  error: string;
+  isValid?: boolean;
+  error?: string;
 };
 
 export default PasswordInput;

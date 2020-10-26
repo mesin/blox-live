@@ -16,14 +16,14 @@ const InnerWrapper = styled.div`
   display:flex;
 `;
 
-const Left = styled.div`
+const Left = styled.div<{ padding: string, justifyContent: string }>`
   width: 500px;
   height:100%;
-  padding:90px 32px 90px 64px;
+  padding:${({padding}) => padding};
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content:space-between;
+  justify-content:${({justifyContent}) => justifyContent};
   text-align: left;
 `;
 
@@ -42,12 +42,14 @@ const Image = styled.img`
   width:200px;
 `;
 
-const ModalTemplate = ({onClose, image, children}: Props) => {
+const ModalTemplate = ({width, height, padding, justifyContent, onClose, image, children}: Props) => {
   return (
     <Wrapper>
-      <CustomModal width={'800px'} height={'500px'} onClose={onClose}>
+      <CustomModal width={width} height={height} onClose={onClose}>
         <InnerWrapper>
-          <Left>{children}</Left>
+          <Left padding={padding} justifyContent={justifyContent}>
+            {children}
+          </Left>
           <Right>
             <Image src={image} />
           </Right>
@@ -57,7 +59,18 @@ const ModalTemplate = ({onClose, image, children}: Props) => {
   );
 };
 
+ModalTemplate.defaultProps = {
+  width: '800px',
+  height: '500px',
+  padding: '90px 32px 90px 64px',
+  justifyContent: 'space-between',
+};
+
 type Props = {
+  width: string;
+  height: string;
+  padding: string;
+  justifyContent: string;
   onClose?: () => void;
   image: string;
   children: React.ReactNode;

@@ -5,8 +5,8 @@ const Wrapper = styled.div`
   position:relative;
 `;
 
-const Element = styled.textarea<{ error: string }>`
-  width: 484px;
+const Element = styled.textarea<{ width: string, error: string }>`
+  width: ${({width}) => width || '484px'};
   height: 90px;
   padding:8px 10px;
   border-radius: 4px;
@@ -32,10 +32,10 @@ const ErrorMessage = styled.span`
   left:0px;
 `;
 
-const Textarea = ({duplicatedMnemonic, onChange, error, ...rest}: Props) => {
+const Textarea = ({width, duplicatedMnemonic, onChange, error, ...rest}: Props) => {
   return (
     <Wrapper>
-      <Element value={duplicatedMnemonic} onChange={(e) => onChange(e.target.value)}
+      <Element value={duplicatedMnemonic} onChange={(e) => onChange(e.target.value)} width={width}
         placeholder={'Separate each word with a space'} error={error} {...rest} />
       {error && (<ErrorMessage>{error}</ErrorMessage>)}
     </Wrapper>
@@ -43,6 +43,7 @@ const Textarea = ({duplicatedMnemonic, onChange, error, ...rest}: Props) => {
 };
 
 type Props = {
+  width: string;
   duplicatedMnemonic: string;
   onChange: (value: string) => void;
   error: string;
