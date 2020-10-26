@@ -18,7 +18,7 @@ export const NETWORKS = {
     title: 'Stake on MainNet',
     image: mainNetImage,
     label: config.env.ZINKEN_NETWORK,
-    isDisabled: store.get('env') === 'production' || process.env.NODE_ENV === 'production',
+    isDisabled: store.get('env') !== 'stage',
   },
 };
 
