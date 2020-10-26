@@ -300,10 +300,17 @@ const Test = () => {
       <div>
         <button onClick={async () => {
           console.log('start test migrate');
-          await Migrate.run();
+          await Migrate.runMain();
           console.log('end test migration');
         }}>
-          Migrations
+          Migrations Main
+        </button>
+        <button onClick={async () => {
+          console.log('start test migrate');
+          await Migrate.runCrypted();
+          console.log('end test migration');
+        }}>
+          Migrations Crypted
         </button>
         <button onClick={async () => {
           await reportCrash();

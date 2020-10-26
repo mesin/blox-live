@@ -6,22 +6,34 @@ export class Migrate {
   private static umzug: any;
   private constructor() {}
 
-  static async run() {
+  static async runMain() {
     this.umzug = new Umzug({
       migrations: {
-        glob: `${cwd.getAppPath()}/dist/migrations/*.js`,
-        resolve: ({ path, name, context }) => {
-          console.log(name, path);
-          console.log(context);
+        glob: `${cwd.getAppPath()}/dist/migrations/main_*.js`,
+        resolve: ({ name }) => {
           const script = require(`./migrations/${name}`);
-          console.log(script);
           return script;
         },
       },
-      storage: new JSONStorage({ path: `${cwd.getPath('userData')}/migrations-log.json` }),
+      storage: new JSONStorage({ path: `${cwd.getPath('userData')}/migrations-main-log.json` }),
       logger: console,
     });
     console.log(await this.umzug.pending());
+    await this.umzug.up();
+  }
+
+  static async runCrypted() {
+    this.umzug = new Umzug({
+      migrations: {
+        glob: `${cwd.getAppPath()}/dist/migrations/crypt_*.js`,
+        resolve: ({ name }) => {
+          const script = require(`./migrations/${name}`);
+          return script;
+        },
+      },
+      storage: new JSONStorage({ path: `${cwd.getPath('userData')}/migrations-crypted-log.json` }),
+      logger: console,
+    });
     await this.umzug.up();
   }
 }

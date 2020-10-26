@@ -106,7 +106,9 @@ export default class Store extends BaseStore {
       }
       this.storage.set(key, this.encrypt(this.cryptoKey, value));
     } else {
-      this.storage.set(key, value);
+      this.storage
+        ? this.storage.set(key, value)
+        : this.baseStore.set(key, value);
     }
   };
 

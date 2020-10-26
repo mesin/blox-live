@@ -18,12 +18,13 @@ const migrationEntries = migrationFiles.reduce((acc, migrationFile) => {
 }, {});
 
 export default merge.smart(baseConfig, {
+  target: 'node',
   entry: {
     ...migrationEntries,
   },
   output: {
     path: path.join(__dirname, '..', 'app/dist'),
-    libraryTarget: 'commonjs',
+    libraryTarget: 'commonjs2',
     filename: chunkData => {
       if (Object.keys(migrationEntries).includes(chunkData.chunk.name)) {
         return `migrations/${chunkData.chunk.name}.js`;
