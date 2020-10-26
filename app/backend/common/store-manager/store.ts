@@ -4,6 +4,7 @@ import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
 import getPlatform from '../../../get-platform';
+import { Migrate } from '../../migrate';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -163,18 +164,20 @@ export default class Store extends BaseStore {
   }
 
   @Catch()
-  setCryptoKey(cryptoKey: string) {
+  async setCryptoKey(cryptoKey: string) {
     // clean timer which was run before, and run new one
     this.unsetCryptoKey();
     this.cryptoKey = this.createCryptoKey(cryptoKey);
     this.logger.error('setCryptoKey');
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
+    // run migrations if exists
+    Migrate.runCrypted();
   }
 
   @Catch()
-  setNewPassword(cryptoKey: string) {
+  async setNewPassword(cryptoKey: string) {
     if (!this.cryptoKey) {
-      this.setCryptoKey('temp');
+      await this.setCryptoKey('temp');
     }
     const oldDecryptedKeys = {};
     this.encryptedKeys.forEach((encryptedKey) => {
@@ -184,7 +187,7 @@ export default class Store extends BaseStore {
       }
     });
 
-    this.setCryptoKey(cryptoKey);
+    await this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(oldDecryptedKeys)) {
       this.set(key, value);

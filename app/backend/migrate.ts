@@ -18,7 +18,6 @@ export class Migrate {
       storage: new JSONStorage({ path: `${cwd.getPath('userData')}/migrations-main-log.json` }),
       logger: console,
     });
-    console.log(await this.umzug.pending());
     await this.umzug.up();
   }
 
