@@ -19,6 +19,7 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_LOAD_MNEMONIC:
     case actionTypes.KEYVAULT_SAVE_MNEMONIC:
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION:
+    case actionTypes.KEYVAULT_VALIDATE_PASSPHRASE:
       draft.isLoading = true;
       break;
     case actionTypes.KEYVAULT_LOAD_MNEMONIC_SUCCESS:
@@ -35,6 +36,7 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_LOAD_MNEMONIC_FAILURE:
     case actionTypes.KEYVAULT_SAVE_MNEMONIC_FAILURE:
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_FAILURE:
+    case actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_FAILURE:
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
       break;

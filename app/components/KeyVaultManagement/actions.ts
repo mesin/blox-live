@@ -47,4 +47,18 @@ export const keyvaultLoadLatestVersionFailure = (error: Record<string, any>) => 
   payload: error,
 });
 
+export const keyvaultValidatePassphrase = (passphrase: string) => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE,
+  payload: passphrase,
+});
+
+export const keyvaultValidatePassphraseSuccess = () => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_SUCCESS,
+});
+
+export const keyvaultValidatePassphraseFailure = (error: Record<string, any>) => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_FAILURE,
+  payload: error,
+});
+
 export const keyvaultClearData = () => ({ type: actionTypes.KEYVAULT_CLEAR_DATA });

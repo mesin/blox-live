@@ -11,7 +11,7 @@ const keyManagerService = new KeyManagerService();
 const versionService = new VersionService();
 const store: Store = Store.getStore();
 
-function* startLoadingMnemonic() {
+function* loadMnemonicSaga() {
   try {
     const mnemonicPhrase = yield call([keyManagerService, 'mnemonicGenerate']);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
@@ -21,7 +21,7 @@ function* startLoadingMnemonic() {
   }
 }
 
-function* startSavingMnemonic(action) {
+function* saveMnemonicSaga(action) {
   try {
     const { payload: { mnemonic } } = action;
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
@@ -36,7 +36,7 @@ function* startSavingMnemonic(action) {
   }
 }
 
-function* startLoadingLatestVersion() {
+function* loadLatestVersionSaga() {
   try {
     const latestVersion = yield call([versionService, 'getLatestKeyVaultVersion']);
     yield put(actions.keyvaultLoadLatestVersionSuccess(latestVersion));
@@ -46,8 +46,20 @@ function* startLoadingLatestVersion() {
   }
 }
 
+function* validatePassphraseSaga() {
+  try {
+    yield setTimeout(() => null, 1000); // TODO: remove this line and call the relevant service
+    yield put(actions.keyvaultValidatePassphraseSuccess());
+  }
+  catch (error) {
+    yield put(actions.keyvaultValidatePassphraseFailure(error));
+    notification.error({ message: 'Error', description: error.message });
+  }
+};
+
 export default function* keyVaultManagementSaga() {
-  yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
-  yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
-  yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, startLoadingLatestVersion);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, loadMnemonicSaga);
+  yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, saveMnemonicSaga);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, loadLatestVersionSaga);
+  yield takeLatest(actionTypes.KEYVAULT_VALIDATE_PASSPHRASE, validatePassphraseSaga);
 }
