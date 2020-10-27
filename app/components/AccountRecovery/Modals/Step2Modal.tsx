@@ -15,8 +15,10 @@ const StepIndicator = styled.div`
 
 const PasswordInputsWrapper = styled.div`
   width: 400px;
-  margin-top:21px;
+  height: 150px;
+  margin:21px 0px;
   display: flex;
+  flex-direction:column;
   justify-content:space-between;
   font-size: 16px;
   font-weight: 500;

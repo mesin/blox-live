@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import * as Modals from './Modals';
-import { FailureModal } from '../KeyVaultModals';
+import { FailureModal, SuccessModal } from '../KeyVaultModals';
 
-const { WelcomeModal, Step1Modal, Step2Modal, RecoveringModal, SuccessModal } = Modals;
+const { WelcomeModal, Step1Modal, Step2Modal, RecoveringModal } = Modals;
+
+const successText = 'You\'re all set! This is now your primary device and you have full access to your Blox staking account.';
 
 const AccountRecovery = ({onClose, type}: Props) => {
   const [step, setStep] = useState(0);
@@ -18,9 +20,9 @@ const AccountRecovery = ({onClose, type}: Props) => {
     case 3:
       return <RecoveringModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
     case 4:
-      return <SuccessModal />;
+      return <SuccessModal title={'Account Recovered'} text={successText} onClose={onClose} />;
     case 5:
-      return <FailureModal />;
+      return <FailureModal title={'Failed To Recover'} onClose={onClose} />;
     default:
       return <WelcomeModal onClose={onClose} onClick={move1StepForward} type={type} />;
   }
