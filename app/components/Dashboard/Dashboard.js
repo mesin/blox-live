@@ -25,7 +25,6 @@ const Dashboard = (props) => {
       <Wallet isActive={walletStatus === 'active'} isNeedUpdate={bloxLiveNeedsUpdate} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
       <EventLogs events={normalizedEventLogs} />
-      <ModalsManager />
       <DiscordButton />
     </Wrapper>
   );

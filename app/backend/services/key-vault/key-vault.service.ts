@@ -8,6 +8,12 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
+function sleep(msec) {
+  return new Promise(resolve => {
+    setTimeout(resolve, msec);
+  });
+}
+
 @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly store: Store;
@@ -137,27 +143,11 @@ export default class KeyVaultService {
     );
 
     this.store.set('keyVaultVersion', keyVaultVersion);
+
+    await sleep(12000);
+
     if (error) {
       throw new Error('Failed to run Key Vault docker container');
-    }
-  }
-
-  // todo: with unseal true we can remove this function
-  @Step({
-    name: 'Running KeyVault...'
-  })
-  async runScripts(): Promise<void> {
-    const containerId = await this.getContainerId();
-    if (!containerId) {
-      throw new Error('Key Vault docker container not found');
-    }
-    const ssh = await this.keyVaultSsh.getConnection();
-    const { stderr } = await ssh.execCommand(
-      `docker exec -t ${containerId} sh -c "/bin/sh /vault/config/vault-init.sh; /bin/sh /vault/config/vault-unseal.sh; /bin/sh /vault/config/vault-plugin.sh"`,
-      {}
-    );
-    if (stderr) {
-      throw new Error(`Key Vault entrypoint scripts are failed: ${stderr}`);
     }
   }
 

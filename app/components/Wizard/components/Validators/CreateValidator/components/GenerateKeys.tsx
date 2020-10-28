@@ -25,35 +25,37 @@ const LoaderText = styled.span`
 
 const GenerateKeys = (props: Props) => {
   const { isLoading, onClick, error, network } = props;
-  console.log('network', network);
-  return (
-    <Wrapper>
-      <Title>Create {NETWORKS[network].name} Validator</Title>
-      <Paragraph>
-        Now we must generate your secure validator keys to begin creating your{' '}
-        <br />
-        {NETWORKS[network].name} validator. These keys will be generated securely using KeyVault.{' '}
-        <br />
-        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-4')}>What is a validator key?</Link>
-      </Paragraph>
-      <ButtonWrapper>
-        <BigButton isDisabled={isLoading} onClick={onClick}>
-          Generate Validator Keys
-        </BigButton>
-      </ButtonWrapper>
-      {isLoading && (
-        <LoaderWrapper>
-          <Spinner width="17px" />
-          <LoaderText>Generating Validator Keys...</LoaderText>
-        </LoaderWrapper>
-      )}
-      {error && (
-        <ErrorMessage>
-          {error}, please try again.
-        </ErrorMessage>
-      )}
-    </Wrapper>
-  );
+  if (network) {
+    return (
+      <Wrapper>
+        <Title>Create {NETWORKS[network].name} Validator</Title>
+        <Paragraph>
+          Now we must generate your secure validator keys to begin creating your{' '}
+          <br />
+          {NETWORKS[network].name} validator. These keys will be generated securely using KeyVault.{' '}
+          <br />
+          <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-4')}>What is a validator key?</Link>
+        </Paragraph>
+        <ButtonWrapper>
+          <BigButton isDisabled={isLoading} onClick={onClick}>
+            Generate Validator Keys
+          </BigButton>
+        </ButtonWrapper>
+        {isLoading && (
+          <LoaderWrapper>
+            <Spinner width="17px" />
+            <LoaderText>Generating Validator Keys...</LoaderText>
+          </LoaderWrapper>
+        )}
+        {error && (
+          <ErrorMessage>
+            {error}, please try again.
+          </ErrorMessage>
+        )}
+      </Wrapper>
+    );
+  }
+  return null;
 };
 
 type Props = {

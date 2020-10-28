@@ -37,14 +37,12 @@ const Validators = (props: Props) => (
     <SubTitle>How would you like to start?</SubTitle>
     <ButtonsWrapper>
       <CustomButton
-        sticker={NETWORKS.test.sticker}
         title={NETWORKS.test.title}
         image={NETWORKS.test.image}
         isDisabled={NETWORKS.test.isDisabled}
         onClick={() => !NETWORKS.test.isDisabled && onClick({ ...props }, NETWORKS.test.label)}
       />
       <CustomButton
-        sticker={NETWORKS.zinken.sticker}
         title={NETWORKS.zinken.title}
         image={NETWORKS.zinken.image}
         isDisabled={NETWORKS.zinken.isDisabled}
