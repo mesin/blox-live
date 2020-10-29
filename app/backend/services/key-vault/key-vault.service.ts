@@ -11,7 +11,7 @@ import config from '../../common/config';
 const STABLE_TAG = 'v0.1.11';
 
 function numVal(str) {
-  return str.replace(/\D/g, '');
+  return +str.replace(/\D/g, '');
 }
 
 function sleep(msec) {
