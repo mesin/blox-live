@@ -174,9 +174,11 @@ export default class KeyVaultService {
     const keyVaultStorage = this.store.get('keyVaultStorage');
 
     if (keyVaultStorage) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
           this.store.set('network', network);
+          // eslint-disable-next-line no-await-in-loop
           await this.updateVaultStorage();
         }
       }
@@ -195,8 +197,10 @@ export default class KeyVaultService {
       return;
     }
     if (keyVaultStorage) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
+          // eslint-disable-next-line no-await-in-loop
           const slashingData = await this.getSlashingStorage(network);
           if (Object.keys(slashingData.data).length) {
             this.store.set(`slashingData.${network}`, slashingData.data);
@@ -219,8 +223,10 @@ export default class KeyVaultService {
     }
 
     if (slashingData) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(slashingData)) {
         if (storage) {
+          // eslint-disable-next-line no-await-in-loop
           await this.updateSlashingStorage(storage, network);
         }
       }
