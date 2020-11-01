@@ -5,6 +5,7 @@ import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
 import Store from 'backend/common/store-manager/store';
 import BloxApi from 'backend/common/communication-manager/blox-api';
+import { METHOD } from 'backend/common/communication-manager/constants';
 import AuthApi from 'backend/common/communication-manager/auth-api';
 import config from 'backend/common/config';
 
@@ -29,10 +30,10 @@ export default class Auth {
 
   loginWithSocialApp = async (name: string) => {
     return new Promise((resolve, reject) => {
-      const onSuccess = (response: Auth0Response) => {
+      const onSuccess = async (response: Auth0Response) => {
         if (response.status === 200) {
           const userProfile: Profile = jwtDecode(response.data.id_token);
-          this.setSession(response.data, userProfile);
+          await this.setSession(response.data, userProfile);
           resolve({
             idToken: response.data.id_token,
             idTokenPayload: userProfile
@@ -82,6 +83,7 @@ export default class Auth {
     this.userProfile = userProfile;
     Store.getStore().init(userProfile.sub, authResult.id_token);
     BloxApi.init();
+    await BloxApi.request(METHOD.GET, 'organizations/profile');
   };
 
   getIdToken = () => this.idToken;
