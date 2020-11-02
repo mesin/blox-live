@@ -55,7 +55,6 @@ const createWindow = async (downloadsDir) => {
   }
   await Migrate.runMain();
 
-  // devtools = new BrowserWindow();
   mainWindow = new BrowserWindow({
     show: false,
     width,
@@ -64,20 +63,9 @@ const createWindow = async (downloadsDir) => {
       nodeIntegration: true,
       enableRemoteModule: true,
     },
-    // webPreferences:
-    //   (process.env.NODE_ENV === 'development' ||
-    //     process.env.E2E_BUILD === 'true') &&
-    //   process.env.ERB_SECURE !== 'true'
-    //     ? {
-    //         nodeIntegration: true,
-    //       }
-    //     : {
-    //         preload: path.join(__dirname, 'dist/renderer.prod.js'),
-    //       },
   });
 
   mainWindow.setMinimumSize(width, height);
-  // mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
   mainWindow.webContents.openDevTools();
 
   mainWindow.loadURL(`file://${__dirname}/app.html?dwldir=${downloadsDir}`);
