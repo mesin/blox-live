@@ -11,7 +11,7 @@ import image4 from '../assets/aws-guide-04.svg';
 import image5 from '../assets/aws-guide-05.svg';
 import image6 from '../assets/aws-guide-06.svg';
 
-const youtubeLink = 'https://www.youtube.com/embed/pr-PHUt5hN4';
+const youtubeLink = 'https://www.youtube.com/embed/pr-PHUt5hN4?&vq=hd720';
 
 const ContentManager = ({page}) => {
   switch (page) {
