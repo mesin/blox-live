@@ -9,13 +9,13 @@ const initialState = {
 /* eslint-disable default-case, no-param-reassign */
 const userReducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
-    case actionTypes.UPDATE_USER:
+    case actionTypes.UPDATE_USER_INFO:
       draft.isLoading = true;
       break;
-    case actionTypes.UPDATE_USER_SUCCESS:
+    case actionTypes.UPDATE_USER_INFO_SUCCESS:
       draft.isLoading = false;
       break;
-    case actionTypes.UPDATE_USER_FAILURE:
+    case actionTypes.UPDATE_USER_INFO_FAILURE:
       draft.isLoading = false;
       break;
   }

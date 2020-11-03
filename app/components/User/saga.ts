@@ -5,7 +5,16 @@ import UsersService from 'backend/services/users/users.service';
 
 const usersService = new UsersService();
 
-function* updateUserSaga(action) {
+function* loadUserInfoSaga() {
+  try {
+    const userInfo = yield call([usersService, 'get']);
+    yield put(actions.loadUserInfoSuccess(userInfo));
+  } catch (error) {
+    yield error && put(actions.loadUserInfoFailure(error));
+  }
+}
+
+function* updateUserInfoSaga(action) {
   const { payload } = action;
   try {
     yield call([usersService, 'update'], payload);
@@ -16,5 +25,6 @@ function* updateUserSaga(action) {
 }
 
 export default function* userSaga() {
-  yield takeLatest(actionTypes.UPDATE_USER, updateUserSaga);
+  yield takeLatest(actionTypes.LOAD_USER_INFO, loadUserInfoSaga);
+  yield takeLatest(actionTypes.UPDATE_USER_INFO, updateUserInfoSaga);
 }
