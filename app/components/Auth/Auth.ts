@@ -8,6 +8,7 @@ import BloxApi from 'backend/common/communication-manager/blox-api';
 import { METHOD } from 'backend/common/communication-manager/constants';
 import AuthApi from 'backend/common/communication-manager/auth-api';
 import config from 'backend/common/config';
+import { Migrate } from 'backend/migrate';
 
 export default class Auth {
   idToken: string;
@@ -82,6 +83,7 @@ export default class Auth {
     this.idToken = id_token;
     this.userProfile = userProfile;
     Store.getStore().init(userProfile.sub, authResult.id_token);
+    await Migrate.runMain();
     BloxApi.init();
     await BloxApi.request(METHOD.GET, 'organizations/profile');
   };

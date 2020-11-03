@@ -3,8 +3,8 @@ import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
-import getPlatform from '../../../get-platform';
 import { Migrate } from '../../migrate';
+import getPlatform from '../../../get-platform';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -174,7 +174,7 @@ export default class Store extends BaseStore {
     this.logger.error('setCryptoKey');
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
     // run migrations if exists
-    Migrate.runCrypted();
+    await Migrate.runCrypted();
   }
 
   @Catch()
