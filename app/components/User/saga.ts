@@ -5,7 +5,7 @@ import UsersService from 'backend/services/users/users.service';
 
 const usersService = new UsersService();
 
-function* startUpdatingUser(action) {
+function* updateUserSaga(action) {
   const { payload } = action;
   try {
     yield call([usersService, 'update'], payload);
@@ -15,6 +15,6 @@ function* startUpdatingUser(action) {
   }
 }
 
-export default function* passwordHandlerSaga() {
-  yield takeLatest(actionTypes.UPDATE_USER, startUpdatingUser);
+export default function* userSaga() {
+  yield takeLatest(actionTypes.UPDATE_USER, updateUserSaga);
 }

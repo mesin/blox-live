@@ -43,6 +43,7 @@ import {
 import webSocketSaga from '../WebSockets/saga';
 
 import { allAccountsDeposited } from '../Accounts/service';
+import { ModalsManager } from 'components/Dashboard/components';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -92,14 +93,17 @@ const LoggedIn = (props: Props) => {
   }
 
   return (
-    <Switch>
-      <Route exact path="/" render={(routeProps) => isFinishedWizard ? <EntryPage {...routeProps} /> : <Wizard />} />
-      <Route path="/login" component={Login} />
-      <Route path="/test" component={TestPage} />
-      <Route path="/settings/:path" render={(routeProps) => <Settings {...routeProps} withMenu />} />
-      <Redirect from="/settings" to="/settings/general" />
-      <Route path="" component={NotFoundPage} />
-    </Switch>
+    <>
+      <Switch>
+        <Route exact path="/" render={(routeProps) => isFinishedWizard ? <EntryPage {...routeProps} /> : <Wizard />} />
+        <Route path="/login" component={Login} />
+        <Route path="/test" component={TestPage} />
+        <Route path="/settings/:path" render={(routeProps) => <Settings {...routeProps} withMenu />} />
+        <Redirect from="/settings" to="/settings/general" />
+        <Route path="" component={NotFoundPage} />
+      </Switch>
+      <ModalsManager />
+    </>
   );
 };
 

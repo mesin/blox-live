@@ -1,12 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 import { notification } from 'antd';
+
 import { CustomModal, Tooltip, InfoWithTooltip } from 'common/components';
-import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
-import { DEPOSIT_DATA } from '../Wizard/components/Validators/StakingDeposit/constants';
-import { getDepositData } from '../Wizard/selectors';
 import { openExternalLink } from '../common/service';
+
+import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
+import { generateDepositDataInfo } from '../Wizard/components/Validators/service';
+import * as wizardActions from '../Wizard/actions';
+import { getDepositData } from '../Wizard/selectors';
 
 const InnerWrapper = styled.div`
   width:100%;
@@ -54,15 +58,25 @@ const CloseButton = styled.div`
 
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
-const Modal = ({onClose, depositData}: Props) => {
+const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
+  const { clearDepositData } = actions;
+
+  const depositDataInfo = depositData && generateDepositDataInfo(depositData);
+
+  const onCloseClick = () => {
+    clearDepositData();
+    onClose();
+  };
+
   return (
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
         <Title>Deposit Info</Title>
-        {depositData && DEPOSIT_DATA.map((row, index) => {
+        {depositData && depositDataInfo && depositDataInfo.map((row, index) => {
           const { label, title, moreInfo, value } = row;
-          const isTxData = label === DEPOSIT_DATA[1].label;
-          const valueText = isTxData ? depositData : value;
+          const isTxData = label === depositDataInfo[1].label;
+          const isAmount = label === depositDataInfo[2].label;
+          const valueText = isTxData ? depositDataInfo[1].value : value;
           return (
             <Row key={index}>
               <KeyText>
@@ -76,7 +90,7 @@ const Modal = ({onClose, depositData}: Props) => {
               ) : (
                 <ValueText>{valueText}</ValueText>
               )}
-              <CopyToClipboardIcon text={valueText} onCopy={onCopy} />
+              {!isAmount && <CopyToClipboardIcon text={valueText} onCopy={onCopy} />}
             </Row>
           );
         })}
@@ -85,7 +99,7 @@ const Modal = ({onClose, depositData}: Props) => {
             Need help?
           </Link>
         </Row>
-        <CloseButton onClick={onClose}>Close</CloseButton>
+        <CloseButton onClick={onCloseClick}>Close</CloseButton>
       </InnerWrapper>
     </CustomModal>
   );
@@ -93,11 +107,17 @@ const Modal = ({onClose, depositData}: Props) => {
 
 type Props = {
   depositData: string;
+  network: string;
   onClose: () => void;
+  actions: Record<string, any>;
 };
 
 const mapStateToProps = (state) => ({
   depositData: getDepositData(state),
 });
 
-export default connect(mapStateToProps)(Modal);
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(wizardActions, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DepositInfoModal);

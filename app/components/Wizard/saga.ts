@@ -26,8 +26,8 @@ function* onLoadWalletFailure(error) {
   notification.error({ message: 'Error', description: error.message});
 }
 
-function* onLoadDepositDataSuccess(response) {
-  yield put(actions.loadDepositDataSuccess(response));
+function* onLoadDepositDataSuccess(depositData) {
+  yield put(actions.loadDepositDataSuccess(depositData));
 }
 
 function* onLoadDepositDataFailure(error) {

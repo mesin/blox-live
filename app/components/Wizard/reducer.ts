@@ -49,6 +49,9 @@ const wizardReducer = (state = initialState, action: Action) => produce(state, (
     case actionTypes.LOAD_DEPOSIT_DATA_FAILURE:
       draft.error = action.payload;
       break;
+    case actionTypes.CLEAR_DEPOSIT_DATA:
+      draft.depositData = initialState.depositData;
+      break;
 
     case actionTypes.SET_FINISHED_WIZARD:
       draft.isFinished = action.payload;

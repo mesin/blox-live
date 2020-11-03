@@ -8,6 +8,18 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
+const STABLE_TAG = 'v0.1.11';
+
+function numVal(str) {
+  return +str.replace(/\D/g, '');
+}
+
+function sleep(msec) {
+  return new Promise(resolve => {
+    setTimeout(resolve, msec);
+  });
+}
+
 @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly store: Store;
@@ -137,27 +149,11 @@ export default class KeyVaultService {
     );
 
     this.store.set('keyVaultVersion', keyVaultVersion);
+
+    await sleep(12000);
+
     if (error) {
       throw new Error('Failed to run Key Vault docker container');
-    }
-  }
-
-  // todo: with unseal true we can remove this function
-  @Step({
-    name: 'Running KeyVault...'
-  })
-  async runScripts(): Promise<void> {
-    const containerId = await this.getContainerId();
-    if (!containerId) {
-      throw new Error('Key Vault docker container not found');
-    }
-    const ssh = await this.keyVaultSsh.getConnection();
-    const { stderr } = await ssh.execCommand(
-      `docker exec -t ${containerId} sh -c "/bin/sh /vault/config/vault-init.sh; /bin/sh /vault/config/vault-unseal.sh; /bin/sh /vault/config/vault-plugin.sh"`,
-      {}
-    );
-    if (stderr) {
-      throw new Error(`Key Vault entrypoint scripts are failed: ${stderr}`);
     }
   }
 
@@ -171,16 +167,17 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Updating server storage...',
-    requiredConfig: ['keyVaultStorage']
+    name: 'Updating server storage...'
   })
   async updateVaultMountsStorage(): Promise<void> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
 
     if (keyVaultStorage) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
           this.store.set('network', network);
+          // eslint-disable-next-line no-await-in-loop
           await this.updateVaultStorage();
         }
       }
@@ -193,10 +190,16 @@ export default class KeyVaultService {
   })
   async importSlashingData(): Promise<any> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
-
+    // check if kv version higher or equal stable tag
+    const currentVersion = (await this.getVersion()).data.version;
+    if (numVal(currentVersion) < numVal(STABLE_TAG)) {
+      return;
+    }
     if (keyVaultStorage) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
+          // eslint-disable-next-line no-await-in-loop
           const slashingData = await this.getSlashingStorage(network);
           if (Object.keys(slashingData.data).length) {
             this.store.set(`slashingData.${network}`, slashingData.data);
@@ -208,14 +211,21 @@ export default class KeyVaultService {
 
   @Step({
     name: 'Import slashing protection data...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'slashingData']
+    requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async exportSlashingData(): Promise<any> {
     const slashingData = this.store.get('slashingData');
+    // check if kv version higher or equal stable tag
+    const currentVersion = (await this.getVersion()).data.version;
+    if (numVal(currentVersion) < numVal(STABLE_TAG)) {
+      return;
+    }
 
     if (slashingData) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(slashingData)) {
         if (storage) {
+          // eslint-disable-next-line no-await-in-loop
           await this.updateSlashingStorage(storage, network);
         }
       }
