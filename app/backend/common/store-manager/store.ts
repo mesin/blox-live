@@ -4,7 +4,6 @@ import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
 import { Migrate } from '../../migrate';
-import getPlatform from '../../../get-platform';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -49,18 +48,22 @@ export default class Store extends BaseStore {
     return Store.instances[prefix];
   };
 
+  static close = (prefix: string = '') => {
+    Store.instances[prefix] = undefined;
+  };
+
   static isExist = (prefix: string = '') => {
     return !!Store.instances[prefix];
   };
 
-  init = (userId: string, authToken: string): any => {
+  init = (userId: string, authToken: string, oldPattern?: boolean): any => {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
     let currentUserId = userId;
     this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    if (getPlatform() === 'win') {
+    if (!oldPattern) {
       currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
     }
     const storeName = `${this.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
@@ -100,11 +103,15 @@ export default class Store extends BaseStore {
     return value;
   };
 
-  set = (key: string, value: any): void => {
+  all = () : any => {
+    return this.storage.store;
+  };
+
+  set = (key: string, value: any, noCrypt? : boolean): void => {
     if (value === undefined) {
       return;
     }
-    if (this.isEncryptedKey(key)) {
+    if (this.isEncryptedKey(key) && !noCrypt) {
       if (!this.cryptoKey) {
         throw new Error('Crypto key is null');
       }
@@ -116,10 +123,10 @@ export default class Store extends BaseStore {
     }
   };
 
-  setMultiple = (params: any): void => {
+  setMultiple = (params: any, noCrypt?: boolean): void => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(params)) {
-      this.set(key, value);
+      this.set(key, value, noCrypt);
     }
   };
 
