@@ -5,7 +5,7 @@ import { METHOD } from '../../common/communication-manager/constants';
 @CatchClass<UserService>()
 export default class UserService {
   async get() {
-    return await BloxApi.request(METHOD.GET, 'users');
+    return await BloxApi.request(METHOD.GET, 'users/profile');
   }
 
   async update(payload: Record<string, any>) {

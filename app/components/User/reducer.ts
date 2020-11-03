@@ -2,6 +2,7 @@ import produce from 'immer';
 import * as actionTypes from './actionTypes';
 
 const initialState = {
+  info: null,
   isLoading: false,
   error: '',
 };
@@ -9,14 +10,21 @@ const initialState = {
 /* eslint-disable default-case, no-param-reassign */
 const userReducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
+    case actionTypes.LOAD_USER_INFO:
     case actionTypes.UPDATE_USER_INFO:
       draft.isLoading = true;
+      break;
+    case actionTypes.LOAD_USER_INFO_SUCCESS:
+      draft.isLoading = false;
+      draft.info = action.payload;
       break;
     case actionTypes.UPDATE_USER_INFO_SUCCESS:
       draft.isLoading = false;
       break;
+    case actionTypes.LOAD_USER_INFO_FAILURE:
     case actionTypes.UPDATE_USER_INFO_FAILURE:
       draft.isLoading = false;
+      draft.error = action.payload;
       break;
   }
 });
