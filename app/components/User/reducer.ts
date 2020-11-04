@@ -26,6 +26,10 @@ const userReducer = (state = initialState, action: Action) => produce(state, (dr
       draft.isLoading = false;
       draft.error = action.payload;
       break;
+    case actionTypes.CLEAR_USER_DATA:
+      draft.info = initialState.info;
+      draft.isLoading = initialState.isLoading;
+      draft.error = initialState.error;
   }
 });
 
