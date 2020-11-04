@@ -181,7 +181,7 @@ export default class Store extends BaseStore {
     this.logger.error('setCryptoKey');
     this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
     // run migrations if exists
-    await Migrate.runCrypted(this.storage.get('currentUserId'));
+    await Migrate.runCrypted(this.get('currentUserId'));
   }
 
   @Catch()
