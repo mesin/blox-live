@@ -83,7 +83,7 @@ export default class Auth {
     this.idToken = id_token;
     this.userProfile = userProfile;
     Store.getStore().init(userProfile.sub, authResult.id_token);
-    await Migrate.runMain();
+    await Migrate.runMain(userProfile.sub);
     BloxApi.init();
     await BloxApi.request(METHOD.GET, 'organizations/profile');
   };

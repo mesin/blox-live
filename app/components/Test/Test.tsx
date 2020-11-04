@@ -17,7 +17,6 @@ import OrganizationService from '../../backend/services/organization/organizatio
 import { Link } from 'react-router-dom/esm/react-router-dom';
 import config from '../../backend/common/config';
 import { reportCrash } from '../common/service';
-import { Migrate } from '../../backend/migrate';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -298,20 +297,6 @@ const Test = () => {
       <p/>
       <h2>Blox API</h2>
       <div>
-        <button onClick={async () => {
-          console.log('start test migrate');
-          await Migrate.runMain();
-          console.log('end test migration');
-        }}>
-          Migrations Main
-        </button>
-        <button onClick={async () => {
-          console.log('start test migrate');
-          await Migrate.runCrypted();
-          console.log('end test migration');
-        }}>
-          Migrations Crypted
-        </button>
         <button onClick={async () => {
           await reportCrash();
         }}>
