@@ -70,7 +70,8 @@ const Test = () => {
       <button
         onClick={async () => {
           console.log('set custom env', env);
-          store.setEnv(env);
+          // store.setEnv(env);
+          await accountService.recovery('ssss', 'ddd');
         }}
       >
         Set Custom Environment

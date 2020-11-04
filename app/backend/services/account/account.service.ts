@@ -170,15 +170,23 @@ export default class AccountService {
     this.store.delete('keyVaultStorage');
 
     if (keyVaultStorage) {
+      // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
           this.store.set('network', network);
+          // eslint-disable-next-line no-await-in-loop
           await this.walletService.createWallet();
+          // eslint-disable-next-line no-await-in-loop
           await this.keyVaultService.updateVaultStorage();
           this.store.delete(`index.${network}`);
         }
       }
     }
     await this.delete();
+  }
+
+  async recovery(seed, newPassword): Promise<void> {
+    const accounts = await this.get();
+    console.log('--->', accounts);
   }
 }
