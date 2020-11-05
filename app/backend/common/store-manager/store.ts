@@ -177,9 +177,10 @@ export default class Store extends BaseStore {
   async setCryptoKey(cryptoKey: string) {
     // clean timer which was run before, and run new one
     this.unsetCryptoKey();
-    this.cryptoKey = this.createCryptoKey(cryptoKey);
     this.logger.error('setCryptoKey');
-    this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
+    this.cryptoKey = this.createCryptoKey(cryptoKey);
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    this.timer = setTimeout(this.unsetCryptoKey.bind(this), this.cryptoKeyTTL * 1000 * 60);
     // run migrations if exists
     await Migrate.runCrypted(this.get('currentUserId'));
   }

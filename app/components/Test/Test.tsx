@@ -92,7 +92,7 @@ const Test = () => {
         <br/>
         <button
           onClick={async () => {
-            store.setCryptoKey(cryptoKey);
+            await store.setCryptoKey(cryptoKey);
             if (store.exists('credentials')) {
               const credentials: any = store.get('credentials');
               setAccessKeyId(credentials.accessKeyId);

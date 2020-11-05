@@ -1,4 +1,3 @@
-import Store from '../../common/store-manager/store';
 import { CatchClass } from '../../decorators';
 import util from 'util';
 import { exec } from 'child_process';
@@ -8,12 +7,10 @@ import { execPath } from '../../../binaries';
 export default class KeyManagerService {
   private readonly executablePath: string;
   private readonly executor: (command: string) => Promise<any>;
-  private readonly store: Store;
 
   constructor() {
     this.executor = util.promisify(exec);
     this.executablePath = execPath;
-    this.store = Store.getStore();
   }
 
   async createWallet(): Promise<string> {
