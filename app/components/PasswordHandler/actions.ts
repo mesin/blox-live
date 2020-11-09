@@ -10,6 +10,10 @@ export const replacePassword = (password: string) => ({
   payload: password
 });
 
+export const savePasswordSuccess = () => ({ type: actionTypes.SAVE_PASSWORD_SUCCESS });
+
+export const savePasswordFailure = (error: string) => ({ type: actionTypes.SAVE_PASSWORD_FAILURE, payload: error });
+
 export const checkPasswordValidation = (password: string) => ({
   type: actionTypes.CHECK_PASSWORD_VALIDATION,
   payload: password

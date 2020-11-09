@@ -206,11 +206,11 @@ export default class Store extends BaseStore {
   }
 
   @Catch()
-  isCryptoKeyValid(password: string) {
-    const userInputCryptoKey = this.createCryptoKey(password);
-    const encryptedSavedCredentials = this.storage.get('credentials');
+  async isCryptoKeyValid(password: string) {
+    const userInputCryptoKey = await this.createCryptoKey(password);
+    const encryptedSavedCredentials = await this.storage.get('credentials');
     try {
-      const decryptedValue = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
+      const decryptedValue = await this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
       return !!decryptedValue;
     } catch (e) {
       return false;

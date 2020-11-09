@@ -29,7 +29,7 @@ const Link = styled.span`
 `;
 
 const PasswordModal = (props) => {
-  const { onClose, onClick, isPasswordValid, actions } = props;
+  const { onClose, onClick, isLoading, isValid, actions } = props;
   const { checkPasswordValidation, clearPasswordData } = actions;
   const [password, setPassword] = useState('');
   const [isButtonClicked, setButtonClicked] = useState(false);
@@ -40,16 +40,16 @@ const PasswordModal = (props) => {
   useInjectSaga({ key, saga, mode: '' });
 
   React.useEffect(() => {
+    if (isLoading) { return; }
     if (isButtonClicked) {
-      if (isPasswordValid) {
-        onPasswordValid();
-        // setTimeout(() => onPasswordValid(), 1000); // TODO: check why setFinishedWizard(true) fired
+      if (isValid) {
+        setTimeout(() => onPasswordValid(), 500);
       }
       else {
         setWrongPasswordErrorDisplay(true);
       }
     }
-  }, [isPasswordValid, isButtonClicked]);
+  }, [isLoading, isValid, isButtonClicked]);
 
   const onPasswordValid = () => {
     setWrongPasswordErrorDisplay(false);
@@ -99,7 +99,7 @@ const PasswordModal = (props) => {
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Enter your password</Title>
       <Description>Critical actions require an extra layer of security.</Description>
-      <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isPasswordValid}
+      <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isValid}
         onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown} autoFocus
       />
       <Link onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</Link>
@@ -112,11 +112,13 @@ PasswordModal.propTypes = {
   onClose: PropTypes.func,
   onClick: PropTypes.func,
   actions: PropTypes.object,
-  isPasswordValid: PropTypes.bool,
+  isLoading: PropTypes.bool,
+  isValid: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
-  isPasswordValid: selectors.getPasswordValidationStatus(state),
+  isLoading: selectors.getPasswordValidationLoadingStatus(state),
+  isValid: selectors.getPasswordValidationStatus(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

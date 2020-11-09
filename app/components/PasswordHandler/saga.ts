@@ -3,16 +3,32 @@ import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 import Store from 'backend/common/store-manager/store';
 
+import { notification } from 'antd';
+
 const store: Store = Store.getStore();
 
 function* savePassword(action) {
   const { payload } = action;
-  yield call([store, 'setCryptoKey'], payload);
+  try {
+    yield call([store, 'setCryptoKey'], payload);
+    yield put(actions.savePasswordSuccess());
+  }
+  catch (error) {
+    yield put(actions.savePasswordFailure(error.message));
+    notification.error({ message: 'Error', description: error.message });
+  }
 }
 
 function* replacePassword(action) {
   const { payload } = action;
-  yield call([store, 'setNewPassword'], payload);
+  try {
+    yield call([store, 'setNewPassword'], payload);
+    yield put(actions.savePasswordSuccess());
+  }
+  catch (error) {
+    yield put(actions.savePasswordFailure(error.message));
+    notification.error({ message: 'Error', description: error.message });
+  }
 }
 
 function* validatePassword(action) {
