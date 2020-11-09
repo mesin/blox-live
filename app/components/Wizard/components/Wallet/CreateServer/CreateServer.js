@@ -91,7 +91,7 @@ const CreateServer = (props) => {
         <b>Important</b>: make sure your&nbsp;
         <ExternalLink onClick={() => shell.openExternal('https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/')}>
           AWS account is verified
-        </ExternalLink> before creating the keys <br />
+        </ExternalLink> before creating the keys. <br /> <br />
         To create a suitable server and access tokens follow this&nbsp;
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
