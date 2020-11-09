@@ -1,4 +1,5 @@
 import React from 'react';
+import { shell } from 'electron';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,7 +12,6 @@ import { useInjectSaga } from 'utils/injectSaga';
 import * as actionsFromPassword from '../../../../PasswordHandler/actions';
 import passwordSaga from '../../../../PasswordHandler/saga';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
-
 import Guide from '../Guide';
 
 const passwordKey = 'password';
@@ -24,11 +24,6 @@ const Wrapper = styled.div`
   font-family: Avenir;
   font-size: 16px;
   font-weight: 500;
-`;
-
-const GuideButton = styled.span`
-  color:${({theme}) => theme.primary900};
-  cursor:pointer;
 `;
 
 const PasswordInputsWrapper = styled.div`
@@ -45,6 +40,19 @@ const ProgressWrapper = styled.div`
   margin-top:20px;
 `;
 
+const GuideButton = styled.span`
+  color:${({theme}) => theme.primary900};
+  cursor:pointer;
+`;
+
+const ExternalLink = styled.span`
+  color:${({theme}) => theme.primary900};
+  cursor:pointer;
+  &:hover {
+    color:${({theme}) => theme.primary600};
+  }
+`;
+
 const CreateServer = (props) => {
   const { isLoading, isDone, error, processName, processMessage,
           loaderPrecentage, startProcess, clearProcessState } = useProcessRunner();
@@ -55,7 +63,7 @@ const CreateServer = (props) => {
   const [secretAccessKey, setSecretAccessKey] = React.useState('');
   const [showGuide, setGuideDisplay] = React.useState(true);
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || (isDone && !error);
-  const isPasswordInputDisabled = isLoading || isDone;
+  const isPasswordInputDisabled = isLoading;
 
   useInjectSaga({ key: passwordKey, saga: passwordSaga, mode: '' });
 
@@ -79,7 +87,11 @@ const CreateServer = (props) => {
       <Title>Create your staking KeyVault</Title>
       <Paragraph>
         We will now create your KeyVault on your selected server. <br />
-        Blox needs to have access to your AWS access/secret tokens. <br /> <br />
+        To do that, Blox needs AWS access/secret keys. <br />
+        <b>Important</b>: make sure your&nbsp;
+        <ExternalLink onClick={() => shell.openExternal('https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/')}>
+          AWS account is verified
+        </ExternalLink> before creating the keys <br />
         To create a suitable server and access tokens follow this&nbsp;
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
