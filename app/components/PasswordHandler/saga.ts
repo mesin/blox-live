@@ -5,10 +5,9 @@ import Store from 'backend/common/store-manager/store';
 
 import { notification } from 'antd';
 
-const store: Store = Store.getStore();
-
 function* savePassword(action) {
   const { payload } = action;
+  const store: Store = Store.getStore();
   try {
     yield call([store, 'setCryptoKey'], payload);
     yield put(actions.savePasswordSuccess());
@@ -21,6 +20,7 @@ function* savePassword(action) {
 
 function* replacePassword(action) {
   const { payload } = action;
+  const store: Store = Store.getStore();
   try {
     yield call([store, 'setNewPassword'], payload);
     yield put(actions.savePasswordSuccess());
@@ -33,6 +33,7 @@ function* replacePassword(action) {
 
 function* validatePassword(action) {
   const { payload } = action;
+  const store: Store = Store.getStore();
   const isValid = yield call([store, 'isCryptoKeyValid'], payload);
   if (isValid) {
     yield call([store, 'setCryptoKey'], payload);

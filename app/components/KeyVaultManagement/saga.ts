@@ -9,7 +9,6 @@ import KeyManagerService from '../../backend/services/key-manager/key-manager.se
 
 const keyManagerService = new KeyManagerService();
 const versionService = new VersionService();
-const store: Store = Store.getStore();
 
 function* startLoadingMnemonic() {
   try {
@@ -24,6 +23,7 @@ function* startLoadingMnemonic() {
 function* startSavingMnemonic(action) {
   try {
     const { payload: { mnemonic } } = action;
+    const store: Store = Store.getStore();
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
     yield store.set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
