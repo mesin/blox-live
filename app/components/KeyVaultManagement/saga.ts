@@ -25,7 +25,7 @@ function* startSavingMnemonic(action) {
   try {
     const { payload: { mnemonic } } = action;
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
-    store.set('seed', seed);
+    yield store.set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
   }
   catch (error) {
