@@ -184,7 +184,7 @@ export default class Store extends BaseStore {
     // eslint-disable-next-line @typescript-eslint/no-implied-eval
     this.timer = setTimeout(this.unsetCryptoKey.bind(this), this.cryptoKeyTTL * 1000 * 60);
     // run migrations if exists
-    await Migrate.runCrypted(this.get('currentUserId'));
+    await Migrate.runCrypted(this.get('currentUserId'), this.storage.get('env'));
   }
 
   @Catch()
