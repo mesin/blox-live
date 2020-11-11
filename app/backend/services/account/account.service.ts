@@ -185,19 +185,21 @@ export default class AccountService {
     await this.delete();
   }
 
-  async recovery(): Promise<boolean> {
+  async recovery(mnemonic: string, password: string): Promise<void> {
+    const seed = await this.keyManagerService.seedFromMnemonicGenerate(mnemonic);
     const defAccountIndex = 0;
     const accounts = await this.get();
     if (accounts.length === 0) {
       throw new Error('Accounts are not exists in database');
     }
     const index = accounts[defAccountIndex].name.split('-')[1];
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index);
+    const storage = await this.keyManagerService.createAccount(seed, index);
     const storageAccounts = await this.keyManagerService.listAccounts(storage);
     const createdAccount = storageAccounts.find(rec => rec.name === `account-${index}`);
     if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
       throw new Error('Seed validation is failed');
     }
-    return true;
+    this.store.setNewPassword(password);
+    this.store.set('seed', seed);
   }
 }
