@@ -190,7 +190,7 @@ export default class AccountService {
     const defAccountIndex = 0;
     const accounts = await this.get();
     if (accounts.length === 0) {
-      throw new Error('Accounts are not exists in database');
+      throw new Error('Validators not found');
     }
     const index = accounts[defAccountIndex].name.split('-')[1];
     const storage = await this.keyManagerService.createAccount(seed, index);
