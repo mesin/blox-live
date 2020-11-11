@@ -185,8 +185,19 @@ export default class AccountService {
     await this.delete();
   }
 
-  async recovery(seed, newPassword): Promise<void> {
+  async recovery(): Promise<boolean> {
+    const defAccountIndex = 0;
     const accounts = await this.get();
-    console.log('--->', accounts);
+    if (accounts.length === 0) {
+      throw new Error('Accounts are not exists in database');
+    }
+    const index = accounts[defAccountIndex].name.split('-')[1];
+    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index);
+    const storageAccounts = await this.keyManagerService.listAccounts(storage);
+    const createdAccount = storageAccounts.find(rec => rec.name === `account-${index}`);
+    if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
+      throw new Error('Seed validation is failed');
+    }
+    return true;
   }
 }
