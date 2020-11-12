@@ -1,5 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
+import { v4 as uuidv4 } from 'uuid';
 import { notification } from 'antd';
 
 import { LOGIN_INIT, LOGOUT } from './actionTypes';
@@ -10,12 +11,19 @@ import { updateUserInfo } from 'components/User/actions';
 
 import { version } from 'package.json';
 import { getOsVersion } from 'utils/service';
+import Store from 'backend/common/store-manager/store';
 
 const auth = new Auth();
 
 function* onLoginSuccess(authResult) {
   const { idToken, idTokenPayload } = authResult;
-  const userInfo = { os: getOsVersion(), appVersion: version };
+
+  const uuid = uuidv4();
+
+  const store: Store = Store.getStore();
+  yield store.set('uuid', uuid);
+
+  const userInfo = { os: getOsVersion(), appVersion: version, uuid };
   yield put(updateUserInfo(userInfo));
   yield put(setIdToken(idToken));
   yield put(loginSuccess(idTokenPayload));
