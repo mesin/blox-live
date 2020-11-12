@@ -8,6 +8,7 @@ const initialState = {
   cloudProvider: '',
   mnemonic: '',
   latestVersion: '',
+  isRecoveryValid: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -22,12 +23,18 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_VALIDATE_PASSPHRASE:
       draft.isLoading = true;
       break;
+    case actionTypes.VALIDATE_RECOVERY_CREDENTIALS:
+      draft.isLoading = true;
+      draft.error = initialState.error;
+      break;
     case actionTypes.KEYVAULT_LOAD_MNEMONIC_SUCCESS:
       draft.mnemonic = action.payload;
       draft.isLoading = initialState.isLoading;
       break;
     case actionTypes.KEYVAULT_SAVE_MNEMONIC_SUCCESS:
+    case actionTypes.VALIDATE_RECOVERY_CREDENTIALS_SUCCESS:
       draft.isLoading = initialState.isLoading;
+      draft.isRecoveryValid = true;
       break;
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_SUCCESS:
       draft.latestVersion = action.payload;
@@ -37,8 +44,13 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_SAVE_MNEMONIC_FAILURE:
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_FAILURE:
     case actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_FAILURE:
+    case actionTypes.VALIDATE_RECOVERY_CREDENTIALS_FAILURE:
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
+      break;
+    case actionTypes.VALIDATE_RECOVERY_CREDENTIALS_CLEAR:
+      draft.error = initialState.error;
+      draft.isRecoveryValid = initialState.isRecoveryValid;
       break;
     case actionTypes.KEYVAULT_CLEAR_DATA:
     case LOGOUT:
@@ -47,6 +59,7 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       draft.cloudProvider = initialState.cloudProvider;
       draft.mnemonic = initialState.mnemonic;
       draft.latestVersion = initialState.latestVersion;
+      draft.isRecoveryValid = initialState.isRecoveryValid;
       break;
   }
 });

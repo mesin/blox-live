@@ -7,3 +7,5 @@ export const getCloudProvider = (state) => state.keyvaultManagement.cloudProvide
 export const getMnemonic = (state) => state.keyvaultManagement.mnemonic;
 
 export const getLatestVersion = (state) => state.keyvaultManagement && state.keyvaultManagement.latestVersion;
+
+export const getRecoveryValidStatus = (state) => state.keyvaultManagement && state.keyvaultManagement.isRecoveryValid;

@@ -6,14 +6,17 @@ import { Regular, Backup } from './components';
 import { writeToTxtFile } from './service';
 
 import * as actionsFromPassword from '../../../../PasswordHandler/actions';
+import passwordSaga from '../../../../PasswordHandler/saga';
+
 import * as actionsFromKeyvault from '../../../../KeyVaultManagement/actions';
 import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/selectors';
-import saga from '../../../../KeyVaultManagement/saga';
+import keyvaultSaga from '../../../../KeyVaultManagement/saga';
 
 import { useInjectSaga } from 'utils/injectSaga';
 import useCreatePassword from 'common/hooks/useCreatePassword';
 
-const key = 'keyvaultManagement';
+const keyvaultKey = 'keyvaultManagement';
+const passwordKey = 'password';
 
 const Passphrase = (props: Props) => {
   const { page, setPage, mnemonic, isLoading, keyvaultActions, passwordActions } = props;
@@ -29,7 +32,8 @@ const Passphrase = (props: Props) => {
   const [showDuplicatedMnemonicError, setDuplicatedMnemonicErrorDisplay] = useState(false);
   const isButtonDisabled = !mnemonic;
 
-  useInjectSaga({key, saga, mode: ''});
+  useInjectSaga({key: keyvaultKey, saga: keyvaultSaga, mode: ''});
+  useInjectSaga({key: passwordKey, saga: passwordSaga, mode: ''});
 
   const onPassphraseClick = () => {
     if (mnemonic || isLoading) { return; }

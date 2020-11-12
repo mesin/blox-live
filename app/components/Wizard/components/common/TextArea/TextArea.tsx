@@ -32,10 +32,10 @@ const ErrorMessage = styled.span`
   left:0px;
 `;
 
-const Textarea = ({width, duplicatedMnemonic, onChange, error, ...rest}: Props) => {
+const Textarea = ({width, value, onChange, error, ...rest}: Props) => {
   return (
     <Wrapper>
-      <Element value={duplicatedMnemonic} onChange={(e) => onChange(e.target.value)} width={width}
+      <Element value={value} onChange={(e) => onChange(e.target.value)} width={width}
         placeholder={'Separate each word with a space'} error={error} {...rest} />
       {error && (<ErrorMessage>{error}</ErrorMessage>)}
     </Wrapper>
@@ -44,9 +44,9 @@ const Textarea = ({width, duplicatedMnemonic, onChange, error, ...rest}: Props) 
 
 type Props = {
   width: string;
-  duplicatedMnemonic: string;
+  value: string;
   onChange: (value: string) => void;
-  error: string;
+  error?: string;
 };
 
 export default Textarea;

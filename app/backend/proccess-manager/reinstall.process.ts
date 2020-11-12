@@ -34,7 +34,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
       { instance: this.keyVaultService, method: 'updateVaultMountsStorage' },
       { instance: this.keyVaultService, method: 'exportSlashingData' },
-      { instance: this.walletService, method: 'reSyncVaultWithBlox' },
+      { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew: false } },
       { instance: this.awsServiceOld, method: 'truncateServer' },
       { instance: store, method: 'saveTmpConfigIntoMain' },
       { instance: this.keyVaultServiceOld, method: 'getKeyVaultStatus' }

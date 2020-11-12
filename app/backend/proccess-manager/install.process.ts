@@ -13,12 +13,13 @@ export default class InstallProcess extends ProcessClass {
   private readonly userService: UsersService;
   public readonly actions: Array<any>;
 
-  constructor({ accessKeyId, secretAccessKey }) {
+  constructor({ accessKeyId, secretAccessKey, isNew = true }) {
     super();
+    this.userService = new UsersService();
+
     const store: Store = Store.getStore();
     if (!store.exists('uuid')) {
       const uuid = uuidv4();
-      console.log('uuid', uuid);
       this.userService.update({ uuid });
       store.set('uuid', uuid);
     }
@@ -27,7 +28,7 @@ export default class InstallProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService();
     this.awsService = new AwsService();
     this.walletService = new WalletService();
-    this.userService = new UsersService();
+
     this.actions = [
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'validateAWSPermissions' },
@@ -38,7 +39,7 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
-      { instance: this.walletService, method: 'syncVaultWithBlox' },
+      { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew } },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
     ];
   }

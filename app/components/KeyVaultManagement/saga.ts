@@ -3,11 +3,13 @@ import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
-import VersionService from 'backend/services/version/version.service';
 import Store from 'backend/common/store-manager/store';
-import KeyManagerService from '../../backend/services/key-manager/key-manager.service';
+import VersionService from 'backend/services/version/version.service';
+import KeyManagerService from 'backend/services/key-manager/key-manager.service';
+import AccountService from 'backend/services/account/account.service';
 
 const keyManagerService = new KeyManagerService();
+const accountService = new AccountService();
 const versionService = new VersionService();
 const store: Store = Store.getStore();
 
@@ -48,18 +50,29 @@ function* loadLatestVersionSaga() {
 
 function* validatePassphraseSaga() {
   try {
-    yield setTimeout(() => null, 1000); // TODO: remove this line and call the relevant service
     yield put(actions.keyvaultValidatePassphraseSuccess());
   }
   catch (error) {
     yield put(actions.keyvaultValidatePassphraseFailure(error));
     notification.error({ message: 'Error', description: error.message });
   }
-};
+}
+
+function* checkRecoveryCredentialsSaga(action) {
+  try {
+    const { payload } = action;
+    yield call([accountService, 'recovery'], payload);
+    yield put(actions.validateRecoveryCredentialsSuccess());
+  }
+  catch (error) {
+    yield put(actions.validateRecoveryCredentialsFailure(error));
+  }
+}
 
 export default function* keyVaultManagementSaga() {
   yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, loadMnemonicSaga);
   yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, saveMnemonicSaga);
   yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, loadLatestVersionSaga);
   yield takeLatest(actionTypes.KEYVAULT_VALIDATE_PASSPHRASE, validatePassphraseSaga);
+  yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, checkRecoveryCredentialsSaga);
 }

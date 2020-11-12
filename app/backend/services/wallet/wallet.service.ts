@@ -78,7 +78,7 @@ export default class WalletService {
     name: 'Syncing KeyVault with Blox...',
     requiredConfig: ['publicIp', 'authToken', 'vaultRootToken', 'keyVaultVersion']
   })
-  async syncVaultWithBlox(): Promise<void> {
+  async syncVaultWithBlox({ isNew }): Promise<void> {
     const payload = {
       url: `http://${this.store.get('publicIp')}:8200`,
       accessToken: this.store.get('vaultRootToken'),
@@ -88,7 +88,7 @@ export default class WalletService {
       const ssh = await this.keyVaultSsh.getConnection();
       const command = this.keyVaultSsh.buildCurlCommand({
         authToken: this.store.get('authToken'),
-        method: METHOD.POST,
+        method: !isNew ? METHOD.PATCH : METHOD.POST,
         data: payload,
         route: `${BloxApi.baseUrl}/wallets/sync`
       });
@@ -96,31 +96,6 @@ export default class WalletService {
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.sync(payload);
-    }
-  }
-
-  @Step({
-    name: 'Re-syncing KeyVault with Blox...',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken']
-  })
-  async reSyncVaultWithBlox(): Promise<void> {
-    const payload = {
-      url: `http://${this.store.get('publicIp')}:8200`,
-      accessToken: this.store.get('vaultRootToken'),
-      version: this.store.get('keyVaultVersion')
-    };
-    try {
-      const ssh = await this.keyVaultSsh.getConnection();
-      const command = this.keyVaultSsh.buildCurlCommand({
-        authToken: this.store.get('authToken'),
-        method: METHOD.PATCH,
-        data: payload,
-        route: `${BloxApi.baseUrl}/wallets/sync`
-      });
-      await ssh.execCommand(command, {});
-    } catch (err) {
-      this.logger.error('ssh error - retrying directly', err);
-      await this.reSync(payload);
     }
   }
 }

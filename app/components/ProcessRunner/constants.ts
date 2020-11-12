@@ -3,4 +3,5 @@ export const PROCESSES: Record<string, string> = {
   RESTART: 'restart',
   REINSTALL: 'reinstall',
   CREATE_ACCOUNT: 'createAccount',
+  RECOVERY: 'recovery',
 };

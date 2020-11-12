@@ -49,7 +49,7 @@ const IconWrapper = styled.div`
 `;
 
 const PasswordInput = (props: Props) => {
-  const { name, width, title, onChange, value, isDisabled, isValid, error, ...rest } = props;
+  const { name, width, title, onChange, onBlur, value, isDisabled, isValid, error, ...rest } = props;
   const [type, setType] = React.useState(INPUT_TYPES.PASSWORD);
   const eyeIconColor = type === INPUT_TYPES.PASSWORD ? 'gray400' : 'gray800';
 
@@ -61,7 +61,7 @@ const PasswordInput = (props: Props) => {
     <Wrapper width={width}>
       {title && <Label htmlFor={name}>{title}</Label>}
       <TextField id={name} type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        disabled={isDisabled} {...rest} error={error} />
+        disabled={isDisabled} onBlur={onBlur} {...rest} error={error} />
       <IconWrapper onClick={toggleType} title={title}>
         {isValid ? (
           <Icon name={'check'} fontSize={ICON_FONT_SIZE} color={'accent2400'} />
@@ -81,6 +81,7 @@ type Props = {
   title: string;
   width?: string;
   onChange: (value: string) => void;
+  onBlur: () => void;
   type?: string;
   value: string;
   isDisabled: boolean;

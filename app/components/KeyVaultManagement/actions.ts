@@ -61,4 +61,22 @@ export const keyvaultValidatePassphraseFailure = (error: Record<string, any>) =>
   payload: error,
 });
 
+export const validateRecoveryCredentials = ({mnemonic, password}: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS,
+  payload: {mnemonic, password},
+});
+
+export const validateRecoveryCredentialsSuccess = () => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_SUCCESS,
+});
+
+export const validateRecoveryCredentialsFailure = (error: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_FAILURE,
+  payload: error,
+});
+
+export const clearRecoveryCredentialsState = () => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_CLEAR,
+});
+
 export const keyvaultClearData = () => ({ type: actionTypes.KEYVAULT_CLEAR_DATA });
