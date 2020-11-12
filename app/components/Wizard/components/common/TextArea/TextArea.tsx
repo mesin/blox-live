@@ -13,6 +13,7 @@ const Element = styled.textarea<{ width: string, error: string }>`
   border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.gray300};
   background-color: #ffffff;
   outline:none;
+  resize:none;
   :focus {
     border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.primary900};
   }
