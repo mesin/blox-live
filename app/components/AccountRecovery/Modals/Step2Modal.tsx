@@ -36,6 +36,10 @@ const Step1Modal = ({onClick, onClose}: Props) => {
           onStartProcessClick, isPasswordInputDisabled, isButtonDisabled
         } = useCreateServer({onStart});
 
+  const onButtonClick = () => {
+    onStartProcessClick('recovery');
+  };
+
   return (
     <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} onClose={onClose} image={image}>
       <Title>Recover Account Data</Title>
@@ -54,7 +58,7 @@ const Step1Modal = ({onClick, onClose}: Props) => {
         />
       </PasswordInputsWrapper>
       <ButtonWrapper>
-        <Button onClick={onStartProcessClick} isDisabled={isButtonDisabled}>Continue</Button>
+        <Button onClick={onButtonClick} isDisabled={isButtonDisabled}>Continue</Button>
       </ButtonWrapper>
     </ModalTemplate>
   );

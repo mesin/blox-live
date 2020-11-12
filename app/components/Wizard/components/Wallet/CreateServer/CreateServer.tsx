@@ -64,7 +64,7 @@ const CreateServer = (props: Props) => {
           onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isPasswordInputDisabled}
         />
       </PasswordInputsWrapper>
-      <Button isDisabled={isButtonDisabled} onClick={onStartProcessClick}>Continue</Button>
+      <Button isDisabled={isButtonDisabled} onClick={() => onStartProcessClick('install')}>Continue</Button>
       {isLoading && processMessage && !error && (
         <ProgressWrapper>
           <ProcessLoader text={processMessage} precentage={loaderPrecentage} />

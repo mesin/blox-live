@@ -47,6 +47,9 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   error?: string;
+  autoFocus?: boolean;
+  placeholder?: string;
+  isDisabled?: boolean;
 };
 
 export default Textarea;

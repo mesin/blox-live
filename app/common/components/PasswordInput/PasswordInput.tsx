@@ -81,7 +81,7 @@ type Props = {
   title: string;
   width?: string;
   onChange: (value: string) => void;
-  onBlur: () => void;
+  onBlur?: () => void;
   type?: string;
   value: string;
   isDisabled: boolean;

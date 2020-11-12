@@ -69,8 +69,8 @@ const Step1Modal = (props: Props) => {
 
   React.useEffect(() => {
       if (!isLoading && !error && isValid) {
-        clearRecoveryCredentialsState();
         onClick && onClick();
+        clearRecoveryCredentialsState();
       }
   }, [isLoading, isValid, error]);
 
