@@ -43,9 +43,8 @@ const catchFunction = (payload: any = {}, toReflect: boolean = false) => {
 function handleCatchFunctionError(key: string, error: Error, payload: any) {
   const logger = new Logger();
   const { handler } = catchDecoratorStore;
-  const displayMessage = payload.displayMessage ? payload.displayMessage : `${key} failed`;
+  const displayMessage = error.message || payload.displayMessage || `${key} failed`;
   const extendedError = { error, displayMessage };
-  console.error(extendedError);
   logger.error(displayMessage, error);
   if (payload.localHandler) {
     return payload.localHandler.call(null, extendedError, this);
