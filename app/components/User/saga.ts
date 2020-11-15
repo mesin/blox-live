@@ -1,6 +1,7 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
+
 import UsersService from 'backend/services/users/users.service';
 
 const usersService = new UsersService();
@@ -8,7 +9,7 @@ const usersService = new UsersService();
 function* loadUserInfoSaga() {
   try {
     const userInfo = yield call([usersService, 'get']);
-    yield put(actions.loadUserInfoSuccess(userInfo));
+    yield call(actions.loadUserInfoSuccess, userInfo);
   } catch (error) {
     yield error && put(actions.loadUserInfoFailure(error));
   }

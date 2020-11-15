@@ -12,6 +12,7 @@ import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
+import { isPrimaryDevice } from './service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -42,30 +43,39 @@ import {
 } from '../WebSockets/selectors';
 import webSocketSaga from '../WebSockets/saga';
 
+// user
+import { loadUserInfo } from '../User/actions';
+import * as userSelectors from '../User/selectors';
+import userSaga from '../User/saga';
+
 import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const websocketKey = 'websocket';
+const userKey = 'user';
 
 const LoggedIn = (props: Props) => {
   useInjectSaga({ key: wizardKey, saga: wizardSaga, mode: '' });
   useInjectSaga({ key: accountsKey, saga: accountsSaga, mode: '' });
   useInjectSaga({ key: websocketKey, saga: webSocketSaga, mode: '' });
-  const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
+  useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
 
   const {
     isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet,
     accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
-    websocket, webSocketError,
+    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, callLoadUserInfo
   } = props;
+
+  const [isFinishLoadingAll, toggleFinishLoadingAll] = useState(false);
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
     const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
     const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
+    const didntLoadUserInfo = !userInfo && !isLoadingUserInfo && !userInfoError;
 
     if (didntLoadWallet) {
       callLoadWallet();
@@ -76,19 +86,29 @@ const LoggedIn = (props: Props) => {
     if (didntLoadWebsocket && walletStatus) {
       callConnectToWebSockets();
     }
+    if (didntLoadUserInfo) {
+      callLoadUserInfo();
+    }
 
-    if (walletStatus && accounts && websocket) {
-      if ((walletStatus === 'active' || walletStatus === 'offline') &&
-          accounts.length > 0 && allAccountsDeposited(accounts) &&
-          !addAnotherAccount) {
-        callSetFinishedWizard(true);
+    if (walletStatus && accounts && websocket && userInfo) {
+      // TODO: check this func
+      const primaryDevice = isPrimaryDevice(userInfo.uuid);
+      if (primaryDevice) {
+        if ((walletStatus === 'active' || walletStatus === 'offline') &&
+            accounts.length > 0 && allAccountsDeposited(accounts) &&
+            !addAnotherAccount) {
+          callSetFinishedWizard(true);
+        }
       }
-      toggleLoadingAll(true);
+      else {
+        // open the pop up and save the new uuid
+      }
+      toggleFinishLoadingAll(true);
       onWindowClose();
     }
-  }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isFinishedWizard]);
+  }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isLoadingUserInfo, isFinishedWizard]);
 
-  if (!isFinishedLoadingAll) {
+  if (!isFinishLoadingAll) {
     return <Loader />;
   }
 
@@ -124,6 +144,11 @@ const mapStateToProps = (state: State) => ({
   isWebsocketLoading: getIsLoadingWebsocket(state),
   webSocketError: getWebSocketError(state),
 
+  // user
+  userInfo: userSelectors.getInfo(state),
+  isLoadingUserInfo: userSelectors.getLoadingStatus(state),
+  userInfoError: userSelectors.getError(state),
+
   isFinishedWizard: getWizardFinishedStatus(state),
 });
 
@@ -131,6 +156,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
+  callLoadUserInfo: () => dispatch(loadUserInfo()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
 });
 
@@ -156,6 +182,12 @@ interface Props extends RouteComponentProps {
   websocket: boolean;
   webSocketError: string;
   callConnectToWebSockets: () => void;
+
+  // user
+  isLoadingUserInfo: boolean;
+  userInfo: Record<string, any>;
+  userInfoError: string;
+  callLoadUserInfo: () => void;
 }
 
 type State = Record<string, any>;
