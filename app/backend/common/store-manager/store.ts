@@ -140,8 +140,8 @@ export default class Store extends BaseStore {
 
   logout = (): void => {
     this.baseStore.clear();
-    this.cryptoKey = undefined;
-    Object.keys(Store.instances).forEach(prefix => Store.close(prefix));
+    // this.cryptoKey = undefined;
+    // Object.keys(Store.instances).forEach(prefix => Store.close(prefix));
   };
 
   isCryptoKeyStored = () => !!this.cryptoKey;
