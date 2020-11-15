@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { setNetworkType } from '../../../actions';
+import { getUserData } from '../../../../CallbackPage/selectors';
 import { Title, SubTitle, Paragraph } from '../../common';
 import CustomButton from './CustomButton';
 import { NETWORKS } from '../constants';
@@ -22,35 +23,39 @@ const onClick = ({ page, setPage, setNetwork }: Props, network) => {
   setNetwork(network);
 };
 
-const Validators = (props: Props) => (
-  <Wrapper>
-    <Title>Select your staking network</Title>
-    <Paragraph>
-      Blox let’s you stake on Eth 2.0 Mainnet or run a Testnet validator to try
-      our <br />
-      staking services. Currently, only our Testnet is available.
-    </Paragraph>
-    <Paragraph>
-      Please select your staking network and our wizard will guide you through the <br />
-      validator creation process.
-    </Paragraph>
-    <SubTitle>How would you like to start?</SubTitle>
-    <ButtonsWrapper>
-      <CustomButton
-        title={NETWORKS.test.title}
-        image={NETWORKS.test.image}
-        isDisabled={NETWORKS.test.isDisabled}
-        onClick={() => !NETWORKS.test.isDisabled && onClick({ ...props }, NETWORKS.test.label)}
-      />
-      <CustomButton
-        title={NETWORKS.zinken.title}
-        image={NETWORKS.zinken.image}
-        isDisabled={NETWORKS.zinken.isDisabled}
-        onClick={() => !NETWORKS.zinken.isDisabled && onClick({ ...props }, NETWORKS.zinken.label)}
-      />
-    </ButtonsWrapper>
-  </Wrapper>
-);
+const Validators = (props: Props) => {
+  const { profile } = props;
+  const isMainNetDisabled = !(profile?.email?.endsWith('@blox.io'));
+  return (
+    <Wrapper>
+      <Title>Select your staking network</Title>
+      <Paragraph>
+        Blox let’s you stake on Eth 2.0 Mainnet or run a Testnet validator to try
+        our <br />
+        staking services. Currently, only our Testnet is available.
+      </Paragraph>
+      <Paragraph>
+        Please select your staking network and our wizard will guide you through the <br />
+        validator creation process.
+      </Paragraph>
+      <SubTitle>How would you like to start?</SubTitle>
+      <ButtonsWrapper>
+        <CustomButton
+          title={NETWORKS.test.title}
+          image={NETWORKS.test.image}
+          isDisabled={false}
+          onClick={() => onClick({ ...props }, NETWORKS.test.label)}
+        />
+        <CustomButton
+          title={NETWORKS.zinken.title}
+          image={NETWORKS.zinken.image}
+          isDisabled={isMainNetDisabled}
+          onClick={() => !isMainNetDisabled && onClick({ ...props }, NETWORKS.zinken.label)}
+        />
+      </ButtonsWrapper>
+    </Wrapper>
+  );
+};
 
 type Props = {
   page: number;
@@ -58,10 +63,15 @@ type Props = {
   step: number;
   setStep: (page: number) => void;
   setNetwork: (network: string) => void;
+  profile: Record<string, any>;
 };
+
+const mapStateToProps = (state) => ({
+  profile: getUserData(state),
+});
 
 const mapDispatchToProps = (dispatch) => ({
   setNetwork: (network) => dispatch(setNetworkType(network)),
 });
 
-export default connect(null, mapDispatchToProps)(Validators);
+export default connect(mapStateToProps, mapDispatchToProps)(Validators);
