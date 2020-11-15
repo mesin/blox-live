@@ -83,12 +83,16 @@ export default class KeyManagerService {
   }
 
   async seedFromMnemonicGenerate(mnemonic: string): Promise<string> {
+    const defaultMnemonicLengthPhrase = 24;
     if (!mnemonic || mnemonic.length === 0) {
-      throw new Error('mnemonic phrase is empty');
+      throw new Error('Mnemonic phrase is empty');
+    }
+    if (mnemonic.split(' ').length !== defaultMnemonicLengthPhrase) {
+      throw new Error('Mnemonic phrase should have 24-word length');
     }
     const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic="${mnemonic}"`);
     if (stderr) {
-      throw new Error(stderr);
+      throw new Error('Not possible to generate seed by mnemonic phrase');
     }
     return stdout.replace('\n', '');
   }
