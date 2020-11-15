@@ -107,7 +107,6 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
 
 type Props = {
   depositData: string;
-  network: string;
   onClose: () => void;
   actions: Record<string, any>;
 };

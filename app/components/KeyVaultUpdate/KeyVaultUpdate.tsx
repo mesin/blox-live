@@ -3,7 +3,7 @@ import { SuccessModal, ReinstallingModal, FailureModal, ThankYouModal } from '..
 
 import activeImage from '../Wizard/assets/img-key-vault.svg';
 
-const KeyVaultUpdate = ({onClose}: Props) => {
+const KeyVaultUpdate = ({onSuccess, onClose}: Props) => {
   const [step, setStep] = useState(1);
   const move1StepForward = () => setStep(step + 1);
   const move2StepsForward = () => setStep(step + 2);
@@ -15,7 +15,7 @@ const KeyVaultUpdate = ({onClose}: Props) => {
         />
       );
     case 2:
-      return <SuccessModal title={'KeyVault Updated!'} onClose={onClose} text={'All Validators are now performing normally.'} />;
+      return <SuccessModal title={'KeyVault Updated!'} onSuccess={onSuccess} text={'All Validators are now performing normally.'} />;
     case 3:
       return <FailureModal title={'Troubleshooting Failed'} onClick={move1StepForward} onClose={onClose} />;
     case 4:
@@ -30,6 +30,7 @@ const KeyVaultUpdate = ({onClose}: Props) => {
 };
 
 type Props = {
+  onSuccess: () => void;
   onClose: () => void;
 };
 
