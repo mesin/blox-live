@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
 
@@ -12,7 +13,7 @@ import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
-import { isPrimaryDevice } from './service';
+import { isPrimaryDevice, handleUserInfo } from './service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -44,15 +45,17 @@ import {
 import webSocketSaga from '../WebSockets/saga';
 
 // user
-import { loadUserInfo } from '../User/actions';
+import * as actionsFromUser from '../User/actions';
 import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
+// modalsmanager
+
+import * as actionsFroDashboard from '../Dashboard/actions';
+import { MODAL_TYPES } from '../Dashboard/constants';
+
 import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
-
-import Store from 'backend/common/store-manager/store';
-import { v4 as uuidv4 } from 'uuid';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -69,47 +72,43 @@ const LoggedIn = (props: Props) => {
     isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet,
     accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
-    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, callLoadUserInfo
+    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, userActions, dashboardActions
   } = props;
+
+  const { loadUserInfo, updateUserInfo } = userActions;
+  const { setModalDisplay } = dashboardActions;
 
   const [isFinishLoadingAll, toggleFinishLoadingAll] = useState(false);
 
   useEffect(() => {
-    const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
-    const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
-    const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
-    const didntLoadUserInfo = !userInfo && !isLoadingUserInfo && !userInfoError;
+    callLoadWallet();
+    callLoadAccounts();
+    loadUserInfo();
+    callConnectToWebSockets();
+  }, []);
 
-    if (didntLoadWallet) {
-      callLoadWallet();
-    }
-    if (didntLoadAccounts && walletStatus) {
-      callLoadAccounts();
-    }
-    if (didntLoadWebsocket && walletStatus) {
-      callConnectToWebSockets();
-    }
-    if (didntLoadUserInfo) {
-      callLoadUserInfo();
-    }
+  useEffect(() => {
+    const allDataIsReady = walletStatus && accounts && websocket && userInfo;
+    const onErrors = !walletError && !accountsError && !webSocketError && !userInfoError;
+    const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
-    if (walletStatus && accounts && websocket && userInfo) {
+    if (allDataIsReady && onErrors && doneLoading) {
       const navigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
                                   accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      // TODO: refactor
-      const store = Store.getStore();
-      if (!store.exists('uuid')) { // TODO: update the api
-        const uuid = uuidv4();
-        store.set('uuid', uuid);
-      }
+      handleUserInfo(updateUserInfo); // TODO: check where is the best place to put it
 
-      const primaryDevice = isPrimaryDevice(userInfo.uuid);
-      if (primaryDevice) {
-        if (navigateToDashboard) { callSetFinishedWizard(true); }
+      if (userInfo.uuid) {
+        const primaryDevice = isPrimaryDevice(userInfo.uuid);
+        if (!primaryDevice) { // TODO: add onSuccess method
+          setModalDisplay({show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        }
+        else {
+          navigateToDashboard && callSetFinishedWizard(true);
+        }
       }
       else {
-        // open the pop up and save the new uuid
+        navigateToDashboard && callSetFinishedWizard(true);
       }
       toggleFinishLoadingAll(true);
       onWindowClose();
@@ -164,8 +163,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
-  callLoadUserInfo: () => dispatch(loadUserInfo()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
+  userActions: bindActionCreators(actionsFromUser, dispatch),
+  dashboardActions: bindActionCreators(actionsFroDashboard, dispatch),
 });
 
 interface Props extends RouteComponentProps {
@@ -195,7 +195,7 @@ interface Props extends RouteComponentProps {
   isLoadingUserInfo: boolean;
   userInfo: Record<string, any>;
   userInfoError: string;
-  callLoadUserInfo: () => void;
+  userActions: Record<string, any>;
 }
 
 type State = Record<string, any>;

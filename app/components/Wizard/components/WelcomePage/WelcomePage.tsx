@@ -74,7 +74,7 @@ const WelcomePage = (props: Props) => {
   useInjectSaga({ key, saga, mode: '' });
   const [showStep2, setStep2Status] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { // TODO: add primary device functionallity
     if (!isLoading && !wallet) {
       loadWallet();
     }
