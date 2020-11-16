@@ -96,10 +96,10 @@ const StakingDeposit = (props: Props) => {
     }
   };
 
-  const onDepositLaterButtonClick = async () => {
-    await clearWizardData();
-    await setFinishedWizard(true);
-    await callClearAccountsData();
+  const onDepositLaterButtonClick = () => {
+    callClearAccountsData();
+    clearWizardData();
+    setFinishedWizard(true);
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});

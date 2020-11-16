@@ -32,6 +32,7 @@ const ModalsManager = (props: Props) => {
   const onAccountRecoverySuccess = () => {
     loadAccounts();
     loadWallet();
+    clearModalDisplayData();
   };
 
   if (showModal) {

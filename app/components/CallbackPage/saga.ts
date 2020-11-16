@@ -6,11 +6,17 @@ import { LOGIN_INIT, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
 import Auth from '../Auth';
 import { saveLastConnection } from 'common/service';
+import { updateUserInfo } from 'components/User/actions';
+
+import { version } from 'package.json';
+import { getOsVersion } from 'utils/service';
 
 const auth = new Auth();
 
 function* onLoginSuccess(authResult) {
   const { idToken, idTokenPayload } = authResult;
+  const userInfo = { os: getOsVersion(), appVersion: version };
+  yield put(updateUserInfo(userInfo));
   yield put(setIdToken(idToken));
   yield put(loginSuccess(idTokenPayload));
   yield put(push('/'));

@@ -3,13 +3,9 @@ import { version } from 'package.json';
 import { getOsVersion } from 'utils/service';
 import Store from 'backend/common/store-manager/store';
 
-// export const handleUserInfo = (userInfo) => {
-
-// };
-
 export const handleUserInfo = (updateUserInfo) => {
   const store = Store.getStore();
-  if (!store.exists('uuid')) { // TODO: update the api
+  if (!store.exists('uuid')) {
     const uuid = uuidv4();
     store.set('uuid', uuid);
     updateUserInfo({ uuid, version, os: getOsVersion() });

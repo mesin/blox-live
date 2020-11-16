@@ -7,7 +7,7 @@ import image from 'assets/images/img-recovery.svg';
 
 const WelcomeModal = ({onClick, onClose, type}: Props) => {
   return (
-    <ModalTemplate onClose={onClose} image={image}>
+    <ModalTemplate onClose={type !== MODAL_TYPES.DEVICE_SWITCH && onClose} image={image}>
       {type === MODAL_TYPES.DEVICE_SWITCH && (
         <>
           <Title>Switch To This Device?</Title>

@@ -49,11 +49,6 @@ import * as actionsFromUser from '../User/actions';
 import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
-// modalsmanager
-
-import * as actionsFroDashboard from '../Dashboard/actions';
-import { MODAL_TYPES } from '../Dashboard/constants';
-
 import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
 
@@ -72,11 +67,10 @@ const LoggedIn = (props: Props) => {
     isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet,
     accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
-    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, userActions, dashboardActions
+    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, userActions
   } = props;
 
-  const { loadUserInfo, updateUserInfo } = userActions;
-  const { setModalDisplay } = dashboardActions;
+  const { loadUserInfo } = userActions;
 
   const [isFinishLoadingAll, toggleFinishLoadingAll] = useState(false);
 
@@ -88,32 +82,21 @@ const LoggedIn = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    const allDataIsReady = walletStatus && accounts && websocket && userInfo;
-    const onErrors = !walletError && !accountsError && !webSocketError && !userInfoError;
+    const allDataIsReady = !!walletStatus && !!accounts && !!websocket && !!userInfo;
+    const noErrors = !walletError && !accountsError && !webSocketError && !userInfoError;
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
-    if (allDataIsReady && onErrors && doneLoading) {
-      const navigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
+    if (allDataIsReady && noErrors && doneLoading) {
+      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
                                   accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      handleUserInfo(updateUserInfo); // TODO: check where is the best place to put it
-
-      if (userInfo.uuid) {
-        const primaryDevice = isPrimaryDevice(userInfo.uuid);
-        if (!primaryDevice) { // TODO: add onSuccess method
-          setModalDisplay({show: true, type: MODAL_TYPES.DEVICE_SWITCH});
-        }
-        else {
-          navigateToDashboard && callSetFinishedWizard(true);
-        }
-      }
-      else {
-        navigateToDashboard && callSetFinishedWizard(true);
+      if (!userInfo.uuid || isPrimaryDevice(userInfo.uuid)) {
+        shouldNavigateToDashboard && callSetFinishedWizard(true);
       }
       toggleFinishLoadingAll(true);
       onWindowClose();
     }
-  }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isLoadingUserInfo, isFinishedWizard]);
+  }, [walletStatus, accounts, websocket, userInfo, isFinishedWizard]);
 
   if (!isFinishLoadingAll) {
     return <Loader />;
@@ -165,7 +148,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
   userActions: bindActionCreators(actionsFromUser, dispatch),
-  dashboardActions: bindActionCreators(actionsFroDashboard, dispatch),
 });
 
 interface Props extends RouteComponentProps {
