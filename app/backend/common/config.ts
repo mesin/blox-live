@@ -22,7 +22,7 @@ export default class Config {
       HTTP_RETRIES: 3,
       HTTP_RETRY_DELAY: 1000,
       TEST_NETWORK: 'test',
-      ZINKEN_NETWORK: 'zinken'
+      MAINNET_NETWORK: 'mainnet'
     }
   };
 

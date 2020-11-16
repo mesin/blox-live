@@ -43,10 +43,10 @@ const Validators = (props: Props) => (
         onClick={() => !NETWORKS.test.isDisabled && onClick({ ...props }, NETWORKS.test.label)}
       />
       <CustomButton
-        title={NETWORKS.zinken.title}
-        image={NETWORKS.zinken.image}
-        isDisabled={NETWORKS.zinken.isDisabled}
-        onClick={() => !NETWORKS.zinken.isDisabled && onClick({ ...props }, NETWORKS.zinken.label)}
+        title={NETWORKS.mainnet.title}
+        image={NETWORKS.mainnet.image}
+        isDisabled={NETWORKS.mainnet.isDisabled}
+        onClick={() => !NETWORKS.mainnet.isDisabled && onClick({ ...props }, NETWORKS.mainnet.label)}
       />
     </ButtonsWrapper>
   </Wrapper>

@@ -118,17 +118,17 @@ export default class AccountService {
       publicKey,
       withdrawalCredentials,
       signature,
-      depositDataRoot
+      depositDataRoot,
+      depositContractAddress
     } = depositData;
 
     const depositContractABI = require('./deposit_abi.json');
-    const depositTo = network === config.env.TEST_NETWORK ? '0x07b39F4fDE4A38bACe212b546dAc87C58DfE3fDC' : '0x99F0Ec06548b086E46Cb0019C78D0b9b9F36cD53';
-    const coin = network === config.env.TEST_NETWORK ? 'GoETH' : 'ETH';
+    const coin = network === config.env.MAINNET_NETWORK ? 'ETH' : 'GoETH';
 
     const web3 = new Web3(
       'https://goerli.infura.io/v3/d03b92aa81864faeb158166231b7f895'
     );
-    const depositContract = new web3.eth.Contract(depositContractABI, depositTo);
+    const depositContract = new web3.eth.Contract(depositContractABI, depositContractAddress);
     const depositMethod = depositContract.methods.deposit(
       `0x${publicKey}`,
       `0x${withdrawalCredentials}`,
@@ -142,7 +142,7 @@ export default class AccountService {
       network,
       accountIndex: index,
       publicKey,
-      depositTo,
+      depositTo: depositContractAddress,
       coin
     };
   }

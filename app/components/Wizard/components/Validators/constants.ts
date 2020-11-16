@@ -13,11 +13,11 @@ export const NETWORKS = {
     label: config.env.TEST_NETWORK,
     isDisabled: false,
   },
-  zinken: {
+  mainnet: {
     name: 'MainNet',
     title: 'Stake on MainNet',
     image: mainNetImage,
-    label: config.env.ZINKEN_NETWORK,
+    label: config.env.MAINNET_NETWORK,
     isDisabled: store.get('env') !== 'stage',
   },
 };
