@@ -185,6 +185,9 @@ export default class AccountService {
     await this.delete();
   }
 
+  @Catch({
+    showErrorMessage: true
+  })
   async recovery({mnemonic, password}: Record<string, any>): Promise<void> {
     const seed = await this.keyManagerService.seedFromMnemonicGenerate(mnemonic);
     const defAccountIndex = 0;
