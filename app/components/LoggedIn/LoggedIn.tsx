@@ -51,6 +51,9 @@ import userSaga from '../User/saga';
 import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
 
+import Store from 'backend/common/store-manager/store';
+import { v4 as uuidv4 } from 'uuid';
+
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const websocketKey = 'websocket';
@@ -91,14 +94,19 @@ const LoggedIn = (props: Props) => {
     }
 
     if (walletStatus && accounts && websocket && userInfo) {
-      // TODO: check this func
+      const navigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
+                                  accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
+
+      // TODO: refactor
+      const store = Store.getStore();
+      if (!store.exists('uuid')) { // TODO: update the api
+        const uuid = uuidv4();
+        store.set('uuid', uuid);
+      }
+
       const primaryDevice = isPrimaryDevice(userInfo.uuid);
       if (primaryDevice) {
-        if ((walletStatus === 'active' || walletStatus === 'offline') &&
-            accounts.length > 0 && allAccountsDeposited(accounts) &&
-            !addAnotherAccount) {
-          callSetFinishedWizard(true);
-        }
+        if (navigateToDashboard) { callSetFinishedWizard(true); }
       }
       else {
         // open the pop up and save the new uuid

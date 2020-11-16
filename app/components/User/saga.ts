@@ -9,7 +9,7 @@ const usersService = new UsersService();
 function* loadUserInfoSaga() {
   try {
     const userInfo = yield call([usersService, 'get']);
-    yield call(actions.loadUserInfoSuccess, userInfo);
+    yield put(actions.loadUserInfoSuccess(userInfo));
   } catch (error) {
     yield error && put(actions.loadUserInfoFailure(error));
   }
