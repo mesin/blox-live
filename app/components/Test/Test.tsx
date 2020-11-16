@@ -87,12 +87,12 @@ const Test = () => {
       <h1>CLI commands</h1>
       <div>
         <h3>Step 0. Set password and init storage</h3>
-        <input type={'text'} value={cryptoKey} onChange={(event) => setCryptoKey(event.target.value)}
+        <input type={'text'} value={cryptoKey} onChange={async (event) => await setCryptoKey(event.target.value)}
                placeholder="Password"/>
         <br/>
         <button
           onClick={async () => {
-            store.setCryptoKey(cryptoKey);
+            await store.setCryptoKey(cryptoKey);
             if (store.exists('credentials')) {
               const credentials: any = store.get('credentials');
               setAccessKeyId(credentials.accessKeyId);

@@ -1,4 +1,3 @@
-import Store from '../../common/store-manager/store';
 import { CatchClass } from '../../decorators';
 import util from 'util';
 import { exec } from 'child_process';
@@ -8,12 +7,10 @@ import { execPath } from '../../../binaries';
 export default class KeyManagerService {
   private readonly executablePath: string;
   private readonly executor: (command: string) => Promise<any>;
-  private readonly store: Store;
 
   constructor() {
     this.executor = util.promisify(exec);
     this.executablePath = execPath;
-    this.store = Store.getStore();
   }
 
   async createWallet(): Promise<string> {
@@ -29,7 +26,7 @@ export default class KeyManagerService {
       `${this.executablePath} wallet account create --seed=${seed} --index=${index} --accumulate=true`
     );
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error('Create keyvault account was failed.');
     }
     return stdout.replace('\n', '');
   }
@@ -39,7 +36,7 @@ export default class KeyManagerService {
       `${this.executablePath} wallet account create --seed=${seed} --index=${index} --response-type=object`
     );
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error('Get keyvault account was failed.');
     }
     return stdout ? JSON.parse(stdout) : {};
   }
@@ -49,7 +46,7 @@ export default class KeyManagerService {
       `${this.executablePath} wallet account list --storage=${storage}`
     );
     if (stderr) {
-      throw new Error(`Get last created account error: ${stderr}`);
+      throw new Error('List keyvault accounts was failed.');
     }
     const accounts = stdout ? JSON.parse(stdout) : [];
     return accounts;
@@ -60,7 +57,7 @@ export default class KeyManagerService {
       `${this.executablePath} wallet account deposit-data --seed=${seed} --index=${index} --public-key=${publicKey} --network=${network}`
     );
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error('Get deposit data was failed.');
     }
     return stdout ? JSON.parse(stdout) : {};
   }
@@ -68,7 +65,7 @@ export default class KeyManagerService {
   async generatePublicKey(seed: string, index: number): Promise<void> {
     const { stdout, stderr } = await this.executor(`${this.executablePath} wallet public-key generate --seed=${seed} --index=${index}`);
     if (stderr) {
-      throw new Error(`Cli error: ${stderr}`);
+      throw new Error('Generate public key failed.');
     }
     console.log(stdout);
   }
@@ -76,7 +73,7 @@ export default class KeyManagerService {
   async mnemonicGenerate(): Promise<string> {
     const { stdout, stderr } = await this.executor(`${this.executablePath} mnemonic generate`);
     if (stderr) {
-      throw new Error(stderr);
+      throw new Error('Generate mnemonic failed.');
     }
     console.log(stdout);
     return stdout.replace('\n', '');

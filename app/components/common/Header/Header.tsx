@@ -94,8 +94,8 @@ const Header = (props: Props) => {
   const hideTopNav = true;
 
   const onAddValidatorPasswordSuccess = () => {
-    setFinishedWizard(false);
     setAddAnotherAccount(true);
+    setFinishedWizard(false);
     clearModalDisplayData();
   };
 

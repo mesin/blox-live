@@ -3,7 +3,7 @@ import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
 import { Catch, Step } from '../../decorators';
-import getPlatform from '../../../get-platform';
+import { Migrate } from '../../migrate';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -15,7 +15,7 @@ export default class Store extends BaseStore {
   private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   private cryptoKey: string;
-  private cryptoKeyTTL: number = 15; // 15 minutes
+  private cryptoKeyTTL: number = 20; // 20 minutes
   private timer: any;
   private logger: Logger;
 
@@ -48,18 +48,22 @@ export default class Store extends BaseStore {
     return Store.instances[prefix];
   };
 
+  static close = (prefix: string = '') => {
+    Store.instances[prefix] = undefined;
+  };
+
   static isExist = (prefix: string = '') => {
     return !!Store.instances[prefix];
   };
 
-  init = (userId: string, authToken: string): any => {
+  init = (userId: string, authToken: string, oldPattern?: boolean): any => {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
     let currentUserId = userId;
     this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    if (getPlatform() === 'win') {
+    if (!oldPattern) {
       currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
     }
     const storeName = `${this.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
@@ -99,24 +103,30 @@ export default class Store extends BaseStore {
     return value;
   };
 
-  set = (key: string, value: any): void => {
+  all = () : any => {
+    return this.storage.store;
+  };
+
+  set = (key: string, value: any, noCrypt? : boolean): void => {
     if (value === undefined) {
       return;
     }
-    if (this.isEncryptedKey(key)) {
+    if (this.isEncryptedKey(key) && !noCrypt) {
       if (!this.cryptoKey) {
         throw new Error('Crypto key is null');
       }
       this.storage.set(key, this.encrypt(this.cryptoKey, value));
     } else {
-      this.storage.set(key, value);
+      this.storage
+        ? this.storage.set(key, value)
+        : this.baseStore.set(key, value);
     }
   };
 
-  setMultiple = (params: any): void => {
+  setMultiple = (params: any, noCrypt?: boolean): void => {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(params)) {
-      this.set(key, value);
+      this.set(key, value, noCrypt);
     }
   };
 
@@ -130,6 +140,8 @@ export default class Store extends BaseStore {
 
   logout = (): void => {
     this.baseStore.clear();
+    // this.cryptoKey = undefined;
+    // Object.keys(Store.instances).forEach(prefix => Store.close(prefix));
   };
 
   isCryptoKeyStored = () => !!this.cryptoKey;
@@ -164,18 +176,21 @@ export default class Store extends BaseStore {
   }
 
   @Catch()
-  setCryptoKey(cryptoKey: string) {
+  async setCryptoKey(cryptoKey: string) {
     // clean timer which was run before, and run new one
     this.unsetCryptoKey();
-    this.cryptoKey = this.createCryptoKey(cryptoKey);
     this.logger.error('setCryptoKey');
-    this.timer = setTimeout(this.unsetCryptoKey, this.cryptoKeyTTL * 60 * 1000);
+    this.cryptoKey = this.createCryptoKey(cryptoKey);
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    this.timer = setTimeout(this.unsetCryptoKey.bind(this), this.cryptoKeyTTL * 1000 * 60);
+    // run migrations if exists
+    await Migrate.runCrypted(this.get('currentUserId'), this.storage.get('env'));
   }
 
   @Catch()
-  setNewPassword(cryptoKey: string) {
+  async setNewPassword(cryptoKey: string) {
     if (!this.cryptoKey) {
-      this.setCryptoKey('temp');
+      await this.setCryptoKey('temp');
     }
     const oldDecryptedKeys = {};
     this.encryptedKeys.forEach((encryptedKey) => {
@@ -185,7 +200,7 @@ export default class Store extends BaseStore {
       }
     });
 
-    this.setCryptoKey(cryptoKey);
+    await this.setCryptoKey(cryptoKey);
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(oldDecryptedKeys)) {
       this.set(key, value);
@@ -193,11 +208,11 @@ export default class Store extends BaseStore {
   }
 
   @Catch()
-  isCryptoKeyValid(password: string) {
-    const userInputCryptoKey = this.createCryptoKey(password);
-    const encryptedSavedCredentials = this.storage.get('credentials');
+  async isCryptoKeyValid(password: string) {
+    const userInputCryptoKey = await this.createCryptoKey(password);
+    const encryptedSavedCredentials = await this.storage.get('credentials');
     try {
-      const decryptedValue = this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
+      const decryptedValue = await this.decrypt(userInputCryptoKey, encryptedSavedCredentials);
       return !!decryptedValue;
     } catch (e) {
       return false;

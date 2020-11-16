@@ -1,11 +1,11 @@
 import React from 'react';
+import { shell } from 'electron';
 import styled from 'styled-components';
 
 import { ProcessLoader, Button, PasswordInput } from 'common/components';
 import { Title, Paragraph, ErrorMessage } from '../../common';
 
 import useCreateServer from 'common/hooks/useCreateServer';
-
 import Guide from '../Guide';
 
 const Wrapper = styled.div`
@@ -16,11 +16,6 @@ const Wrapper = styled.div`
   font-family: Avenir;
   font-size: 16px;
   font-weight: 500;
-`;
-
-const GuideButton = styled.span`
-  color:${({theme}) => theme.primary900};
-  cursor:pointer;
 `;
 
 const PasswordInputsWrapper = styled.div`
@@ -35,6 +30,19 @@ const PasswordInputsWrapper = styled.div`
 const ProgressWrapper = styled.div`
   width:58%;
   margin-top:20px;
+`;
+
+const GuideButton = styled.span`
+  color:${({theme}) => theme.primary900};
+  cursor:pointer;
+`;
+
+const ExternalLink = styled.span`
+  color:${({theme}) => theme.primary900};
+  cursor:pointer;
+  &:hover {
+    color:${({theme}) => theme.primary600};
+  }
 `;
 
 const CreateServer = (props: Props) => {
@@ -52,7 +60,11 @@ const CreateServer = (props: Props) => {
       <Title>Create your staking KeyVault</Title>
       <Paragraph>
         We will now create your KeyVault on your selected server. <br />
-        Blox needs to have access to your AWS access/secret tokens. <br /> <br />
+        To do that, Blox needs AWS access/secret keys. <br />
+        <b>Important</b>: make sure your&nbsp;
+        <ExternalLink onClick={() => shell.openExternal('https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/')}>
+          AWS account is verified
+        </ExternalLink> before creating the keys. <br /> <br />
         To create a suitable server and access tokens follow this&nbsp;
         <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
       </Paragraph>
@@ -79,7 +91,6 @@ const CreateServer = (props: Props) => {
     </Wrapper>
   );
 };
-
 
 type Props = {
   page: number;

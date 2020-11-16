@@ -10,8 +10,14 @@ const initialState = {
 /* eslint-disable default-case, no-param-reassign */
 const passwordHandlerReducer = (state = initialState, action: Action) => produce(state, (draft) => {
   switch (action.type) {
+    case actionTypes.SAVE_PASSWORD:
+    case actionTypes.REPLACE_PASSWORD:
     case actionTypes.CHECK_PASSWORD_VALIDATION:
       draft.isLoading = true;
+      break;
+    case actionTypes.SAVE_PASSWORD_SUCCESS:
+    case actionTypes.SAVE_PASSWORD_FAILURE:
+      draft.isLoading = initialState.isLoading;
       break;
     case actionTypes.SET_PASSWORD_VALIDATION:
       draft.isValid = action.payload;

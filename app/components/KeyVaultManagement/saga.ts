@@ -11,7 +11,6 @@ import AccountService from 'backend/services/account/account.service';
 const keyManagerService = new KeyManagerService();
 const accountService = new AccountService();
 const versionService = new VersionService();
-const store: Store = Store.getStore();
 
 function* loadMnemonicSaga() {
   try {
@@ -26,8 +25,9 @@ function* loadMnemonicSaga() {
 function* saveMnemonicSaga(action) {
   try {
     const { payload: { mnemonic } } = action;
+    const store: Store = Store.getStore();
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
-    store.set('seed', seed);
+    yield store.set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
   }
   catch (error) {

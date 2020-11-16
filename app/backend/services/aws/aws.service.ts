@@ -1,7 +1,7 @@
 import net from 'net';
 import Store from '../../common/store-manager/store';
 import * as AWS from 'aws-sdk';
-import { CatchClass, Step } from '../../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -39,6 +39,9 @@ export default class AwsService {
 
   @Step({
     name: 'Checking AWS keys permissions...'
+  })
+  @Catch({
+    showErrorMessage: true
   })
   async validateAWSPermissions() {
     try {

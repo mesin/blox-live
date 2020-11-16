@@ -25,8 +25,6 @@ import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
 import mainNetImg from 'components/Wizard/assets/img-validator-main-net.svg';
 
-const store: Store = Store.getStore();
-
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
@@ -80,6 +78,7 @@ const WelcomePage = (props: Props) => {
     if (!isLoading && !wallet) {
       loadWallet();
     }
+    const store: Store = Store.getStore();
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     const hasSeed = store.exists('seed');
 

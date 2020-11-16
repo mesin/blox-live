@@ -8,7 +8,7 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
-const STABLE_TAG = 'v0.1.11';
+const STABLE_TAG = 'v0.1.13';
 
 function numVal(str) {
   return +str.replace(/\D/g, '');
