@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom'; // TODO: remove later
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from './Button';
 import LogoutButton from './LogoutButton';
+import Store from 'backend/common/store-manager/store';
 
 const Wrapper = styled.div`
   position: relative;
@@ -56,8 +57,9 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.gray300};
 `;
 
-const canViewTestPage = (profile) => {
-  return profile && profile.email && profile.email.endsWith('@blox.io');
+const canViewTestPage = () => {
+  const store = Store.getStore();
+  return store.exists('testPage');
 };
 
 const ProfileMenu = forwardRef(
