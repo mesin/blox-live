@@ -136,7 +136,9 @@ export default class KeyVaultService {
 
     if (typeof networksList === 'object') {
       Object.entries(networksList).forEach(([key, val]) => {
-        dockerCMD += `-e ${key}_GENESIS_TIME='${val}' `;
+        if (key !== 'test') {
+          dockerCMD += `-e ${key}_GENESIS_TIME='${val}' `;
+        }
       });
     }
     dockerCMD += `'${dockerHubImage}'`;
