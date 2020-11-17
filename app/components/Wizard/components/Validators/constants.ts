@@ -3,17 +3,17 @@ import mainNetImage from '../../assets/img-validator-main-net.svg';
 import config from 'backend/common/config';
 
 export const NETWORKS = {
-  test: {
+  pyrmont: {
     name: 'TestNet',
     title: 'Test on TestNet',
     image: testNetImage,
     label: config.env.TEST_NETWORK,
   },
-  zinken: {
+  mainnet: {
     name: 'MainNet',
     title: 'Stake on MainNet',
     image: mainNetImage,
-    label: config.env.ZINKEN_NETWORK,
+    label: config.env.MAINNET_NETWORK,
   },
 };
 

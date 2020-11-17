@@ -75,7 +75,7 @@ const ProfileMenu = forwardRef(
             <Email>{profile.email}</Email>
           </MenuItem>
           <Separator />
-          {canViewTestPage(profile) && (
+          {canViewTestPage() && (
             <MenuItem>
               <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
             </MenuItem>

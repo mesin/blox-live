@@ -157,7 +157,7 @@ const Test = () => {
           console.log('network:', event.target.value);
         }}>
           <option value={config.env.TEST_NETWORK}>Test Network</option>
-          <option value={config.env.ZINKEN_NETWORK}>Zinken Network</option>
+          <option value={config.env.MAINNET_NETWORK}>MainNet Network</option>
         </select>
         <h3>Step 4. Account create</h3>
         <button
@@ -277,6 +277,11 @@ const Test = () => {
           console.log(store.get('seed'));
         }}>
           Show seed in console
+        </button>
+        <button onClick={async () => {
+          console.log(store.get('keyPair'));
+        }}>
+          Show key-pair in console
         </button>
         <br/>
         <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)}
