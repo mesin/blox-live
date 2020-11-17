@@ -111,7 +111,7 @@ const Step1Modal = (props: Props) => {
         />
       </PasswordInputsWrapper>
       <ButtonWrapper>
-        <Button onClick={() => onSaveAndConfirmClick()} isDisabled={isButtonDisabled}>
+        <Button onClick={() => !isButtonDisabled && onSaveAndConfirmClick()} isDisabled={isButtonDisabled}>
           Save &amp; Confirm
         </Button>
         {isLoading && (
