@@ -78,13 +78,15 @@ const PasswordInput = (props: Props) => {
 type Props = {
   autoFocus?: any
   name: string;
-  title: string;
+  title?: string;
   width?: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
+  onFocus?: () => void;
+  onKeyDown?: (event: Record<string, any>) => void;
   type?: string;
   value: string;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   isValid?: boolean;
   error?: string;
 };
