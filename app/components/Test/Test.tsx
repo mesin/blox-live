@@ -278,6 +278,11 @@ const Test = () => {
         }}>
           Show seed in console
         </button>
+        <button onClick={async () => {
+          console.log(store.get('keyPair'));
+        }}>
+          Show key-pair in console
+        </button>
         <br/>
         <input type={'text'} value={publicKey} onChange={(event) => setPublicKey(event.target.value)}
                placeholder="Public key"/>
