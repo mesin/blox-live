@@ -28,7 +28,6 @@ const WelcomeModal = ({onClick, onClose, type}: Props) => {
           <Button onClick={onClick}>Continue</Button>
         </>
       )}
-
     </ModalTemplate>
   );
 };

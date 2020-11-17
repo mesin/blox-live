@@ -200,7 +200,7 @@ export default class AccountService {
     const storageAccounts = await this.keyManagerService.listAccounts(storage);
     const createdAccount = storageAccounts.find(rec => rec.name === `account-${index}`);
     if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
-      throw new Error('Seed validation is failed');
+      throw new Error('Passphrase not linked to your account.');
     }
     this.store.clear();
     await this.store.setNewPassword(password, false);
