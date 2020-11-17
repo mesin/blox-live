@@ -202,7 +202,7 @@ export default class AccountService {
     if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
       throw new Error('Seed validation is failed');
     }
-    this.store.setNewPassword(password);
+    await this.store.setNewPassword(password);
     this.store.set('seed', seed);
   }
 }
