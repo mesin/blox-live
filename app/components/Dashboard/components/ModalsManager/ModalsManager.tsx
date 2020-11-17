@@ -16,7 +16,7 @@ import { MODAL_TYPES } from '../../constants';
 const ModalsManager = (props: Props) => {
   const { dashboardActions, wizardActions, accountsActions, showModal, modalType, onSuccess, activeValidators } = props;
   const { clearModalDisplayData } = dashboardActions;
-  const { loadWallet } = wizardActions;
+  const { loadWallet, setFinishedWizard } = wizardActions;
   const { loadAccounts } = accountsActions;
 
   const onPasswordSuccess = () => {
@@ -30,8 +30,9 @@ const ModalsManager = (props: Props) => {
   };
 
   const onAccountRecoverySuccess = () => {
-    loadAccounts();
+    setFinishedWizard(true);
     loadWallet();
+    loadAccounts();
     clearModalDisplayData();
   };
 
