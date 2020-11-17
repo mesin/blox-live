@@ -6,7 +6,7 @@ import Store from 'backend/common/store-manager/store';
 const store: Store = Store.getStore();
 
 export const NETWORKS = {
-  test: {
+  pyrmont: {
     name: 'TestNet',
     title: 'Test on TestNet',
     image: testNetImage,

@@ -29,7 +29,8 @@ const KeyCell = ({ value }) => {
         <CopyToClipboard text={publicKey} onCopy={onCopy}>
           <Icon name="copy" color="gray800" fontSize="16px" onClick={() => false} />
         </CopyToClipboard>
-        {network === 'test' && <TestNet>TestNet</TestNet>}
+        {network === 'pyrmont' && <TestNet>Pyrmont</TestNet>}
+        {network === 'mainnet' && <TestNet>MainNet</TestNet>}
       </Right>
     </Wrapper>
   );
