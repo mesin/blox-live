@@ -20,9 +20,10 @@ const WelcomeModal = ({onClick, onClose, type}: Props) => {
       )}
       {type === MODAL_TYPES.FORGOT_PASSWORD && (
         <>
-          <Title>Account Recovery</Title>
+          <Title>Forgotten Password</Title>
           <Description>
-            Your account will be recovered and all of your information will be imported to this device.
+            In order to generate a new password, we need to recover your account. <br />
+            All of your information will be restored after account recovery.
           </Description>
           <Button onClick={onClick}>Continue</Button>
         </>
