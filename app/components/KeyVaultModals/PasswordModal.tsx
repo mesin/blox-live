@@ -105,7 +105,7 @@ const PasswordModal = (props) => {
       <Title>Enter your password</Title>
       <Description>Critical actions require an extra layer of security.</Description>
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isValid}
-        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown} autoFocus
+        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown}
       />
       <Link onClick={onForgotPasswordClick}>Forgot password?</Link>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
