@@ -37,10 +37,10 @@ const Validators = (props: Props) => (
     <SubTitle>How would you like to start?</SubTitle>
     <ButtonsWrapper>
       <CustomButton
-        title={NETWORKS.test.title}
-        image={NETWORKS.test.image}
-        isDisabled={NETWORKS.test.isDisabled}
-        onClick={() => !NETWORKS.test.isDisabled && onClick({ ...props }, NETWORKS.test.label)}
+        title={NETWORKS.pyrmont.title}
+        image={NETWORKS.pyrmont.image}
+        isDisabled={NETWORKS.pyrmont.isDisabled}
+        onClick={() => !NETWORKS.pyrmont.isDisabled && onClick({ ...props }, NETWORKS.pyrmont.label)}
       />
       <CustomButton
         title={NETWORKS.mainnet.title}
