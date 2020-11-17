@@ -58,7 +58,7 @@ const Step1Modal = ({onClick, onClose}: Props) => {
         />
       </PasswordInputsWrapper>
       <ButtonWrapper>
-        <Button onClick={onButtonClick} isDisabled={isButtonDisabled}>Continue</Button>
+        <Button onClick={() => !isButtonDisabled && onButtonClick()} isDisabled={isButtonDisabled}>Continue</Button>
       </ButtonWrapper>
     </ModalTemplate>
   );

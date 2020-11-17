@@ -29,7 +29,7 @@ const useCreateServer = ({onStart, onSuccess}: Props) => {
 
   const onStartProcessClick = async (name: string) => {
     if (!isButtonDisabled && !processMessage && !processName) {
-      dispatch(savePassword('temp'));
+      name === 'install' && dispatch(savePassword('temp'));
       const credentials: Credentials = { accessKeyId, secretAccessKey };
       await startProcess(name, 'Checking KeyVault configuration...', credentials);
       onStart && onStart();

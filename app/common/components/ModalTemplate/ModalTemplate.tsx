@@ -71,7 +71,7 @@ type Props = {
   height: string;
   padding: string;
   justifyContent: string;
-  onClose?: () => void;
+  onClose?: () => void | null;
   image: string;
   children: React.ReactNode;
 };
