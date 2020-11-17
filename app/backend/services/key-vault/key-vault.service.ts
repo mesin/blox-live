@@ -137,8 +137,8 @@ export default class KeyVaultService {
     if (networksList.test) {
       dockerCMD += `-e TESTNET_GENESIS_TIME='${networksList.test}' `;
     }
-    if (networksList.zinken) {
-      dockerCMD += `-e ZINKEN_GENESIS_TIME='${networksList.zinken}' `;
+    if (networksList.mainnet) {
+      dockerCMD += `-e MAINNET_GENESIS_TIME='${networksList.mainnet}' `;
     }
     dockerCMD += `'${dockerHubImage}'`;
 

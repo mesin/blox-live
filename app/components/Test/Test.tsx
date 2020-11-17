@@ -157,7 +157,7 @@ const Test = () => {
           console.log('network:', event.target.value);
         }}>
           <option value={config.env.TEST_NETWORK}>Test Network</option>
-          <option value={config.env.ZINKEN_NETWORK}>Zinken Network</option>
+          <option value={config.env.MAINNET_NETWORK}>MainNet Network</option>
         </select>
         <h3>Step 4. Account create</h3>
         <button
