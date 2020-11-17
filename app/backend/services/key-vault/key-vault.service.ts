@@ -134,11 +134,12 @@ export default class KeyVaultService {
       "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
       "-e VAULT_CLIENT_TIMEOUT='30s' ";
 
-    if (networksList.test) {
-      dockerCMD += `-e TESTNET_GENESIS_TIME='${networksList.test}' `;
-    }
-    if (networksList.mainnet) {
-      dockerCMD += `-e MAINNET_GENESIS_TIME='${networksList.mainnet}' `;
+    if (typeof networksList === 'object') {
+      Object.entries(networksList).forEach(([key, val]) => {
+        if (key !== 'test') {
+          dockerCMD += `-e ${key}_GENESIS_TIME='${val}' `;
+        }
+      });
     }
     dockerCMD += `'${dockerHubImage}'`;
 
