@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Right = styled.div`
-  width: 20%;
+  width: 25%;
   padding-left: 1%;
   display: flex;
   align-items: center;

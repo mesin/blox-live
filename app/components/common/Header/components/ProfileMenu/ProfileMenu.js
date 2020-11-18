@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom'; // TODO: remove later
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from './Button';
 import LogoutButton from './LogoutButton';
+import Store from 'backend/common/store-manager/store';
 
 const Wrapper = styled.div`
   position: relative;
@@ -56,8 +57,9 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.gray300};
 `;
 
-const canViewTestPage = (profile) => {
-  return true;
+const canViewTestPage = () => {
+  const store = Store.getStore();
+  return store.exists('testPage');
 };
 
 const ProfileMenu = forwardRef(
@@ -73,7 +75,7 @@ const ProfileMenu = forwardRef(
             <Email>{profile.email}</Email>
           </MenuItem>
           <Separator />
-          {canViewTestPage(profile) && (
+          {canViewTestPage() && (
             <MenuItem>
               <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
             </MenuItem>
