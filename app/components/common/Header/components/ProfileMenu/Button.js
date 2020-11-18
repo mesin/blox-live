@@ -6,14 +6,12 @@ const Button = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme, isOpen }) =>
-    isOpen ? theme.accent2400 : theme.accent250};
+  background-color: ${({ theme, isOpen }) => isOpen ? theme.accent2400 : theme.accent250};
   cursor: pointer;
   border-radius: 50%;
   overflow: hidden;
   &:hover {
-    background-color: ${({ theme, isOpen }) =>
-      isOpen ? theme.accent2400 : theme.accent2200};
+    background-color: ${({ theme, isOpen }) => isOpen ? theme.accent2400 : theme.accent2200};
   }
 `;
 
