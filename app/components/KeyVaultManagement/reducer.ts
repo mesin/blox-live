@@ -9,6 +9,7 @@ const initialState = {
   mnemonic: '',
   latestVersion: '',
   isRecoveryValid: false,
+  areAwsKeysValid: false,
 };
 
 /* eslint-disable default-case, no-param-reassign */
@@ -24,6 +25,7 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       draft.isLoading = true;
       break;
     case actionTypes.VALIDATE_RECOVERY_CREDENTIALS:
+    case actionTypes.VALIDATE_AWS_KEYS:
       draft.isLoading = true;
       draft.error = initialState.error;
       break;
@@ -36,6 +38,10 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
       draft.isLoading = initialState.isLoading;
       draft.isRecoveryValid = true;
       break;
+    case actionTypes.VALIDATE_AWS_KEYS_SUCCESS:
+      draft.isLoading = initialState.isLoading;
+      draft.areAwsKeysValid = true;
+      break;
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_SUCCESS:
       draft.latestVersion = action.payload;
       draft.isLoading = initialState.isLoading;
@@ -45,12 +51,17 @@ const KeyVaultManagementReducer = (state = initialState, action: Action) => prod
     case actionTypes.KEYVAULT_LOAD_LATEST_VERSION_FAILURE:
     case actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_FAILURE:
     case actionTypes.VALIDATE_RECOVERY_CREDENTIALS_FAILURE:
+    case actionTypes.VALIDATE_AWS_KEYS_FAILURE:
       draft.error = action.payload.message;
       draft.isLoading = initialState.isLoading;
       break;
     case actionTypes.VALIDATE_RECOVERY_CREDENTIALS_CLEAR:
       draft.error = initialState.error;
       draft.isRecoveryValid = initialState.isRecoveryValid;
+      break;
+    case actionTypes.VALIDATE_AWS_KEYS_CLEAR:
+      draft.error = initialState.error;
+      draft.isRecoveryValid = initialState.areAwsKeysValid;
       break;
     case actionTypes.KEYVAULT_CLEAR_DATA:
     case LOGOUT:

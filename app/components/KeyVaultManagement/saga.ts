@@ -69,10 +69,23 @@ function* checkRecoveryCredentialsSaga(action) {
   }
 }
 
+function* validateAwsKeysSaga(action) {
+  try {
+    const { payload } = action;
+    // TODO: add the relevant func
+    // yield call([accountService, 'recovery'], payload);
+    yield put(actions.validateAwsKeysSuccess());
+  }
+  catch (error) {
+    yield put(actions.validateAwsKeysFailure(error));
+  }
+}
+
 export default function* keyVaultManagementSaga() {
   yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, loadMnemonicSaga);
   yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, saveMnemonicSaga);
   yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, loadLatestVersionSaga);
   yield takeLatest(actionTypes.KEYVAULT_VALIDATE_PASSPHRASE, validatePassphraseSaga);
   yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, checkRecoveryCredentialsSaga);
+  yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, validateAwsKeysSaga);
 }

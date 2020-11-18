@@ -79,4 +79,22 @@ export const clearRecoveryCredentialsState = () => ({
   type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_CLEAR,
 });
 
+export const validateAwsKeys = (keys: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_AWS_KEYS,
+  payload: keys,
+});
+
+export const validateAwsKeysSuccess = () => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_SUCCESS,
+});
+
+export const validateAwsKeysFailure = (error: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_FAILURE,
+  payload: error,
+});
+
+export const clearAwsKeysState = () => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_CLEAR,
+});
+
 export const keyvaultClearData = () => ({ type: actionTypes.KEYVAULT_CLEAR_DATA });
