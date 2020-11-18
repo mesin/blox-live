@@ -31,7 +31,6 @@ const PasswordInputsWrapper = styled.div`
 
 const ButtonWrapper = styled.div`
   margin-top:41px;
-  margin-bottom:41px;
 `;
 
 const Message = styled.span<{ error?: string }>`
@@ -93,7 +92,9 @@ const Step1Modal = (props: Props) => {
             <Message>Validating AWS keys...</Message>
           </LoadingWrapper>
         )}
-        {isValidError && (<Message error={isValidError}>{isValidError}</Message>)}
+        {isValidError && (
+          <Message error={isValidError}>Please check your access keys and try again</Message>
+        )}
       </ButtonWrapper>
     </ModalTemplate>
   );

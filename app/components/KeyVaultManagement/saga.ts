@@ -4,6 +4,7 @@ import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
 import Store from 'backend/common/store-manager/store';
+import AwsService from 'backend/services/aws/aws.service';
 import VersionService from 'backend/services/version/version.service';
 import KeyManagerService from 'backend/services/key-manager/key-manager.service';
 import AccountService from 'backend/services/account/account.service';
@@ -72,8 +73,7 @@ function* checkRecoveryCredentialsSaga(action) {
 function* validateAwsKeysSaga(action) {
   try {
     const { payload } = action;
-    // TODO: add the relevant func
-    // yield call([accountService, 'recovery'], payload);
+    yield call([AwsService, 'validateAWSCredentials'], payload);
     yield put(actions.validateAwsKeysSuccess());
   }
   catch (error) {
@@ -87,5 +87,5 @@ export default function* keyVaultManagementSaga() {
   yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, loadLatestVersionSaga);
   yield takeLatest(actionTypes.KEYVAULT_VALIDATE_PASSPHRASE, validatePassphraseSaga);
   yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, checkRecoveryCredentialsSaga);
-  yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, validateAwsKeysSaga);
+  yield takeLatest(actionTypes.VALIDATE_AWS_KEYS, validateAwsKeysSaga);
 }
