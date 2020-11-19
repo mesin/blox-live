@@ -22,7 +22,7 @@ const WelcomeModal = ({onClick, onClose, type}: Props) => {
         <>
           <Title>Forgotten Password</Title>
           <Description>
-            In order to generate a new password, we need to recover your account. <br />
+            In order to generate a new password, we need to recover your account.
             All of your information will be restored after account recovery.
           </Description>
           <Button onClick={onClick}>Continue</Button>
