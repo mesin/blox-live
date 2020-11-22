@@ -20,7 +20,7 @@ function sleep(msec) {
   });
 }
 
-@CatchClass<KeyVaultService>()
+// @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
@@ -170,7 +170,7 @@ export default class KeyVaultService {
   @Step({
     name: 'Updating server storage...'
   })
-  async updateVaultMountsStorage(): Promise<void> {
+  async updateVaultMountsStorage(): Promise<any> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
 
     if (keyVaultStorage) {
@@ -183,6 +183,7 @@ export default class KeyVaultService {
         }
       }
     }
+    return { isActive: true };
   }
 
   @Step({
