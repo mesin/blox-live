@@ -27,7 +27,10 @@ export default class Config {
   };
 
   private constructor() {
-    const envKey = (new BaseStore()).get('env') || 'production';
+    const baseStore: BaseStore = new BaseStore();
+    console.log('====baseStore=', baseStore);
+    const envKey = baseStore.get('env') || 'production';
+    console.log('====envKey=', envKey);
     // env related
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings[envKey])) {
@@ -49,6 +52,7 @@ export default class Config {
     if (!this.instance) {
       this.instance = new Config();
     }
+    console.log('------->', this.instance);
     return this.instance;
   }
 }

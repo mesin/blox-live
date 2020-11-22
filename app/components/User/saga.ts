@@ -4,10 +4,9 @@ import * as actions from './actions';
 
 import UsersService from 'backend/services/users/users.service';
 
-const usersService = new UsersService();
-
 function* loadUserInfoSaga() {
   try {
+    const usersService = new UsersService();
     const userInfo = yield call([usersService, 'get']);
     yield put(actions.loadUserInfoSuccess(userInfo));
   } catch (error) {
@@ -18,6 +17,7 @@ function* loadUserInfoSaga() {
 function* updateUserInfoSaga(action) {
   const { payload } = action;
   try {
+    const usersService = new UsersService();
     yield call([usersService, 'update'], payload);
     yield put(actions.updateUserInfoSuccess());
   } catch (error) {

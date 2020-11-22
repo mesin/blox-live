@@ -19,6 +19,7 @@ export default class WalletService {
     this.keyVaultSsh = new KeyVaultSsh(this.storePrefix);
     this.keyManagerService = new KeyManagerService();
     this.bloxApi = new BloxApi(this.storePrefix);
+    this.bloxApi.init();
     this.logger = new Logger();
   }
 

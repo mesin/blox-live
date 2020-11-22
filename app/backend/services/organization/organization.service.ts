@@ -8,6 +8,7 @@ export default class OrganizationService {
 
   constructor() {
     this.bloxApi = new BloxApi();
+    this.bloxApi.init();
   }
 
   async get() {

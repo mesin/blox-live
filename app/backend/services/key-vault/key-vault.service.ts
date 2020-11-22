@@ -36,6 +36,7 @@ export default class KeyVaultService {
     this.keyVaultApi = new KeyVaultApi(this.storePrefix);
     this.walletService = new WalletService(this.storePrefix);
     this.bloxApi = new BloxApi(this.storePrefix);
+    this.bloxApi.init();
   }
 
   async updateStorage(payload: any) {

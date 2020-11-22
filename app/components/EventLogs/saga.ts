@@ -9,10 +9,9 @@ import OrganizationService from 'backend/services/organization/organization.serv
 import { setModalDisplay } from '../Dashboard/actions';
 import { MODAL_TYPES } from '../Dashboard/constants';
 
-const organizationService = new OrganizationService();
-
 export function* startLoadingEventLogs() {
   try {
+    const organizationService = new OrganizationService();
     const response = yield call([organizationService, 'getEventLogs']);
     yield call(onLoadingEventLogsSuccess, response);
   } catch (error) {

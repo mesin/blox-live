@@ -5,8 +5,6 @@ import { LOAD_ACCOUNTS } from './actionTypes';
 import * as actions from './actions';
 import AccountService from '../../backend/services/account/account.service';
 
-const accountService = new AccountService();
-
 function* onLoadingSuccess(response: Record<string, any>) {
   yield put(actions.loadAccountsSuccess(response));
 }
@@ -18,6 +16,7 @@ function* onLoadingFailure(error: Record<string, any>) {
 
 export function* startLoadingAccounts() {
   try {
+    const accountService = new AccountService();
     const response = yield call([accountService, 'get']);
     yield call(onLoadingSuccess, response);
   } catch (error) {

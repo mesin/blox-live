@@ -20,6 +20,7 @@ export default class AccountService {
     this.keyVaultService = new KeyVaultService();
     this.keyManagerService = new KeyManagerService();
     this.bloxApi = new BloxApi();
+    this.bloxApi.init();
   }
 
   async get() {

@@ -5,9 +5,6 @@ import * as actions from './actions';
 import WalletService from '../../backend/services/wallet/wallet.service';
 import AccountService from '../../backend/services/account/account.service';
 
-const walletService = new WalletService();
-const accountService = new AccountService();
-
 function* onAccountStatusUpdateSuccess() {
   yield put(actions.updateAccountStatusSuccess());
 }
@@ -37,6 +34,7 @@ function* onLoadDepositDataFailure(error) {
 
 function* loadWallet() {
   try {
+    const walletService = new WalletService();
     const response = yield call([walletService, 'get']);
     yield call(onLoadWalletSuccess, response);
   } catch (error) {
@@ -48,6 +46,7 @@ function* loadDepositData(action) {
   const { payload } = action;
   const { publicKey, accountIndex, network } = payload;
   try {
+    const accountService = new AccountService();
     const response = yield call([accountService, 'getDepositData'], publicKey, accountIndex, network);
     yield call(onLoadDepositDataSuccess, response);
   } catch (error) {
@@ -58,6 +57,7 @@ function* loadDepositData(action) {
 function* startUpdatingAccountStatus(action) {
   const { payload } = action;
   try {
+    const accountService = new AccountService();
     yield call([accountService, 'updateStatus'], payload, { deposited: true });
     yield call(onAccountStatusUpdateSuccess);
   } catch (error) {
