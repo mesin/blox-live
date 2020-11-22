@@ -18,7 +18,7 @@ export default class WalletService {
     this.storePrefix = prefix;
     this.keyVaultSsh = new KeyVaultSsh(this.storePrefix);
     this.keyManagerService = new KeyManagerService();
-    this.bloxApi = new BloxApi(this.storePrefix);
+    this.bloxApi = new BloxApi();
     this.bloxApi.init();
     this.logger = new Logger();
   }
@@ -45,8 +45,7 @@ export default class WalletService {
   }
 
   @Step({
-    name: 'Creating wallet...',
-    requiredConfig: ['network']
+    name: 'Creating wallet...'
   })
   @Catch({
     displayMessage: 'CLI Create Wallet failed'
@@ -59,8 +58,7 @@ export default class WalletService {
   }
 
   @Step({
-    name: 'Remove blox wallet',
-    requiredConfig: ['authToken']
+    name: 'Remove blox wallet'
   })
   async removeBloxWallet(): Promise<void> {
     try {
@@ -78,8 +76,7 @@ export default class WalletService {
   }
 
   @Step({
-    name: 'Syncing KeyVault with Blox...',
-    requiredConfig: ['publicIp', 'authToken', 'vaultRootToken', 'keyVaultVersion']
+    name: 'Syncing KeyVault with Blox...'
   })
   async syncVaultWithBlox({ isNew }): Promise<void> {
     const payload = {

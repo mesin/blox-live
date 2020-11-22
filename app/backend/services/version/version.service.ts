@@ -8,6 +8,7 @@ export default class VersionService {
 
   constructor() {
     this.bloxApi = new BloxApi();
+    this.bloxApi.init();
   }
 
   async getLatestKeyVaultVersion() {

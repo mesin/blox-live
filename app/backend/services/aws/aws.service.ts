@@ -40,8 +40,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Securely connecting to AWS...',
-    requiredConfig: ['credentials']
+    name: 'Securely connecting to AWS...'
   })
   async setAWSCredentials(): Promise<any> {
     const credentials: any = Connection.db(this.storePrefix).get('credentials');
@@ -68,10 +67,10 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Creating secure EC2 key pair...',
-    requiredConfig: ['uuid']
+    name: 'Creating secure EC2 key pair...'
   })
   async createEc2KeyPair() {
+    console.log('KEYPAIIIIR', this.storePrefix, Connection.db(this.storePrefix).exists('keyPair'));
     if (Connection.db(this.storePrefix).exists('keyPair')) return;
 
     const {
@@ -98,8 +97,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Setting security group permissions...',
-    requiredConfig: ['uuid']
+    name: 'Setting security group permissions...'
   })
   async createSecurityGroup() {
     if (Connection.db(this.storePrefix).exists('securityGroupId')) return;
@@ -136,8 +134,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Establishing KeyVault server...',
-    requiredConfig: ['uuid', 'securityGroupId', 'addressId']
+    name: 'Establishing KeyVault server...'
   })
   async createInstance() {
     if (Connection.db(this.storePrefix).exists('instanceId')) return;
@@ -169,8 +166,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Delete all EC2 items',
-    requiredConfig: ['instanceId', 'securityGroupId', 'addressId', 'keyPair']
+    name: 'Delete all EC2 items'
   })
   async uninstallItems() {
     await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
@@ -188,8 +184,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Removing old EC2 instance...',
-    requiredConfig: ['instanceId', 'addressId']
+    name: 'Removing old EC2 instance...'
   })
   async truncateServer() {
     await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
@@ -198,8 +193,7 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Establishing connection to your server...',
-    requiredConfig: ['instanceId', 'publicIp']
+    name: 'Establishing connection to your server...'
   })
   async rebootInstance() {
     await this.ec2.rebootInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();

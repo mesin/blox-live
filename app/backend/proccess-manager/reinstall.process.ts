@@ -2,11 +2,12 @@ import AwsService from '../services/aws/aws.service';
 import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
 import WalletService from '../services/wallet/wallet.service';
-import Connection from '../common/store-manager/store';
+import Connection from '../common/store-manager/connection';
+import BaseStore from '../common/store-manager/base-store';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
-
+const mainStorePrefix = '';
 export default class ReinstallProcess extends ProcessClass {
   private readonly awsServiceTmp: AwsService;
   private readonly awsService: AwsService;
@@ -17,6 +18,17 @@ export default class ReinstallProcess extends ProcessClass {
 
   constructor() {
     super();
+    const baseStore = new BaseStore();
+    Connection.setup({
+      currentUserId: baseStore.get('currentUserId'),
+      authToken: baseStore.get('authToken'),
+      prefix: tempStorePrefix
+    });
+    Connection.cloneCryptoKey({
+      fromPrefix: mainStorePrefix,
+      toPrefix: tempStorePrefix
+    });
+
     this.keyVaultServiceTmp = new KeyVaultService(tempStorePrefix);
     this.keyVaultService = new KeyVaultService();
     this.awsServiceTmp = new AwsService(tempStorePrefix);
@@ -28,11 +40,11 @@ export default class ReinstallProcess extends ProcessClass {
         instance: Connection,
         method: 'clone',
         params: {
-          fromPrefix: '',
+          fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
           fields: ['uuid', 'credentials', 'keyPair', 'securityGroupId', 'keyVaultStorage', 'slashingData'],
           postClean: {
-            prefix: '',
+            prefix: mainStorePrefix,
             fields: ['slashingData']
           }
         }
@@ -52,7 +64,7 @@ export default class ReinstallProcess extends ProcessClass {
         method: 'clone',
         params: {
           fromPrefix: tempStorePrefix,
-          toPrefix: '',
+          toPrefix: mainStorePrefix,
           fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'keyVaultStorage'],
           postClean: {
             prefix: tempStorePrefix

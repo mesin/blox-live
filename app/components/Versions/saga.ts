@@ -4,10 +4,9 @@ import {LOAD_BLOX_LIVE_VERSION} from './actionTypes';
 import * as actions from './actions';
 import VersionService from '../../backend/services/version/version.service';
 
-const versionService = new VersionService();
-
 export function* startLoadingBloxLiveLatestVersion() {
   try {
+    const versionService = new VersionService();
     const latestVersion = yield call([versionService, 'getLatestBloxLiveVersion']);
     yield call(onLoadingBloxLiveLatestSuccess, latestVersion);
   } catch (error) {

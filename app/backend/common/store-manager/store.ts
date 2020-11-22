@@ -10,7 +10,7 @@ export default class Store {
   private readonly prefix: string;
   private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
-  private cryptoKey: string;
+  public cryptoKey: string;
   private cryptoKeyTTL: number = 20; // 20 minutes
   private timer: any;
   private logger: Logger;
@@ -26,16 +26,14 @@ export default class Store {
     this.logger = new Logger();
   }
 
-  init(userId: string, authToken: string, oldPattern?: boolean): void {
+  init(userId: string, authToken: string): void {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
     let currentUserId = userId;
     this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    if (!oldPattern) {
-      currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
-    }
+    currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
     const storeName = `${this.baseStore.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
     this.storage = new ElectronStore({ name: storeName });
   }
@@ -74,7 +72,12 @@ export default class Store {
   }
 
   all(): any {
-    return this.storage.store;
+    const keys = Object.keys(this.storage.store);
+    return keys.reduce((aggr, key) => {
+      // eslint-disable-next-line no-param-reassign
+      aggr[key] = this.get(key);
+      return aggr;
+    }, {});
   }
 
   set(key: string, value: any, noCrypt? : boolean): void {

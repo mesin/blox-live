@@ -84,7 +84,7 @@ export default class Auth {
     const { id_token } = authResult;
     this.idToken = id_token;
     this.userProfile = userProfile;
-    Connection.setup({ userId: userProfile.sub, authToken: authResult.id_token });
+    Connection.setup({ currentUserId: userProfile.sub, authToken: authResult.id_token });
     // Store.getStore().init(userProfile.sub, authResult.id_token);
 
     // await Migrate.runMain(userProfile.sub, Store.getStore().get('env'));

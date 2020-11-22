@@ -35,7 +35,7 @@ export default class KeyVaultService {
     this.versionService = new VersionService();
     this.keyVaultApi = new KeyVaultApi(this.storePrefix);
     this.walletService = new WalletService(this.storePrefix);
-    this.bloxApi = new BloxApi(this.storePrefix);
+    this.bloxApi = new BloxApi();
     this.bloxApi.init();
   }
 
@@ -100,8 +100,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Getting KeyVault authentication token...',
-    requiredConfig: ['publicIp']
+    name: 'Getting KeyVault authentication token...'
   })
   async getKeyVaultRootToken(): Promise<void> {
     const ssh = await this.keyVaultSsh.getConnection();
@@ -162,8 +161,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
+    name: 'Updating server storage...'
   })
   async updateVaultStorage(): Promise<void> {
     const network = Connection.db(this.storePrefix).get('network');
@@ -189,8 +187,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Export slashing protection data...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
+    name: 'Export slashing protection data...'
   })
   async importSlashingData(): Promise<any> {
     const keyVaultStorage = Connection.db(this.storePrefix).get('keyVaultStorage');
@@ -214,8 +211,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Import slashing protection data...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
+    name: 'Import slashing protection data...'
   })
   async exportSlashingData(): Promise<any> {
     const slashingData = Connection.db(this.storePrefix).get('slashingData');
@@ -237,8 +233,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Validating KeyVault final configuration...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
+    name: 'Validating KeyVault final configuration...'
   })
   async getKeyVaultStatus() {
     // check if the key vault is alive

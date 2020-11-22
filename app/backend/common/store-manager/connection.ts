@@ -8,10 +8,11 @@ export default class Connection {
   private static userId: string;
   private logger: Logger;
 
-  static setup(payload: { userId: string, authToken: string, oldPattern?: boolean, prefix?: string }): void {
-    Connection.userId = payload.userId;
-    instances[Connection.userId] = new Store(payload.prefix);
-    instances[Connection.userId].init(payload.userId, payload.authToken, payload.oldPattern);
+  static setup(payload: { currentUserId: string, authToken: string, prefix?: string }): void {
+    Connection.userId = payload.currentUserId;
+    const name = `${payload.currentUserId}${payload.prefix || ''}`;
+    instances[name] = new Store(payload.prefix);
+    instances[name].init(payload.currentUserId, payload.authToken);
   }
 
   static db(prefix: string = ''): Store {
@@ -22,19 +23,26 @@ export default class Connection {
     return instances[name];
   }
 
+  static cloneCryptoKey(payload: { fromPrefix: string, toPrefix: string }): void {
+    Connection.db(payload.toPrefix).cryptoKey = Connection.db(payload.fromPrefix).cryptoKey;
+    console.log('set toprefix cryptokey', Connection.db(payload.toPrefix).cryptoKey, 'from:', Connection.db(payload.toPrefix).get('credentials'));
+  }
+
   @Step({
     name: 'Clone configuration settings...'
   })
-  @Catch()
+  @Catch({
+    showErrorMessage: true
+  })
   static clone(payload: { fromPrefix: string, toPrefix: string, fields: any, postClean?: { prefix: string, fields?: any } }): void {
     const items = Connection.db(payload.fromPrefix).all();
-    Connection.setup({ userId: items.userId, authToken: items.authToken, prefix: payload.toPrefix });
     const data = payload.fields.reduce((aggr, field) => {
       // eslint-disable-next-line no-param-reassign
       aggr[field] = items[field];
       return aggr;
     }, {});
     Connection.db(payload.toPrefix).setMultiple(data);
+    console.log('clone cryptkey', Connection.db(payload.toPrefix).cryptoKey, Connection.db(payload.toPrefix).get('credentials'))
     const { postClean } = payload;
     if (postClean) {
       if (postClean.fields) {

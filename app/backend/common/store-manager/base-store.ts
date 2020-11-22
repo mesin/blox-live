@@ -4,27 +4,27 @@ import ElectronStore from 'electron-store';
 const baseStoreName = 'blox';
 
 export default class BaseStore {
-  protected readonly baseStore: ElectronStore;
+  public storage: ElectronStore;
   public baseStoreName: string;
 
   constructor() {
     this.baseStoreName = baseStoreName;
-    this.baseStore = new ElectronStore({ name: baseStoreName });
+    this.storage = new ElectronStore({ name: baseStoreName });
   }
 
   set(key: string, value: any): void {
-    this.baseStore.set(key, value);
+    this.storage.set(key, value);
   }
 
   get(key: string): any {
-    return this.baseStore.get(key);
+    return this.storage.get(key);
   }
 
   delete(key: string): any {
-    this.baseStore.delete(key);
+    this.storage.delete(key);
   }
 
   clear(): void {
-    this.baseStore.clear();
+    this.storage.clear();
   }
 }

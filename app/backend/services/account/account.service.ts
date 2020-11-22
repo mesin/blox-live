@@ -43,8 +43,7 @@ export default class AccountService {
   }
 
   @Step({
-    name: 'Create Blox Account',
-    requiredConfig: ['seed', 'authToken', 'network']
+    name: 'Create Blox Account'
   })
   @Catch({
     displayMessage: 'Create Blox Account failed'
@@ -60,8 +59,7 @@ export default class AccountService {
   }
 
   @Step({
-    name: 'Create Account',
-    requiredConfig: ['seed', 'network']
+    name: 'Create Account'
   })
   @Catch({
     displayMessage: 'CLI Create Account failed'
