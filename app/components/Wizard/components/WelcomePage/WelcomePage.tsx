@@ -89,6 +89,10 @@ const WelcomePage = (props: Props) => {
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
+      if (!isPrimaryDevice) {
+        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        return;
+      }
       if (hasSeed) {
         if (addAnotherAccount) {
           redirectToCreateAccount();
@@ -105,10 +109,7 @@ const WelcomePage = (props: Props) => {
         setStep2Status(true);
         return;
       }
-      if (!isPrimaryDevice) {
-        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
-        return;
-      }
+
       redirectToPassPhrasePage();
     }
   }, [isLoading]);
