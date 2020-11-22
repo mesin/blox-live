@@ -3,7 +3,7 @@ import jwtDecode from 'jwt-decode';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 import BloxApi from 'backend/common/communication-manager/blox-api';
 import { METHOD } from 'backend/common/communication-manager/constants';
 import AuthApi from 'backend/common/communication-manager/auth-api';
@@ -15,6 +15,7 @@ export default class Auth {
   userProfile: Profile;
   auth: Auth0ConfigObject;
   private readonly authApi: AuthApi;
+  private readonly bloxApi: BloxApi;
 
   constructor() {
     this.idToken = '';
@@ -27,6 +28,7 @@ export default class Auth {
       scope: 'openid profile email offline_access'
     };
     this.authApi = new AuthApi();
+    this.bloxApi = new BloxApi();
   }
 
   loginWithSocialApp = async (name: string) => {
@@ -82,10 +84,12 @@ export default class Auth {
     const { id_token } = authResult;
     this.idToken = id_token;
     this.userProfile = userProfile;
-    Store.getStore().init(userProfile.sub, authResult.id_token);
-    await Migrate.runMain(userProfile.sub, Store.getStore().get('env'));
-    BloxApi.init();
-    await BloxApi.request(METHOD.GET, 'organizations/profile');
+    Connection.setup({ userId: userProfile.sub, authToken: authResult.id_token });
+    // Store.getStore().init(userProfile.sub, authResult.id_token);
+
+    // await Migrate.runMain(userProfile.sub, Store.getStore().get('env'));
+    this.bloxApi.init();
+    await this.bloxApi.request(METHOD.GET, 'organizations/profile');
   };
 
   getIdToken = () => this.idToken;
@@ -94,7 +98,7 @@ export default class Auth {
 
   logout = async () => {
     await createLogoutWindow(`https://${this.auth.domain}/v2/logout?client_id=${this.auth.clientID}&federated`);
-    Store.getStore().logout();
+    Connection.db().logout();
     this.idToken = '';
     this.userProfile = null;
   };

@@ -1,18 +1,18 @@
-import Store from '../store-manager/store';
+import Connection from '../store-manager/connection';
 import NodeSSH from 'node-ssh';
 
 export default class KeyVaultSsh {
-  private readonly store: Store;
+  private storePrefix: string;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
+  constructor(prefix: string = '') {
+    this.storePrefix = prefix;
   }
 
   getConnection = async (): Promise<NodeSSH> => {
     const ssh = new NodeSSH();
-    const keyPair: any = this.store.get('keyPair');
+    const keyPair: any = Connection.db(this.storePrefix).get('keyPair');
     await ssh.connect({
-      host: this.store.get('publicIp'),
+      host: Connection.db(this.storePrefix).get('publicIp'),
       username: 'ec2-user',
       privateKey: keyPair.privateKey
     });

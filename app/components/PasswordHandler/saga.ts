@@ -1,15 +1,14 @@
 import { call, put, takeLatest } from 'redux-saga/effects';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 import { notification } from 'antd';
 
 function* savePassword(action) {
   const { payload } = action;
-  const store: Store = Store.getStore();
   try {
-    yield call([store, 'setCryptoKey'], payload);
+    yield call([Connection.db(), 'setCryptoKey'], payload);
     yield put(actions.savePasswordSuccess());
   }
   catch (error) {
@@ -20,9 +19,8 @@ function* savePassword(action) {
 
 function* replacePassword(action) {
   const { payload } = action;
-  const store: Store = Store.getStore();
   try {
-    yield call([store, 'setNewPassword'], payload);
+    yield call([Connection.db(), 'setNewPassword'], payload);
     yield put(actions.savePasswordSuccess());
   }
   catch (error) {
@@ -33,10 +31,9 @@ function* replacePassword(action) {
 
 function* validatePassword(action) {
   const { payload } = action;
-  const store: Store = Store.getStore();
-  const isValid = yield call([store, 'isCryptoKeyValid'], payload);
+  const isValid = yield call([Connection.db(), 'isCryptoKeyValid'], payload);
   if (isValid) {
-    yield call([store, 'setCryptoKey'], payload);
+    yield call([Connection.db(), 'setCryptoKey'], payload);
   }
   yield put(actions.setPasswordValidation(isValid));
 }

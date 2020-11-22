@@ -3,7 +3,7 @@ import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 import AwsService from 'backend/services/aws/aws.service';
 import VersionService from 'backend/services/version/version.service';
 import KeyManagerService from 'backend/services/key-manager/key-manager.service';
@@ -26,9 +26,8 @@ function* loadMnemonicSaga() {
 function* saveMnemonicSaga(action) {
   try {
     const { payload: { mnemonic } } = action;
-    const store: Store = Store.getStore();
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
-    yield store.set('seed', seed);
+    yield Connection.db().set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
   }
   catch (error) {

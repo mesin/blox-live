@@ -5,18 +5,26 @@ const baseStoreName = 'blox';
 
 export default class BaseStore {
   protected readonly baseStore: ElectronStore;
-  protected baseStoreName: string;
+  public baseStoreName: string;
 
   constructor() {
     this.baseStoreName = baseStoreName;
     this.baseStore = new ElectronStore({ name: baseStoreName });
   }
 
-  set = (key: string, value: any): void => {
+  set(key: string, value: any): void {
     this.baseStore.set(key, value);
-  };
+  }
 
-  clear = (): void => {
+  get(key: string): any {
+    return this.baseStore.get(key);
+  }
+
+  delete(key: string): any {
+    this.baseStore.delete(key);
+  }
+
+  clear(): void {
     this.baseStore.clear();
-  };
+  }
 }

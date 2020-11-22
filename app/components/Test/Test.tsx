@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import Store from '../../backend/common/store-manager/store';
+import Connection from '../../backend/common/store-manager/connection';
 import InstallProcess from '../../backend/proccess-manager/install.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import UninstallProcess from '../../backend/proccess-manager/uninstall.process';
@@ -39,7 +39,6 @@ const Test = () => {
   const keyVaultService = new KeyVaultService();
   const walletService = new WalletService();
   const versionService = new VersionService();
-  const store: Store = Store.getStore();
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
@@ -51,8 +50,8 @@ const Test = () => {
   let [secretAccessKey, setSecretAccessKey] = useState('');
   let [processStatus, setProcessStatus] = useState('');
   if (!isRendered) {
-    if (store.exists('env')) {
-      setEnv(store.get('env'));
+    if (Connection.db().exists('env')) {
+      setEnv(Connection.db().get('env'));
     } else {
       setEnv('production');
     }
@@ -70,7 +69,7 @@ const Test = () => {
       <button
         onClick={() => {
           console.log('set custom env', env);
-          store.setEnv(env);
+          Connection.db().setEnv(env);
         }}
       >
         Set Custom Environment
@@ -78,7 +77,7 @@ const Test = () => {
       <button
         onClick={async () => {
           console.log('delete custom env');
-          store.deleteEnv();
+          Connection.db().deleteEnv();
         }}
       >
         Delete Custom Environment
@@ -92,9 +91,9 @@ const Test = () => {
         <br/>
         <button
           onClick={async () => {
-            await store.setCryptoKey(cryptoKey);
-            if (store.exists('credentials')) {
-              const credentials: any = store.get('credentials');
+            await Connection.db().setCryptoKey(cryptoKey);
+            if (Connection.db().exists('credentials')) {
+              const credentials: any = Connection.db().get('credentials');
               setAccessKeyId(credentials.accessKeyId);
               setSecretAccessKey(credentials.secretAccessKey);
             }
@@ -106,7 +105,7 @@ const Test = () => {
         <h3>Step 1. Clean storage</h3>
         <button
           onClick={async () => {
-            Store.getStore().clear();
+            Connection.db().clear();
             cryptoKey = '';
             accessKeyId = '';
             secretAccessKey = '';
@@ -146,14 +145,14 @@ const Test = () => {
         <button onClick={async () => {
           const seed = await keyManagerService.seedFromMnemonicGenerate(mnemonic);
           console.log('seed', seed);
-          store.set('seed', seed);
+          Connection.db().set('seed', seed);
         }}>
           Set mnemonic phrase
         </button>
         <h2>Select Network</h2>
         <select value={network} onChange={(event) => {
           setNetwork(event.target.value);
-          store.set('network', event.target.value);
+          Connection.db().set('network', event.target.value);
           console.log('network:', event.target.value);
         }}>
           <option value={config.env.TEST_NETWORK}>Test Network</option>
@@ -274,12 +273,12 @@ const Test = () => {
         </button>
         <br/>
         <button onClick={async () => {
-          console.log(store.get('seed'));
+          console.log(Connection.db().get('seed'));
         }}>
           Show seed in console
         </button>
         <button onClick={async () => {
-          console.log(store.get('keyPair'));
+          console.log(Connection.db().get('keyPair'));
         }}>
           Show key-pair in console
         </button>

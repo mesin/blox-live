@@ -1,4 +1,4 @@
-import Store from './store-manager/store';
+import BaseStore from './store-manager/base-store';
 
 export default class Config {
   private static instance: Config;
@@ -27,8 +27,7 @@ export default class Config {
   };
 
   private constructor() {
-    const backendStore = Store.getStore();
-    const envKey = (backendStore.get('env') || 'production');
+    const envKey = (new BaseStore()).get('env') || 'production';
     // env related
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings[envKey])) {

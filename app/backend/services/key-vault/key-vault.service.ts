@@ -1,8 +1,8 @@
-import Store from '../../common/store-manager/store';
+import Connection from '../../common/store-manager/connection';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import VersionService from '../version/version.service';
 import WalletService from '../wallet/wallet.service';
-import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
+import KeyVaultApi from '../../common/communication-manager/key-vault-api';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
@@ -22,18 +22,20 @@ function sleep(msec) {
 
 @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
-  private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
   private readonly keyVaultApi: KeyVaultApi;
   private readonly versionService: VersionService;
   private readonly walletService: WalletService;
+  private readonly bloxApi: BloxApi;
+  private storePrefix: string;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
-    this.keyVaultSsh = new KeyVaultSsh(storePrefix);
+  constructor(prefix: string = '') {
+    this.storePrefix = prefix;
+    this.keyVaultSsh = new KeyVaultSsh(this.storePrefix);
     this.versionService = new VersionService();
-    this.keyVaultApi = resolveKeyVaultApi(storePrefix);
-    this.walletService = new WalletService(storePrefix);
+    this.keyVaultApi = new KeyVaultApi(this.storePrefix);
+    this.walletService = new WalletService(this.storePrefix);
+    this.bloxApi = new BloxApi(this.storePrefix);
   }
 
   async updateStorage(payload: any) {
@@ -104,7 +106,7 @@ export default class KeyVaultService {
     const ssh = await this.keyVaultSsh.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('vault-plugin rootToken not found');
-    this.store.set('vaultRootToken', rootToken);
+    Connection.db(this.storePrefix).set('vaultRootToken', rootToken);
   }
 
   @Step({
@@ -117,12 +119,12 @@ export default class KeyVaultService {
     }
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
-    const envKey = (this.store.get('env') || 'production');
+    const envKey = (Connection.db(this.storePrefix).get('env') || 'production');
     const dockerHubImage = envKey === 'production' ?
       `bloxstaking/key-vault:${keyVaultVersion}` :
       `bloxstaking/key-vault-rc:${keyVaultVersion}`;
 
-    const networksList = await BloxApi.request(METHOD.GET, 'ethereum2/genesis-time');
+    const networksList = await this.bloxApi.request(METHOD.GET, 'ethereum2/genesis-time');
 
     let dockerCMD = 'docker start key_vault 2>/dev/null || ' +
       `docker pull  ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
@@ -149,7 +151,7 @@ export default class KeyVaultService {
       {}
     );
 
-    this.store.set('keyVaultVersion', keyVaultVersion);
+    Connection.db(this.storePrefix).set('keyVaultVersion', keyVaultVersion);
 
     await sleep(12000);
 
@@ -163,21 +165,21 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
   })
   async updateVaultStorage(): Promise<void> {
-    const network = this.store.get('network');
-    await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+    const network = Connection.db(this.storePrefix).get('network');
+    await this.updateStorage({ data: Connection.db(this.storePrefix).get(`keyVaultStorage.${network}`) });
   }
 
   @Step({
     name: 'Updating server storage...'
   })
   async updateVaultMountsStorage(): Promise<void> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
+    const keyVaultStorage = Connection.db(this.storePrefix).get('keyVaultStorage');
 
     if (keyVaultStorage) {
       // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
-          this.store.set('network', network);
+          Connection.db(this.storePrefix).set('network', network);
           // eslint-disable-next-line no-await-in-loop
           await this.updateVaultStorage();
         }
@@ -190,7 +192,7 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
+    const keyVaultStorage = Connection.db(this.storePrefix).get('keyVaultStorage');
     // check if kv version higher or equal stable tag
     const currentVersion = (await this.getVersion()).data.version;
     if (numVal(currentVersion) < numVal(STABLE_TAG)) {
@@ -203,7 +205,7 @@ export default class KeyVaultService {
           // eslint-disable-next-line no-await-in-loop
           const slashingData = await this.getSlashingStorage(network);
           if (Object.keys(slashingData.data).length) {
-            this.store.set(`slashingData.${network}`, slashingData.data);
+            Connection.db(this.storePrefix).set(`slashingData.${network}`, slashingData.data);
           }
         }
       }
@@ -215,7 +217,7 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async exportSlashingData(): Promise<any> {
-    const slashingData = this.store.get('slashingData');
+    const slashingData = Connection.db(this.storePrefix).get('slashingData');
     // check if kv version higher or equal stable tag
     const currentVersion = (await this.getVersion()).data.version;
     if (numVal(currentVersion) < numVal(STABLE_TAG)) {

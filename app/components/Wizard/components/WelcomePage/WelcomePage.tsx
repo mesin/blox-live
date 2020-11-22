@@ -21,7 +21,7 @@ import * as userSelectors from '../../../User/selectors';
 import { InfoWithTooltip } from 'common/components';
 import ButtonWithIcon from './ButtonWithIcon';
 
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
@@ -82,10 +82,9 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
 
-    const store: Store = Store.getStore();
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
-    const hasSeed = store.exists('seed');
-    const storedUuid = store.get('uuid');
+    const hasSeed = Connection.db().exists('seed');
+    const storedUuid = Connection.db().get('uuid');
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {

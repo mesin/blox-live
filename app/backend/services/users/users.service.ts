@@ -4,11 +4,17 @@ import { METHOD } from '../../common/communication-manager/constants';
 
 @CatchClass<UserService>()
 export default class UserService {
+  private readonly bloxApi: BloxApi;
+
+  constructor() {
+    this.bloxApi = new BloxApi();
+  }
+
   async get() {
-    return await BloxApi.request(METHOD.GET, 'users/profile');
+    return await this.bloxApi.request(METHOD.GET, 'users/profile');
   }
 
   async update(payload: Record<string, any>) {
-    return await BloxApi.request(METHOD.PATCH, 'users', payload);
+    return await this.bloxApi.request(METHOD.PATCH, 'users', payload);
   }
 }

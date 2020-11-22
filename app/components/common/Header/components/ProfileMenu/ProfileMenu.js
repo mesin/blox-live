@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from './Button';
 import MenuButton from './MenuButton';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 import { openLocalDirectory } from 'common/service';
 
 const Wrapper = styled.div`
@@ -61,8 +61,7 @@ const Separator = styled.div`
 const ProfileMenu = forwardRef(
   ({ isOpen, toggleOpen, profile, logout }, ref) => {
     const canViewTestPage = () => {
-      const store = Store.getStore();
-      return store.exists('testPage');
+      return Connection.db().exists('testPage');
     };
 
     const openLogsFolder = () => {

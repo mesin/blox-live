@@ -1,11 +1,9 @@
 import KeyVaultService from '../services/key-vault/key-vault.service';
 import ProcessClass from './process.class';
 import AccountService from '../services/account/account.service';
-import Store from '../common/store-manager/store';
-import WalletService from '../services/wallet/wallet.service';
+import Connection from '../common/store-manager/connection';
 
 export default class AccountCreateProcess extends ProcessClass {
-  private readonly walletService: WalletService;
   private readonly accountService: AccountService;
   private readonly keyVaultService: KeyVaultService;
   public readonly actions: Array<any>;
@@ -13,11 +11,9 @@ export default class AccountCreateProcess extends ProcessClass {
 
   constructor(network: string) {
     super();
-    const store: Store = Store.getStore();
-    store.set('network', network);
+    Connection.db().set('network', network);
     this.keyVaultService = new KeyVaultService();
     this.accountService = new AccountService();
-    this.walletService = new WalletService();
     this.actions = [
       { instance: this.accountService, method: 'createAccount' },
       { instance: this.keyVaultService, method: 'updateVaultStorage' },

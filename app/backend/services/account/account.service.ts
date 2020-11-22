@@ -1,4 +1,4 @@
-import Store from '../../common/store-manager/store';
+import Connection from '../../common/store-manager/connection';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { Catch, CatchClass, Step } from '../../decorators';
@@ -10,35 +10,35 @@ import config from '../../common/config';
 
 @CatchClass<AccountService>()
 export default class AccountService {
-  private readonly store: Store;
   private readonly walletService: WalletService;
   private readonly keyVaultService: KeyVaultService;
   private readonly keyManagerService: KeyManagerService;
+  private readonly bloxApi: BloxApi;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
+  constructor() {
     this.walletService = new WalletService();
     this.keyVaultService = new KeyVaultService();
     this.keyManagerService = new KeyManagerService();
+    this.bloxApi = new BloxApi();
   }
 
   async get() {
-    return await BloxApi.request(METHOD.GET, 'accounts');
+    return await this.bloxApi.request(METHOD.GET, 'accounts');
   }
 
   async create(payload: any) {
-    return await BloxApi.request(METHOD.POST, 'accounts', payload);
+    return await this.bloxApi.request(METHOD.POST, 'accounts', payload);
   }
 
   async delete() {
-    return await BloxApi.request(METHOD.DELETE, 'accounts');
+    return await this.bloxApi.request(METHOD.DELETE, 'accounts');
   }
 
   async updateStatus(route: string, payload: any) {
     if (!route) {
       throw new Error('route');
     }
-    return await BloxApi.request(METHOD.PATCH, `accounts/${route}`, payload);
+    return await this.bloxApi.request(METHOD.PATCH, `accounts/${route}`, payload);
   }
 
   @Step({
@@ -49,10 +49,10 @@ export default class AccountService {
     displayMessage: 'Create Blox Account failed'
   })
   async createBloxAccount(): Promise<any> {
-    const network = this.store.get('network');
-    const index: number = +this.store.get(`index.${network}`) + 1;
-    const lastIndexedAccount = await this.keyManagerService.getAccount(this.store.get('seed'), index);
-    lastIndexedAccount['network'] = network;
+    const network = Connection.db().get('network');
+    const index: number = +Connection.db().get(`index.${network}`) + 1;
+    const lastIndexedAccount = await this.keyManagerService.getAccount(Connection.db().get('seed'), index);
+    lastIndexedAccount.network = network;
     const account = await this.create(lastIndexedAccount);
     if (account.error && account.error instanceof Error) return;
     return { data: account };
@@ -66,35 +66,35 @@ export default class AccountService {
     displayMessage: 'CLI Create Account failed'
   })
   async createAccount(): Promise<void> {
-    const network = this.store.get('network');
+    const network = Connection.db().get('network');
     const index: number = await this.getNextIndex();
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index);
-    this.store.set(`keyVaultStorage.${network}`, storage);
+    const storage = await this.keyManagerService.createAccount(Connection.db().get('seed'), index);
+    Connection.db().set(`keyVaultStorage.${network}`, storage);
   }
 
   async getNextIndex(): Promise<number> {
-    const network = this.store.get('network');
+    const network = Connection.db().get('network');
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
     let index = 0;
-    if (this.store.exists(`keyVaultStorage.${network}`)) {
+    if (Connection.db().exists(`keyVaultStorage.${network}`)) {
       const response = await this.keyVaultService.listAccounts();
       const { data: { accounts } } = response;
       if (accounts && accounts instanceof Array && accounts.length > 0) {
         index = +accounts[0].name.replace('account-', '') + 1;
       }
     }
-    this.store.set(`index.${network}`, (index - 1).toString());
+    Connection.db().set(`index.${network}`, (index - 1).toString());
     return index;
   }
 
   async listAccounts(): Promise<any> {
-    const network = this.store.get('network');
+    const network = Connection.db().get('network');
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    return await this.keyManagerService.listAccounts(this.store.get(`keyVaultStorage.${network}`));
+    return await this.keyManagerService.listAccounts(Connection.db().get(`keyVaultStorage.${network}`));
   }
 
   async getLastIndexedAccount(): Promise<any> {
@@ -113,7 +113,7 @@ export default class AccountService {
       throw new Error('publicKey is empty');
     }
     const publicKeyWithoutPrefix = pubKey.replace(/^(0x)/, '');
-    const depositData = await this.keyManagerService.getDepositData(this.store.get('seed'), index, publicKeyWithoutPrefix, network);
+    const depositData = await this.keyManagerService.getDepositData(Connection.db().get('seed'), index, publicKeyWithoutPrefix, network);
     const {
       publicKey,
       withdrawalCredentials,
@@ -148,37 +148,37 @@ export default class AccountService {
   }
 
   async deleteLastIndexedAccount(): Promise<void> {
-    const network = this.store.get('network');
+    const network = Connection.db().get('network');
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    const index: number = +this.store.get(`index.${network}`);
-    const storage = index < 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
-    this.store.set(`keyVaultStorage.${network}`, storage);
+    const index: number = +Connection.db().get(`index.${network}`);
+    const storage = index < 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(Connection.db().get('seed'), index);
+    Connection.db().set(`keyVaultStorage.${network}`, storage);
   }
 
   async generatePublicKeys(): Promise<void> {
     const results = [];
     for (let i = 0; i < 10; i += 1) {
-      results.push(this.keyManagerService.generatePublicKey(this.store.get('seed'), i));
+      results.push(this.keyManagerService.generatePublicKey(Connection.db().get('seed'), i));
     }
     await Promise.all(results);
   }
 
   async deleteAllAccounts(): Promise<void> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
-    this.store.delete('keyVaultStorage');
+    const keyVaultStorage = Connection.db().get('keyVaultStorage');
+    Connection.db().delete('keyVaultStorage');
 
     if (keyVaultStorage) {
       // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
-          this.store.set('network', network);
+          Connection.db().set('network', network);
           // eslint-disable-next-line no-await-in-loop
           await this.walletService.createWallet();
           // eslint-disable-next-line no-await-in-loop
           await this.keyVaultService.updateVaultStorage();
-          this.store.delete(`index.${network}`);
+          Connection.db().delete(`index.${network}`);
         }
       }
     }
@@ -202,8 +202,8 @@ export default class AccountService {
     if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
       throw new Error('Passphrase not linked to your account.');
     }
-    this.store.clear();
-    await this.store.setNewPassword(password, false);
-    this.store.set('seed', seed);
+    Connection.db().clear();
+    await Connection.db().setNewPassword(password, false);
+    Connection.db().set('seed', seed);
   }
 }

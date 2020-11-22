@@ -31,7 +31,7 @@ export default class KeyManagerService {
     return stdout.replace('\n', '');
   }
 
-  async getAccount(seed: string, index: number): Promise<string> {
+  async getAccount(seed: string, index: number): Promise<any> {
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account create --seed=${seed} --index=${index} --response-type=object`
     );
