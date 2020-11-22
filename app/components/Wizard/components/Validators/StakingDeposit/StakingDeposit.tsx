@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -19,6 +19,8 @@ import { getData } from '../../../../ProcessRunner/selectors';
 import { DepositData } from './components';
 import { openExternalLink } from '../../../../common/service';
 import config from 'backend/common/config';
+
+import EarlyAdopters from '../EarlyAdopters';
 
 import tipImage from 'assets/images/info.svg';
 
@@ -74,6 +76,8 @@ const StakingDeposit = (props: Props) => {
           isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
+  const [showEarlyAdopters, setShowEarlyAdopters] = useState(true);
+
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
       loadDepositData(publicKey, accountIndex, network);
@@ -103,6 +107,11 @@ const StakingDeposit = (props: Props) => {
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
+
+  if (showEarlyAdopters) {
+    return <EarlyAdopters onClick={() => setShowEarlyAdopters(false)} />;
+  }
+
   if (network) {
     return (
       <Wrapper>
