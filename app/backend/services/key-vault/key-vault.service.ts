@@ -8,7 +8,7 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
-const STABLE_TAG = 'v0.1.13';
+const STABLE_TAG = 'v0.1.16';
 
 function numVal(str) {
   return +str.replace(/\D/g, '');
@@ -191,12 +191,16 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
     // check if kv version higher or equal stable tag
-    const currentVersion = (await this.getVersion()).data.version;
-    if (numVal(currentVersion) < numVal(STABLE_TAG)) {
+    let keyVaultVersion = this.store.get('keyVaultVersion');
+    if (!keyVaultVersion) {
       return;
     }
+    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
+      return;
+    }
+
+    const keyVaultStorage = this.store.get('keyVaultStorage');
     if (keyVaultStorage) {
       // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
@@ -216,13 +220,16 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async exportSlashingData(): Promise<any> {
-    const slashingData = this.store.get('slashingData');
     // check if kv version higher or equal stable tag
-    const currentVersion = (await this.getVersion()).data.version;
-    if (numVal(currentVersion) < numVal(STABLE_TAG)) {
+    let keyVaultVersion = this.store.get('keyVaultVersion');
+    if (!keyVaultVersion) {
+      return;
+    }
+    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
       return;
     }
 
+    const slashingData = this.store.get('slashingData');
     if (slashingData) {
       // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(slashingData)) {
