@@ -89,7 +89,7 @@ const WelcomePage = (props: Props) => {
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
-      if (!isPrimaryDevice) {
+      if (!isPrimaryDevice && accounts?.length > 0) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
       }

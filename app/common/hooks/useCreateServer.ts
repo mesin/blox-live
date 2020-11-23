@@ -6,10 +6,15 @@ import passwordSaga from 'components/PasswordHandler/saga';
 import { savePassword } from 'components/PasswordHandler/actions';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
+import userSaga from 'components/User/saga';
+import { loadUserInfo } from 'components/User/actions';
+
 const passwordKey = 'password';
+const userKey = 'user';
 
 const useCreateServer = ({onStart, onSuccess}: Props) => {
   useInjectSaga({ key: passwordKey, saga: passwordSaga, mode: '' });
+  useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
   const dispatch = useDispatch();
 
   const { isLoading, isDone, error, processName, processMessage,
@@ -22,6 +27,7 @@ const useCreateServer = ({onStart, onSuccess}: Props) => {
 
   useEffect(() => {
     if (!isLoading && isDone && !error) {
+      dispatch(loadUserInfo());
       clearProcessState();
       onSuccess && onSuccess();
     }
