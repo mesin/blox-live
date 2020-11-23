@@ -8,16 +8,18 @@ import ActiveValidatorModal from '../../../ActiveValidatorModal';
 import * as actionsFromDashboard from '../../actions';
 import * as actionsFromWizard from '../../../Wizard/actions';
 import * as actionsFromAccounts from '../../../Accounts/actions';
+import * as actionsFromUser from '../../../User/actions';
 import * as selectors from '../../selectors';
 import { getActiveValidators } from '../../../EventLogs/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
 const ModalsManager = (props: Props) => {
-  const { dashboardActions, wizardActions, accountsActions, showModal, modalType, onSuccess, activeValidators } = props;
+  const { dashboardActions, wizardActions, accountsActions, userActions, showModal, modalType, onSuccess, activeValidators } = props;
   const { clearModalDisplayData } = dashboardActions;
   const { loadWallet, setFinishedWizard } = wizardActions;
   const { loadAccounts } = accountsActions;
+  const { loadUserInfo } = userActions;
 
   const onPasswordSuccess = () => {
     onSuccess();
@@ -31,6 +33,7 @@ const ModalsManager = (props: Props) => {
 
   const onAccountRecoverySuccess = () => {
     setFinishedWizard(true);
+    loadUserInfo();
     loadWallet();
     loadAccounts();
     clearModalDisplayData();
@@ -72,12 +75,14 @@ const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
   wizardActions: bindActionCreators(actionsFromWizard, dispatch),
   accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
+  userActions: bindActionCreators(actionsFromUser, dispatch),
 });
 
 type Props = {
   dashboardActions: Record<string, any>;
   wizardActions: Record<string, any>;
   accountsActions: Record<string, any>;
+  userActions: Record<string, any>;
   showModal: boolean;
   modalType: string;
   onSuccess: () => void;
