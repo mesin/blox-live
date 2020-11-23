@@ -18,7 +18,7 @@ const useCreateServer = ({onStart, onSuccess}: Props) => {
   const [accessKeyId, setAccessKeyId] = useState('');
   const [secretAccessKey, setSecretAccessKey] = useState('');
   const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || (isDone && !error);
-  const isPasswordInputDisabled = isLoading || isDone;
+  const isPasswordInputDisabled = isLoading;
 
   useEffect(() => {
     if (!isLoading && isDone && !error) {
