@@ -58,7 +58,7 @@ const LoadingWrapper = styled.div`
 const Step1Modal = (props: Props) => {
   useInjectSaga({key, saga, mode: ''});
 
-  const {onClick, onClose, isLoading, isValid, error, keyvaultActions} = props;
+  const { onClick, onClose, isLoading, isValid, error, keyvaultActions } = props;
 
   const { validateRecoveryCredentials, clearRecoveryCredentialsState } = keyvaultActions;
   const { password, setPassword, confirmPassword, setConfirmPassword, showPasswordError,

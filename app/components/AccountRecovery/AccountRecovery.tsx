@@ -18,9 +18,9 @@ const AccountRecovery = ({onSuccess, onClose, type}: Props) => {
     case 1:
       return <Step1Modal onClose={onCloseClick} onClick={move1StepForward} />;
     case 2:
-      return <Step2Modal onClose={onCloseClick} onClick={move1StepForward} />;
+      return <Step2Modal onClose={onCloseClick} onClick={move1StepForward} type={type} />;
     case 3:
-      return <RecoveringModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} />;
+      return <RecoveringModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} type={type} />;
     case 4:
       return <SuccessModal title={'Account Recovered'} text={successText} onSuccess={onSuccess} />;
     case 5:

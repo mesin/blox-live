@@ -10,6 +10,8 @@ import * as actionsFromKeyvault from '../../KeyVaultManagement/actions';
 import * as keyvaultSelectors from '../../KeyVaultManagement/selectors';
 import Store from 'backend/common/store-manager/store';
 
+import { MODAL_TYPES } from '../../Dashboard/constants';
+
 import image from 'assets/images/img-recovery.svg';
 
 const StepIndicator = styled.div`
@@ -50,13 +52,15 @@ const LoadingWrapper = styled.div`
 `;
 
 const Step1Modal = (props: Props) => {
-  const {onClick, onClose, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions} = props;
+  const { onClick, onClose, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions, type } = props;
   const { validateAwsKeys, clearAwsKeysState } = keyvaultActions;
 
   React.useEffect(() => {
     if (areAwsKeyvsValid && !isValidError && !isValidLoading) {
-      const store: Store = Store.getStore();
-      store.set('inRecoveryProcess', true);
+      if (type === MODAL_TYPES.DEVICE_SWITCH) {
+        const store: Store = Store.getStore();
+        store.set('inRecoveryProcess', true);
+      }
       onStartProcessClick('recovery');
       clearAwsKeysState();
     }
@@ -120,6 +124,7 @@ type Props = {
   keyvaultActions: Record<string, any>;
   onClick: () => void;
   onClose: () => void;
+  type: string;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Step1Modal);

@@ -90,7 +90,7 @@ const LoggedIn = (props: Props) => {
       const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
                                   accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      if (!userInfo.uuid || isPrimaryDevice(userInfo.uuid) || !inRecoveryProcess()) {
+      if (!userInfo.uuid || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
         shouldNavigateToDashboard && callSetFinishedWizard(true);
       }
       toggleFinishLoadingAll(true);

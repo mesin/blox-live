@@ -4,16 +4,20 @@ import { Title, SmallText, Wrapper } from 'common/components/ModalTemplate/compo
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 import Store from 'backend/common/store-manager/store';
 
+import { MODAL_TYPES } from '../../Dashboard/constants';
+
 import image from 'assets/images/img-recovery.svg';
 
 const RecoveringModal = (props: Props) => {
   const { isLoading, processMessage, isDone, isServerActive, clearProcessState, loaderPrecentage } = useProcessRunner();
-  const { move1StepForward, move2StepsForward } = props;
+  const { move1StepForward, move2StepsForward, type } = props;
 
   const onSuccess = () => {
     move1StepForward();
-    const store: Store = Store.getStore();
-    store.delete('inRecoveryProcess');
+    if (type === MODAL_TYPES.DEVICE_SWITCH) {
+      const store: Store = Store.getStore();
+      store.delete('inRecoveryProcess');
+    }
   };
 
   const onFailure = () => move2StepsForward();
@@ -39,6 +43,7 @@ const RecoveringModal = (props: Props) => {
 type Props = {
   move1StepForward: () => void;
   move2StepsForward: () => void;
+  type: string;
 };
 
 export default RecoveringModal;
