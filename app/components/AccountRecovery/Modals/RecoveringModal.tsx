@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ProcessLoader, ModalTemplate } from 'common/components';
 import { Title, SmallText, Wrapper } from 'common/components/ModalTemplate/components';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
+import Store from 'backend/common/store-manager/store';
 
 import image from 'assets/images/img-recovery.svg';
 
@@ -9,10 +10,18 @@ const RecoveringModal = (props: Props) => {
   const { isLoading, processMessage, isDone, isServerActive, clearProcessState, loaderPrecentage } = useProcessRunner();
   const { move1StepForward, move2StepsForward } = props;
 
+  const onSuccess = () => {
+    move1StepForward();
+    const store: Store = Store.getStore();
+    store.delete('inRecoveryProcess');
+  };
+
+  const onFailure = () => move2StepsForward();
+
   useEffect(() => {
     if (isDone) {
       clearProcessState();
-      isServerActive ? move1StepForward() : move2StepsForward();
+      isServerActive ? onSuccess() : onFailure();
     }
   }, [isLoading, isDone, processMessage]);
 

@@ -8,6 +8,7 @@ import { Title, Description } from 'common/components/ModalTemplate/components';
 import useCreateServer from 'common/hooks/useCreateServer';
 import * as actionsFromKeyvault from '../../KeyVaultManagement/actions';
 import * as keyvaultSelectors from '../../KeyVaultManagement/selectors';
+import Store from 'backend/common/store-manager/store';
 
 import image from 'assets/images/img-recovery.svg';
 
@@ -54,6 +55,8 @@ const Step1Modal = (props: Props) => {
 
   React.useEffect(() => {
     if (areAwsKeyvsValid && !isValidError && !isValidLoading) {
+      const store: Store = Store.getStore();
+      store.set('inRecoveryProcess', true);
       onStartProcessClick('recovery');
       clearAwsKeysState();
     }

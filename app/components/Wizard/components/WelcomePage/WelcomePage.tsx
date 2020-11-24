@@ -44,7 +44,7 @@ const Left = styled.div`
   color: ${({ theme }) => theme.gray50};
   font-size: 54px;
   font-weight: 500;
-  line-height: 76px
+  line-height: 76px;
   text-align: center;
 `;
 
@@ -86,10 +86,12 @@ const WelcomePage = (props: Props) => {
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     const hasSeed = store.exists('seed');
     const storedUuid = store.get('uuid');
+
+    const isInRecoveryProcess = store.get('inRecoveryProcess');
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
-      if (!isPrimaryDevice && accounts?.length > 0) {
+      if ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
       }
