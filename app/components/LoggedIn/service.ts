@@ -17,3 +17,8 @@ export const isPrimaryDevice = (userInfoUuid: string) => {
   const storedUuid = store.get('uuid');
   return userInfoUuid === storedUuid;
 };
+
+export const inRecoveryProcess = () => {
+  const store: Store = Store.getStore();
+  return !!store.get('inRecoveryProcess');
+};

@@ -13,7 +13,7 @@ import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
-import { isPrimaryDevice, handleUserInfo } from './service';
+import { isPrimaryDevice, inRecoveryProcess } from './service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -90,7 +90,7 @@ const LoggedIn = (props: Props) => {
       const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
                                   accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      if (!userInfo.uuid || isPrimaryDevice(userInfo.uuid)) {
+      if (!userInfo.uuid || isPrimaryDevice(userInfo.uuid) || !inRecoveryProcess()) {
         shouldNavigateToDashboard && callSetFinishedWizard(true);
       }
       toggleFinishLoadingAll(true);
