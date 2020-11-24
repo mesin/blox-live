@@ -69,7 +69,7 @@ const DepositData = (props: Props) => {
 };
 
 type Props = {
-  depositData: string;
+  depositData: Record<string, any>;
   onCopy: () => void;
   network: string;
 };

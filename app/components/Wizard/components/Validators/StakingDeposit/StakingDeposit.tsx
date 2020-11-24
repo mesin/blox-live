@@ -3,10 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { notification } from 'antd';
-import { shell } from 'electron';
-import { InfoWithTooltip } from 'common/components';
-import { INTRO_TOOLTIP_TEXT, NETWORKS } from '../constants';
-import { Title, Paragraph, Link, BigButton } from '../../common';
+import { NETWORKS } from '../constants';
+import { Title, Link, BigButton } from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
 
@@ -16,29 +14,13 @@ import { getAccounts, getDepositNeededStatus, getDepositToPublicKey,
 
 import { getData } from '../../../../ProcessRunner/selectors';
 
-import { DepositData } from './components';
+import { DepositData, MainNetText, TestNetText } from './components';
 import { openExternalLink } from '../../../../common/service';
-import config from 'backend/common/config';
 
 import tipImage from 'assets/images/info.svg';
 
 const Wrapper = styled.div`
   width:580px;
-`;
-
-const GoEthButton = styled.a`
-  width:113px;
-  height:28px;
-  border-radius:6px;
-  border:solid 1px ${({theme}) => theme.gray400};
-  font-size: 11px;
-  font-weight: 500;
-  color:${({theme}) => theme.primary900};
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-top:12px;
-  cursor:pointer;
 `;
 
 const ButtonsWrapper = styled.div`
@@ -104,24 +86,17 @@ const StakingDeposit = (props: Props) => {
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
   if (network) {
+    const needHelpLink = NETWORKS[network].name === 'MainNet' ?
+     'docs-guides/#pp-toc__heading-anchor-14' :
+     'docs-guides/#pp-toc__heading-anchor-15';
+
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        <Paragraph>
-          To start staking on beacon chain {NETWORKS[network].name}, you are required to stake <br />
-          32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
-          validator deposit contract.
-          {network === 'test' && (
-            <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>
-              Need GoETH?
-            </GoEthButton>
-          )}
-
-        </Paragraph>
-
+        {NETWORKS[network].name === 'MainNet' ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
         <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
-        <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>Need help?</Link>
+        <Link onClick={() => openExternalLink(needHelpLink)}>Need help?</Link>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
           <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
@@ -153,7 +128,7 @@ type Props = {
   setPage: (page: number) => void;
   step: number;
   setStep: (page: number) => void;
-  depositData: string;
+  depositData: Record<string, any>;
   accountsFromApi: { publicKey: string, id: number, network: string }[];
   accountDataFromProcess: Record<string, any> | null;
   actions: Record<string, any> | null;
