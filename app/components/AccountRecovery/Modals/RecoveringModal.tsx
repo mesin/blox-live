@@ -14,9 +14,12 @@ const RecoveringModal = (props: Props) => {
 
   const onSuccess = () => {
     move1StepForward();
+    const store: Store = Store.getStore();
     if (type === MODAL_TYPES.DEVICE_SWITCH) {
-      const store: Store = Store.getStore();
       store.delete('inRecoveryProcess');
+    }
+    else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
+      store.delete('inForgotPasswordProcess');
     }
   };
 

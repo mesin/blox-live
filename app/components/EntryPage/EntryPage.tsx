@@ -1,5 +1,6 @@
 import React, {useEffect} from 'react';
 import {connect} from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {Switch, Route} from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -21,7 +22,11 @@ import useVersions from 'components/Versions/useVersions';
 import useEventLogs from 'components/EventLogs/useEventLogs';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
+import * as actionsFromDashboard from '../Dashboard/actions';
+import { MODAL_TYPES } from '../Dashboard/constants';
+
 import { useInjectSaga } from '../../utils/injectSaga';
+import Store from 'backend/common/store-manager/store';
 
 const wizardKey = 'wizard';
 const walletKey = 'keyvaultManagement';
@@ -42,16 +47,12 @@ const Content = styled.div`
 
 const EntryPage = (props: Props) => {
   const {
-    callLoadWallet,
-    loadWalletLatestVersion,
-    walletStatus,
-    isLoadingWallet,
-    walletErorr,
-    keyvaultCurrentVersion,
-    keyvaultLatestVersion,
-    isLoadingKeyvault,
-    keyvaultError,
+    callLoadWallet, loadWalletLatestVersion, walletStatus,
+    isLoadingWallet, walletErorr, keyvaultCurrentVersion,
+    keyvaultLatestVersion, isLoadingKeyvault, keyvaultError, dashboardActions,
   } = props;
+
+  const { setModalDisplay } = dashboardActions;
 
   useInjectSaga({key: wizardKey, saga: wizardSaga, mode: ''});
   useInjectSaga({key: walletKey, saga: walletSaga, mode: ''});
@@ -60,6 +61,12 @@ const EntryPage = (props: Props) => {
   const { bloxLiveNeedsUpdate, isLoadingBloxLiveVersion } = useVersions();
   const { eventLogs, isLoadingEventLogs } = useEventLogs();
   const { processData, error, clearProcessState } = useProcessRunner();
+
+  useEffect(() => {
+    const store: Store = Store.getStore();
+    const inForgotPasswordProcess = store.get('inForgotPasswordProcess');
+    inForgotPasswordProcess && setModalDisplay({show: true, type: MODAL_TYPES.FORGOT_PASSWORD});
+  }, []);
 
   useEffect(() => {
     const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletErorr;
@@ -124,6 +131,8 @@ type Props = {
 
   bloxLiveNeedsUpdate: boolean;
   isLoadingBloxLiveVersion: boolean;
+
+  dashboardActions: Record<string, any>;
 };
 
 const mapStateToProps = (state: State) => ({
@@ -140,6 +149,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadWallet: () => dispatch(loadWallet()),
   loadWalletLatestVersion: () => dispatch(keyvaultLoadLatestVersion()),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
 });
 
 type State = Record<string, any>;

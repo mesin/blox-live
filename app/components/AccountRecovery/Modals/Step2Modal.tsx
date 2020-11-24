@@ -61,6 +61,10 @@ const Step1Modal = (props: Props) => {
         const store: Store = Store.getStore();
         store.set('inRecoveryProcess', true);
       }
+      else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
+        const store: Store = Store.getStore();
+        store.set('inForgotPasswordProcess', true);
+      }
       onStartProcessClick('recovery');
       clearAwsKeysState();
     }
