@@ -56,15 +56,17 @@ const Step1Modal = (props: Props) => {
   const { validateAwsKeys, clearAwsKeysState } = keyvaultActions;
 
   React.useEffect(() => {
+    const store: Store = Store.getStore();
+    if (type === MODAL_TYPES.DEVICE_SWITCH) {
+      store.set('inRecoveryProcess', true);
+    }
+    else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
+      store.set('inForgotPasswordProcess', true);
+    }
+  }, []);
+
+  React.useEffect(() => {
     if (areAwsKeyvsValid && !isValidError && !isValidLoading) {
-      if (type === MODAL_TYPES.DEVICE_SWITCH) {
-        const store: Store = Store.getStore();
-        store.set('inRecoveryProcess', true);
-      }
-      else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
-        const store: Store = Store.getStore();
-        store.set('inForgotPasswordProcess', true);
-      }
       onStartProcessClick('recovery');
       clearAwsKeysState();
     }
