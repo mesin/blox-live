@@ -26,7 +26,7 @@ const AccountRecovery = ({onSuccess, onClose, type}: Props) => {
     case 5:
       return <FailureModal title={'Failed To Recover'} onClick={move1StepForward} onClose={onCloseClick} />;
     case 6:
-      return <ThankYouModal onClose={onCloseClick} />;
+      return <ThankYouModal onClose={onCloseClick} type={type} />;
     default:
       return <WelcomeModal onClose={onCloseClick} onClick={move1StepForward} type={type} />;
   }
