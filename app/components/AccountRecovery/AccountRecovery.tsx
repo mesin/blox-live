@@ -18,15 +18,15 @@ const AccountRecovery = ({onSuccess, onClose, type}: Props) => {
     case 1:
       return <Step1Modal onClose={onCloseClick} onClick={move1StepForward} />;
     case 2:
-      return <Step2Modal onClose={onCloseClick} onClick={move1StepForward} type={type} />;
+      return <Step2Modal onClick={move1StepForward} type={type} />;
     case 3:
       return <RecoveringModal move1StepForward={move1StepForward} move2StepsForward={move2StepsForward} type={type} />;
     case 4:
       return <SuccessModal title={'Account Recovered'} text={successText} onSuccess={onSuccess} />;
     case 5:
-      return <FailureModal title={'Failed To Recover'} onClick={move1StepForward} onClose={onCloseClick} />;
+      return <FailureModal title={'Failed To Recover'} onClick={move1StepForward} />;
     case 6:
-      return <ThankYouModal onClose={onCloseClick} type={type} />;
+      return <ThankYouModal type={type} />;
     default:
       return <WelcomeModal onClose={onCloseClick} onClick={move1StepForward} type={type} />;
   }

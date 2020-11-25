@@ -7,15 +7,14 @@ import { MODAL_TYPES } from '../Dashboard/constants';
 import image from '../Wizard/assets/img-key-vault-inactive.svg';
 
 const ThankYouModal = ({onClose, type}) => {
+  const showButton = (type !== MODAL_TYPES.DEVICE_SWITCH) && (type !== MODAL_TYPES.FORGOT_PASSWORD);
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Thank You!</Title>
       <Description>
         We will contact you as soon as possible
       </Description>
-      {type !== MODAL_TYPES.DEVICE_SWITCH && (
-        <Button onClick={onClose}>Close</Button>
-      )}
+      {showButton && (<Button onClick={onClose}>Close</Button>)}
     </ModalTemplate>
   );
 };
