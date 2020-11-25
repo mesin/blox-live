@@ -26,9 +26,9 @@ const ModalsManager = (props: Props) => {
     clearModalDisplayData();
   };
 
-  const onKeyvaultProcessSuccess = () => {
-    loadWallet();
-    clearModalDisplayData();
+  const onKeyvaultProcessSuccess = async () => {
+    await loadWallet();
+    await clearModalDisplayData();
   };
 
   const onAccountRecoverySuccess = () => {
@@ -44,9 +44,9 @@ const ModalsManager = (props: Props) => {
       case MODAL_TYPES.PASSWORD:
         return <PasswordModal onClick={onPasswordSuccess} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.REACTIVATION:
-        return <KeyVaultReactivation onSuccess={() => onKeyvaultProcessSuccess} onClose={() => clearModalDisplayData()} />;
+        return <KeyVaultReactivation onSuccess={() => onKeyvaultProcessSuccess()} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.UPDATE:
-        return <KeyVaultUpdate onSuccess={() => onKeyvaultProcessSuccess} onClose={() => clearModalDisplayData()} />;
+        return <KeyVaultUpdate onSuccess={() => onKeyvaultProcessSuccess()} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.DEPOSIT_INFO:
         return <DepositInfoModal onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
