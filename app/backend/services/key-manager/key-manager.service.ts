@@ -94,7 +94,7 @@ export default class KeyManagerService {
       const { stdout } = await this.executor(`${this.executablePath} seed generate --mnemonic="${mnemonic}"`);
       return stdout.replace('\n', '');
     } catch (e) {
-      throw new Error('Cli command to generate seed failed');
+      throw new Error('Passphrase not correct');
     }
   }
 }
