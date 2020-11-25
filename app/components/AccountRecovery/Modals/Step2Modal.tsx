@@ -52,7 +52,7 @@ const LoadingWrapper = styled.div`
 `;
 
 const Step1Modal = (props: Props) => {
-  const { onClick, onClose, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions, type } = props;
+  const { onClick, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions, type } = props;
   const { validateAwsKeys, clearAwsKeysState } = keyvaultActions;
 
   React.useEffect(() => {
@@ -81,7 +81,7 @@ const Step1Modal = (props: Props) => {
   const onButtonClick = () => validateAwsKeys({accessKeyId, secretAccessKey});
 
   return (
-    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} onClose={onClose} image={image}>
+    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} image={image}>
       <Title>Recover Account Data</Title>
       <StepIndicator>Step 02</StepIndicator>
       <Description>
@@ -129,7 +129,6 @@ type Props = {
   isValidError: string;
   keyvaultActions: Record<string, any>;
   onClick: () => void;
-  onClose: () => void;
   type: string;
 };
 

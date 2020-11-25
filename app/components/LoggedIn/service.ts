@@ -3,8 +3,9 @@ import { version } from 'package.json';
 import { getOsVersion } from 'utils/service';
 import Store from 'backend/common/store-manager/store';
 
+const store: Store = Store.getStore();
+
 export const handleUserInfo = (updateUserInfo) => {
-  const store = Store.getStore();
   if (!store.exists('uuid')) {
     const uuid = uuidv4();
     store.set('uuid', uuid);
@@ -13,13 +14,16 @@ export const handleUserInfo = (updateUserInfo) => {
 };
 
 export const isPrimaryDevice = (userInfoUuid: string) => {
-  const store: Store = Store.getStore();
   const storedUuid = store.get('uuid');
   return userInfoUuid === storedUuid;
 };
 
 export const inRecoveryProcess = () => {
-  const store: Store = Store.getStore();
   const result = !!store.get('inRecoveryProcess');
+  return result;
+};
+
+export const inForgotPasswordProcess = () => {
+  const result = !!store.get('inForgotPasswordProcess');
   return result;
 };
