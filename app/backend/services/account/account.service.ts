@@ -193,25 +193,25 @@ export default class AccountService {
   })
   async recoveryAccounts(): Promise<void> {
     const accounts = await this.get();
-    console.log('accounts=', accounts);
     const uniqueNetworks = [...new Set(accounts.map(acc => acc.network))];
     // eslint-disable-next-line no-restricted-syntax
     for (const network of uniqueNetworks) {
       const networkAccounts = accounts
         .filter(acc => acc.network === network)
         .sort((a, b) => a.name.localeCompare(b.name));
-      // validation names: account-x starts from 0 1 2 throw
-      console.log(network, networkAccounts);
+      /*
+      !!! validation names: account-x starts from 0 1 2 throw
+      !!! turn off validation temprary till import and delete account logic
       networkAccounts.reduce((aggr, item) => {
         const idx = +item.name.split('-')[1];
-        console.log('---->', idx, aggr);
         if (idx === 0) return aggr;
         if (idx - 1 !== aggr) throw new Error('account indexes numeration is broken');
         // eslint-disable-next-line no-param-reassign
         aggr = idx;
         return aggr;
       }, 0);
-      const lastIndex = networkAccounts[accounts.length - 1].name.split('-')[1];
+      */
+      const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
       // eslint-disable-next-line no-await-in-loop
       const networkStorage = await this.keyManagerService.createAccount(this.store.get('seed'), lastIndex);
       this.store.set(`keyVaultStorage.${network}`, networkStorage);
