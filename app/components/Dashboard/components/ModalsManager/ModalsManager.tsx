@@ -22,8 +22,8 @@ const ModalsManager = (props: Props) => {
   const { loadUserInfo } = userActions;
 
   const onPasswordSuccess = () => {
-    onSuccess();
     clearModalDisplayData();
+    onSuccess();
   };
 
   const onKeyvaultProcessSuccess = async () => {
