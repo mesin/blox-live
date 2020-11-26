@@ -35,9 +35,14 @@ export default class KeyManagerService {
     let highestSource = '';
     let highestTarget = '';
 
-    for (let i = 0; i <= index; i++) {
-      highestSource += `${i.toString()}${i==index ? "" : ","}`;
-      highestTarget += `${(i + 1).toString()}${i==index ? "" : ","}`;
+    if (!accumulate) {
+      highestSource = '0';
+      highestTarget = '1';
+    } else {
+      for (let i = 0; i <= index; i++) {
+        highestSource += `${i.toString()}${i==index ? "" : ","}`;
+        highestTarget += `${(i + 1).toString()}${i==index ? "" : ","}`;
+      }
     }
 
     console.log(highestSource);
