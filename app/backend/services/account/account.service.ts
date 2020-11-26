@@ -34,6 +34,10 @@ export default class AccountService {
     return await BloxApi.request(METHOD.DELETE, 'accounts');
   }
 
+  async getHighestAttestation(payload: any) {
+    return await BloxApi.request(METHOD.POST, 'ethereum2/highest-attestation', payload);
+  }
+
   async updateStatus(route: string, payload: any) {
     if (!route) {
       throw new Error('route');
@@ -68,7 +72,28 @@ export default class AccountService {
   async createAccount(): Promise<void> {
     const network = this.store.get('network');
     const index: number = await this.getNextIndex();
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index);
+    const accounts = await this.keyManagerService.getAccount(this.store.get('seed'), index, true);
+    const accountsHash = Object.assign({}, ...accounts.map(s => ({[s.validationPubKey]: s})));
+    const publicKeys = accounts.map(a => a.validationPubKey);
+    const highestAttestationsMap = await this.getHighestAttestation({
+      "public_keys": publicKeys,
+      network
+    });
+
+    for (const [key, value] of Object.entries(highestAttestationsMap)) {
+      accountsHash[key] = {...accountsHash[key], ...value}
+    }
+
+    let highestSource = '';
+    let highestTarget = '';
+    const accountsArray = Object.values(accountsHash);
+    for (let i = index; i >= 0; i--) {
+      highestSource += `${accountsArray[i]['highest_source_epoch']}${i==0 ? "" : ","}`;
+      highestTarget += `${accountsArray[i]['highest_target_epoch']}${i==0 ? "" : ","}`;
+    }
+    console.log(highestSource);
+    console.log(highestTarget);
+    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, highestSource, highestTarget);
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
 
