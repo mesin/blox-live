@@ -192,7 +192,7 @@ export default class KeyVaultService {
   })
   async importSlashingData(): Promise<any> {
     // check if kv version higher or equal stable tag
-    let keyVaultVersion = this.store.get('keyVaultVersion');
+    const keyVaultVersion = this.store.get('keyVaultVersion');
     if (!keyVaultVersion) {
       return;
     }
