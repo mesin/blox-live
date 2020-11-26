@@ -111,8 +111,9 @@ const WelcomePage = (props: Props) => {
         setStep2Status(true);
         return;
       }
-
-      redirectToPassPhrasePage();
+      if (storedUuid && accounts?.length === 0) {
+        redirectToPassPhrasePage();
+      }
     }
   }, [isLoading]);
 

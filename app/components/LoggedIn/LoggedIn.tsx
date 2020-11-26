@@ -49,8 +49,8 @@ import * as actionsFromUser from '../User/actions';
 import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
-import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
+import Store from 'backend/common/store-manager/store';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -87,14 +87,15 @@ const LoggedIn = (props: Props) => {
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
     if (allDataIsReady && noErrors && doneLoading) {
-      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
-                                  accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
+      const store: Store = Store.getStore();
+      const storedUuid = store.exists('uuid');
+      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') && !addAnotherAccount;
 
       if (inForgotPasswordProcess()) {
         callSetFinishedWizard(true);
       }
 
-      if (!userInfo.uuid || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
+      if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
         shouldNavigateToDashboard && callSetFinishedWizard(true);
       }
 
