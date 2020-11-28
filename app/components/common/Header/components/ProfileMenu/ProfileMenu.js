@@ -59,7 +59,7 @@ const Separator = styled.div`
 
 const canViewTestPage = () => {
   const store = Store.getStore();
-  return store.exists('testPage');
+  return store.exists('testPage') || true;
 };
 
 const ProfileMenu = forwardRef(

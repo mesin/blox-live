@@ -354,7 +354,7 @@ const Test = () => {
         </button>
         <button onClick={async () => {
           const response = await keyVaultService.getVersion();
-          console.log(response.data.version);
+          console.log(response);
         }}>
           Get Version
         </button>
