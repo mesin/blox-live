@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, withRouter, RouteComponentProps } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
+import { isPrimaryDevice, inRecoveryProcess, inForgotPasswordProcess } from './service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -42,53 +44,74 @@ import {
 } from '../WebSockets/selectors';
 import webSocketSaga from '../WebSockets/saga';
 
-import { allAccountsDeposited } from '../Accounts/service';
+// user
+import * as actionsFromUser from '../User/actions';
+import * as userSelectors from '../User/selectors';
+import userSaga from '../User/saga';
+
 import { ModalsManager } from 'components/Dashboard/components';
+import Store from 'backend/common/store-manager/store';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
 const websocketKey = 'websocket';
+const userKey = 'user';
 
 const LoggedIn = (props: Props) => {
   useInjectSaga({ key: wizardKey, saga: wizardSaga, mode: '' });
   useInjectSaga({ key: accountsKey, saga: accountsSaga, mode: '' });
   useInjectSaga({ key: websocketKey, saga: webSocketSaga, mode: '' });
-  const [isFinishedLoadingAll, toggleLoadingAll] = useState(false);
+  useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
 
   const {
     isFinishedWizard, callSetFinishedWizard, walletStatus,
     isLoadingWallet, walletError, callLoadWallet,
     accounts, addAnotherAccount, isLoadingAccounts, accountsError, callLoadAccounts, callConnectToWebSockets, isWebsocketLoading,
-    websocket, webSocketError,
+    websocket, webSocketError, userInfo, userInfoError, isLoadingUserInfo, userActions
   } = props;
 
+  const { loadUserInfo } = userActions;
+
+  const [isFinishLoadingAll, toggleFinishLoadingAll] = useState(false);
+
   useEffect(() => {
-    const didntLoadWallet = !walletStatus && !isLoadingWallet && !walletError;
-    const didntLoadAccounts = !accounts && !isLoadingAccounts && !accountsError;
-    const didntLoadWebsocket = !websocket && !isWebsocketLoading && !webSocketError;
+    callLoadWallet();
+    callLoadAccounts();
+    loadUserInfo();
+    callConnectToWebSockets();
+  }, []);
 
-    if (didntLoadWallet) {
-      callLoadWallet();
-    }
-    if (didntLoadAccounts && walletStatus) {
-      callLoadAccounts();
-    }
-    if (didntLoadWebsocket && walletStatus) {
-      callConnectToWebSockets();
-    }
+  useEffect(() => {
+    const allDataIsReady = !!walletStatus && !!accounts && !!websocket && !!userInfo;
+    const noErrors = !walletError && !accountsError && !webSocketError && !userInfoError;
+    const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
-    if (walletStatus && accounts && websocket) {
-      if ((walletStatus === 'active' || walletStatus === 'offline') &&
-          accounts.length > 0 && allAccountsDeposited(accounts) &&
-          !addAnotherAccount) {
+    if (allDataIsReady && noErrors && doneLoading) {
+      const store: Store = Store.getStore();
+      const withAccountRecovery = store.exists('accountRecovery');
+      const storedUuid = store.exists('uuid');
+      const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
+      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && !addAnotherAccount;
+
+      if (withAccountRecovery) {
+        if (inForgotPasswordProcess()) {
+          callSetFinishedWizard(true);
+        }
+
+        if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
+          shouldNavigateToDashboard && callSetFinishedWizard(true);
+        }
+      }
+      else if (shouldNavigateToDashboard) {
         callSetFinishedWizard(true);
       }
-      toggleLoadingAll(true);
+
+      toggleFinishLoadingAll(true);
       onWindowClose();
     }
-  }, [isLoadingWallet, isLoadingAccounts, isWebsocketLoading, isFinishedWizard]);
+  }, [walletStatus, accounts, websocket, userInfo, isFinishedWizard]);
 
-  if (!isFinishedLoadingAll) {
+  if (!isFinishLoadingAll) {
     return <Loader />;
   }
 
@@ -124,6 +147,11 @@ const mapStateToProps = (state: State) => ({
   isWebsocketLoading: getIsLoadingWebsocket(state),
   webSocketError: getWebSocketError(state),
 
+  // user
+  userInfo: userSelectors.getInfo(state),
+  isLoadingUserInfo: userSelectors.getLoadingStatus(state),
+  userInfoError: userSelectors.getError(state),
+
   isFinishedWizard: getWizardFinishedStatus(state),
 });
 
@@ -132,6 +160,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   callLoadAccounts: () => dispatch(loadAccounts()),
   callConnectToWebSockets: () => dispatch(connectToWebSockets()),
   callSetFinishedWizard: (isFinished: boolean) => dispatch(setFinishedWizard(isFinished)),
+  userActions: bindActionCreators(actionsFromUser, dispatch),
 });
 
 interface Props extends RouteComponentProps {
@@ -156,6 +185,12 @@ interface Props extends RouteComponentProps {
   websocket: boolean;
   webSocketError: string;
   callConnectToWebSockets: () => void;
+
+  // user
+  isLoadingUserInfo: boolean;
+  userInfo: Record<string, any>;
+  userInfoError: string;
+  userActions: Record<string, any>;
 }
 
 type State = Record<string, any>;

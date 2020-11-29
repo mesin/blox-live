@@ -1,4 +1,4 @@
-import { CatchClass } from '../../decorators';
+import { Catch, CatchClass } from '../../decorators';
 import util from 'util';
 import { exec } from 'child_process';
 import { execPath } from '../../../binaries';
@@ -21,13 +21,13 @@ export default class KeyManagerService {
     return stdout.replace('\n', '');
   }
 
+  @Catch({
+    displayMessage: 'Create Keyvault account failed'
+  })
   async createAccount(seed: string, index: number): Promise<string> {
-    const { stdout, stderr } = await this.executor(
+    const { stdout } = await this.executor(
       `${this.executablePath} wallet account create --seed=${seed} --index=${index} --accumulate=true`
     );
-    if (stderr) {
-      throw new Error('Create keyvault account was failed.');
-    }
     return stdout.replace('\n', '');
   }
 
@@ -41,13 +41,13 @@ export default class KeyManagerService {
     return stdout ? JSON.parse(stdout) : {};
   }
 
+  @Catch({
+    displayMessage: 'List Keyvault accounts failed'
+  })
   async listAccounts(storage: string): Promise<any> {
-    const { stdout, stderr } = await this.executor(
+    const { stdout } = await this.executor(
       `${this.executablePath} wallet account list --storage=${storage}`
     );
-    if (stderr) {
-      throw new Error('List keyvault accounts was failed.');
-    }
     const accounts = stdout ? JSON.parse(stdout) : [];
     return accounts;
   }
@@ -79,14 +79,22 @@ export default class KeyManagerService {
     return stdout.replace('\n', '');
   }
 
+  @Catch({
+    showErrorMessage: true
+  })
   async seedFromMnemonicGenerate(mnemonic: string): Promise<string> {
+    const defaultMnemonicLengthPhrase = 24;
     if (!mnemonic || mnemonic.length === 0) {
       throw new Error('Mnemonic phrase is empty');
     }
-    const { stdout, stderr } = await this.executor(`${this.executablePath} seed generate --mnemonic="${mnemonic}"`);
-    if (stderr) {
-      throw new Error('Generate seed from mnemonic.');
+    if (mnemonic.split(' ').length !== defaultMnemonicLengthPhrase) {
+      throw new Error('Mnemonic phrase should have 24-word length');
     }
-    return stdout.replace('\n', '');
+    try {
+      const { stdout } = await this.executor(`${this.executablePath} seed generate --mnemonic="${mnemonic}"`);
+      return stdout.replace('\n', '');
+    } catch (e) {
+      throw new Error('Passphrase not correct');
+    }
   }
 }

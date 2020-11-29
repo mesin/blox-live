@@ -1,5 +1,6 @@
 import { PROCESSES } from './constants';
 import InstallProcess from '../../backend/proccess-manager/install.process';
+import RecoveryProcess from '../../backend/proccess-manager/recovery.process';
 import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
@@ -11,6 +12,10 @@ export const processInstantiator = (processName: string, payload: Record<string,
   if (processName === PROCESSES.INSTALL && payload.credentials) {
     const { accessKeyId, secretAccessKey } = payload.credentials;
     return new InstallProcess({accessKeyId, secretAccessKey});
+  }
+  if (processName === PROCESSES.RECOVERY && payload.credentials) {
+    const { accessKeyId, secretAccessKey } = payload.credentials;
+    return new RecoveryProcess({accessKeyId, secretAccessKey, isNew: false});
   }
   if (processName === PROCESSES.RESTART) {
     return new RebootProcess();

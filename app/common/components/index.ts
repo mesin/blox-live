@@ -9,6 +9,7 @@ export { default as Table } from './Table';
 export { default as DropDown } from './DropDown';
 export { default as Modal } from './Modal';
 export { default as CustomModal } from './CustomModal';
+export { default as ModalTemplate } from './ModalTemplate';
 export { default as ProgressBar } from './ProgressBar';
 export { default as ProgressMessage } from './ProgressMessage';
 export { default as SuccessIcon } from './SuccessIcon';
@@ -18,3 +19,4 @@ export { default as DiscordButton } from './DiscordButton';
 export { default as PasswordInput } from './PasswordInput';
 export { default as Confetti } from './Confetti';
 export { default as EtherNumber } from './EtherNumber';
+

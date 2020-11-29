@@ -20,7 +20,7 @@ const StatusBar = (props) => {
   const { isActive } = props;
   return (
     <Wrapper isActive={isActive}>
-      {isActive ? 'All System Operational' : 'KeyVault Inactive'}
+      {isActive ? 'All Systems Operational' : 'KeyVault Inactive'}
     </Wrapper>
   );
 };

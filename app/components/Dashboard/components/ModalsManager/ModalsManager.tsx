@@ -1,23 +1,42 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal } from '../../..';
-import { PasswordModal } from '../../../KeyVaultModals/Modals';
+import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal, AccountRecovery } from '../../..';
+import { PasswordModal } from '../../../KeyVaultModals';
 import ActiveValidatorModal from '../../../ActiveValidatorModal';
-import * as actionsFromDashboard from '../../actions';
 
+import * as actionsFromDashboard from '../../actions';
+import * as actionsFromWizard from '../../../Wizard/actions';
+import * as actionsFromAccounts from '../../../Accounts/actions';
+import * as actionsFromUser from '../../../User/actions';
 import * as selectors from '../../selectors';
 import { getActiveValidators } from '../../../EventLogs/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
 const ModalsManager = (props: Props) => {
-  const { dashboardActions, showModal, modalType, onSuccess, activeValidators } = props;
+  const { dashboardActions, wizardActions, accountsActions, userActions, showModal, modalType, onSuccess, activeValidators } = props;
   const { clearModalDisplayData } = dashboardActions;
+  const { loadWallet, setFinishedWizard } = wizardActions;
+  const { loadAccounts } = accountsActions;
+  const { loadUserInfo } = userActions;
 
   const onPasswordSuccess = () => {
     clearModalDisplayData();
     onSuccess();
+  };
+
+  const onKeyvaultProcessSuccess = async () => {
+    await loadWallet();
+    await clearModalDisplayData();
+  };
+
+  const onAccountRecoverySuccess = () => {
+    setFinishedWizard(true);
+    loadUserInfo();
+    loadWallet();
+    loadAccounts();
+    clearModalDisplayData();
   };
 
   if (showModal) {
@@ -25,13 +44,18 @@ const ModalsManager = (props: Props) => {
       case MODAL_TYPES.PASSWORD:
         return <PasswordModal onClick={onPasswordSuccess} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.REACTIVATION:
-        return <KeyVaultReactivation onClose={() => clearModalDisplayData()} />;
+        return <KeyVaultReactivation onSuccess={() => onKeyvaultProcessSuccess()} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.UPDATE:
-        return <KeyVaultUpdate onClose={() => clearModalDisplayData()} />;
+        return <KeyVaultUpdate onSuccess={() => onKeyvaultProcessSuccess()} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.DEPOSIT_INFO:
         return <DepositInfoModal onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
-        return activeValidators.length > 0 && <ActiveValidatorModal onClose={() => clearModalDisplayData()} activeValidators={activeValidators} />;
+        return activeValidators.length > 0 && (
+          <ActiveValidatorModal onClose={() => clearModalDisplayData()} activeValidators={activeValidators} />
+        );
+      case MODAL_TYPES.DEVICE_SWITCH:
+      case MODAL_TYPES.FORGOT_PASSWORD:
+        return <AccountRecovery onSuccess={() => onAccountRecoverySuccess()} onClose={() => clearModalDisplayData()} type={modalType} />;
       default:
         return null;
     }
@@ -49,10 +73,16 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
+  wizardActions: bindActionCreators(actionsFromWizard, dispatch),
+  accountsActions: bindActionCreators(actionsFromAccounts, dispatch),
+  userActions: bindActionCreators(actionsFromUser, dispatch),
 });
 
 type Props = {
   dashboardActions: Record<string, any>;
+  wizardActions: Record<string, any>;
+  accountsActions: Record<string, any>;
+  userActions: Record<string, any>;
   showModal: boolean;
   modalType: string;
   onSuccess: () => void;

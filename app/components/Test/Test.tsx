@@ -68,7 +68,7 @@ const Test = () => {
         <option value="production">production</option>
       </select>
       <button
-        onClick={async () => {
+        onClick={() => {
           console.log('set custom env', env);
           store.setEnv(env);
         }}

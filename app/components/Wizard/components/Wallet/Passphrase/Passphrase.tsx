@@ -13,6 +13,7 @@ import { getMnemonic, getIsLoading } from '../../../../KeyVaultManagement/select
 import keyvaultSaga from '../../../../KeyVaultManagement/saga';
 
 import { useInjectSaga } from 'utils/injectSaga';
+import useCreatePassword from 'common/hooks/useCreatePassword';
 
 const keyvaultKey = 'keyvaultManagement';
 const passwordKey = 'password';
@@ -22,13 +23,13 @@ const Passphrase = (props: Props) => {
   const { keyvaultLoadMnemonic, keyvaultSaveMnemonic } = keyvaultActions;
   const { replacePassword } = passwordActions;
 
+  const { password, setPassword, confirmPassword, setConfirmPassword, showPasswordError,
+          showConfirmPasswordError, onPasswordBlur, onConfirmPasswordBlur
+        } = useCreatePassword();
+
   const [showBackup, toggleBackupDisplay] = useState(false);
   const [duplicatedMnemonic, setDuplicatedMnemonic] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showDuplicatedMnemonicError, setDuplicatedMnemonicErrorDisplay] = useState(false);
-  const [showPasswordError, setPasswordErrorDisplay] = useState(false);
-  const [showConfirmPasswordError, setConfirmPasswordErrorDisplay] = useState(false);
   const isButtonDisabled = !mnemonic;
 
   useInjectSaga({key: keyvaultKey, saga: keyvaultSaga, mode: ''});
@@ -70,23 +71,6 @@ const Passphrase = (props: Props) => {
       return;
     }
     setDuplicatedMnemonicErrorDisplay(false);
-  };
-
-  const onPasswordBlur = () => {
-    if (password.length < 8) {
-      setPasswordErrorDisplay(true);
-      return;
-    }
-    setPasswordErrorDisplay(false);
-  };
-
-  const onConfirmPasswordBlur = () => {
-    if (password !== confirmPassword && !showConfirmPasswordError) {
-      setConfirmPasswordErrorDisplay(true);
-    }
-    if (password === confirmPassword && showConfirmPasswordError) {
-      setConfirmPasswordErrorDisplay(false);
-    }
   };
 
   return (

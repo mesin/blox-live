@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button } from 'common/components';
-import ModalTemplate from '../ModalTemplate';
-import { Title, Description, SmallText } from '..';
-import { getModalText } from '../../Dashboard/selectors';
+import { ModalTemplate, Button } from 'common/components';
+import { Title, Description, SmallText } from 'common/components/ModalTemplate/components';
+import { getModalText } from '../Dashboard/selectors';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
+import image from '../Wizard/assets/img-key-vault-inactive.svg';
 
 const defaultText = `Due to KeyVault inactivity, your validators are not operating.
                     To fix this issue, we will restart your KeyVault.
