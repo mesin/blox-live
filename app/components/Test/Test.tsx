@@ -364,7 +364,8 @@ const Test = () => {
           Update Storage for both networks
         </button>
         <button onClick={async () => {
-          await keyVaultService.exportSlashingData();
+          const slashingStorage = await keyVaultService.getSlashingStorage(network);
+          console.log(slashingStorage);
         }}>
           Export Slashing Data
         </button>

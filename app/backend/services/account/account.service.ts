@@ -7,6 +7,7 @@ import KeyManagerService from '../key-manager/key-manager.service';
 import Web3 from 'web3';
 import WalletService from '../wallet/wallet.service';
 import config from '../../common/config';
+import { hexDecode } from '../../../utils/service';
 
 @CatchClass<AccountService>()
 export default class AccountService {
@@ -72,24 +73,48 @@ export default class AccountService {
   async createAccount(): Promise<void> {
     const network = this.store.get('network');
     const index: number = await this.getNextIndex();
+
+    // 1. get public-keys to create
     const accounts = await this.keyManagerService.getAccount(this.store.get('seed'), index, true);
-    const accountsHash = Object.assign({}, ...accounts.map(s => ({[s.validationPubKey]: s})));
-    const publicKeys = accounts.map(a => a.validationPubKey);
+    const accountsHash = Object.assign({}, ...accounts.map(account => ({ [account.validationPubKey]: account })));
+    const publicKeysToGetHighestAttestation = [];
+
+    // 2. export slashing data if exists
+    const slashingStorage = await this.keyVaultService.getSlashingStorage(network);
+    const slashingData = slashingStorage?.data || {};
+
+    // 3. update accounts-hash from exist slashing storage
+    for (const key of Object.keys(accountsHash)) {
+      if (slashingData.hasOwnProperty(key)) {
+        const decodedValue = hexDecode(slashingData[key]);
+        const decodedValueJson = JSON.parse(decodedValue);
+        const highestAttestation = {
+          'highest_source_epoch': decodedValueJson?.HighestAttestation?.source?.epoch,
+          'highest_target_epoch': decodedValueJson?.HighestAttestation?.target?.epoch
+        };
+        accountsHash[key] = { ...accountsHash[key], ...highestAttestation };
+      } else {
+        publicKeysToGetHighestAttestation.push(key);
+      }
+    }
+
+    // 4. get highest attestation from slasher to missing public-keys
     const highestAttestationsMap = await this.getHighestAttestation({
-      "public_keys": publicKeys,
+      'public_keys': publicKeysToGetHighestAttestation,
       network
     });
 
+    // 5. update accounts-hash from slasher
     for (const [key, value] of Object.entries(highestAttestationsMap)) {
-      accountsHash[key] = {...accountsHash[key], ...value}
+      accountsHash[key] = { ...accountsHash[key], ...value };
     }
 
     let highestSource = '';
     let highestTarget = '';
     const accountsArray = Object.values(accountsHash);
     for (let i = index; i >= 0; i--) {
-      highestSource += `${accountsArray[i]['highest_source_epoch']}${i==0 ? "" : ","}`;
-      highestTarget += `${accountsArray[i]['highest_target_epoch']}${i==0 ? "" : ","}`;
+      highestSource += `${accountsArray[i]['highest_source_epoch']}${i === 0 ? '' : ','}`;
+      highestTarget += `${accountsArray[i]['highest_target_epoch']}${i === 0 ? '' : ','}`;
     }
     console.log(highestSource);
     console.log(highestTarget);
@@ -246,7 +271,7 @@ export default class AccountService {
   @Catch({
     showErrorMessage: true
   })
-  async recovery({mnemonic, password}: Record<string, any>): Promise<void> {
+  async recovery({ mnemonic, password }: Record<string, any>): Promise<void> {
     const seed = await this.keyManagerService.seedFromMnemonicGenerate(mnemonic);
     const defAccountIndex = 0;
     const accounts = await this.get();
