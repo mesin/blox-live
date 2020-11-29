@@ -36,26 +36,45 @@ export default class KeyVaultService {
   }
 
   async updateStorage(payload: any) {
-    return await this.keyVaultApi.requestThruSsh(METHOD.POST, 'storage', payload);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.POST,
+      path: 'storage',
+      data: payload
+    });
   }
 
   async listAccounts() {
-    return await this.keyVaultApi.requestThruSsh(METHOD.LIST, 'accounts');
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.LIST,
+      path: 'accounts'
+    });
   }
 
   async healthCheck() {
-    return await this.keyVaultApi.requestThruSsh(METHOD.GET, 'sys/health');
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: 'sys/health',
+      isNetworkRequired: false
+    });
   }
 
   async getVersion() {
-    return await this.keyVaultApi.requestThruSsh(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: `ethereum/${config.env.TEST_NETWORK}/version`,
+      isNetworkRequired: false
+    });
   }
 
   async getSlashingStorage(network: string) {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    return await this.keyVaultApi.requestThruSsh(METHOD.GET, `ethereum/${network}/storage/slashing`);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: `ethereum/${network}/storage/slashing`,
+      isNetworkRequired: false
+    });
   }
 
   async getContainerId() {
@@ -71,7 +90,12 @@ export default class KeyVaultService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    return await this.keyVaultApi.requestThruSsh(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.POST,
+      path: `ethereum/${network}/storage/slashing`,
+      data: payload,
+      isNetworkRequired: false
+    });
   }
 
   @Step({
