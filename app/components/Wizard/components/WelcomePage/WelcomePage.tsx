@@ -83,6 +83,7 @@ const WelcomePage = (props: Props) => {
     }
 
     const store: Store = Store.getStore();
+    const withAccountRecovery = store.exists('accountRecovery');
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     const hasSeed = store.exists('seed');
     const storedUuid = store.get('uuid');
@@ -91,10 +92,7 @@ const WelcomePage = (props: Props) => {
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
-
-      debugger;
-
-      if ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess) {
+      if (withAccountRecovery && ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess)) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
       }
