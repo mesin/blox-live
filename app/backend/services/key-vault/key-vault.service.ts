@@ -8,12 +8,6 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
-const STABLE_TAG = 'v0.1.16';
-
-function numVal(str) {
-  return +str.replace(/\D/g, '');
-}
-
 function sleep(msec) {
   return new Promise(resolve => {
     setTimeout(resolve, msec);
@@ -206,49 +200,17 @@ export default class KeyVaultService {
     name: 'Export slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async importSlashingData(): Promise<any> {
-    // check if kv version higher or equal stable tag
-    // const keyVaultVersion = this.store.get('keyVaultVersion');
-    // if (!keyVaultVersion) {
-    //   return;
-    // }
-    // if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
-    //   return;
-    // }
-
+  async exportKeyVaultData(): Promise<any> {
     const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
     for (const network of supportedNetworks) {
       this.store.set('network', network);
+      // save latest network index
+      const accounts = await this.listAccounts();
+      this.store.set(`index.${network}`, (accounts.length - 1).toString());
+
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
         this.store.set(`slashingData.${network}`, slashingData);
-      }
-      const accounts = await this.listAccounts();
-    }
-  }
-
-  @Step({
-    name: 'Import slashing protection data...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
-  })
-  async exportSlashingData(): Promise<any> {
-    // check if kv version higher or equal stable tag
-    let keyVaultVersion = this.store.get('keyVaultVersion');
-    if (!keyVaultVersion) {
-      return;
-    }
-    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
-      return;
-    }
-
-    const slashingData = this.store.get('slashingData');
-    if (slashingData) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(slashingData)) {
-        if (storage) {
-          // eslint-disable-next-line no-await-in-loop
-          await this.updateSlashingStorage(storage, network);
-        }
       }
     }
   }

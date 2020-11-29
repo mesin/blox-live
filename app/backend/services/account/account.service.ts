@@ -70,9 +70,8 @@ export default class AccountService {
   @Catch({
     displayMessage: 'CLI Create Account failed'
   })
-  async createAccount(): Promise<void> {
-    const network = this.store.get('network');
-    const index: number = await this.getNextIndex();
+  async createAccount({ network, getNextIndex = true, indexToRestore = 0, getRemoteSlashingData = true }): Promise<void> {
+    const index: number = getNextIndex ? await this.getNextIndex(network) : indexToRestore;
 
     // 1. get public-keys to create
     const accounts = await this.keyManagerService.getAccount(this.store.get('seed'), index, true);
@@ -80,7 +79,7 @@ export default class AccountService {
     const publicKeysToGetHighestAttestation = [];
 
     // 2. get slashing data if exists
-    const slashingData = await this.keyVaultService.getSlashingStorage();
+    const slashingData = getRemoteSlashingData ? await this.keyVaultService.getSlashingStorage() : this.store.get(`slashingData.${network}`);
 
     // 3. update accounts-hash from exist slashing storage
     for (const key of Object.keys(accountsHash)) {
@@ -123,11 +122,27 @@ export default class AccountService {
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
 
-  async getNextIndex(): Promise<number> {
-    const network = this.store.get('network');
-    if (!network) {
-      throw new Error('Configuration settings network not found');
+  @Step({
+    name: 'Restore Accounts'
+  })
+  @Catch({
+    displayMessage: 'CLI Create Account failed'
+  })
+  async restoreAccounts(): Promise<void> {
+    const indices = this.store.get('index');
+    if (indices) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [network, lastIndex] of Object.entries(indices)) {
+        const index = +lastIndex;
+        if (index > -1) {
+          // this.store.set('network', network);
+          this.createAccount({ network, getNextIndex: false, indexToRestore: index, getRemoteSlashingData: false });
+        }
+      }
     }
+  }
+
+  async getNextIndex(network: string): Promise<number> {
     let index = 0;
     const accounts = await this.keyVaultService.listAccounts();
     if (accounts.length) {
