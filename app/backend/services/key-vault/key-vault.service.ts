@@ -3,6 +3,7 @@ import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import VersionService from '../version/version.service';
 import WalletService from '../wallet/wallet.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
+import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
@@ -155,9 +156,12 @@ export default class KeyVaultService {
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     const envKey = (this.store.get('env') || 'production');
-    const dockerHubImage = `bloxstaking/key-vault${envKey === 'stage' ? '-rc' : ''}:${keyVaultVersion}`;
+    const dockerHubImage = envKey === 'production'
+      ? `bloxstaking/key-vault:${keyVaultVersion}`
+      : `bloxstaking/key-vault-rc:${keyVaultVersion}`;
 
-    const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
+    const networksList = await BloxApi.request(METHOD.GET, 'ethereum2/genesis-time');
+    let dockerCMD = 'docker start key_vault 2>/dev/null || ' +
       `docker pull ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
       '-v $(pwd)/data:/data ' +
       '-v $(pwd)/policies:/policies ' +
