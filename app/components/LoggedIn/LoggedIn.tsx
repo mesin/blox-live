@@ -89,7 +89,8 @@ const LoggedIn = (props: Props) => {
     if (allDataIsReady && noErrors && doneLoading) {
       const store: Store = Store.getStore();
       const storedUuid = store.exists('uuid');
-      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') && !addAnotherAccount;
+      const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
+      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && !addAnotherAccount;
 
       if (inForgotPasswordProcess()) {
         callSetFinishedWizard(true);

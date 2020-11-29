@@ -91,6 +91,9 @@ const WelcomePage = (props: Props) => {
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
+
+      debugger;
+
       if ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
