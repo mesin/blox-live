@@ -36,25 +36,18 @@ export default class KeyVaultService {
   }
 
   async updateStorage(payload: any) {
-    // this.keyVaultApi.init();
     return await this.keyVaultApi.requestThruSsh(METHOD.POST, 'storage', payload);
   }
 
   async listAccounts() {
-    // this.keyVaultApi.init();
-    // return await this.keyVaultApi.request(METHOD.LIST, 'accounts');
     return await this.keyVaultApi.requestThruSsh(METHOD.LIST, 'accounts');
   }
 
   async healthCheck() {
-    // this.keyVaultApi.init(false);
-    // return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
     return await this.keyVaultApi.requestThruSsh(METHOD.GET, 'sys/health');
   }
 
   async getVersion() {
-    // this.keyVaultApi.init(false);
-    // return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
     return await this.keyVaultApi.requestThruSsh(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
   }
 
@@ -62,8 +55,6 @@ export default class KeyVaultService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    // this.keyVaultApi.init(false);
-    // return await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
     return await this.keyVaultApi.requestThruSsh(METHOD.GET, `ethereum/${network}/storage/slashing`);
   }
 
@@ -80,8 +71,6 @@ export default class KeyVaultService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    // this.keyVaultApi.init(false);
-    // return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
     return await this.keyVaultApi.requestThruSsh(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
   }
 
@@ -131,8 +120,6 @@ export default class KeyVaultService {
       '-p 8200:8200 ' +
       `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
       '-e UNSEAL=true ' +
-      // "-e VAULT_ADDR='http://127.0.0.1:8200' " +
-      // "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
       "-e VAULT_CLIENT_TIMEOUT='30s' " +
       `'${dockerHubImage}'`;
     console.log(dockerCMD);

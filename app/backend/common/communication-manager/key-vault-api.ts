@@ -29,7 +29,6 @@ class KeyVaultApi extends Http {
       route: `https://localhost:8200/v1/${url}`
     }, true);
     const { stdout } = await ssh.execCommand(command, {});
-    console.log('stdout=', stdout);
     const body = JSON.parse(stdout);
     if (body.errors) {
       throw new Error(`requestThruSsh: ${body.errors}`);
