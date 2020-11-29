@@ -43,7 +43,8 @@ export default class KeyVaultService {
 
   async listAccounts() {
     this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.LIST, 'accounts');
+    const response = await this.keyVaultApi.request(METHOD.LIST, 'accounts');
+    return this.checkForError(response, []);
   }
 
   async healthCheck() {
@@ -61,8 +62,21 @@ export default class KeyVaultService {
       throw new Error('Configuration settings network not found');
     }
     this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
+    const response = await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
+    return this.checkForError(response, {});
   }
+
+  checkForError = (response: any, defaultValue: any) => {
+    const errors = response?.error?.response?.data?.errors;
+    if (Array.isArray(errors)) {
+      for (const err of errors) {
+        if (err.includes('wallet not found')) {
+          return defaultValue;
+        }
+      }
+    }
+    return response;
+  };
 
   async getContainerId() {
     const ssh = await this.keyVaultSsh.getConnection();
@@ -130,9 +144,9 @@ export default class KeyVaultService {
       '-v $(pwd)/policies:/policies ' +
       '-p 8200:8200 ' +
       '-e UNSEAL=true ' +
-      "-e VAULT_ADDR='http://127.0.0.1:8200' " +
-      "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
-      "-e VAULT_CLIENT_TIMEOUT='30s' ";
+      '-e VAULT_ADDR=\'http://127.0.0.1:8200\' ' +
+      '-e VAULT_API_ADDR=\'http://127.0.0.1:8200\' ' +
+      '-e VAULT_CLIENT_TIMEOUT=\'30s\' ';
 
     if (typeof networksList === 'object') {
       Object.entries(networksList).forEach(([key, val]) => {

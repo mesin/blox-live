@@ -80,8 +80,14 @@ export default class AccountService {
     const publicKeysToGetHighestAttestation = [];
 
     // 2. export slashing data if exists
-    const slashingStorage = await this.keyVaultService.getSlashingStorage(network);
-    const slashingData = slashingStorage?.data || {};
+    let slashingStorage = '';
+    let slashingData = {};
+    try {
+      slashingStorage = await this.keyVaultService.getSlashingStorage(network);
+      slashingData = slashingStorage?.data || {};
+    } catch (e) {
+      console.log(e);
+    }
 
     // 3. update accounts-hash from exist slashing storage
     for (const key of Object.keys(accountsHash)) {
@@ -118,6 +124,8 @@ export default class AccountService {
     }
     console.log(highestSource);
     console.log(highestTarget);
+
+    // 6. create accounts
     const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, highestSource, highestTarget);
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
