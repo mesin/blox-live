@@ -49,8 +49,8 @@ import * as actionsFromUser from '../User/actions';
 import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
-import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
+import Store from 'backend/common/store-manager/store';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -87,15 +87,23 @@ const LoggedIn = (props: Props) => {
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
     if (allDataIsReady && noErrors && doneLoading) {
-      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
-                                  accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
+      const store: Store = Store.getStore();
+      const withAccountRecovery = store.exists('accountRecovery');
+      const storedUuid = store.exists('uuid');
+      const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
+      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && !addAnotherAccount;
 
-      if (inForgotPasswordProcess()) {
-        callSetFinishedWizard(true);
+      if (withAccountRecovery) {
+        if (inForgotPasswordProcess()) {
+          callSetFinishedWizard(true);
+        }
+
+        if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
+          shouldNavigateToDashboard && callSetFinishedWizard(true);
+        }
       }
-
-      if (!userInfo.uuid || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
-        shouldNavigateToDashboard && callSetFinishedWizard(true);
+      else if (shouldNavigateToDashboard) {
+        callSetFinishedWizard(true);
       }
 
       toggleFinishLoadingAll(true);
