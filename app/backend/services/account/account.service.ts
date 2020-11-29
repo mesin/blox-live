@@ -79,15 +79,8 @@ export default class AccountService {
     const accountsHash = Object.assign({}, ...accounts.map(account => ({ [account.validationPubKey]: account })));
     const publicKeysToGetHighestAttestation = [];
 
-    // 2. export slashing data if exists
-    let slashingStorage = '';
-    let slashingData = {};
-    try {
-      slashingStorage = await this.keyVaultService.getSlashingStorage(network);
-      slashingData = slashingStorage?.data || {};
-    } catch (e) {
-      console.log(e);
-    }
+    // 2. get slashing data if exists
+    const slashingData = await this.keyVaultService.getSlashingStorage();
 
     // 3. update accounts-hash from exist slashing storage
     for (const key of Object.keys(accountsHash)) {
@@ -136,31 +129,12 @@ export default class AccountService {
       throw new Error('Configuration settings network not found');
     }
     let index = 0;
-    if (this.store.exists(`keyVaultStorage.${network}`)) {
-      const response = await this.keyVaultService.listAccounts();
-      const { data: { accounts } } = response;
-      if (accounts && accounts instanceof Array && accounts.length > 0) {
-        index = +accounts[0].name.replace('account-', '') + 1;
-      }
+    const accounts = await this.keyVaultService.listAccounts();
+    if (accounts.length) {
+      index = +accounts[0].name.replace('account-', '') + 1;
     }
     this.store.set(`index.${network}`, (index - 1).toString());
     return index;
-  }
-
-  async listAccounts(): Promise<any> {
-    const network = this.store.get('network');
-    if (!network) {
-      throw new Error('Configuration settings network not found');
-    }
-    return await this.keyManagerService.listAccounts(this.store.get(`keyVaultStorage.${network}`));
-  }
-
-  async getLastIndexedAccount(): Promise<any> {
-    const accounts = await this.listAccounts();
-    if (accounts && accounts.length) {
-      console.log('account', accounts[0]);
-      return accounts[0];
-    }
   }
 
   async getDepositData(pubKey: string, index: number, network: string): Promise<any> {

@@ -57,17 +57,6 @@ export default class KeyManagerService {
     return stdout ? JSON.parse(stdout) : {};
   }
 
-  @Catch({
-    displayMessage: 'List Keyvault accounts failed'
-  })
-  async listAccounts(storage: string): Promise<any> {
-    const { stdout } = await this.executor(
-      `${this.executablePath} wallet account list --storage=${storage}`
-    );
-    const accounts = stdout ? JSON.parse(stdout) : [];
-    return accounts;
-  }
-
   async getDepositData(seed: string, index: number, publicKey: string, network: string): Promise<any> {
     const { stdout, stderr } = await this.executor(
       `${this.executablePath} wallet account deposit-data --seed=${seed} --index=${index} --public-key=${publicKey} --network=${network}`

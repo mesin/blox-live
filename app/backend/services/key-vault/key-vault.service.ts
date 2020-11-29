@@ -44,7 +44,16 @@ export default class KeyVaultService {
   async listAccounts() {
     this.keyVaultApi.init();
     const response = await this.keyVaultApi.request(METHOD.LIST, 'accounts');
-    return this.checkForError(response, []);
+    const errors = response?.error?.response?.data?.errors;
+    if (Array.isArray(errors)) {
+      for (const err of errors) {
+        if (err.includes('wallet not found')) {
+          return [];
+        }
+      }
+    }
+
+    return response?.data?.accounts || [];
   }
 
   async healthCheck() {
@@ -57,26 +66,19 @@ export default class KeyVaultService {
     return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
   }
 
-  async getSlashingStorage(network: string) {
-    if (!network) {
-      throw new Error('Configuration settings network not found');
-    }
-    this.keyVaultApi.init(false);
-    const response = await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
-    return this.checkForError(response, {});
-  }
-
-  checkForError = (response: any, defaultValue: any) => {
+  async getSlashingStorage() {
+    this.keyVaultApi.init();
+    const response = await this.keyVaultApi.request(METHOD.GET, 'storage/slashing');
     const errors = response?.error?.response?.data?.errors;
     if (Array.isArray(errors)) {
       for (const err of errors) {
         if (err.includes('wallet not found')) {
-          return defaultValue;
+          return {};
         }
       }
     }
-    return response;
-  };
+    return response?.data || {};
+  }
 
   async getContainerId() {
     const ssh = await this.keyVaultSsh.getConnection();
@@ -206,26 +208,22 @@ export default class KeyVaultService {
   })
   async importSlashingData(): Promise<any> {
     // check if kv version higher or equal stable tag
-    const keyVaultVersion = this.store.get('keyVaultVersion');
-    if (!keyVaultVersion) {
-      return;
-    }
-    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
-      return;
-    }
+    // const keyVaultVersion = this.store.get('keyVaultVersion');
+    // if (!keyVaultVersion) {
+    //   return;
+    // }
+    // if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
+    //   return;
+    // }
 
-    const keyVaultStorage = this.store.get('keyVaultStorage');
-    if (keyVaultStorage) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(keyVaultStorage)) {
-        if (storage) {
-          // eslint-disable-next-line no-await-in-loop
-          const slashingData = await this.getSlashingStorage(network);
-          if (Object.keys(slashingData.data).length) {
-            this.store.set(`slashingData.${network}`, slashingData.data);
-          }
-        }
+    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+    for (const network of supportedNetworks) {
+      this.store.set('network', network);
+      const slashingData = await this.getSlashingStorage();
+      if (Object.keys(slashingData).length) {
+        this.store.set(`slashingData.${network}`, slashingData);
       }
+      const accounts = await this.listAccounts();
     }
   }
 
