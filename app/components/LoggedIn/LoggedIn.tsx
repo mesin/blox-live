@@ -100,9 +100,7 @@ const LoggedIn = (props: Props) => {
         }
 
         if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
-          if (hasWallet && accounts.length > 0 && !addAnotherAccount) {
-            callSetFinishedWizard(true);
-          }
+          shouldNavigateToDashboard && callSetFinishedWizard(true);
         }
       }
       else if (shouldNavigateToDashboard) {
