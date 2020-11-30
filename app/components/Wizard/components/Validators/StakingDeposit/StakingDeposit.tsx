@@ -88,7 +88,7 @@ const StakingDeposit = (props: Props) => {
   if (network) {
     const needHelpLink = NETWORKS[network].name === 'MainNet' ?
      'docs-guides/#pp-toc__heading-anchor-14' :
-     'docs-guides/#pp-toc__heading-anchor-15';
+     'documents/guides/#pp-toc__heading-anchor-20';
 
     return (
       <Wrapper>

@@ -57,7 +57,7 @@ const CreateServer = (props: Props) => {
 
   return (
     <Wrapper>
-      <Title>Create your staking KeyVault</Title>
+      <Title>Create your Staking KeyVault</Title>
       <Paragraph>
         We will now create your KeyVault on your selected server. <br />
         To do that, Blox needs AWS access/secret keys. <br />
@@ -66,7 +66,7 @@ const CreateServer = (props: Props) => {
           AWS account is verified
         </ExternalLink> before creating the keys. <br /> <br />
         To create a suitable server and access tokens follow this&nbsp;
-        <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
+        <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>.
       </Paragraph>
       <PasswordInputsWrapper>
         <PasswordInput name={'accessKeyId'} title={'Access Key ID'} autoFocus

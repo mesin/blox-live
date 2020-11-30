@@ -24,7 +24,7 @@ const GoEthButton = styled.a`
 const TestNetText = () => {
   return (
     <Paragraph>
-      To start staking on beacon chain TestNet, you are required to stake <br />
+      To start staking on the beacon chain Testnet, you are required to deposit <br />
       32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
       validator deposit contract.
       <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>

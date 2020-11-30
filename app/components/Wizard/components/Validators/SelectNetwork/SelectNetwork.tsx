@@ -33,9 +33,9 @@ const Validators = (props: Props) => {
   const isMainNetEnabled = canUseMainNet();
   return (
     <Wrapper>
-      <Title>Select your staking network</Title>
+      <Title>Select your Staking network</Title>
       <Paragraph>
-        Blox let’s you stake on Eth 2.0 Mainnet or run a Testnet validator to try
+        Blox let’s you stake on the Eth2 Mainnet or run a Testnet validator to try
         our <br />
         staking services. Currently, only our Testnet is available.
       </Paragraph>
