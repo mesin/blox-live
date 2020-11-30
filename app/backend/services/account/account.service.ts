@@ -110,12 +110,10 @@ export default class AccountService {
     let highestSource = '';
     let highestTarget = '';
     const accountsArray = Object.values(accountsHash);
-    for (let i = index; i >= 0; i--) {
+    for (let i = index; i >= 0; i -= 1) {
       highestSource += `${accountsArray[i]['highest_source_epoch']}${i === 0 ? '' : ','}`;
       highestTarget += `${accountsArray[i]['highest_target_epoch']}${i === 0 ? '' : ','}`;
     }
-    console.log(highestSource);
-    console.log(highestTarget);
 
     // 6. create accounts
     const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, highestSource, highestTarget);
@@ -200,34 +198,22 @@ export default class AccountService {
       throw new Error('Configuration settings network not found');
     }
     const index: number = +this.store.get(`index.${network}`);
-    const storage = index < 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
-    this.store.set(`keyVaultStorage.${network}`, storage);
-  }
-
-  async generatePublicKeys(): Promise<void> {
-    const results = [];
-    for (let i = 0; i < 10; i += 1) {
-      results.push(this.keyManagerService.generatePublicKey(this.store.get('seed'), i));
+    if (index < 0) {
+      await this.walletService.createWallet();
+    } else {
+      this.createAccount({ network, getNextIndex: false, indexToRestore: index });
     }
-    await Promise.all(results);
   }
 
+  // TODO delete per network, blocked by web-api
   async deleteAllAccounts(): Promise<void> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
-    this.store.delete('keyVaultStorage');
-
-    if (keyVaultStorage) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(keyVaultStorage)) {
-        if (storage) {
-          this.store.set('network', network);
-          // eslint-disable-next-line no-await-in-loop
-          await this.walletService.createWallet();
-          // eslint-disable-next-line no-await-in-loop
-          await this.keyVaultService.updateVaultStorage();
-          this.store.delete(`index.${network}`);
-        }
-      }
+    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+    for (const network of supportedNetworks) {
+      this.store.set('network', network);
+      // eslint-disable-next-line no-await-in-loop
+      await this.walletService.createWallet();
+      // eslint-disable-next-line no-await-in-loop
+      await this.keyVaultService.updateVaultStorage();
     }
     await this.delete();
   }
@@ -243,6 +229,7 @@ export default class AccountService {
     const uniqueNetworks = [...new Set(accounts.map(acc => acc.network))];
     // eslint-disable-next-line no-restricted-syntax
     for (const network of uniqueNetworks) {
+      if (network === 'test') continue;
       const networkAccounts = accounts
         .filter(acc => acc.network === network)
         .sort((a, b) => a.name.localeCompare(b.name));
@@ -259,9 +246,7 @@ export default class AccountService {
       }, 0);
       */
       const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
-      // eslint-disable-next-line no-await-in-loop
-      const networkStorage = await this.keyManagerService.createAccount(this.store.get('seed'), lastIndex);
-      this.store.set(`keyVaultStorage.${network}`, networkStorage);
+      await this.createAccount({ network, getNextIndex: false, indexToRestore: lastIndex });
     }
   }
 
@@ -270,21 +255,17 @@ export default class AccountService {
   })
   async recovery({ mnemonic, password }: Record<string, any>): Promise<void> {
     const seed = await this.keyManagerService.seedFromMnemonicGenerate(mnemonic);
-    const defAccountIndex = 0;
     const accounts = await this.get();
     if (accounts.length === 0) {
       throw new Error('Validators not found');
     }
+    const accountToCompareWith = accounts[0];
+    const index = accountToCompareWith.name.split('-')[1];
+    const account = this.keyManagerService.getAccount(seed, index);
 
-    const index = accounts[defAccountIndex].name.split('-')[1];
-    const storage = await this.keyManagerService.createAccount(seed, index);
-    const tmpStorageAccounts = await this.keyManagerService.listAccounts(storage);
-    const createdAccount = tmpStorageAccounts.find(rec => rec.name === `account-${index}`);
-    if (createdAccount.validationPubKey !== accounts[defAccountIndex].publicKey.split('x')[1]) {
+    if (account.validationPubKey !== accountToCompareWith.publicKey.replace(/^(0x)/, '')) {
       throw new Error('Passphrase not linked to your account.');
     }
-
-    this.store.clear();
     await this.store.setNewPassword(password, false);
     this.store.set('seed', seed);
   }

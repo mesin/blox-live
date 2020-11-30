@@ -43,8 +43,7 @@ export default class KeyManagerService {
       highestSource = '0';
       highestTarget = '1';
     } else {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i <= index; i++) {
+      for (let i = 0; i <= index; i += 1) {
         highestSource += `${i.toString()}${i === index ? '' : ','}`;
         highestTarget += `${(i + 1).toString()}${i === index ? '' : ','}`;
       }
@@ -71,15 +70,6 @@ export default class KeyManagerService {
       return stdout ? JSON.parse(stdout) : {};
     } catch (e) {
       throw new Error(`Get ${network} deposit account data with index ${JSON.stringify(index)} was failed.`);
-    }
-  }
-
-  async generatePublicKey(seed: string, index: number): Promise<void> {
-    try {
-      const { stdout } = await this.executor(`${this.executablePath} wallet public-key generate --seed=${seed} --index=${index}`);
-      console.log(stdout);
-    } catch (e) {
-      throw new Error('Generate public key failed.');
     }
   }
 
