@@ -261,7 +261,7 @@ export default class AccountService {
     }
     const accountToCompareWith = accounts[0];
     const index = accountToCompareWith.name.split('-')[1];
-    const account = this.keyManagerService.getAccount(seed, index);
+    const account = await this.keyManagerService.getAccount(seed, index);
 
     if (account.validationPubKey !== accountToCompareWith.publicKey.replace(/^(0x)/, '')) {
       throw new Error('Passphrase not linked to your account.');

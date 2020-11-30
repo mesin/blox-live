@@ -35,7 +35,7 @@ export default class KeyManagerService {
     }
   }
 
-  async getAccount(seed: string, index: number, accumulate: boolean = false): Promise<string> {
+  async getAccount(seed: string, index: number, accumulate: boolean = false): Promise<any> {
     let highestSource = '';
     let highestTarget = '';
 
