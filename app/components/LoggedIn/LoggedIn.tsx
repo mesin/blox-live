@@ -14,6 +14,7 @@ import TestPage from '../Test';
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
 import { isPrimaryDevice, inRecoveryProcess, inForgotPasswordProcess } from './service';
+import { allAccountsDeposited } from '../Accounts/service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -91,7 +92,7 @@ const LoggedIn = (props: Props) => {
       const withAccountRecovery = store.exists('accountRecovery');
       const storedUuid = store.exists('uuid');
       const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
-      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && !addAnotherAccount;
+      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
       if (withAccountRecovery) {
         if (inForgotPasswordProcess()) {
@@ -99,7 +100,9 @@ const LoggedIn = (props: Props) => {
         }
 
         if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
-          shouldNavigateToDashboard && callSetFinishedWizard(true);
+          if (hasWallet && accounts.length > 0 && !addAnotherAccount) {
+            callSetFinishedWizard(true);
+          }
         }
       }
       else if (shouldNavigateToDashboard) {
