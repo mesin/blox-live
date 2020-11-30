@@ -31,47 +31,71 @@ export default class KeyVaultService {
   }
 
   async updateStorage(payload: any) {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'storage', payload);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.POST,
+      path: 'storage',
+      data: payload
+    });
   }
 
   async listAccounts() {
-    this.keyVaultApi.init();
-    const response = await this.keyVaultApi.request(METHOD.LIST, 'accounts');
-    const errors = response?.error?.response?.data?.errors;
-    if (Array.isArray(errors)) {
-      for (const err of errors) {
-        if (err.includes('wallet not found')) {
-          return [];
+    try {
+      const response = await this.keyVaultApi.requestThruSsh({
+        method: METHOD.LIST,
+        path: 'accounts'
+      });
+      return response?.data.accounts || [];
+    } catch (e) {
+      console.error(e);
+      const { errors } = JSON.parse(e.message);
+      console.error('---> list accounts errors', errors);
+      if (Array.isArray(errors)) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const err of errors) {
+          if (err.includes('wallet not found')) {
+            return [];
+          }
         }
       }
     }
-
-    return response?.data?.accounts || [];
   }
 
   async healthCheck() {
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: 'sys/health',
+      isNetworkRequired: false
+    });
   }
 
   async getVersion() {
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: `ethereum/${config.env.TEST_NETWORK}/version`,
+      isNetworkRequired: false
+    });
   }
 
   async getSlashingStorage() {
-    this.keyVaultApi.init();
-    const response = await this.keyVaultApi.request(METHOD.GET, 'storage/slashing');
-    const errors = response?.error?.response?.data?.errors;
-    if (Array.isArray(errors)) {
-      for (const err of errors) {
-        if (err.includes('wallet not found')) {
-          return {};
+    try {
+      const response = await this.keyVaultApi.requestThruSsh({
+        method: METHOD.GET,
+        path: 'storage/slashing'
+      });
+      return response?.data || {};
+    } catch (e) {
+      console.error(e);
+      const { errors } = JSON.parse(e.message);
+      console.error('---> list accounts errors', errors);
+      if (Array.isArray(errors)) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const err of errors) {
+          if (err.includes('wallet not found')) {
+            return {};
+          }
         }
       }
     }
-    return response?.data || {};
   }
 
   async getContainerId() {
@@ -87,8 +111,12 @@ export default class KeyVaultService {
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.POST,
+      path: `ethereum/${network}/storage/slashing`,
+      data: payload,
+      isNetworkRequired: false
+    });
   }
 
   @Step({
@@ -128,30 +156,19 @@ export default class KeyVaultService {
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     const envKey = (this.store.get('env') || 'production');
-    const dockerHubImage = envKey === 'production' ?
-      `bloxstaking/key-vault:${keyVaultVersion}` :
-      `bloxstaking/key-vault-rc:${keyVaultVersion}`;
+    const dockerHubImage = envKey === 'production'
+      ? `bloxstaking/key-vault:${keyVaultVersion}`
+      : `bloxstaking/key-vault-rc:${keyVaultVersion}`;
 
     const networksList = await BloxApi.request(METHOD.GET, 'ethereum2/genesis-time');
-
-    let dockerCMD = 'docker start key_vault 2>/dev/null || ' +
-      `docker pull  ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
+    const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
+      `docker pull ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
       '-v $(pwd)/data:/data ' +
       '-v $(pwd)/policies:/policies ' +
       '-p 8200:8200 ' +
+      `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
       '-e UNSEAL=true ' +
-      '-e VAULT_ADDR=\'http://127.0.0.1:8200\' ' +
-      '-e VAULT_API_ADDR=\'http://127.0.0.1:8200\' ' +
-      '-e VAULT_CLIENT_TIMEOUT=\'30s\' ';
-
-    if (typeof networksList === 'object') {
-      Object.entries(networksList).forEach(([key, val]) => {
-        if (key !== 'test') {
-          dockerCMD += `-e ${key.toUpperCase()}_GENESIS_TIME='${val}' `;
-        }
-      });
-    }
-    dockerCMD += `'${dockerHubImage}'`;
+      `-e VAULT_CLIENT_TIMEOUT=\'30s\' '${dockerHubImage}'`;
 
     const ssh = await this.keyVaultSsh.getConnection();
     const { stderr: error } = await ssh.execCommand(
@@ -164,13 +181,13 @@ export default class KeyVaultService {
     await sleep(12000);
 
     if (error) {
-      throw new Error('Failed to run Key Vault docker container');
+      throw new Error(`Failed to run Key Vault docker container: ${error}`);
     }
   }
 
   @Step({
     name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
+    requiredConfig: ['network']
   })
   async updateVaultStorage(): Promise<void> {
     const network = this.store.get('network');
@@ -178,7 +195,8 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Updating server storage...'
+    name: 'Updating server storage...',
+    requiredConfig: ['keyVaultStorage']
   })
   async updateVaultMountsStorage(): Promise<any> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
