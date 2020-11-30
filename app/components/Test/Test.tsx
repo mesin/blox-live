@@ -253,7 +253,7 @@ const Test = () => {
           Create Wallet
         </button>
         <button onClick={async () => {
-          await accountService.createAccount();
+          await accountService.createAccount({network});
         }}>
           Create Account
         </button>
@@ -283,11 +283,7 @@ const Test = () => {
         }}>
           Get Account Deposit Data
         </button>
-        <button onClick={async () => {
-          await accountService.generatePublicKeys();
-        }}>
-          Generate Public Key
-        </button>
+
       </div>
       <p/>
       <h2>Blox API</h2>
@@ -354,15 +350,10 @@ const Test = () => {
           Update Storage for both networks
         </button>
         <button onClick={async () => {
-          const slashingStorage = await keyVaultService.getSlashingStorage(network);
+          const slashingStorage = await keyVaultService.getSlashingStorage();
           console.log(slashingStorage);
         }}>
           Export Slashing Data
-        </button>
-        <button onClick={async () => {
-          await keyVaultService.importSlashingData();
-        }}>
-          Import Slashing Data
         </button>
       </div>
       <p/>

@@ -110,7 +110,7 @@ export default class AccountService {
     let highestSource = '';
     let highestTarget = '';
     const accountsArray = Object.values(accountsHash);
-    for (let i = index; i >= 0; i--) {
+    for (let i = index; i >= 0; i -= 1) {
       highestSource += `${accountsArray[i]['highest_source_epoch']}${i === 0 ? '' : ','}`;
       highestTarget += `${accountsArray[i]['highest_target_epoch']}${i === 0 ? '' : ','}`;
     }
@@ -200,34 +200,22 @@ export default class AccountService {
       throw new Error('Configuration settings network not found');
     }
     const index: number = +this.store.get(`index.${network}`);
-    const storage = index < 0 ? await this.keyManagerService.createWallet() : await this.keyManagerService.createAccount(this.store.get('seed'), index);
-    this.store.set(`keyVaultStorage.${network}`, storage);
-  }
-
-  async generatePublicKeys(): Promise<void> {
-    const results = [];
-    for (let i = 0; i < 10; i += 1) {
-      results.push(this.keyManagerService.generatePublicKey(this.store.get('seed'), i));
+    if (index < 0) {
+      await this.walletService.createWallet();
+    } else {
+      this.createAccount({ network, getNextIndex: false, indexToRestore: index });
     }
-    await Promise.all(results);
   }
 
+  // TODO delete per network, blocked by web-api
   async deleteAllAccounts(): Promise<void> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
-    this.store.delete('keyVaultStorage');
-
-    if (keyVaultStorage) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(keyVaultStorage)) {
-        if (storage) {
-          this.store.set('network', network);
-          // eslint-disable-next-line no-await-in-loop
-          await this.walletService.createWallet();
-          // eslint-disable-next-line no-await-in-loop
-          await this.keyVaultService.updateVaultStorage();
-          this.store.delete(`index.${network}`);
-        }
-      }
+    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+    for (const network of supportedNetworks) {
+      this.store.set('network', network);
+      // eslint-disable-next-line no-await-in-loop
+      await this.walletService.createWallet();
+      // eslint-disable-next-line no-await-in-loop
+      await this.keyVaultService.updateVaultStorage();
     }
     await this.delete();
   }

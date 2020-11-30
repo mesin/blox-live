@@ -3,7 +3,6 @@ import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import VersionService from '../version/version.service';
 import WalletService from '../wallet/wallet.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
-import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
@@ -46,9 +45,7 @@ export default class KeyVaultService {
       });
       return response?.data.accounts || [];
     } catch (e) {
-      console.error(e);
       const { errors } = JSON.parse(e.message);
-      console.error('---> list accounts errors', errors);
       if (Array.isArray(errors)) {
         // eslint-disable-next-line no-restricted-syntax
         for (const err of errors) {
@@ -57,6 +54,7 @@ export default class KeyVaultService {
           }
         }
       }
+      throw e;
     }
   }
 
@@ -84,9 +82,7 @@ export default class KeyVaultService {
       });
       return response?.data || {};
     } catch (e) {
-      console.error(e);
       const { errors } = JSON.parse(e.message);
-      console.error('---> list accounts errors', errors);
       if (Array.isArray(errors)) {
         // eslint-disable-next-line no-restricted-syntax
         for (const err of errors) {
@@ -95,6 +91,7 @@ export default class KeyVaultService {
           }
         }
       }
+      throw e;
     }
   }
 
@@ -105,18 +102,6 @@ export default class KeyVaultService {
       throw new Error('Could not reach Docker Container');
     }
     return containerId;
-  }
-
-  async updateSlashingStorage(payload: any, network: string) {
-    if (!network) {
-      throw new Error('Configuration settings network not found');
-    }
-    return await this.keyVaultApi.requestThruSsh({
-      method: METHOD.POST,
-      path: `ethereum/${network}/storage/slashing`,
-      data: payload,
-      isNetworkRequired: false
-    });
   }
 
   @Step({
@@ -156,11 +141,8 @@ export default class KeyVaultService {
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     const envKey = (this.store.get('env') || 'production');
-    const dockerHubImage = envKey === 'production'
-      ? `bloxstaking/key-vault:${keyVaultVersion}`
-      : `bloxstaking/key-vault-rc:${keyVaultVersion}`;
+    const dockerHubImage = `bloxstaking/key-vault${envKey === 'production' ? '' : '-rc'}:${keyVaultVersion}`;
 
-    const networksList = await BloxApi.request(METHOD.GET, 'ethereum2/genesis-time');
     const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
       `docker pull ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
       '-v $(pwd)/data:/data ' +
@@ -168,7 +150,7 @@ export default class KeyVaultService {
       '-p 8200:8200 ' +
       `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
       '-e UNSEAL=true ' +
-      `-e VAULT_CLIENT_TIMEOUT=\'30s\' '${dockerHubImage}'`;
+      `-e VAULT_CLIENT_TIMEOUT='30s' '${dockerHubImage}'`;
 
     const ssh = await this.keyVaultSsh.getConnection();
     const { stderr: error } = await ssh.execCommand(
@@ -177,7 +159,6 @@ export default class KeyVaultService {
     );
 
     this.store.set('keyVaultVersion', keyVaultVersion);
-
     await sleep(12000);
 
     if (error) {
@@ -191,12 +172,14 @@ export default class KeyVaultService {
   })
   async updateVaultStorage(): Promise<void> {
     const network = this.store.get('network');
-    await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+    if (this.store.exists(`keyVaultStorage.${network}`)) {
+      await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+      this.store.delete(`keyVaultStorage.${network}`);
+    }
   }
 
   @Step({
-    name: 'Updating server storage...',
-    requiredConfig: ['keyVaultStorage']
+    name: 'Updating server storage...'
   })
   async updateVaultMountsStorage(): Promise<any> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
@@ -210,6 +193,7 @@ export default class KeyVaultService {
           await this.updateVaultStorage();
         }
       }
+      this.store.delete('keyVaultStorage');
     }
     return { isActive: true };
   }

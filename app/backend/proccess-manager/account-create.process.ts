@@ -26,10 +26,6 @@ export default class AccountCreateProcess extends ProcessClass {
 
     this.fallbackActions = [
       {
-        method: 'updateVaultStorage',
-        actions: [{ instance: this.accountService, method: 'deleteLastIndexedAccount' }]
-      },
-      {
         method: 'createBloxAccount',
         actions: [
           { instance: this.accountService, method: 'deleteLastIndexedAccount' },
