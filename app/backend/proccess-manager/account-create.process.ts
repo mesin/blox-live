@@ -15,16 +15,12 @@ export default class AccountCreateProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService();
     this.accountService = new AccountService();
     this.actions = [
-      { instance: this.accountService, method: 'createAccount' },
+      { instance: this.accountService, method: 'createAccount', params: { network }},
       { instance: this.keyVaultService, method: 'updateVaultStorage' },
       { instance: this.accountService, method: 'createBloxAccount' }
     ];
 
     this.fallbackActions = [
-      {
-        method: 'updateVaultStorage',
-        actions: [{ instance: this.accountService, method: 'deleteLastIndexedAccount' }]
-      },
       {
         method: 'createBloxAccount',
         actions: [

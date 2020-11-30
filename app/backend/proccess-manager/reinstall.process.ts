@@ -4,12 +4,14 @@ import ProcessClass from './process.class';
 import WalletService from '../services/wallet/wallet.service';
 import Connection from '../common/store-manager/connection';
 import BaseStore from '../common/store-manager/base-store';
+import AccountService from '../services/account/account.service';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
 const mainStorePrefix = '';
 export default class ReinstallProcess extends ProcessClass {
   private readonly awsServiceTmp: AwsService;
+  private readonly accountService: AccountService;
   private readonly awsService: AwsService;
   private readonly keyVaultServiceTmp: KeyVaultService;
   private readonly keyVaultService: KeyVaultService;
@@ -33,9 +35,10 @@ export default class ReinstallProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService();
     this.awsServiceTmp = new AwsService(tempStorePrefix);
     this.awsService = new AwsService();
+    this.accountService = new AccountService(tempStorePrefix);
     this.walletService = new WalletService(tempStorePrefix);
     this.actions = [
-      { instance: this.keyVaultService, method: 'importSlashingData' },
+      { instance: this.keyVaultService, method: 'exportKeyVaultData' },
       {
         instance: Connection,
         method: 'clone',
@@ -55,8 +58,8 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultServiceTmp, method: 'installDockerScope' },
       { instance: this.keyVaultServiceTmp, method: 'runDockerContainer' },
       { instance: this.keyVaultServiceTmp, method: 'getKeyVaultRootToken' },
+      { instance: this.accountService, method: 'restoreAccounts' },
       { instance: this.keyVaultServiceTmp, method: 'updateVaultMountsStorage' },
-      { instance: this.keyVaultServiceTmp, method: 'exportSlashingData' },
       { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew: false } },
       { instance: this.awsService, method: 'truncateServer' },
       {

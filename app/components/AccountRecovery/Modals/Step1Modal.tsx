@@ -58,12 +58,11 @@ const LoadingWrapper = styled.div`
 const Step1Modal = (props: Props) => {
   useInjectSaga({key, saga, mode: ''});
 
-  const {onClick, onClose, isLoading, isValid, error, keyvaultActions} = props;
-  const { validateRecoveryCredentials, clearRecoveryCredentialsState } = keyvaultActions;
+  const { onClick, onClose, isLoading, isValid, error, keyvaultActions } = props;
 
+  const { validateRecoveryCredentials, clearRecoveryCredentialsState } = keyvaultActions;
   const { password, setPassword, confirmPassword, setConfirmPassword, showPasswordError,
-    showConfirmPasswordError, onPasswordBlur, onConfirmPasswordBlur
-  } = useCreatePassword();
+    showConfirmPasswordError, onPasswordBlur, onConfirmPasswordBlur } = useCreatePassword();
 
   const [mnemonic, setMnemonic] = React.useState('');
 
@@ -79,8 +78,8 @@ const Step1Modal = (props: Props) => {
   };
 
   const onCloseClick = () => {
-    clearRecoveryCredentialsState();
-    onClose && onClose();
+      clearRecoveryCredentialsState();
+      onClose && onClose();
   };
 
   const isButtonDisabled = isLoading || !mnemonic || !password || !confirmPassword
@@ -88,7 +87,9 @@ const Step1Modal = (props: Props) => {
                           || password !== confirmPassword;
 
   return (
-    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} onClose={onCloseClick} image={image}>
+    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'}
+      onClose={onClose ? onCloseClick : null} image={image}
+    >
       <Title>Recover Account Data</Title>
       <StepIndicator>Step 01</StepIndicator>
       <Description>
@@ -128,7 +129,7 @@ const Step1Modal = (props: Props) => {
 
 type Props = {
   onClick: () => void;
-  onClose: () => void;
+  onClose: () => void | null;
   isLoading: boolean;
   isValid: boolean;
   error: string;

@@ -2,17 +2,32 @@ import React, { useEffect } from 'react';
 import { ProcessLoader, ModalTemplate } from 'common/components';
 import { Title, SmallText, Wrapper } from 'common/components/ModalTemplate/components';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
+import Connection from 'backend/common/store-manager/connection';
+
+import { MODAL_TYPES } from '../../Dashboard/constants';
 
 import image from 'assets/images/img-recovery.svg';
 
 const RecoveringModal = (props: Props) => {
   const { isLoading, processMessage, isDone, isServerActive, clearProcessState, loaderPrecentage } = useProcessRunner();
-  const { move1StepForward, move2StepsForward } = props;
+  const { move1StepForward, move2StepsForward, type } = props;
+
+  const onSuccess = () => {
+    move1StepForward();
+    if (type === MODAL_TYPES.DEVICE_SWITCH) {
+      Connection.db().delete('inRecoveryProcess');
+    }
+    else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
+      Connection.db().delete('inForgotPasswordProcess');
+    }
+  };
+
+  const onFailure = () => move2StepsForward();
 
   useEffect(() => {
     if (isDone) {
       clearProcessState();
-      isServerActive ? move1StepForward() : move2StepsForward();
+      isServerActive ? onSuccess() : onFailure();
     }
   }, [isLoading, isDone, processMessage]);
 
@@ -30,6 +45,7 @@ const RecoveringModal = (props: Props) => {
 type Props = {
   move1StepForward: () => void;
   move2StepsForward: () => void;
+  type: string;
 };
 
 export default RecoveringModal;

@@ -5,7 +5,7 @@ import { compareFunction } from 'common/components/Table/service';
 export default [
   {
     key: 'key',
-    title: 'Key',
+    title: 'Public key',
     width: '34%',
     justifyContent: 'flex-start',
     compareFunction: (a, b, dir) => compareFunction('publicKey', a, b, dir, 'string'),

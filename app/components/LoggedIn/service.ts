@@ -14,3 +14,13 @@ export const handleUserInfo = (updateUserInfo) => {
 export const isPrimaryDevice = (userInfoUuid: string) => {
   return userInfoUuid === Connection.db().get('uuid');
 };
+
+export const inRecoveryProcess = () => {
+  const result = !!Connection.db().get('inRecoveryProcess');
+  return result;
+};
+
+export const inForgotPasswordProcess = () => {
+  const result = !!Connection.db().get('inForgotPasswordProcess');
+  return result;
+};

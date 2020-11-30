@@ -44,7 +44,7 @@ const Left = styled.div`
   color: ${({ theme }) => theme.gray50};
   font-size: 54px;
   font-weight: 500;
-  line-height: 76px
+  line-height: 76px;
   text-align: center;
 `;
 
@@ -61,9 +61,9 @@ const IntroText = styled.div`
   margin-bottom: 20px;
 `;
 
-let toolTipText = "Blox KeyVault is responsible for securing your private keys and signing the validators'";
-toolTipText += 'activity on the beaconChain. Blox will communicate with your secured KeyVault everyime a validator';
-toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must be online 24/7.';
+let toolTipText = "Blox KeyVault is responsible for securing your private validator keys and signing your validator's '";
+toolTipText += 'activity on the Beacon Chain. Blox will communicate with your secured KeyVault every time your validator';
+toolTipText += 'is requested to attest/propose. To do so, KeyVault must be online 24/7.';
 
 const key = 'wizard';
 
@@ -82,12 +82,23 @@ const WelcomePage = (props: Props) => {
       loadWallet();
     }
 
+    const withAccountRecovery = Connection.db().exists('accountRecovery');
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     const hasSeed = Connection.db().exists('seed');
     const storedUuid = Connection.db().get('uuid');
+
+    const isInRecoveryProcess = Connection.db().get('inRecoveryProcess');
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
+      if (withAccountRecovery && !storedUuid && !userInfo.uuid && accounts?.length > 0) {
+        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        return;
+      }
+      if (withAccountRecovery && userInfo.uuid && ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess)) {
+        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        return;
+      }
       if (hasSeed) {
         if (addAnotherAccount) {
           redirectToCreateAccount();
@@ -104,11 +115,9 @@ const WelcomePage = (props: Props) => {
         setStep2Status(true);
         return;
       }
-      if (!isPrimaryDevice) {
-        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
-        return;
+      if (storedUuid && accounts?.length === 0) {
+        redirectToPassPhrasePage();
       }
-      redirectToPassPhrasePage();
     }
   }, [isLoading]);
 
@@ -145,7 +154,7 @@ const WelcomePage = (props: Props) => {
         <IntroText>
           This one-time wizard will guide you through creating your KeyVault
           <InfoWithTooltip title={toolTipText} placement="bottom" />
-          and validator client.
+          remote signer and validator client.
         </IntroText>
         <ButtonWithIcon title="Step 1" subTitle="KeyVault Setup" image={keyVaultImg}
           isDisabled={showStep2} onClick={onStep1Click} isLoading={isLoading}

@@ -13,7 +13,8 @@ import TestPage from '../Test';
 
 import { useInjectSaga } from '../../utils/injectSaga';
 import { onWindowClose } from 'common/service';
-import { isPrimaryDevice, handleUserInfo } from './service';
+import { isPrimaryDevice, inRecoveryProcess, inForgotPasswordProcess } from './service';
+import { allAccountsDeposited } from '../Accounts/service';
 
 // wallet
 import { loadWallet, setFinishedWizard } from '../Wizard/actions';
@@ -49,8 +50,8 @@ import * as actionsFromUser from '../User/actions';
 import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
-import { allAccountsDeposited } from '../Accounts/service';
 import { ModalsManager } from 'components/Dashboard/components';
+import Connection from 'backend/common/store-manager/connection';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -87,12 +88,24 @@ const LoggedIn = (props: Props) => {
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
     if (allDataIsReady && noErrors && doneLoading) {
-      const shouldNavigateToDashboard = (walletStatus === 'active' || walletStatus === 'offline') &&
-                                  accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
+      const withAccountRecovery = Connection.db().exists('accountRecovery');
+      const storedUuid = Connection.db().exists('uuid');
+      const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
+      const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      if (!userInfo.uuid || isPrimaryDevice(userInfo.uuid)) {
-        shouldNavigateToDashboard && callSetFinishedWizard(true);
+      if (withAccountRecovery) {
+        if (inForgotPasswordProcess()) {
+          callSetFinishedWizard(true);
+        }
+
+        if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
+          shouldNavigateToDashboard && callSetFinishedWizard(true);
+        }
       }
+      else if (shouldNavigateToDashboard) {
+        callSetFinishedWizard(true);
+      }
+
       toggleFinishLoadingAll(true);
       onWindowClose();
     }

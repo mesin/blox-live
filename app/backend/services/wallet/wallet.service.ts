@@ -52,7 +52,7 @@ export default class WalletService {
   })
   async createWallet(): Promise<void> {
     const network = Connection.db(this.storePrefix).get('network');
-    if (Connection.db(this.storePrefix).exists(`keyVaultStorage.${network}`)) return;
+    // if (Connection.db(this.storePrefix).exists(`keyVaultStorage.${network}`)) return;
     const storage = await this.keyManagerService.createWallet();
     Connection.db(this.storePrefix).set(`keyVaultStorage.${network}`, storage);
   }
@@ -80,7 +80,7 @@ export default class WalletService {
   })
   async syncVaultWithBlox({ isNew }): Promise<void> {
     const payload = {
-      url: `http://${Connection.db(this.storePrefix).get('publicIp')}:8200`,
+      url: `https://${Connection.db(this.storePrefix).get('publicIp')}:8200`,
       accessToken: Connection.db(this.storePrefix).get('vaultRootToken'),
       version: Connection.db().get('keyVaultVersion')
     };

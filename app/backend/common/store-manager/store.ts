@@ -208,10 +208,12 @@ export default class Store {
       credentials: store.get('credentials'),
       keyPair: store.get('keyPair'),
       securityGroupId: store.get('securityGroupId'),
-      keyVaultStorage: store.get('keyVaultStorage'),
-      slashingData: store.get('slashingData')
+      slashingData: store.get('slashingData'),
+      index: store.get('index'),
+      seed: store.get('seed')
     });
     store.delete('slashingData');
+    store.delete('index');
   }
 
   @Step({
@@ -227,8 +229,7 @@ export default class Store {
       publicIp: tmpStore.get('publicIp'),
       instanceId: tmpStore.get('instanceId'),
       vaultRootToken: tmpStore.get('vaultRootToken'),
-      keyVaultVersion: tmpStore.get('keyVaultVersion'),
-      keyVaultStorage: tmpStore.get('keyVaultStorage')
+      keyVaultVersion: tmpStore.get('keyVaultVersion')
     });
     tmpStore.clear();
   }

@@ -19,7 +19,8 @@ export const openExternalLink = async (url) => {
 export const reportCrash = async () => {
   const organizationService = new OrganizationService();
   const form = new FormData();
-  form.append('keyVaultVersion', Connection.db().get('keyVaultVersion'));
+  const keyVaultVersion = Connection.db().get('keyVaultVersion');
+  keyVaultVersion && form.append('keyVaultVersion', keyVaultVersion);
   form.append('appVersion', version);
   await organizationService.reportCrash(form);
 };

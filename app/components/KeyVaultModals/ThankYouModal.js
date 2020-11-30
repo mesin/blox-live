@@ -2,23 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ModalTemplate } from 'common/components';
 import { Title, Description } from 'common/components/ModalTemplate/components';
+import { MODAL_TYPES } from '../Dashboard/constants';
 
 import image from '../Wizard/assets/img-key-vault-inactive.svg';
 
-const ThankYouModal = ({onClose}) => {
+const ThankYouModal = ({onClose, type}) => {
+  const showButton = (type !== MODAL_TYPES.DEVICE_SWITCH) && (type !== MODAL_TYPES.FORGOT_PASSWORD);
   return (
     <ModalTemplate onClose={onClose} image={image}>
       <Title>Thank You!</Title>
       <Description>
         We will contact you as soon as possible
       </Description>
-      <Button onClick={onClose}>Close</Button>
+      {showButton && (<Button onClick={onClose}>Close</Button>)}
     </ModalTemplate>
   );
 };
 
 ThankYouModal.propTypes = {
   onClose: PropTypes.func,
+  type: PropTypes.string,
 };
 
 export default ThankYouModal;

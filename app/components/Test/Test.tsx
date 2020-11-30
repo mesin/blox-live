@@ -252,19 +252,9 @@ const Test = () => {
           Create Wallet
         </button>
         <button onClick={async () => {
-          await accountService.createAccount();
+          await accountService.createAccount({network});
         }}>
           Create Account
-        </button>
-        <button onClick={async () => {
-          console.log(await accountService.listAccounts());
-        }}>
-          List Accounts
-        </button>
-        <button onClick={async () => {
-          await accountService.getLastIndexedAccount();
-        }}>
-          Get Last Indexed Account
         </button>
         <button onClick={async () => {
           await accountService.deleteLastIndexedAccount();
@@ -292,11 +282,7 @@ const Test = () => {
         }}>
           Get Account Deposit Data
         </button>
-        <button onClick={async () => {
-          await accountService.generatePublicKeys();
-        }}>
-          Generate Public Key
-        </button>
+
       </div>
       <p/>
       <h2>Blox API</h2>
@@ -347,13 +333,13 @@ const Test = () => {
         </button>
         <button onClick={async () => {
           const response = await keyVaultService.listAccounts();
-          console.log(response.data.accounts);
+          console.log(response);
         }}>
           List Accounts
         </button>
         <button onClick={async () => {
           const response = await keyVaultService.getVersion();
-          console.log(response.data.version);
+          console.log(response);
         }}>
           Get Version
         </button>
@@ -363,14 +349,10 @@ const Test = () => {
           Update Storage for both networks
         </button>
         <button onClick={async () => {
-          await keyVaultService.exportSlashingData();
+          const slashingStorage = await keyVaultService.getSlashingStorage();
+          console.log(slashingStorage);
         }}>
           Export Slashing Data
-        </button>
-        <button onClick={async () => {
-          await keyVaultService.importSlashingData();
-        }}>
-          Import Slashing Data
         </button>
       </div>
       <p/>

@@ -8,6 +8,9 @@ import { Title, Description } from 'common/components/ModalTemplate/components';
 import useCreateServer from 'common/hooks/useCreateServer';
 import * as actionsFromKeyvault from '../../KeyVaultManagement/actions';
 import * as keyvaultSelectors from '../../KeyVaultManagement/selectors';
+import Connection from 'backend/common/store-manager/connection';
+
+import { MODAL_TYPES } from '../../Dashboard/constants';
 
 import image from 'assets/images/img-recovery.svg';
 
@@ -49,8 +52,17 @@ const LoadingWrapper = styled.div`
 `;
 
 const Step1Modal = (props: Props) => {
-  const {onClick, onClose, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions} = props;
+  const { onClick, areAwsKeyvsValid, isValidLoading, isValidError, keyvaultActions, type } = props;
   const { validateAwsKeys, clearAwsKeysState } = keyvaultActions;
+
+  React.useEffect(() => {
+    if (type === MODAL_TYPES.DEVICE_SWITCH) {
+      Connection.db().set('inRecoveryProcess', true);
+    }
+    else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
+      Connection.db().set('inForgotPasswordProcess', true);
+    }
+  }, []);
 
   React.useEffect(() => {
     if (areAwsKeyvsValid && !isValidError && !isValidLoading) {
@@ -68,7 +80,7 @@ const Step1Modal = (props: Props) => {
   const onButtonClick = () => validateAwsKeys({accessKeyId, secretAccessKey});
 
   return (
-    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} onClose={onClose} image={image}>
+    <ModalTemplate height={'560px'} padding={'30px 32px 30px 64px'} justifyContent={'initial'} image={image}>
       <Title>Recover Account Data</Title>
       <StepIndicator>Step 02</StepIndicator>
       <Description>
@@ -116,7 +128,7 @@ type Props = {
   isValidError: string;
   keyvaultActions: Record<string, any>;
   onClick: () => void;
-  onClose: () => void;
+  type: string;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Step1Modal);
