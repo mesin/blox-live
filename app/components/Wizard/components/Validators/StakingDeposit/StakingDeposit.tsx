@@ -51,6 +51,12 @@ const TipImage = styled.img`
   margin-right:7px;
 `;
 
+const WarningText = styled.div`
+  font-size: 11px;
+  font-weight: 500;
+  color: ${({theme}) => theme.warning900};
+`;
+
 const StakingDeposit = (props: Props) => {
   const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
           isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
@@ -86,15 +92,18 @@ const StakingDeposit = (props: Props) => {
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
   if (network) {
-    const needHelpLink = NETWORKS[network].name === 'MainNet' ?
+    const needHelpLink = NETWORKS[network].name === 'Mainnet' ?
      'docs-guides/#pp-toc__heading-anchor-14' :
      'documents/guides/#pp-toc__heading-anchor-20';
 
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        {NETWORKS[network].name === 'MainNet' ? (<MainNetText />) : (<TestNetText />)}
+        {NETWORKS[network].name === 'Mainnet' ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
+        {NETWORKS[network].name === 'Testnet' && (
+          <WarningText>Make sure you send GoEth testnet tokens and not real ETH!</WarningText>
+        )}
         <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
         <Link onClick={() => openExternalLink(needHelpLink)}>Need help?</Link>
         <ButtonsWrapper>
