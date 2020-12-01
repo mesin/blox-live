@@ -71,7 +71,7 @@ yarn dev
 
 ### Create packages
 
-BloxStaking desktop app can run on MacOs and Windows(soon). You can create a package from your development enviroment. 
+BloxStaking desktop app can run on MacOs and Windows. You can create a package from your development enviroment. 
 
 #### Pacakage for MacOS release
 
