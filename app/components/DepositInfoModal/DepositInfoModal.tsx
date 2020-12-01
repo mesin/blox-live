@@ -56,6 +56,14 @@ const CloseButton = styled.div`
   }
 `;
 
+const WarningText = styled.div`
+  font-size: 11px;
+  font-weight: 500;
+  color: ${({theme}) => theme.warning900};
+  display:flex;
+  padding-bottom:15px;
+`;
+
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
 const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
@@ -77,6 +85,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
           const isTxData = label === depositDataInfo[1].label;
           const isAmount = label === depositDataInfo[2].label;
           const valueText = isTxData ? depositDataInfo[1].value : value;
+
           return (
             <Row key={index}>
               <KeyText>
@@ -94,6 +103,11 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
             </Row>
           );
         })}
+        {depositData?.network === 'pyrmont' && (
+          <WarningText>
+            Make sure you send GoEth testnet tokens and not real ETH!
+          </WarningText>
+        )}
         <Row>
           <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>
             Need help?
@@ -106,7 +120,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
 };
 
 type Props = {
-  depositData: string;
+  depositData: Record<string, any>;
   onClose: () => void;
   actions: Record<string, any>;
 };
