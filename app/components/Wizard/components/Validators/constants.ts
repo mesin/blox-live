@@ -4,10 +4,10 @@ import config from 'backend/common/config';
 
 export const NETWORKS = {
   pyrmont: {
-    name: 'Testnet',
-    title: 'Test on Testnet',
+    name: 'Pyrmont',
+    title: 'Test on Pyrmont',
     image: testNetImage,
-    label: config.env.TEST_NETWORK,
+    label: config.env.PYRMONT_NETWORK,
   },
   mainnet: {
     name: 'Mainnet',

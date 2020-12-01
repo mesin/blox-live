@@ -27,7 +27,7 @@ export default class ReinstallProcess extends ProcessClass {
     this.walletService = new WalletService(tempStorePrefix);
     const store: Store = Store.getStore();
     this.actions = [
-      { instance: this.keyVaultServiceOld, method: 'exportKeyVaultData' },
+      { instance: this.keyVaultServiceOld, method: 'importKeyVaultData' },
       { instance: store, method: 'prepareTmpStorageConfig' },
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'createElasticIp' },

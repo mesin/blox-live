@@ -70,7 +70,8 @@ export default class AccountService {
   @Catch({
     displayMessage: 'CLI Create Account failed'
   })
-  async createAccount({ network, getNextIndex = true, indexToRestore = 0, getRemoteSlashingData = true }): Promise<void> {
+  async createAccount(getNextIndex = true, indexToRestore = 0): Promise<void> {
+    const network = this.store.get('network');
     const index: number = getNextIndex ? await this.getNextIndex(network) : indexToRestore;
 
     // 1. get public-keys to create
@@ -79,7 +80,7 @@ export default class AccountService {
     const publicKeysToGetHighestAttestation = [];
 
     // 2. get slashing data if exists
-    const slashingData = getRemoteSlashingData ? await this.keyVaultService.getSlashingStorage() : this.store.get(`slashingData.${network}`);
+    const slashingData = this.store.get(`slashingData.${network}`);
 
     // 3. update accounts-hash from exist slashing storage
     for (const key of Object.keys(accountsHash)) {
@@ -133,8 +134,8 @@ export default class AccountService {
       for (const [network, lastIndex] of Object.entries(indices)) {
         const index = +lastIndex;
         if (index > -1) {
-          // this.store.set('network', network);
-          this.createAccount({ network, getNextIndex: false, indexToRestore: index, getRemoteSlashingData: false });
+          this.store.set('network', network);
+          this.createAccount(false, index);
         }
       }
     }
@@ -201,13 +202,13 @@ export default class AccountService {
     if (index < 0) {
       await this.walletService.createWallet();
     } else {
-      this.createAccount({ network, getNextIndex: false, indexToRestore: index });
+      this.createAccount(false, index);
     }
   }
 
   // TODO delete per network, blocked by web-api
   async deleteAllAccounts(): Promise<void> {
-    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+    const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
     for (const network of supportedNetworks) {
       this.store.set('network', network);
       // eslint-disable-next-line no-await-in-loop
@@ -219,12 +220,12 @@ export default class AccountService {
   }
 
   @Step({
-    name: 'Validate passphrase and accounts'
+    name: 'Recover accounts'
   })
   @Catch({
     showErrorMessage: true
   })
-  async recoveryAccounts(): Promise<void> {
+  async recoverAccounts(): Promise<void> {
     const accounts = await this.get();
     const uniqueNetworks = [...new Set(accounts.map(acc => acc.network))];
     // eslint-disable-next-line no-restricted-syntax
@@ -234,20 +235,9 @@ export default class AccountService {
       const networkAccounts = accounts
         .filter(acc => acc.network === network)
         .sort((a, b) => a.name.localeCompare(b.name));
-      /*
-      !!! validation names: account-x starts from 0 1 2 throw
-      !!! turn off validation temprary till import and delete account logic
-      networkAccounts.reduce((aggr, item) => {
-        const idx = +item.name.split('-')[1];
-        if (idx === 0) return aggr;
-        if (idx - 1 !== aggr) throw new Error('account indexes numeration is broken');
-        // eslint-disable-next-line no-param-reassign
-        aggr = idx;
-        return aggr;
-      }, 0);
-      */
+
       const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
-      await this.createAccount({ network, getNextIndex: false, indexToRestore: +lastIndex, getRemoteSlashingData: false });
+      await this.createAccount(false, +lastIndex);
     }
   }
 

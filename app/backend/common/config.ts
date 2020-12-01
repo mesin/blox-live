@@ -21,7 +21,7 @@ export default class Config {
       DISCORD_GOETH_INVITE: 'https://discord.gg/wXxuQwY',
       HTTP_RETRIES: 3,
       HTTP_RETRY_DELAY: 1000,
-      TEST_NETWORK: 'pyrmont',
+      PYRMONT_NETWORK: 'pyrmont',
       MAINNET_NETWORK: 'mainnet'
     }
   };

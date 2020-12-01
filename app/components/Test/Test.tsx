@@ -43,7 +43,7 @@ const Test = () => {
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
-  let [network, setNetwork] = useState(config.env.TEST_NETWORK);
+  let [network, setNetwork] = useState(config.env.PYRMONT_NETWORK);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -156,7 +156,7 @@ const Test = () => {
           store.set('network', event.target.value);
           console.log('network:', event.target.value);
         }}>
-          <option value={config.env.TEST_NETWORK}>Test Network</option>
+          <option value={config.env.PYRMONT_NETWORK}>Test Network</option>
           <option value={config.env.MAINNET_NETWORK}>MainNet Network</option>
         </select>
         <h3>Step 4. Account create</h3>
@@ -253,7 +253,7 @@ const Test = () => {
           Create Wallet
         </button>
         <button onClick={async () => {
-          await accountService.createAccount({network});
+          await accountService.createAccount();
         }}>
           Create Account
         </button>
