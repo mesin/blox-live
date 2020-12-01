@@ -13,6 +13,10 @@ function sleep(msec) {
   });
 }
 
+function numVal(str) {
+  return +str.replace(/\D/g, '');
+}
+
 // @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly store: Store;
@@ -69,7 +73,7 @@ export default class KeyVaultService {
   async getVersion() {
     return await this.keyVaultApi.requestThruSsh({
       method: METHOD.GET,
-      path: `ethereum/${config.env.TEST_NETWORK}/version`,
+      path: `ethereum/${config.env.PYRMONT_NETWORK}/version`,
       isNetworkRequired: false
     });
   }
@@ -199,17 +203,30 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Export slashing protection data...',
+    name: 'Import key-vault data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async exportKeyVaultData(): Promise<any> {
-    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+  async importKeyVaultData(): Promise<any> {
+    const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
     for (const network of supportedNetworks) {
       this.store.set('network', network);
       // save latest network index
       const accounts = await this.listAccounts();
       this.store.set(`index.${network}`, (accounts.length - 1).toString());
+      await this.importSlashingData();
+    }
+  }
 
+  @Step({
+    name: 'Import slashing protection data...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  async importSlashingData(): Promise<any> {
+    const GET_HIGHEST_ATTESTATION_SUPPORTED_TAG = 'v0.1.25';
+    const keyVaultVersion = this.store.get('keyVaultVersion');
+
+    if (keyVaultVersion && numVal(keyVaultVersion) >= numVal(GET_HIGHEST_ATTESTATION_SUPPORTED_TAG)) {
+      const network = this.store.get('network');
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
         this.store.set(`slashingData.${network}`, slashingData);
