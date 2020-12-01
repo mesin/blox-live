@@ -49,9 +49,6 @@ export default class KeyManagerService {
       }
     }
 
-    console.log(highestSource);
-    console.log(highestTarget);
-
     try {
       const { stdout } = await this.executor(
         `${this.executablePath} wallet account create --seed=${seed} --index=${index} --response-type=object --accumulate=${accumulate} --highest-source=${highestSource} --highest-target=${highestTarget}`

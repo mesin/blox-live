@@ -36,6 +36,7 @@ export default class AccountService {
   }
 
   async getHighestAttestation(payload: any) {
+    if (payload.public_keys.length === 0) return {};
     return await BloxApi.request(METHOD.POST, 'ethereum2/highest-attestation', payload);
   }
 
@@ -80,7 +81,11 @@ export default class AccountService {
     const publicKeysToGetHighestAttestation = [];
 
     // 2. get slashing data if exists
-    const slashingData = this.store.get(`slashingData.${network}`);
+    let slashingData = {};
+    if (this.store.exists(`slashingData.${network}`)) {
+      slashingData = this.store.get(`slashingData.${network}`);
+      this.store.delete('slashingData');
+    }
 
     // 3. update accounts-hash from exist slashing storage
     for (const key of Object.keys(accountsHash)) {
@@ -135,7 +140,7 @@ export default class AccountService {
         const index = +lastIndex;
         if (index > -1) {
           this.store.set('network', network);
-          this.createAccount(false, index);
+          await this.createAccount(false, index);
         }
       }
     }

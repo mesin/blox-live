@@ -213,7 +213,7 @@ export default class KeyVaultService {
       // save latest network index
       const accounts = await this.listAccounts();
       this.store.set(`index.${network}`, (accounts.length - 1).toString());
-      this.importSlashingData();
+      await this.importSlashingData();
     }
   }
 
