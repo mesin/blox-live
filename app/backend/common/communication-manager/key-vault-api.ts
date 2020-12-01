@@ -1,5 +1,13 @@
 import Http from './http';
 import KeyVaultSsh from './key-vault-ssh';
+import { version } from './../../../../app/package.json';
+
+const SSL_SUPPORTED_TAG = 'v0.25.36';
+
+function numVal(str) {
+  return +str.replace(/\D/g, '');
+}
+
 class KeyVaultApi extends Http {
   private readonly keyVaultSsh: KeyVaultSsh;
 
@@ -38,7 +46,7 @@ class KeyVaultApi extends Http {
       authToken: this.store.get('vaultRootToken'),
       method,
       data,
-      route: `https://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
+      route: `http${"s" ? numVal(version) >= numVal(SSL_SUPPORTED_TAG) : ""}}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
     }, true);
     console.log('curl=', command);
     const { stdout } = await ssh.execCommand(command, {});
