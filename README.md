@@ -16,6 +16,29 @@
 ## Blox Staking - Desktop App
 Blox is an open-source, fully non-custodial staking platform for Ethereum 2.0. The platform serves as an easy and accessible way to stake Ether and earn rewards on Eth2, while ensuring participants retain complete control over their private keys. Our goal at Blox is to simplify staking while ensuring Ethereum stays fair and decentralized. 
 
+The Blox Live Desktop App is the gateway to convenient non-custodial staking on Eth2. Admin actions are performed in Blox Live for validator set up and management. Blox Live is run locally, offering the highest level of security and is responsible for the following key features:
+
+<ul>
+  <li>Key Management</li>
+  <li>KeyVault Remote Signer Management</li>
+  <li>Validator Monitoring Dashboard</li>
+</ul>
+
+Blox Live bundles together all of the functionality for securely managing backups, key imports, creating and managing validators, and more. Live maintains direct connectivity with Blox Infra and the user’s cloud service, on which KeyVault remote signer is installed.
+
+#### Eth2 Staking Services
+When considering an Eth2 staking service, it is important to understand how these services manage user private keys. Generally, the more centralized the service, the higher the security risks and penalties its users may face.  
+
+#### Custodial vs. Non-Custodial Staking
+A major differentiator between staking services is level of custodianship; meaning, how a service stores user private keys. Most staking services are custodial or ‘centralized.’ 
+Custodial staking services manage the entire ETH staking process on behalf of the user and have ‘custody’ over user private keys.  This level of third party involvement raises major security breach concerns.
+Additionally, should the service inadvertently partake in a slashable event, its users face steep penalties given that slashing penalties grow exponentially the more validators are involved in an event. The larger the centralized service, the larger the potential penalties.
+
+#### Our Non-Custodial Staking Solution
+In order to be truly non-custodial we developed a solution that ensures that user keys cannot be compromised in any way, all the while, segregating user private keys from Blox 
+The result --->  an open-source Desktop app, (AKA Blox Live), which grants a user management access to an individualized remote signing environment in which validator keys are securely stored and signing requests are properly managed.
+
+
 ### Download
 Download the app from https://www.bloxstaking.com/download
 
