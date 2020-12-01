@@ -86,7 +86,7 @@ export default class AccountService {
     // 3. update accounts-hash from exist slashing storage
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(accountsHash)) {
-      if (slashingData[key]) {
+      if (slashingData && slashingData.hasOwnProperty(key)) {
         const decodedValue = hexDecode(slashingData[key]);
         const decodedValueJson = JSON.parse(decodedValue);
         const highestAttestation = {
@@ -120,7 +120,7 @@ export default class AccountService {
     }
 
     // 6. create accounts
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, highestSource, highestTarget);
+    const storage = await this.keyManagerService.createAccount(Connection.db(this.storePrefix).get('seed'), index, highestSource, highestTarget);
     Connection.db(this.storePrefix).set(`keyVaultStorage.${network}`, storage);
   }
 
@@ -235,6 +235,7 @@ export default class AccountService {
     // eslint-disable-next-line no-restricted-syntax
     for (const network of uniqueNetworks) {
       if (network !== 'test') {
+        Connection.db(this.storePrefix).set('network', network);
         const networkAccounts = accounts
           .filter(acc => acc.network === network)
           .sort((a, b) => a.name.localeCompare(b.name));
@@ -252,7 +253,7 @@ export default class AccountService {
         */
         const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
         // eslint-disable-next-line no-await-in-loop
-        await this.createAccount({ network, getNextIndex: false, indexToRestore: lastIndex });
+        await this.createAccount({ network, getNextIndex: false, indexToRestore: +lastIndex, getRemoteSlashingData: false });
       }
     }
   }
