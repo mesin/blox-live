@@ -5,17 +5,16 @@ import { Catch, CatchClass, Step } from '../../decorators';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
-
+const defaultAwsOptions = {
+  apiVersion: '2016-11-15',
+  region: 'us-west-1'
+};
 @CatchClass<AwsService>()
 export default class AwsService {
   private ec2!: AWS.EC2;
   private readonly store: Store;
   private readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   private readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
-  private readonly defaultAwsOptions = {
-    apiVersion: '2016-11-15',
-    region: 'us-west-1'
-  };
 
   constructor(storePrefix: string = '') {
     this.store = Store.getStore(storePrefix);
@@ -25,6 +24,23 @@ export default class AwsService {
     }
   }
 
+  static async validateAWSCredentials({ accessKeyId, secretAccessKey }) {
+    const ec2 = new AWS.EC2({
+      ...defaultAwsOptions,
+      credentials: {
+        accessKeyId,
+        secretAccessKey
+      }
+    });
+    try {
+      await ec2.describeInstances().promise();
+      await ec2.describeAddresses().promise();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+    return true;
+  }
+
   @Step({
     name: 'Securely connecting to AWS...',
     requiredConfig: ['credentials']
@@ -32,7 +48,7 @@ export default class AwsService {
   async setAWSCredentials(): Promise<any> {
     const credentials: any = this.store.get('credentials');
     this.ec2 = new AWS.EC2({
-      ...this.defaultAwsOptions,
+      ...defaultAwsOptions,
       credentials
     });
   }

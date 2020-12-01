@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
-import { ProcessLoader } from 'common/components';
-import { Title, SmallText } from '..';
-import ModalTemplate from '../ModalTemplate';
+import { ModalTemplate, ProcessLoader } from 'common/components';
+import { Title, SmallText } from 'common/components/ModalTemplate/components';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
+import image from '../Wizard/assets/img-key-vault-inactive.svg';
 
 const RestartingModal = (props: Props) => {
   const { isLoading, processMessage, isDone, isServerActive, processName,

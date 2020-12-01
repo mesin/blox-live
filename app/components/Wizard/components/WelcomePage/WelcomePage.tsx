@@ -16,10 +16,12 @@ import usePasswordHandler from '../../../PasswordHandler/usePasswordHandler';
 import * as accountSelectors from '../../../Accounts/selectors';
 import { allAccountsDeposited } from '../../../Accounts/service';
 
+import * as userSelectors from '../../../User/selectors';
+
 import { InfoWithTooltip } from 'common/components';
 import ButtonWithIcon from './ButtonWithIcon';
 
-import Store from '../../../../backend/common/store-manager/store';
+import Store from 'backend/common/store-manager/store';
 
 import bgImage from 'assets/images/bg_staking.jpg';
 import keyVaultImg from 'components/Wizard/assets/img-key-vault.svg';
@@ -42,7 +44,7 @@ const Left = styled.div`
   color: ${({ theme }) => theme.gray50};
   font-size: 54px;
   font-weight: 500;
-  line-height: 76px
+  line-height: 76px;
   text-align: center;
 `;
 
@@ -59,14 +61,15 @@ const IntroText = styled.div`
   margin-bottom: 20px;
 `;
 
-let toolTipText = "Blox KeyVault is responsible for securing your private keys and signing the validators'";
-toolTipText += 'activity on the beaconChain. Blox will communicate with your secured KeyVault everyime a validator';
-toolTipText += 'is requested to attest/propose, and to do so, the KeyVault must be online 24/7.';
+let toolTipText = "Blox KeyVault is responsible for securing your private validator keys and signing your validator's '";
+toolTipText += 'activity on the Beacon Chain. Blox will communicate with your secured KeyVault every time your validator';
+toolTipText += 'is requested to attest/propose. To do so, KeyVault must be online 24/7.';
 
 const key = 'wizard';
 
 const WelcomePage = (props: Props) => {
-  const { setPage, setStep, step, actions, dashboardActions, wallet, accounts, isLoading, isDepositNeeded, addAnotherAccount } = props;
+  const { setPage, setStep, step, actions, dashboardActions, wallet, accounts, isLoading,
+          isDepositNeeded, addAnotherAccount, userInfo } = props;
   const { loadWallet, setFinishedWizard } = actions;
   const { setModalDisplay } = dashboardActions;
 
@@ -78,11 +81,25 @@ const WelcomePage = (props: Props) => {
     if (!isLoading && !wallet) {
       loadWallet();
     }
+
     const store: Store = Store.getStore();
+    const withAccountRecovery = store.exists('accountRecovery');
     const hasWallet = wallet && (wallet.status === 'active' || wallet.status === 'offline');
     const hasSeed = store.exists('seed');
+    const storedUuid = store.get('uuid');
+
+    const isInRecoveryProcess = store.get('inRecoveryProcess');
+    const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
+      if (withAccountRecovery && !storedUuid && !userInfo.uuid && accounts?.length > 0) {
+        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        return;
+      }
+      if (withAccountRecovery && userInfo.uuid && ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess)) {
+        setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
+        return;
+      }
       if (hasSeed) {
         if (addAnotherAccount) {
           redirectToCreateAccount();
@@ -99,7 +116,9 @@ const WelcomePage = (props: Props) => {
         setStep2Status(true);
         return;
       }
-      redirectToPassPhrasePage();
+      if (storedUuid && accounts?.length === 0) {
+        redirectToPassPhrasePage();
+      }
     }
   }, [isLoading]);
 
@@ -136,7 +155,7 @@ const WelcomePage = (props: Props) => {
         <IntroText>
           This one-time wizard will guide you through creating your KeyVault
           <InfoWithTooltip title={toolTipText} placement="bottom" />
-          and validator client.
+          remote signer and validator client.
         </IntroText>
         <ButtonWithIcon title="Step 1" subTitle="KeyVault Setup" image={keyVaultImg}
           isDisabled={showStep2} onClick={onStep1Click} isLoading={isLoading}
@@ -155,6 +174,7 @@ const mapStateToProps = (state: State) => ({
   accounts: accountSelectors.getAccounts(state),
   isDepositNeeded: accountSelectors.getDepositNeededStatus(state),
   addAnotherAccount: accountSelectors.getAddAnotherAccount(state),
+  userInfo: userSelectors.getInfo(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -173,6 +193,7 @@ type Props = {
   isLoading: boolean;
   isDepositNeeded: boolean;
   addAnotherAccount: boolean;
+  userInfo: Record<string, any>;
 };
 
 type State = Record<string, any>;

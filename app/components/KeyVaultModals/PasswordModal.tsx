@@ -5,18 +5,21 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { shell } from 'electron';
 
-import { Title, Description } from '..';
-import ModalTemplate from '../ModalTemplate';
-import { PasswordInput, Button } from 'common/components';
+import { Title, Description } from 'common/components/ModalTemplate/components';
+import { PasswordInput, Button, ModalTemplate } from 'common/components';
 
-import * as passwordActions from '../../PasswordHandler/actions';
-import * as selectors from '../../PasswordHandler/selectors';
-import saga from '../../PasswordHandler/saga';
+import * as actionsFromDashboard from '../Dashboard/actions';
+import { MODAL_TYPES } from '../Dashboard/constants';
+
+import * as actionsFromPassword from '../PasswordHandler/actions';
+import * as selectors from '../PasswordHandler/selectors';
+import saga from '../PasswordHandler/saga';
 import { useInjectSaga } from 'utils/injectSaga';
 
 import config from 'backend/common/config';
+import Store from 'backend/common/store-manager/store';
 
-import image from '../../Wizard/assets/img-password.svg';
+import image from '../Wizard/assets/img-password.svg';
 
 const key = 'password';
 
@@ -29,8 +32,9 @@ const Link = styled.span`
 `;
 
 const PasswordModal = (props) => {
-  const { onClose, onClick, isLoading, isValid, actions } = props;
-  const { checkPasswordValidation, clearPasswordData } = actions;
+  const { onClose, onClick, isLoading, isValid, passwordActions, dashboardActions } = props;
+  const { checkPasswordValidation, clearPasswordData } = passwordActions;
+  const { setModalDisplay, clearModalDisplayData } = dashboardActions;
   const [password, setPassword] = useState('');
   const [isButtonClicked, setButtonClicked] = useState(false);
   const [showTooShortPasswordError, setTooShortPasswordErrorDisplay] = useState(false);
@@ -70,6 +74,18 @@ const PasswordModal = (props) => {
     }
   };
 
+  const onForgotPasswordClick = () => {
+    const store: Store = Store.getStore();
+    const withAccountRecovery = store.exists('accountRecovery');
+    if (withAccountRecovery) {
+      clearModalDisplayData();
+      setModalDisplay({show: true, type: MODAL_TYPES.FORGOT_PASSWORD, text: ''});
+    }
+    else {
+      shell.openExternal(config.env.DISCORD_INVITE);
+    }
+  };
+
   const onButtonClick = () => {
     if (!isButtonDisabled) {
       setButtonClicked(true);
@@ -100,9 +116,9 @@ const PasswordModal = (props) => {
       <Title>Enter your password</Title>
       <Description>Critical actions require an extra layer of security.</Description>
       <PasswordInput name={'password'} onChange={setPassword} value={password} isValid={isValid}
-        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown} autoFocus
+        onBlur={onPasswordBlur} error={error} onFocus={onPasswordFocus} onKeyDown={onKeyDown}
       />
-      <Link onClick={() => shell.openExternal(config.env.DISCORD_INVITE)}>Forgot password?</Link>
+      <Link onClick={onForgotPasswordClick}>Forgot password?</Link>
       <Button isDisabled={isButtonDisabled} onClick={onButtonClick}>Continue</Button>
     </ModalTemplate>
   );
@@ -111,7 +127,8 @@ const PasswordModal = (props) => {
 PasswordModal.propTypes = {
   onClose: PropTypes.func,
   onClick: PropTypes.func,
-  actions: PropTypes.object,
+  passwordActions: PropTypes.object,
+  dashboardActions: PropTypes.object,
   isLoading: PropTypes.bool,
   isValid: PropTypes.bool,
 };
@@ -122,7 +139,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions: bindActionCreators(passwordActions, dispatch),
+  passwordActions: bindActionCreators(actionsFromPassword, dispatch),
+  dashboardActions: bindActionCreators(actionsFromDashboard, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PasswordModal);

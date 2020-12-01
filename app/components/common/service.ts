@@ -1,7 +1,7 @@
 import { shell } from 'electron';
 import config from 'backend/common/config';
-import OrganizationService from '../../backend/services/organization/organization.service';
-import Store from '../../backend/common/store-manager/store';
+import OrganizationService from 'backend/services/organization/organization.service';
+import Store from 'backend/common/store-manager/store';
 import { version } from '../../package.json';
 import FormData from 'form-data';
 
@@ -19,8 +19,11 @@ export const openExternalLink = async (url) => {
 export const reportCrash = async () => {
   const organizationService = new OrganizationService();
   const store = Store.getStore();
+  const keyVaultVersion = store.exists('keyVaultVersion');
   const form = new FormData();
-  form.append('keyVaultVersion', store.get('keyVaultVersion'));
+  keyVaultVersion ?
+    form.append('keyVaultVersion', keyVaultVersion) :
+    form.append('keyVaultVersion', 'empty');
   form.append('appVersion', version);
   await organizationService.reportCrash(form);
 };

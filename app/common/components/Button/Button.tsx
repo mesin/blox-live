@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type Props = {
-  isDisabled: boolean;
+  isDisabled?: boolean;
 };
 
 const Button = styled.button<Props>`

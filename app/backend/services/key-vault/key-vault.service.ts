@@ -7,19 +7,17 @@ import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 
-const STABLE_TAG = 'v0.1.16';
-
-function numVal(str) {
-  return +str.replace(/\D/g, '');
-}
-
 function sleep(msec) {
   return new Promise(resolve => {
     setTimeout(resolve, msec);
   });
 }
 
-@CatchClass<KeyVaultService>()
+function numVal(str) {
+  return +str.replace(/\D/g, '');
+}
+
+// @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
@@ -36,31 +34,69 @@ export default class KeyVaultService {
   }
 
   async updateStorage(payload: any) {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.POST, 'storage', payload);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.POST,
+      path: 'storage',
+      data: payload
+    });
   }
 
   async listAccounts() {
-    this.keyVaultApi.init();
-    return await this.keyVaultApi.request(METHOD.LIST, 'accounts');
+    try {
+      const response = await this.keyVaultApi.requestThruSsh({
+        method: METHOD.LIST,
+        path: 'accounts'
+      });
+      return response?.data.accounts || [];
+    } catch (e) {
+      const { errors } = JSON.parse(e.message);
+      if (Array.isArray(errors)) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const err of errors) {
+          if (err.includes('wallet not found')) {
+            return [];
+          }
+        }
+      }
+      throw e;
+    }
   }
 
   async healthCheck() {
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, 'sys/health');
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: 'sys/health',
+      isNetworkRequired: false
+    });
   }
 
   async getVersion() {
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${config.env.TEST_NETWORK}/version`);
+    return await this.keyVaultApi.requestThruSsh({
+      method: METHOD.GET,
+      path: `ethereum/${config.env.PYRMONT_NETWORK}/version`,
+      isNetworkRequired: false
+    });
   }
 
-  async getSlashingStorage(network: string) {
-    if (!network) {
-      throw new Error('Configuration settings network not found');
+  async getSlashingStorage() {
+    try {
+      const response = await this.keyVaultApi.requestThruSsh({
+        method: METHOD.GET,
+        path: 'storage/slashing'
+      });
+      return response?.data || {};
+    } catch (e) {
+      const { errors } = JSON.parse(e.message);
+      if (Array.isArray(errors)) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const err of errors) {
+          if (err.includes('wallet not found')) {
+            return {};
+          }
+        }
+      }
+      throw e;
     }
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.GET, `ethereum/${network}/storage/slashing`);
   }
 
   async getContainerId() {
@@ -70,14 +106,6 @@ export default class KeyVaultService {
       throw new Error('Could not reach Docker Container');
     }
     return containerId;
-  }
-
-  async updateSlashingStorage(payload: any, network: string) {
-    if (!network) {
-      throw new Error('Configuration settings network not found');
-    }
-    this.keyVaultApi.init(false);
-    return await this.keyVaultApi.request(METHOD.POST, `ethereum/${network}/storage/slashing`, payload);
   }
 
   @Step({
@@ -117,18 +145,16 @@ export default class KeyVaultService {
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     const envKey = (this.store.get('env') || 'production');
-    const dockerHubImage = `bloxstaking/key-vault${envKey === 'stage' ? '-rc' : ''}:${keyVaultVersion}`;
+    const dockerHubImage = `bloxstaking/key-vault${envKey === 'production' ? '' : '-rc'}:${keyVaultVersion}`;
 
     const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
       `docker pull ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
       '-v $(pwd)/data:/data ' +
       '-v $(pwd)/policies:/policies ' +
       '-p 8200:8200 ' +
+      `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
       '-e UNSEAL=true ' +
-      "-e VAULT_ADDR='http://127.0.0.1:8200' " +
-      "-e VAULT_API_ADDR='http://127.0.0.1:8200' " +
-      "-e VAULT_CLIENT_TIMEOUT='30s' " +
-      `'${dockerHubImage}'`;
+      `-e VAULT_CLIENT_TIMEOUT='30s' '${dockerHubImage}'`;
 
     const ssh = await this.keyVaultSsh.getConnection();
     const { stderr: error } = await ssh.execCommand(
@@ -137,27 +163,29 @@ export default class KeyVaultService {
     );
 
     this.store.set('keyVaultVersion', keyVaultVersion);
-
     await sleep(12000);
 
     if (error) {
-      throw new Error('Failed to run Key Vault docker container');
+      throw new Error(`Failed to run Key Vault docker container: ${error}`);
     }
   }
 
   @Step({
     name: 'Updating server storage...',
-    requiredConfig: ['publicIp', 'vaultRootToken', 'keyVaultStorage', 'network']
+    requiredConfig: ['network']
   })
   async updateVaultStorage(): Promise<void> {
     const network = this.store.get('network');
-    await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+    if (this.store.exists(`keyVaultStorage.${network}`)) {
+      await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+      this.store.delete(`keyVaultStorage.${network}`);
+    }
   }
 
   @Step({
     name: 'Updating server storage...'
   })
-  async updateVaultMountsStorage(): Promise<void> {
+  async updateVaultMountsStorage(): Promise<any> {
     const keyVaultStorage = this.store.get('keyVaultStorage');
 
     if (keyVaultStorage) {
@@ -169,35 +197,23 @@ export default class KeyVaultService {
           await this.updateVaultStorage();
         }
       }
+      this.store.delete('keyVaultStorage');
     }
+    return { isActive: true };
   }
 
   @Step({
-    name: 'Export slashing protection data...',
+    name: 'Import key-vault data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async importSlashingData(): Promise<any> {
-    // check if kv version higher or equal stable tag
-    const keyVaultVersion = this.store.get('keyVaultVersion');
-    if (!keyVaultVersion) {
-      return;
-    }
-    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
-      return;
-    }
-
-    const keyVaultStorage = this.store.get('keyVaultStorage');
-    if (keyVaultStorage) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(keyVaultStorage)) {
-        if (storage) {
-          // eslint-disable-next-line no-await-in-loop
-          const slashingData = await this.getSlashingStorage(network);
-          if (Object.keys(slashingData.data).length) {
-            this.store.set(`slashingData.${network}`, slashingData.data);
-          }
-        }
-      }
+  async importKeyVaultData(): Promise<any> {
+    const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
+    for (const network of supportedNetworks) {
+      this.store.set('network', network);
+      // save latest network index
+      const accounts = await this.listAccounts();
+      this.store.set(`index.${network}`, (accounts.length - 1).toString());
+      await this.importSlashingData();
     }
   }
 
@@ -205,24 +221,15 @@ export default class KeyVaultService {
     name: 'Import slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async exportSlashingData(): Promise<any> {
-    // check if kv version higher or equal stable tag
+  async importSlashingData(): Promise<any> {
+    const GET_HIGHEST_ATTESTATION_SUPPORTED_TAG = 'v0.1.25';
     const keyVaultVersion = this.store.get('keyVaultVersion');
-    if (!keyVaultVersion) {
-      return;
-    }
-    if (numVal(keyVaultVersion) < numVal(STABLE_TAG)) {
-      return;
-    }
 
-    const slashingData = this.store.get('slashingData');
-    if (slashingData) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [network, storage] of Object.entries(slashingData)) {
-        if (storage) {
-          // eslint-disable-next-line no-await-in-loop
-          await this.updateSlashingStorage(storage, network);
-        }
+    if (keyVaultVersion && numVal(keyVaultVersion) >= numVal(GET_HIGHEST_ATTESTATION_SUPPORTED_TAG)) {
+      const network = this.store.get('network');
+      const slashingData = await this.getSlashingStorage();
+      if (Object.keys(slashingData).length) {
+        this.store.set(`slashingData.${network}`, slashingData);
       }
     }
   }

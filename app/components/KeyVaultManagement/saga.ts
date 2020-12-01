@@ -3,14 +3,17 @@ import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
-import VersionService from 'backend/services/version/version.service';
 import Store from 'backend/common/store-manager/store';
-import KeyManagerService from '../../backend/services/key-manager/key-manager.service';
+import AwsService from 'backend/services/aws/aws.service';
+import VersionService from 'backend/services/version/version.service';
+import KeyManagerService from 'backend/services/key-manager/key-manager.service';
+import AccountService from 'backend/services/account/account.service';
 
 const keyManagerService = new KeyManagerService();
+const accountService = new AccountService();
 const versionService = new VersionService();
 
-function* startLoadingMnemonic() {
+function* loadMnemonicSaga() {
   try {
     const mnemonicPhrase = yield call([keyManagerService, 'mnemonicGenerate']);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
@@ -20,7 +23,7 @@ function* startLoadingMnemonic() {
   }
 }
 
-function* startSavingMnemonic(action) {
+function* saveMnemonicSaga(action) {
   try {
     const { payload: { mnemonic } } = action;
     const store: Store = Store.getStore();
@@ -36,7 +39,7 @@ function* startSavingMnemonic(action) {
   }
 }
 
-function* startLoadingLatestVersion() {
+function* loadLatestVersionSaga() {
   try {
     const latestVersion = yield call([versionService, 'getLatestKeyVaultVersion']);
     yield put(actions.keyvaultLoadLatestVersionSuccess(latestVersion));
@@ -46,8 +49,43 @@ function* startLoadingLatestVersion() {
   }
 }
 
+function* validatePassphraseSaga() {
+  try {
+    yield put(actions.keyvaultValidatePassphraseSuccess());
+  }
+  catch (error) {
+    yield put(actions.keyvaultValidatePassphraseFailure(error));
+    notification.error({ message: 'Error', description: error.message });
+  }
+}
+
+function* checkRecoveryCredentialsSaga(action) {
+  try {
+    const { payload } = action;
+    yield call([accountService, 'recovery'], payload);
+    yield put(actions.validateRecoveryCredentialsSuccess());
+  }
+  catch (error) {
+    yield put(actions.validateRecoveryCredentialsFailure(error));
+  }
+}
+
+function* validateAwsKeysSaga(action) {
+  try {
+    const { payload } = action;
+    yield call([AwsService, 'validateAWSCredentials'], payload);
+    yield put(actions.validateAwsKeysSuccess());
+  }
+  catch (error) {
+    yield put(actions.validateAwsKeysFailure(error));
+  }
+}
+
 export default function* keyVaultManagementSaga() {
-  yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, startLoadingMnemonic);
-  yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, startSavingMnemonic);
-  yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, startLoadingLatestVersion);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_MNEMONIC, loadMnemonicSaga);
+  yield takeLatest(actionTypes.KEYVAULT_SAVE_MNEMONIC, saveMnemonicSaga);
+  yield takeLatest(actionTypes.KEYVAULT_LOAD_LATEST_VERSION, loadLatestVersionSaga);
+  yield takeLatest(actionTypes.KEYVAULT_VALIDATE_PASSPHRASE, validatePassphraseSaga);
+  yield takeLatest(actionTypes.VALIDATE_RECOVERY_CREDENTIALS, checkRecoveryCredentialsSaga);
+  yield takeLatest(actionTypes.VALIDATE_AWS_KEYS, validateAwsKeysSaga);
 }

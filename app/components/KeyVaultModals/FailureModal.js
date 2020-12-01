@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, FailureIcon } from 'common/components';
-import ModalTemplate from '../ModalTemplate';
-import { Title, Description, Wrapper } from '..';
+import { Button, FailureIcon, ModalTemplate } from 'common/components';
+import { Title, Description, Wrapper } from 'common/components/ModalTemplate/components';
 
-import image from '../../Wizard/assets/img-key-vault-inactive.svg';
-import { reportCrash } from '../../common/service';
+import image from '../Wizard/assets/img-key-vault-inactive.svg';
+import { reportCrash } from '../common/service';
 
 const FailureModal = ({title, onClick, onClose}) => {
   const contactSupport = async () => {
     await reportCrash();
-    onClick();
+    await onClick();
   };
   return (
     <ModalTemplate onClose={onClose} image={image}>

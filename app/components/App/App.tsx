@@ -25,8 +25,8 @@ const userKey = 'user';
 
 const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
-  useInjectSaga({ key: loginKey, saga: loginSaga, mode: '' });
   useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
+  useInjectSaga({ key: loginKey, saga: loginSaga, mode: '' });
   const { isLoggedIn, isLoading } = props;
 
   const init = async () => {

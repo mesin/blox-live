@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from './Button';
-import LogoutButton from './LogoutButton';
+import MenuButton from './MenuButton';
 import Store from 'backend/common/store-manager/store';
+import { openLocalDirectory } from 'common/service';
 
 const Wrapper = styled.div`
   position: relative;
@@ -57,36 +58,47 @@ const Separator = styled.div`
   background-color: ${({ theme }) => theme.gray300};
 `;
 
-const canViewTestPage = () => {
-  const store = Store.getStore();
-  return store.exists('testPage');
-};
-
 const ProfileMenu = forwardRef(
-  ({ isOpen, toggleOpen, profile, logout }, ref) => (
-    <Wrapper ref={ref}>
-      <Button isOpen={isOpen} onClick={() => toggleOpen(!isOpen)}>
-        <Image src={profile.picture} />
-      </Button>
-      {isOpen && (
-        <Menu>
-          <MenuItem>
-            <Name>{profile.name}</Name>
-            <Email>{profile.email}</Email>
-          </MenuItem>
-          <Separator />
-          {canViewTestPage() && (
+  ({ isOpen, toggleOpen, profile, logout }, ref) => {
+    const canViewTestPage = () => {
+      const store = Store.getStore();
+      return store.exists('testPage');
+    };
+
+    const openLogsFolder = () => {
+      openLocalDirectory('logs');
+      toggleOpen(false);
+    };
+
+    const { email, name, picture } = profile;
+    return (
+      <Wrapper ref={ref}>
+        <Button isOpen={isOpen} onClick={() => toggleOpen(!isOpen)}>
+          <Image src={picture} />
+        </Button>
+        {isOpen && (
+          <Menu>
             <MenuItem>
-              <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
+              <Name>{name}</Name>
+              <Email>{email}</Email>
             </MenuItem>
-          )}
-          <MenuItem>
-            <LogoutButton onClick={logout}>Log Out</LogoutButton>
-          </MenuItem>
-        </Menu>
-      )}
-    </Wrapper>
-  ),
+            <Separator />
+            {canViewTestPage() && (
+              <MenuItem>
+                <Link to={'/test'} style={{marginLeft: '16px'}}>Test page</Link>
+              </MenuItem>
+            )}
+            <MenuItem>
+              <MenuButton onClick={openLogsFolder}>Open logs folder</MenuButton>
+            </MenuItem>
+            <MenuItem>
+              <MenuButton onClick={logout}>Log Out</MenuButton>
+            </MenuItem>
+          </Menu>
+        )}
+      </Wrapper>
+    );
+  },
 );
 
 ProfileMenu.propTypes = {

@@ -43,7 +43,7 @@ const Test = () => {
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
-  let [network, setNetwork] = useState(config.env.TEST_NETWORK);
+  let [network, setNetwork] = useState(config.env.PYRMONT_NETWORK);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -68,7 +68,7 @@ const Test = () => {
         <option value="production">production</option>
       </select>
       <button
-        onClick={async () => {
+        onClick={() => {
           console.log('set custom env', env);
           store.setEnv(env);
         }}
@@ -156,7 +156,7 @@ const Test = () => {
           store.set('network', event.target.value);
           console.log('network:', event.target.value);
         }}>
-          <option value={config.env.TEST_NETWORK}>Test Network</option>
+          <option value={config.env.PYRMONT_NETWORK}>Test Network</option>
           <option value={config.env.MAINNET_NETWORK}>MainNet Network</option>
         </select>
         <h3>Step 4. Account create</h3>
@@ -258,16 +258,6 @@ const Test = () => {
           Create Account
         </button>
         <button onClick={async () => {
-          console.log(await accountService.listAccounts());
-        }}>
-          List Accounts
-        </button>
-        <button onClick={async () => {
-          await accountService.getLastIndexedAccount();
-        }}>
-          Get Last Indexed Account
-        </button>
-        <button onClick={async () => {
           await accountService.deleteLastIndexedAccount();
         }}>
           Delete Last Indexed Account
@@ -293,11 +283,7 @@ const Test = () => {
         }}>
           Get Account Deposit Data
         </button>
-        <button onClick={async () => {
-          await accountService.generatePublicKeys();
-        }}>
-          Generate Public Key
-        </button>
+
       </div>
       <p/>
       <h2>Blox API</h2>
@@ -348,13 +334,13 @@ const Test = () => {
         </button>
         <button onClick={async () => {
           const response = await keyVaultService.listAccounts();
-          console.log(response.data.accounts);
+          console.log(response);
         }}>
           List Accounts
         </button>
         <button onClick={async () => {
           const response = await keyVaultService.getVersion();
-          console.log(response.data.version);
+          console.log(response);
         }}>
           Get Version
         </button>
@@ -364,14 +350,10 @@ const Test = () => {
           Update Storage for both networks
         </button>
         <button onClick={async () => {
-          await keyVaultService.exportSlashingData();
+          const slashingStorage = await keyVaultService.getSlashingStorage();
+          console.log(slashingStorage);
         }}>
           Export Slashing Data
-        </button>
-        <button onClick={async () => {
-          await keyVaultService.importSlashingData();
-        }}>
-          Import Slashing Data
         </button>
       </div>
       <p/>

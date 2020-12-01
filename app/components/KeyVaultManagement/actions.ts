@@ -47,4 +47,54 @@ export const keyvaultLoadLatestVersionFailure = (error: Record<string, any>) => 
   payload: error,
 });
 
+export const keyvaultValidatePassphrase = (passphrase: string) => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE,
+  payload: passphrase,
+});
+
+export const keyvaultValidatePassphraseSuccess = () => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_SUCCESS,
+});
+
+export const keyvaultValidatePassphraseFailure = (error: Record<string, any>) => ({
+  type: actionTypes.KEYVAULT_VALIDATE_PASSPHRASE_FAILURE,
+  payload: error,
+});
+
+export const validateRecoveryCredentials = ({mnemonic, password}: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS,
+  payload: {mnemonic, password},
+});
+
+export const validateRecoveryCredentialsSuccess = () => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_SUCCESS,
+});
+
+export const validateRecoveryCredentialsFailure = (error: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_FAILURE,
+  payload: error,
+});
+
+export const clearRecoveryCredentialsState = () => ({
+  type: actionTypes.VALIDATE_RECOVERY_CREDENTIALS_CLEAR,
+});
+
+export const validateAwsKeys = (keys: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_AWS_KEYS,
+  payload: keys,
+});
+
+export const validateAwsKeysSuccess = () => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_SUCCESS,
+});
+
+export const validateAwsKeysFailure = (error: Record<string, any>) => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_FAILURE,
+  payload: error,
+});
+
+export const clearAwsKeysState = () => ({
+  type: actionTypes.VALIDATE_AWS_KEYS_CLEAR,
+});
+
 export const keyvaultClearData = () => ({ type: actionTypes.KEYVAULT_CLEAR_DATA });

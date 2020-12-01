@@ -22,12 +22,12 @@ const BoxWithTooltip = (props) => {
   const { checkIfPasswordIsNeeded } = usePasswordHandler();
 
   const showReactivationModal = () => {
-    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION, text: ''});
+    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.REACTIVATION });
     checkIfPasswordIsNeeded(onSuccess);
   };
 
   const showUpdateModal = () => {
-    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE, text: ''});
+    const onSuccess = () => setModalDisplay({ show: true, type: MODAL_TYPES.UPDATE });
     checkIfPasswordIsNeeded(onSuccess);
   };
 

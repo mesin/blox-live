@@ -1,20 +1,12 @@
 import React from 'react';
 import { shell } from 'electron';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import styled from 'styled-components';
 
 import { ProcessLoader, Button, PasswordInput } from 'common/components';
 import { Title, Paragraph, ErrorMessage } from '../../common';
-import { useInjectSaga } from 'utils/injectSaga';
 
-import * as actionsFromPassword from '../../../../PasswordHandler/actions';
-import passwordSaga from '../../../../PasswordHandler/saga';
-import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
+import useCreateServer from 'common/hooks/useCreateServer';
 import Guide from '../Guide';
-
-const passwordKey = 'password';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -53,38 +45,19 @@ const ExternalLink = styled.span`
   }
 `;
 
-const CreateServer = (props) => {
-  const { isLoading, isDone, error, processName, processMessage,
-          loaderPrecentage, startProcess, clearProcessState } = useProcessRunner();
-
-  const { page, setPage, passwordActions } = props;
-  const { savePassword } = passwordActions;
-  const [accessKeyId, setAccessKeyId] = React.useState('');
-  const [secretAccessKey, setSecretAccessKey] = React.useState('');
+const CreateServer = (props: Props) => {
+  const { page, setPage } = props;
   const [showGuide, setGuideDisplay] = React.useState(true);
-  const isButtonDisabled = !accessKeyId || !secretAccessKey || isLoading || (isDone && !error);
-  const isPasswordInputDisabled = isLoading;
 
-  useInjectSaga({ key: passwordKey, saga: passwordSaga, mode: '' });
+  const onSuccess = () => setPage(page + 1);
 
-  React.useEffect(() => {
-    if (!isLoading && isDone && !error) {
-      clearProcessState();
-      setPage(page + 1);
-    }
-  }, [isLoading, isDone, error]);
-
-  const onClick = async () => {
-    if (!isButtonDisabled && !processMessage && !processName) {
-      savePassword('temp');
-      const credentials = { accessKeyId, secretAccessKey };
-      await startProcess('install', 'Checking KeyVault configuration...', credentials);
-    }
-  };
+  const { isLoading, error, processMessage, loaderPrecentage, accessKeyId, setAccessKeyId,
+          secretAccessKey, setSecretAccessKey, onStartProcessClick, isPasswordInputDisabled, isButtonDisabled
+        } = useCreateServer({onSuccess});
 
   return (
     <Wrapper>
-      <Title>Create your staking KeyVault</Title>
+      <Title>Create your Staking KeyVault</Title>
       <Paragraph>
         We will now create your KeyVault on your selected server. <br />
         To do that, Blox needs AWS access/secret keys. <br />
@@ -93,7 +66,7 @@ const CreateServer = (props) => {
           AWS account is verified
         </ExternalLink> before creating the keys. <br /> <br />
         To create a suitable server and access tokens follow this&nbsp;
-        <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>
+        <GuideButton onClick={() => setGuideDisplay(true)}>step-by-step guide</GuideButton>.
       </Paragraph>
       <PasswordInputsWrapper>
         <PasswordInput name={'accessKeyId'} title={'Access Key ID'} autoFocus
@@ -103,7 +76,7 @@ const CreateServer = (props) => {
           onChange={setSecretAccessKey} value={secretAccessKey} isDisabled={isPasswordInputDisabled}
         />
       </PasswordInputsWrapper>
-      <Button isDisabled={isButtonDisabled} onClick={onClick}>Continue</Button>
+      <Button isDisabled={isButtonDisabled} onClick={() => onStartProcessClick('install')}>Continue</Button>
       {isLoading && processMessage && !error && (
         <ProgressWrapper>
           <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
@@ -119,14 +92,9 @@ const CreateServer = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  passwordActions: bindActionCreators(actionsFromPassword, dispatch),
-});
-
-CreateServer.propTypes = {
-  page: PropTypes.number,
-  setPage: PropTypes.func,
-  passwordActions: PropTypes.object,
+type Props = {
+  page: number;
+  setPage: (page: number) => void;
 };
 
-export default connect(null, mapDispatchToProps)(CreateServer);
+export default CreateServer;

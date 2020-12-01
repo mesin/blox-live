@@ -1,4 +1,4 @@
-export const STATUSES = {
+export const STATUSES: Record<string, any> = {
   active: { name: 'Active', color: 'accent2400' },
   waiting: { name: 'Waiting', color: 'warning700' },
   pending: { name: 'Pending', color: 'warning900' },
@@ -11,10 +11,12 @@ export const STATUSES = {
   partially_deposited: { name: 'Partial', color: 'warning900' },
 };
 
-export const MODAL_TYPES = {
+export const MODAL_TYPES: Record<string, any> = {
   PASSWORD: 'password',
   REACTIVATION: 'reactivation',
   UPDATE: 'update',
   DEPOSIT_INFO: 'depositInfo',
   ACTIVE_VALIDATOR: 'activeValidator',
+  DEVICE_SWITCH: 'deviceSwitch',
+  FORGOT_PASSWORD: 'forgotPassword',
 };

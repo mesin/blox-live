@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Wallet, Validators, ModalsManager } from './components';
+import { Wallet, Validators } from './components';
 import { summarizeAccounts, normalizeAccountsData, normalizeEventLogs } from './service';
 import EventLogs from './components/EventLogs';
 import { DiscordButton } from 'common/components';

@@ -5,14 +5,15 @@ const Wrapper = styled.div`
   position:relative;
 `;
 
-const Element = styled.textarea<{ error: string }>`
-  width: 484px;
+const Element = styled.textarea<{ width: string, error: string }>`
+  width: ${({width}) => width || '484px'};
   height: 90px;
   padding:8px 10px;
   border-radius: 4px;
   border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.gray300};
   background-color: #ffffff;
   outline:none;
+  resize:none;
   :focus {
     border: solid 1px ${({theme, error}) => error ? theme.destructive600 : theme.primary900};
   }
@@ -32,10 +33,10 @@ const ErrorMessage = styled.span`
   left:0px;
 `;
 
-const Textarea = ({duplicatedMnemonic, onChange, error, ...rest}: Props) => {
+const Textarea = ({width, value, onChange, error, ...rest}: Props) => {
   return (
     <Wrapper>
-      <Element value={duplicatedMnemonic} onChange={(e) => onChange(e.target.value)}
+      <Element value={value} onChange={(e) => onChange(e.target.value)} width={width}
         placeholder={'Separate each word with a space'} error={error} {...rest} />
       {error && (<ErrorMessage>{error}</ErrorMessage>)}
     </Wrapper>
@@ -43,9 +44,13 @@ const Textarea = ({duplicatedMnemonic, onChange, error, ...rest}: Props) => {
 };
 
 type Props = {
-  duplicatedMnemonic: string;
+  width: string;
+  value: string;
   onChange: (value: string) => void;
-  error: string;
+  error?: string;
+  autoFocus?: boolean;
+  placeholder?: string;
+  isDisabled?: boolean;
 };
 
 export default Textarea;
