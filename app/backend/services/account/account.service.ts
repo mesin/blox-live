@@ -257,6 +257,7 @@ export default class AccountService {
     if (account.validationPubKey !== accountToCompareWith.publicKey.replace(/^(0x)/, '')) {
       throw new Error('Passphrase not linked to your account.');
     }
+    this.store.clear();
     await this.store.setNewPassword(password, false);
     this.store.set('seed', seed);
   }
