@@ -77,6 +77,9 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
     onClose();
   };
 
+  const needHelpLink = depositData?.network === NETWORKS.mainnet.label ?
+    'docs-guides/#pp-toc__heading-anchor-14' :
+    'documents/guides/#pp-toc__heading-anchor-20';
   return (
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
@@ -110,7 +113,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
           </WarningText>
         )}
         <Row>
-          <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>
+          <Link onClick={() => openExternalLink(needHelpLink)}>
             Need help?
           </Link>
         </Row>
