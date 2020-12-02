@@ -106,7 +106,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
         })}
         {depositData?.network === NETWORKS.pyrmont.label && (
           <WarningText>
-            Make sure you send GoEth {NETWORKS.pyrmont.name} tokens and not real ETH!
+            Make sure you send GoETH Testnet tokens and not real ETH!
           </WarningText>
         )}
         <Row>
