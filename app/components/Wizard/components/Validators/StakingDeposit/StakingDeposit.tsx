@@ -102,7 +102,7 @@ const StakingDeposit = (props: Props) => {
         {NETWORKS[network].label === NETWORKS.mainnet.label ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
         {NETWORKS[network].label === NETWORKS.pyrmont.label && (
-          <WarningText>Make sure you send GoEth {NETWORKS.pyrmont.name} tokens and not real ETH!</WarningText>
+          <WarningText>Make sure you send GoETH Testnet tokens and not real ETH!</WarningText>
         )}
         <Tip>
           <TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.
