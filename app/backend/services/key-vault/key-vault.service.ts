@@ -6,15 +6,12 @@ import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-mana
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
+import { checkVersion } from '../../../utils/service';
 
 function sleep(msec) {
   return new Promise(resolve => {
     setTimeout(resolve, msec);
   });
-}
-
-function numVal(str) {
-  return +str.replace(/\D/g, '');
 }
 
 // @CatchClass<KeyVaultService>()
@@ -222,10 +219,9 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const GET_HIGHEST_ATTESTATION_SUPPORTED_TAG = 'v0.1.25';
     const keyVaultVersion = this.store.get('keyVaultVersion');
 
-    if (keyVaultVersion && numVal(keyVaultVersion) >= numVal(GET_HIGHEST_ATTESTATION_SUPPORTED_TAG)) {
+    if (keyVaultVersion && checkVersion(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG) >= 0) {
       const network = this.store.get('network');
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
