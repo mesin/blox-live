@@ -6,6 +6,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Icon } from 'common/components';
 import { AddressKey, AdditionalData, AdditionalDataWrapper, Left, Right, TestNet } from './components';
 import { truncateText } from '../../../../../common/service';
+import { NETWORKS } from '../../../../../Wizard/components/Validators/constants';
 
 const Wrapper = styled.div`
   width: 90%;
@@ -29,8 +30,8 @@ const KeyCell = ({ value }) => {
         <CopyToClipboard text={publicKey} onCopy={onCopy}>
           <Icon name="copy" color="gray800" fontSize="16px" onClick={() => false} />
         </CopyToClipboard>
-        {network === 'pyrmont' && <TestNet>Pyrmont</TestNet>}
-        {network === 'mainnet' && <TestNet>MainNet</TestNet>}
+        {network === NETWORKS.pyrmont.label && <TestNet>Pyrmont</TestNet>}
+        {network === NETWORKS.mainnet.label && <TestNet>MainNet</TestNet>}
       </Right>
     </Wrapper>
   );

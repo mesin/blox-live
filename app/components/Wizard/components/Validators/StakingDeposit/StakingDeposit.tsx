@@ -92,19 +92,21 @@ const StakingDeposit = (props: Props) => {
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
   if (network) {
-    const needHelpLink = NETWORKS[network].name === 'Mainnet' ?
+    const needHelpLink = NETWORKS[network].label === NETWORKS.mainnet.label ?
      'docs-guides/#pp-toc__heading-anchor-14' :
      'documents/guides/#pp-toc__heading-anchor-20';
 
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        {NETWORKS[network].name === 'Mainnet' ? (<MainNetText />) : (<TestNetText />)}
+        {NETWORKS[network].label === NETWORKS.mainnet.label ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
-        {NETWORKS[network].name === 'Testnet' && (
-          <WarningText>Make sure you send GoEth testnet tokens and not real ETH!</WarningText>
+        {NETWORKS[network].label === NETWORKS.pyrmont.label && (
+          <WarningText>Make sure you send GoEth {NETWORKS.pyrmont.name} tokens and not real ETH!</WarningText>
         )}
-        <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
+        <Tip>
+          <TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.
+        </Tip>
         <Link onClick={() => openExternalLink(needHelpLink)}>Need help?</Link>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
