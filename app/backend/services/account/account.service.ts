@@ -207,7 +207,7 @@ export default class AccountService {
     if (index < 0) {
       await this.walletService.createWallet();
     } else {
-      this.createAccount(false, index);
+      await this.createAccount(false, index);
     }
   }
 
