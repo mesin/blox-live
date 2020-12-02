@@ -12,8 +12,8 @@ export default class VersionService {
   }
 
   async getLatestKeyVaultVersion() {
-    if (this.store.exists('keyVaultTempVersion')) {
-      this.store.get('keyVaultTempVersion');
+    if (this.store.exists('customKeyVaultVersion')) {
+      this.store.get('customKeyVaultVersion');
     }
     return await BloxApi.request(METHOD.GET, 'version/key-vault');
   }
