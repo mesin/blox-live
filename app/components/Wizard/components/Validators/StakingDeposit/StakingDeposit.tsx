@@ -101,7 +101,7 @@ const StakingDeposit = (props: Props) => {
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
         {NETWORKS[network].name === 'Mainnet' ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
-        {NETWORKS[network].name === 'Testnet' && (
+        {NETWORKS[network].name === NETWORKS.pyrmont.name && (
           <WarningText>Make sure you send GoEth testnet tokens and not real ETH!</WarningText>
         )}
         <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
