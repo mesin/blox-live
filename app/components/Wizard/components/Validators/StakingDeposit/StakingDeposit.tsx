@@ -99,7 +99,7 @@ const StakingDeposit = (props: Props) => {
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        {NETWORKS[network].name === 'Mainnet' ? (<MainNetText />) : (<TestNetText />)}
+        {NETWORKS[network].name === NETWORKS.mainnet.name ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
         {NETWORKS[network].name === NETWORKS.pyrmont.name && (
           <WarningText>Make sure you send GoEth testnet tokens and not real ETH!</WarningText>
