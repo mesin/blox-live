@@ -84,3 +84,20 @@ export const hexDecode = (hex) => {
   }
   return str;
 };
+
+export const checkVersion = (a, b) => {
+  const x = a.replace('v', '').split('.').map(e => parseInt(e, 10));
+  const y = b.replace('v', '').split('.').map(e => parseInt(e, 10));
+
+  for (const i in x) {
+    y[i] = y[i] || 0;
+    if (x[i] === y[i]) {
+      continue;
+    } else if (x[i] > y[i]) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+  return y.length > x.length ? -1 : 0;
+};

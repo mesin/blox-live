@@ -22,7 +22,9 @@ export default class Config {
       HTTP_RETRIES: 3,
       HTTP_RETRY_DELAY: 1000,
       PYRMONT_NETWORK: 'pyrmont',
-      MAINNET_NETWORK: 'mainnet'
+      MAINNET_NETWORK: 'mainnet',
+      SSL_SUPPORTED_TAG: 'v0.1.25',
+      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.1.25'
     }
   };
 
