@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { shell } from 'electron';
 import { InfoWithTooltip } from 'common/components';
 import { Paragraph } from '../../../common';
-import { INTRO_TOOLTIP_TEXT } from '../../constants';
+import { INTRO_TOOLTIP_TEXT, NETWORKS } from '../../constants';
 import config from 'backend/common/config';
 
 const GoEthButton = styled.a`
@@ -24,7 +24,7 @@ const GoEthButton = styled.a`
 const TestNetText = () => {
   return (
     <Paragraph>
-      To start staking on the beacon chain Testnet, you are required to deposit <br />
+      To start staking on the beacon chain {NETWORKS.pyrmont.name}, you are required to deposit <br />
       32 GoETH<InfoWithTooltip title={INTRO_TOOLTIP_TEXT} placement="bottom" /> into the
       validator deposit contract.
       <GoEthButton onClick={() => shell.openExternal(config.env.DISCORD_GOETH_INVITE)}>

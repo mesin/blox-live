@@ -9,6 +9,7 @@ import { openExternalLink } from '../common/service';
 
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
 import { generateDepositDataInfo } from '../Wizard/components/Validators/service';
+import { NETWORKS } from '../Wizard/components/Validators/constants';
 import * as wizardActions from '../Wizard/actions';
 import { getDepositData } from '../Wizard/selectors';
 
@@ -103,9 +104,9 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
             </Row>
           );
         })}
-        {depositData?.network === 'pyrmont' && (
+        {depositData?.network === NETWORKS.pyrmont.label && (
           <WarningText>
-            Make sure you send GoEth testnet tokens and not real ETH!
+            Make sure you send GoEth {NETWORKS.pyrmont.name} tokens and not real ETH!
           </WarningText>
         )}
         <Row>
