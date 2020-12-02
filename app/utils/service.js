@@ -86,8 +86,8 @@ export const hexDecode = (hex) => {
 };
 
 export const checkVersion = (a, b) => {
-  const x = a.split('.').map(e => parseInt(e, 10));
-  const y = b.split('.').map(e => parseInt(e, 10));
+  const x = a.replace('v', '').split('.').map(e => parseInt(e, 10));
+  const y = b.replace('v', '').split('.').map(e => parseInt(e, 10));
 
   for (const i in x) {
     y[i] = y[i] || 0;
