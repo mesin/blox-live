@@ -64,9 +64,8 @@ const EntryPage = (props: Props) => {
 
   useEffect(() => {
     const store: Store = Store.getStore();
-    const withAccountRecovery = store.exists('accountRecovery');
     const inForgotPasswordProcess = store.get('inForgotPasswordProcess');
-    if (withAccountRecovery && inForgotPasswordProcess) {
+    if (inForgotPasswordProcess) {
       setModalDisplay({show: true, type: MODAL_TYPES.FORGOT_PASSWORD});
     }
   }, []);

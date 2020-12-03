@@ -202,7 +202,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 .icon-protection:before {
   content: "\61";
 }
@@ -283,4 +282,7 @@
 }
 .icon-eth-icon-colors:before {
   content: "\41";
+}
+.icon-refresh:before {
+  content: "\42";
 }
