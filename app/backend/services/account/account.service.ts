@@ -57,7 +57,7 @@ export default class AccountService {
   async createBloxAccount(): Promise<any> {
     const network = this.store.get('network');
     const index: number = +this.store.get(`index.${network}`) + 1;
-    const lastIndexedAccount = await this.keyManagerService.getAccount(this.store.get('seed'), index);
+    const lastIndexedAccount = await this.keyManagerService.getAccount(this.store.get('seed'), index, network);
     lastIndexedAccount['network'] = network;
     const account = await this.create(lastIndexedAccount);
     if (account.error && account.error instanceof Error) return;
@@ -76,7 +76,7 @@ export default class AccountService {
     const index: number = getNextIndex ? await this.getNextIndex(network) : indexToRestore;
 
     // 1. get public-keys to create
-    const accounts = await this.keyManagerService.getAccount(this.store.get('seed'), index, true);
+    const accounts = await this.keyManagerService.getAccount(this.store.get('seed'), index, network, true);
     const accountsHash = Object.assign({}, ...accounts.map(account => ({ [account.validationPubKey]: account })));
     const publicKeysToGetHighestAttestation = [];
 
@@ -94,7 +94,8 @@ export default class AccountService {
         const decodedValueJson = JSON.parse(decodedValue);
         const highestAttestation = {
           'highest_source_epoch': decodedValueJson?.HighestAttestation?.source?.epoch,
-          'highest_target_epoch': decodedValueJson?.HighestAttestation?.target?.epoch
+          'highest_target_epoch': decodedValueJson?.HighestAttestation?.target?.epoch,
+          'highest_proposal_slot': decodedValueJson?.HighestProposal?.slot,
         };
         accountsHash[key] = { ...accountsHash[key], ...highestAttestation };
       } else {
@@ -115,14 +116,16 @@ export default class AccountService {
 
     let highestSource = '';
     let highestTarget = '';
+    let highestProposal = '';
     const accountsArray = Object.values(accountsHash);
     for (let i = index; i >= 0; i -= 1) {
       highestSource += `${accountsArray[i]['highest_source_epoch']}${i === 0 ? '' : ','}`;
       highestTarget += `${accountsArray[i]['highest_target_epoch']}${i === 0 ? '' : ','}`;
+      highestProposal += `${accountsArray[i]['highest_proposal_slot']}${i === 0 ? '' : ','}`;
     }
 
     // 6. create accounts
-    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, highestSource, highestTarget);
+    const storage = await this.keyManagerService.createAccount(this.store.get('seed'), index, network, highestSource, highestTarget, highestProposal);
     this.store.set(`keyVaultStorage.${network}`, storage);
   }
 
@@ -257,7 +260,7 @@ export default class AccountService {
     }
     const accountToCompareWith = accounts[0];
     const index = accountToCompareWith.name.split('-')[1];
-    const account = await this.keyManagerService.getAccount(seed, index);
+    const account = await this.keyManagerService.getAccount(seed, index, config.env.PYRMONT_NETWORK);
 
     if (account.validationPubKey !== accountToCompareWith.publicKey.replace(/^(0x)/, '')) {
       throw new Error('Passphrase not linked to your account.');

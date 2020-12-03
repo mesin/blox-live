@@ -24,7 +24,7 @@ export default class Config {
       PYRMONT_NETWORK: 'pyrmont',
       MAINNET_NETWORK: 'mainnet',
       SSL_SUPPORTED_TAG: 'v0.1.25',
-      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.1.25'
+      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2'
     }
   };
 
