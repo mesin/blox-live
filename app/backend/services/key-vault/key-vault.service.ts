@@ -4,9 +4,9 @@ import VersionService from '../version/version.service';
 import WalletService from '../wallet/wallet.service';
 import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
 import { METHOD } from '../../common/communication-manager/constants';
-import { CatchClass, Step } from '../../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
-import { checkVersion } from '../../../utils/service';
+import { isVersionHigherOrEqual } from '../../../utils/service';
 
 function sleep(msec) {
   return new Promise(resolve => {
@@ -221,7 +221,7 @@ export default class KeyVaultService {
   async importSlashingData(): Promise<any> {
     const keyVaultVersion = this.store.get('keyVaultVersion');
 
-    if (keyVaultVersion && checkVersion(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG) >= 0) {
+    if (keyVaultVersion && isVersionHigherOrEqual(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG)) {
       const network = this.store.get('network');
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
@@ -245,8 +245,26 @@ export default class KeyVaultService {
       }
       return { isActive: true };
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return { isActive: false };
+    }
+  }
+
+  @Step({
+    name: 'Configurate sshd settings...'
+  })
+  @Catch({
+    displayMessage: 'Configurate sshd failed'
+  })
+  async configurateSshd() {
+    try {
+      const ssh = await this.keyVaultSsh.getConnection(22);
+      const { stderr: error } = await ssh.execCommand(`sudo sed -i '1iPort ${config.env.SSH_PORT}\\nLoginGraceTime 30s' /etc/ssh/sshd_config && sudo service sshd restart`, {});
+      if (error) {
+        throw new Error('Could not setup ssh configuration');
+      }
+    } catch (e) {
+      await this.keyVaultSsh.getConnection();
     }
   }
 }

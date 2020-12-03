@@ -85,19 +85,16 @@ export const hexDecode = (hex) => {
   return str;
 };
 
-export const checkVersion = (a, b) => {
-  const x = a.replace('v', '').split('.').map(e => parseInt(e, 10));
-  const y = b.replace('v', '').split('.').map(e => parseInt(e, 10));
+export const isVersionHigherOrEqual = (current, defaultValue) => {
+  const pattern = /(?<=\..*)\./g;
+  // eslint-disable-next-line no-param-reassign
+  current = current
+    .replace('v', '')
+    .replace(pattern, '');
+  // eslint-disable-next-line no-param-reassign
+  defaultValue = defaultValue
+    .replace('v', '')
+    .replace(pattern, '');
 
-  for (const i in x) {
-    y[i] = y[i] || 0;
-    if (x[i] === y[i]) {
-      continue;
-    } else if (x[i] > y[i]) {
-      return 1;
-    } else {
-      return -1;
-    }
-  }
-  return y.length > x.length ? -1 : 0;
+  return +current >= +defaultValue;
 };

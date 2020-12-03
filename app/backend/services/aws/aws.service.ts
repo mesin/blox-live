@@ -2,6 +2,7 @@ import net from 'net';
 import Store from '../../common/store-manager/store';
 import * as AWS from 'aws-sdk';
 import { Catch, CatchClass, Step } from '../../decorators';
+import config from '../../common/config';
 
 // TODO import from .env
 const tempStorePrefix = 'tmp';
@@ -131,6 +132,12 @@ export default class AwsService {
             FromPort: 22,
             ToPort: 22,
             IpRanges: [{ CidrIp: '0.0.0.0/0' }]
+          },
+          {
+            IpProtocol: 'tcp',
+            FromPort: config.env.SSH_PORT,
+            ToPort: config.env.SSH_PORT,
+            IpRanges: [{ CidrIp: '0.0.0.0/0' }]
           }
         ]
       }).promise();
@@ -223,7 +230,7 @@ export default class AwsService {
         socket.once('error', onError);
         socket.once('timeout', onError);
         const ip: any = this.store.get('publicIp');
-        socket.connect(22, ip, () => {
+        socket.connect(config.env.SSH_PORT, ip, () => {
           console.log('Server is online');
           socket.destroy();
           clearInterval(intervalId);

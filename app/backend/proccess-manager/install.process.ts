@@ -34,6 +34,7 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.awsService, method: 'createElasticIp' },
       { instance: this.awsService, method: 'createSecurityGroup' },
       { instance: this.awsService, method: 'createInstance' },
+      { instance: this.keyVaultService, method: 'configurateSshd' },
       { instance: this.keyVaultService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },

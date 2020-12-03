@@ -23,8 +23,9 @@ export default class Config {
       HTTP_RETRY_DELAY: 1000,
       PYRMONT_NETWORK: 'pyrmont',
       MAINNET_NETWORK: 'mainnet',
-      SSL_SUPPORTED_TAG: 'v0.1.25',
-      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.1.25'
+      SSL_SUPPORTED_TAG: 'v0.1.15',
+      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.1.25',
+      SSH_PORT: 2200
     }
   };
 
