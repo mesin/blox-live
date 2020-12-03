@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Boxes, StatusBar } from './components';
+import { Boxes, StatusBar, RefreshButton } from './components';
 import UpdateBanner from './components/UpdateBanner';
 import DateAndTime from '../DateAndTime';
 
@@ -11,12 +11,21 @@ const Wrapper = styled.div`
   margin-bottom:36px;
 `;
 
+const TopPart = styled.div`
+  width:100%;
+  display:flex;
+  align-items:flex-start;
+`;
+
 const Wallet = (props) => {
   const { isActive, isNeedUpdate, ...rest } = props;
   return (
     <Wrapper>
       <UpdateBanner isNeedUpdate={isNeedUpdate} />
-      <DateAndTime />
+      <TopPart>
+        <DateAndTime />
+        <RefreshButton />
+      </TopPart>
       <StatusBar isActive={isActive} />
       <Boxes isActive={isActive} {...rest} />
     </Wrapper>
