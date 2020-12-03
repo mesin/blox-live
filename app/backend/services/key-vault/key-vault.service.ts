@@ -174,7 +174,7 @@ export default class KeyVaultService {
   async updateVaultStorage(): Promise<void> {
     const network = this.store.get('network');
     if (this.store.exists(`keyVaultStorage.${network}`)) {
-      await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
+      await this.updateStorage(this.store.get(`keyVaultStorage.${network}`));
       this.store.delete(`keyVaultStorage.${network}`);
     }
   }

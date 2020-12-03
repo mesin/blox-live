@@ -37,16 +37,23 @@ class KeyVaultApi extends Http {
       }
     }
     const ssh = await this.keyVaultSsh.getConnection();
+    let remoteFileName;
+    if (data) {
+      remoteFileName = await this.keyVaultSsh.dataToRemoteFile(data);
+    }
+
     const keyVaultVersion = this.store.get('keyVaultVersion');
     const command = this.keyVaultSsh.buildCurlCommand({
       authToken: this.store.get('vaultRootToken'),
       method,
-      data,
+      // data,
+      dataAsFile: remoteFileName,
       route: `http${isVersionHigherOrEqual(keyVaultVersion, config.env.SSL_SUPPORTED_TAG) ? 's' : ''}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
     }, true);
     console.log('curl=', command);
     const { stdout } = await ssh.execCommand(command, {});
     const body = JSON.parse(stdout);
+    remoteFileName && await ssh.execCommand(`rm ${remoteFileName}`, {});
     console.log('curl answer=', body);
     if (body.errors) {
       throw new Error(JSON.stringify(body));
