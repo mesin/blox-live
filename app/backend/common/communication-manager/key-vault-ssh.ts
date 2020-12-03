@@ -27,15 +27,19 @@ export default class KeyVaultSsh {
 
   buildCurlCommand(data: any, returnBodyResponse?: boolean): string {
     // eslint-disable-next-line no-nested-ternary
-    const body = data.dataAsFile
-      ? `@${data.dataAsFile}`
-      : data.data ? JSON.stringify(data.data) : '';
-    return `curl -s ${!returnBodyResponse ? '-o /dev/null -w "%{http_code}"' : ''} --header "Content-Type: application/json" --header "Authorization: Bearer ${data.authToken}" --request ${data.method} ${body ? `--data '${body}'` : ''} ${data.route} ${data.route.startsWith('https') ? '--insecure' : ''}`;
+    let body = '';
+    if (data.dataAsFile) {
+      body = `-d @${data.dataAsFile}`;
+    } else if (data.data) {
+      body = `--data '${JSON.stringify(data.data)}'`;
+    }
+    return `curl -s ${!returnBodyResponse ? '-o /dev/null -w "%{http_code}"' : ''} --header "Content-Type: application/json" --header "Authorization: Bearer ${data.authToken}" --request ${data.method} ${body} ${data.route} ${data.route.startsWith('https') ? '--insecure' : ''}`;
   }
 
   async dataToRemoteFile(data: any): Promise<string> {
     const readStream = Readable.from([JSON.stringify(data)]);
-    const remoteFileName = `/home/${userName}/${uuidv4}.data`;
+    const remoteFileName = `/home/${userName}/${uuidv4()}.data`;
+    console.log(remoteFileName, data);
     const ssh = await this.getConnection();
     await ssh.withSFTP(async (sftp) => {
       return new Promise((resolve, reject) => {
