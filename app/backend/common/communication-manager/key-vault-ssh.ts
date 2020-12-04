@@ -13,12 +13,12 @@ export default class KeyVaultSsh {
     this.store = Store.getStore(storePrefix);
   }
 
-  async getConnection(customPort?): Promise<NodeSSH> {
+  async getConnection(): Promise<NodeSSH> {
     const ssh = new NodeSSH();
     const keyPair: any = this.store.get('keyPair');
     await ssh.connect({
       host: this.store.get('publicIp'),
-      port: customPort || config.env.SSH_PORT,
+      port: config.env.port,
       username: userName,
       privateKey: keyPair.privateKey
     });

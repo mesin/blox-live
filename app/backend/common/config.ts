@@ -25,13 +25,15 @@ export default class Config {
       MAINNET_NETWORK: 'mainnet',
       SSL_SUPPORTED_TAG: 'v0.1.15',
       HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.1.25',
-      SSH_PORT: 2200
+      DEFAULT_SSH_PORT: 22,
+      TARGET_SSH_PORT: 2200,
     }
   };
 
   private constructor() {
     const backendStore = Store.getStore();
     const envKey = (backendStore.get('env') || 'production');
+    this.settings.default.SSH_PORT = backendStore.get('port') || this.settings.default.DEFAULT_SSH_PORT;
     // env related
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings[envKey])) {
@@ -44,9 +46,17 @@ export default class Config {
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings.default)) {
       Object.defineProperty(this, key, {
+
         get: () => this.settings.default[key]
       });
     }
+
+    Object.defineProperty(this, 'port', {
+      get: () => {
+        const store = Store.getStore();
+        return store.get('port') || this.settings.default.DEFAULT_SSH_PORT;
+      }
+    });
   }
 
   static get env(): any {

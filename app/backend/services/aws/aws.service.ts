@@ -135,8 +135,8 @@ export default class AwsService {
           },
           {
             IpProtocol: 'tcp',
-            FromPort: config.env.SSH_PORT,
-            ToPort: config.env.SSH_PORT,
+            FromPort: config.env.TARGET_SSH_PORT,
+            ToPort: config.env.TARGET_SSH_PORT,
             IpRanges: [{ CidrIp: '0.0.0.0/0' }]
           }
         ]
@@ -230,7 +230,7 @@ export default class AwsService {
         socket.once('error', onError);
         socket.once('timeout', onError);
         const ip: any = this.store.get('publicIp');
-        socket.connect(config.env.SSH_PORT, ip, () => {
+        socket.connect(config.env.port, ip, () => {
           console.log('Server is online');
           socket.destroy();
           clearInterval(intervalId);
