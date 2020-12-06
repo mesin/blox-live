@@ -53,11 +53,9 @@ export default class KeyManagerService {
     }
 
     try {
-      console.log('===index=', index);
       const { stdout } = await this.executor(
         `${this.executablePath} wallet account create --seed=${seed} --index=${index} --network=${network} --response-type=object --accumulate=${accumulate} --highest-source=${highestSource} --highest-target=${highestTarget} --highest-proposal=${highestProposal}`
       );
-      console.log('2====>>>', stdout);
       return stdout ? JSON.parse(stdout) : {};
     } catch (e) {
       throw new Error(`Get keyvault account with index ${JSON.stringify(index)} was failed.`);

@@ -9,7 +9,7 @@ import WalletService from '../wallet/wallet.service';
 import config from '../../common/config';
 import { hexDecode } from '../../../utils/service';
 
-// @CatchClass<AccountService>()
+@CatchClass<AccountService>()
 export default class AccountService {
   private readonly walletService: WalletService;
   private readonly keyVaultService: KeyVaultService;
@@ -76,10 +76,7 @@ export default class AccountService {
     const network = Connection.db(this.storePrefix).get('network');
     const index: number = getNextIndex ? await this.getNextIndex(network) : indexToRestore;
     // 1. get public-keys to create
-    console.log('==index222', indexToRestore)
-    console.log('==index333', await this.getNextIndex(network));
     const accounts = await this.keyManagerService.getAccount(Connection.db(this.storePrefix).get('seed'), index, network, true);
-    console.log('=====>>>>', accounts);
     const accountsHash = Object.assign({}, ...accounts.map(account => ({ [account.validationPubKey]: account })));
     const publicKeysToGetHighestAttestation = [];
 
