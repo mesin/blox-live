@@ -95,11 +95,11 @@ const Test = () => {
             const isValid = store.isCryptoKeyValid(cryptoKey);
             if (isValid) {
               await store.setCryptoKey(cryptoKey);
-            }
-            if (store.exists('credentials')) {
-              const credentials: any = store.get('credentials');
-              setAccessKeyId(credentials.accessKeyId);
-              setSecretAccessKey(credentials.secretAccessKey);
+              if (store.exists('credentials')) {
+                const credentials: any = store.get('credentials');
+                setAccessKeyId(credentials.accessKeyId);
+                setSecretAccessKey(credentials.secretAccessKey);
+              }
             }
           }}
         >
