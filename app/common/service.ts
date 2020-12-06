@@ -10,7 +10,7 @@ export const saveLastConnection = () => {
 
 export const loadLastConnection = () => {
   const store = Store.getStore();
-  store.get('lastConnection');
+  return store.get('lastConnection');
 };
 
 export const onWindowClose = () => {

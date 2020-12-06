@@ -64,7 +64,7 @@ const StakingDeposit = (props: Props) => {
           isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
 
-  const [showEarlyAdopters, setShowEarlyAdopters] = useState(true);
+  const [showEarlyAdopters, setShowEarlyAdopters] = useState(network === 'mainnet');
 
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
