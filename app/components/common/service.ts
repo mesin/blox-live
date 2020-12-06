@@ -20,7 +20,9 @@ export const reportCrash = async () => {
   const organizationService = new OrganizationService();
   const form = new FormData();
   const keyVaultVersion = Connection.db().get('keyVaultVersion');
-  keyVaultVersion && form.append('keyVaultVersion', keyVaultVersion);
+  keyVaultVersion
+    ? form.append('keyVaultVersion', keyVaultVersion)
+    : form.append('keyVaultVersion', 'empty');
   form.append('appVersion', version);
   await organizationService.reportCrash(form);
 };

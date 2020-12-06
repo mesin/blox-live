@@ -1,6 +1,9 @@
 import Http from './http';
 import Connection from '../store-manager/connection';
 import KeyVaultSsh from './key-vault-ssh';
+import { checkVersion } from '../../../utils/service';
+import config from '../config';
+
 export default class KeyVaultApi extends Http {
   private storePrefix: string;
   private readonly keyVaultSsh: KeyVaultSsh;
@@ -37,11 +40,12 @@ export default class KeyVaultApi extends Http {
       }
     }
     const ssh = await this.keyVaultSsh.getConnection();
+    const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
     const command = this.keyVaultSsh.buildCurlCommand({
       authToken: Connection.db(this.storePrefix).get('vaultRootToken'),
       method,
       data,
-      route: `https://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
+      route: `http${checkVersion(keyVaultVersion, config.env.SSL_SUPPORTED_TAG) >= 0 ? 's' : ''}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
     }, true);
     console.log('curl=', command);
     const { stdout } = await ssh.execCommand(command, {});

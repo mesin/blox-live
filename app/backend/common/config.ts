@@ -21,8 +21,10 @@ export default class Config {
       DISCORD_GOETH_INVITE: 'https://discord.gg/wXxuQwY',
       HTTP_RETRIES: 3,
       HTTP_RETRY_DELAY: 1000,
-      TEST_NETWORK: 'pyrmont',
-      MAINNET_NETWORK: 'mainnet'
+      PYRMONT_NETWORK: 'pyrmont',
+      MAINNET_NETWORK: 'mainnet',
+      SSL_SUPPORTED_TAG: 'v0.1.25',
+      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2'
     }
   };
 

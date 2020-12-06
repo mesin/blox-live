@@ -13,8 +13,8 @@ export default class KeyManagerService {
     this.executablePath = execPath;
   }
 
-  async createWallet(): Promise<string> {
-    const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create`);
+  async createWallet(network: string): Promise<string> {
+    const { stdout, stderr } = await this.executor(`${this.executablePath} wallet create --network=${network}`);
     if (stderr) {
       throw new Error(`Cli error: ${stderr}`);
     }
@@ -24,10 +24,10 @@ export default class KeyManagerService {
   @Catch({
     displayMessage: 'Create Keyvault account failed'
   })
-  async createAccount(seed: string, index: number, highestSource: string, highestTarget: string): Promise<string> {
+  async createAccount(seed: string, index: number, network: string, highestSource: string, highestTarget: string, highestProposal: string): Promise<string> {
     try {
       const { stdout } = await this.executor(
-        `${this.executablePath} wallet account create --seed=${seed} --index=${index} --accumulate=true --highest-source=${highestSource} --highest-target=${highestTarget}`
+        `${this.executablePath} wallet account create --seed=${seed} --index=${index} --network=${network} --accumulate=true --highest-source=${highestSource} --highest-target=${highestTarget} --highest-proposal=${highestProposal}`
       );
       return stdout.replace('\n', '');
     } catch (e) {
@@ -35,27 +35,29 @@ export default class KeyManagerService {
     }
   }
 
-  async getAccount(seed: string, index: number, accumulate: boolean = false): Promise<any> {
+  async getAccount(seed: string, index: number, network: string, accumulate: boolean = false): Promise<any> {
     let highestSource = '';
     let highestTarget = '';
+    let highestProposal = '';
 
     if (!accumulate) {
       highestSource = '0';
       highestTarget = '1';
+      highestProposal = '0';
     } else {
       for (let i = 0; i <= index; i += 1) {
         highestSource += `${i.toString()}${i === index ? '' : ','}`;
         highestTarget += `${(i + 1).toString()}${i === index ? '' : ','}`;
       }
+      highestProposal = highestSource;
     }
 
-    console.log(highestSource);
-    console.log(highestTarget);
-
     try {
+      console.log('===index=', index);
       const { stdout } = await this.executor(
-        `${this.executablePath} wallet account create --seed=${seed} --index=${index} --response-type=object --accumulate=${accumulate} --highest-source=${highestSource} --highest-target=${highestTarget}`
+        `${this.executablePath} wallet account create --seed=${seed} --index=${index} --network=${network} --response-type=object --accumulate=${accumulate} --highest-source=${highestSource} --highest-target=${highestTarget} --highest-proposal=${highestProposal}`
       );
+      console.log('2====>>>', stdout);
       return stdout ? JSON.parse(stdout) : {};
     } catch (e) {
       throw new Error(`Get keyvault account with index ${JSON.stringify(index)} was failed.`);

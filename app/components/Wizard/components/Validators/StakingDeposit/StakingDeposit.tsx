@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
@@ -16,6 +16,8 @@ import { getData } from '../../../../ProcessRunner/selectors';
 
 import { DepositData, MainNetText, TestNetText } from './components';
 import { openExternalLink } from '../../../../common/service';
+
+import EarlyAdopters from '../EarlyAdopters';
 
 import tipImage from 'assets/images/info.svg';
 
@@ -51,10 +53,18 @@ const TipImage = styled.img`
   margin-right:7px;
 `;
 
+const WarningText = styled.div`
+  font-size: 11px;
+  font-weight: 500;
+  color: ${({theme}) => theme.warning900};
+`;
+
 const StakingDeposit = (props: Props) => {
   const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
           isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
   const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
+
+  const [showEarlyAdopters, setShowEarlyAdopters] = useState(network === 'mainnet');
 
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
@@ -85,17 +95,27 @@ const StakingDeposit = (props: Props) => {
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
+
+  if (showEarlyAdopters) {
+    return <EarlyAdopters onClick={() => setShowEarlyAdopters(false)} />;
+  }
+
   if (network) {
-    const needHelpLink = NETWORKS[network].name === 'MainNet' ?
+    const needHelpLink = NETWORKS[network].label === NETWORKS.mainnet.label ?
      'docs-guides/#pp-toc__heading-anchor-14' :
      'documents/guides/#pp-toc__heading-anchor-20';
 
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        {NETWORKS[network].name === 'MainNet' ? (<MainNetText />) : (<TestNetText />)}
+        {NETWORKS[network].label === NETWORKS.mainnet.label ? (<MainNetText />) : (<TestNetText />)}
         {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
-        <Tip><TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.</Tip>
+        {NETWORKS[network].label === NETWORKS.pyrmont.label && (
+          <WarningText>Make sure you send GoETH Testnet tokens and not real ETH!</WarningText>
+        )}
+        <Tip>
+          <TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.
+        </Tip>
         <Link onClick={() => openExternalLink(needHelpLink)}>Need help?</Link>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>

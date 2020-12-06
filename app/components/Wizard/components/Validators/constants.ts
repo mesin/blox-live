@@ -4,10 +4,10 @@ import config from 'backend/common/config';
 
 export const NETWORKS = {
   pyrmont: {
-    name: 'Testnet',
-    title: 'Test on Testnet',
+    name: 'Pyrmont',
+    title: 'Test on Pyrmont',
     image: testNetImage,
-    label: config.env.TEST_NETWORK,
+    label: config.env.PYRMONT_NETWORK,
   },
   mainnet: {
     name: 'Mainnet',
@@ -18,4 +18,4 @@ export const NETWORKS = {
 };
 
 export const INTRO_TOOLTIP_TEXT = `GoETH are test tokens needed in order to participate in the Goerli Test Network.
-  'You need at least 32 GoETH test tokens in order to stake on TestNet. GoETH have no real value!`;
+  'You need at least 32 GoETH test tokens in order to stake on ${NETWORKS.pyrmont.name}. GoETH have no real value!`;

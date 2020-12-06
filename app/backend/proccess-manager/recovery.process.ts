@@ -29,7 +29,7 @@ export default class RecoveryProcess extends ProcessClass {
     this.userService.update({ uuid });
 
     this.actions = [
-      { instance: this.accountService, method: 'recoveryAccounts' },
+      { instance: this.accountService, method: 'recoverAccounts' },
       { instance: this.awsService, method: 'setAWSCredentials' },
       { instance: this.awsService, method: 'validateAWSPermissions' },
       { instance: this.awsService, method: 'createEc2KeyPair' },

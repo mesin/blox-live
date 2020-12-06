@@ -9,7 +9,7 @@ import WalletService from '../wallet/wallet.service';
 import config from '../../common/config';
 import { hexDecode } from '../../../utils/service';
 
-@CatchClass<AccountService>()
+// @CatchClass<AccountService>()
 export default class AccountService {
   private readonly walletService: WalletService;
   private readonly keyVaultService: KeyVaultService;
@@ -39,6 +39,7 @@ export default class AccountService {
   }
 
   async getHighestAttestation(payload: any) {
+    if (payload.public_keys.length === 0) return {};
     return await this.bloxApi.request(METHOD.POST, 'ethereum2/highest-attestation', payload);
   }
 
@@ -58,7 +59,7 @@ export default class AccountService {
   async createBloxAccount(): Promise<any> {
     const network = Connection.db(this.storePrefix).get('network');
     const index: number = +Connection.db(this.storePrefix).get(`index.${network}`) + 1;
-    const lastIndexedAccount = await this.keyManagerService.getAccount(Connection.db(this.storePrefix).get('seed'), index);
+    const lastIndexedAccount = await this.keyManagerService.getAccount(Connection.db(this.storePrefix).get('seed'), index, network);
     lastIndexedAccount.network = network;
     const account = await this.create(lastIndexedAccount);
     if (account.error && account.error instanceof Error) return;
@@ -71,17 +72,23 @@ export default class AccountService {
   @Catch({
     displayMessage: 'CLI Create Account failed'
   })
-  async createAccount({ network, getNextIndex = true, indexToRestore = 0, getRemoteSlashingData = true }): Promise<void> {
+  async createAccount(getNextIndex = true, indexToRestore = 0): Promise<void> {
+    const network = Connection.db(this.storePrefix).get('network');
     const index: number = getNextIndex ? await this.getNextIndex(network) : indexToRestore;
     // 1. get public-keys to create
-    const accounts = await this.keyManagerService.getAccount(Connection.db(this.storePrefix).get('seed'), index, true);
+    console.log('==index222', indexToRestore)
+    console.log('==index333', await this.getNextIndex(network));
+    const accounts = await this.keyManagerService.getAccount(Connection.db(this.storePrefix).get('seed'), index, network, true);
+    console.log('=====>>>>', accounts);
     const accountsHash = Object.assign({}, ...accounts.map(account => ({ [account.validationPubKey]: account })));
     const publicKeysToGetHighestAttestation = [];
 
     // 2. get slashing data if exists
-    const slashingData = getRemoteSlashingData
-      ? await this.keyVaultService.getSlashingStorage()
-      : Connection.db(this.storePrefix).get(`slashingData.${network}`);
+    let slashingData = {};
+    if (Connection.db(this.storePrefix).exists(`slashingData.${network}`)) {
+      slashingData = Connection.db(this.storePrefix).get(`slashingData.${network}`);
+      Connection.db(this.storePrefix).delete('slashingData');
+    }
 
     // 3. update accounts-hash from exist slashing storage
     // eslint-disable-next-line no-restricted-syntax
@@ -91,7 +98,8 @@ export default class AccountService {
         const decodedValueJson = JSON.parse(decodedValue);
         const highestAttestation = {
           'highest_source_epoch': decodedValueJson?.HighestAttestation?.source?.epoch,
-          'highest_target_epoch': decodedValueJson?.HighestAttestation?.target?.epoch
+          'highest_target_epoch': decodedValueJson?.HighestAttestation?.target?.epoch,
+          'highest_proposal_slot': decodedValueJson?.HighestProposal?.slot,
         };
         accountsHash[key] = { ...accountsHash[key], ...highestAttestation };
       } else {
@@ -113,14 +121,16 @@ export default class AccountService {
 
     let highestSource = '';
     let highestTarget = '';
+    let highestProposal = '';
     const accountsArray = Object.values(accountsHash);
     for (let i = index; i >= 0; i -= 1) {
       highestSource += `${accountsArray[i]['highest_source_epoch']}${i === 0 ? '' : ','}`;
       highestTarget += `${accountsArray[i]['highest_target_epoch']}${i === 0 ? '' : ','}`;
+      highestProposal += `${accountsArray[i]['highest_proposal_slot']}${i === 0 ? '' : ','}`;
     }
 
     // 6. create accounts
-    const storage = await this.keyManagerService.createAccount(Connection.db(this.storePrefix).get('seed'), index, highestSource, highestTarget);
+    const storage = await this.keyManagerService.createAccount(Connection.db(this.storePrefix).get('seed'), index, network, highestSource, highestTarget, highestProposal);
     Connection.db(this.storePrefix).set(`keyVaultStorage.${network}`, storage);
   }
 
@@ -137,8 +147,9 @@ export default class AccountService {
       for (const [network, lastIndex] of Object.entries(indices)) {
         const index = +lastIndex;
         if (index > -1) {
-          // this.store.set('network', network);
-          this.createAccount({ network, getNextIndex: false, indexToRestore: index, getRemoteSlashingData: false });
+          Connection.db(this.storePrefix).set('network', network);
+          // eslint-disable-next-line no-await-in-loop
+          await this.createAccount(false, index);
         }
       }
     }
@@ -147,6 +158,7 @@ export default class AccountService {
   async getNextIndex(network: string): Promise<number> {
     let index = 0;
     const accounts = await this.keyVaultService.listAccounts();
+    console.log('=getnextindex', accounts);
     if (accounts.length) {
       index = +accounts[0].name.replace('account-', '') + 1;
     }
@@ -205,13 +217,13 @@ export default class AccountService {
     if (index < 0) {
       await this.walletService.createWallet();
     } else {
-      this.createAccount({ network, getNextIndex: false, indexToRestore: index });
+      await this.createAccount(false, index);
     }
   }
 
   // TODO delete per network, blocked by web-api
   async deleteAllAccounts(): Promise<void> {
-    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+    const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
     // eslint-disable-next-line no-restricted-syntax
     for (const network of supportedNetworks) {
       Connection.db(this.storePrefix).set('network', network);
@@ -224,37 +236,24 @@ export default class AccountService {
   }
 
   @Step({
-    name: 'Validate passphrase and accounts'
+    name: 'Recover accounts'
   })
   @Catch({
     showErrorMessage: true
   })
-  async recoveryAccounts(): Promise<void> {
+  async recoverAccounts(): Promise<void> {
     const accounts = await this.get();
     const uniqueNetworks = [...new Set(accounts.map(acc => acc.network))];
     // eslint-disable-next-line no-restricted-syntax
     for (const network of uniqueNetworks) {
-      if (network !== 'test') {
-        Connection.db(this.storePrefix).set('network', network);
-        const networkAccounts = accounts
-          .filter(acc => acc.network === network)
-          .sort((a, b) => a.name.localeCompare(b.name));
-        /*
-        !!! validation names: account-x starts from 0 1 2 throw
-        !!! turn off validation temprary till import and delete account logic
-        networkAccounts.reduce((aggr, item) => {
-          const idx = +item.name.split('-')[1];
-          if (idx === 0) return aggr;
-          if (idx - 1 !== aggr) throw new Error('account indexes numeration is broken');
-          // eslint-disable-next-line no-param-reassign
-          aggr = idx;
-          return aggr;
-        }, 0);
-        */
-        const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
-        // eslint-disable-next-line no-await-in-loop
-        await this.createAccount({ network, getNextIndex: false, indexToRestore: +lastIndex, getRemoteSlashingData: false });
-      }
+      if (network === 'test') continue;
+      Connection.db(this.storePrefix).set('network', network);
+      const networkAccounts = accounts
+        .filter(acc => acc.network === network)
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      const lastIndex = networkAccounts[networkAccounts.length - 1].name.split('-')[1];
+      await this.createAccount(false, +lastIndex);
     }
   }
 
@@ -269,11 +268,12 @@ export default class AccountService {
     }
     const accountToCompareWith = accounts[0];
     const index = accountToCompareWith.name.split('-')[1];
-    const account = await this.keyManagerService.getAccount(seed, index);
+    const account = await this.keyManagerService.getAccount(seed, index, config.env.PYRMONT_NETWORK);
 
     if (account.validationPubKey !== accountToCompareWith.publicKey.replace(/^(0x)/, '')) {
       throw new Error('Passphrase not linked to your account.');
     }
+    Connection.db(this.storePrefix).clear();
     await Connection.db(this.storePrefix).setNewPassword(password, false);
     Connection.db(this.storePrefix).set('seed', seed);
   }

@@ -52,8 +52,7 @@ export default class WalletService {
   })
   async createWallet(): Promise<void> {
     const network = Connection.db(this.storePrefix).get('network');
-    // if (Connection.db(this.storePrefix).exists(`keyVaultStorage.${network}`)) return;
-    const storage = await this.keyManagerService.createWallet();
+    const storage = await this.keyManagerService.createWallet(network);
     Connection.db(this.storePrefix).set(`keyVaultStorage.${network}`, storage);
   }
 

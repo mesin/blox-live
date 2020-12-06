@@ -7,6 +7,7 @@ import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
 import { CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
+import { checkVersion } from '../../../utils/service';
 
 function sleep(msec) {
   return new Promise(resolve => {
@@ -73,7 +74,7 @@ export default class KeyVaultService {
   async getVersion() {
     return await this.keyVaultApi.requestThruSsh({
       method: METHOD.GET,
-      path: `ethereum/${config.env.TEST_NETWORK}/version`,
+      path: `ethereum/${config.env.PYRMONT_NETWORK}/version`,
       isNetworkRequired: false
     });
   }
@@ -202,10 +203,11 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Export slashing protection data...'
+    name: 'Import key-vault data...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
   })
-  async exportKeyVaultData(): Promise<any> {
-    const supportedNetworks = [config.env.TEST_NETWORK, config.env.MAINNET_NETWORK];
+  async importKeyVaultData(): Promise<any> {
+    const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
     // eslint-disable-next-line no-restricted-syntax
     for (const network of supportedNetworks) {
       Connection.db(this.storePrefix).set('network', network);
@@ -213,8 +215,20 @@ export default class KeyVaultService {
       // eslint-disable-next-line no-await-in-loop
       const accounts = await this.listAccounts();
       Connection.db(this.storePrefix).set(`index.${network}`, (accounts.length - 1).toString());
-
       // eslint-disable-next-line no-await-in-loop
+      await this.importSlashingData();
+    }
+  }
+
+  @Step({
+    name: 'Import slashing protection data...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  async importSlashingData(): Promise<any> {
+    const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
+
+    if (keyVaultVersion && checkVersion(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG) >= 0) {
+      const network = Connection.db(this.storePrefix).get('network');
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
         Connection.db(this.storePrefix).set(`slashingData.${network}`, slashingData);
@@ -223,7 +237,8 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Validating KeyVault final configuration...'
+    name: 'Validating KeyVault final configuration...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async getKeyVaultStatus() {
     // check if the key vault is alive

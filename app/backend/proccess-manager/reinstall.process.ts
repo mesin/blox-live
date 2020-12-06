@@ -38,7 +38,7 @@ export default class ReinstallProcess extends ProcessClass {
     this.accountService = new AccountService(tempStorePrefix);
     this.walletService = new WalletService(tempStorePrefix);
     this.actions = [
-      { instance: this.keyVaultService, method: 'exportKeyVaultData' },
+      { instance: this.keyVaultService, method: 'importKeyVaultData' },
       {
         instance: Connection,
         method: 'clone',

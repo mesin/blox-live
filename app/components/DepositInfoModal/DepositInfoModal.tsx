@@ -9,6 +9,7 @@ import { openExternalLink } from '../common/service';
 
 import { CopyToClipboardIcon, Link } from '../Wizard/components/common';
 import { generateDepositDataInfo } from '../Wizard/components/Validators/service';
+import { NETWORKS } from '../Wizard/components/Validators/constants';
 import * as wizardActions from '../Wizard/actions';
 import { getDepositData } from '../Wizard/selectors';
 
@@ -56,6 +57,14 @@ const CloseButton = styled.div`
   }
 `;
 
+const WarningText = styled.div`
+  font-size: 11px;
+  font-weight: 500;
+  color: ${({theme}) => theme.warning900};
+  display:flex;
+  padding-bottom:15px;
+`;
+
 const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
 const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
@@ -68,6 +77,9 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
     onClose();
   };
 
+  const needHelpLink = depositData?.network === NETWORKS.mainnet.label ?
+    'docs-guides/#pp-toc__heading-anchor-14' :
+    'documents/guides/#pp-toc__heading-anchor-20';
   return (
     <CustomModal width={'700px'} height={'462px'} onClose={onClose}>
       <InnerWrapper>
@@ -77,6 +89,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
           const isTxData = label === depositDataInfo[1].label;
           const isAmount = label === depositDataInfo[2].label;
           const valueText = isTxData ? depositDataInfo[1].value : value;
+
           return (
             <Row key={index}>
               <KeyText>
@@ -94,8 +107,13 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
             </Row>
           );
         })}
+        {depositData?.network === NETWORKS.pyrmont.label && (
+          <WarningText>
+            Make sure you send GoETH Testnet tokens and not real ETH!
+          </WarningText>
+        )}
         <Row>
-          <Link onClick={() => openExternalLink('docs-guides/#pp-toc__heading-anchor-15')}>
+          <Link onClick={() => openExternalLink(needHelpLink)}>
             Need help?
           </Link>
         </Row>
@@ -106,7 +124,7 @@ const DepositInfoModal = ({onClose, depositData, actions}: Props) => {
 };
 
 type Props = {
-  depositData: string;
+  depositData: Record<string, any>;
   onClose: () => void;
   actions: Record<string, any>;
 };

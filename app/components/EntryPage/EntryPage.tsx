@@ -63,9 +63,8 @@ const EntryPage = (props: Props) => {
   const { processData, error, clearProcessState } = useProcessRunner();
 
   useEffect(() => {
-    const withAccountRecovery = Connection.db().exists('accountRecovery');
     const inForgotPasswordProcess = Connection.db().get('inForgotPasswordProcess');
-    if (withAccountRecovery && inForgotPasswordProcess) {
+    if (inForgotPasswordProcess) {
       setModalDisplay({show: true, type: MODAL_TYPES.FORGOT_PASSWORD});
     }
   }, []);

@@ -88,22 +88,16 @@ const LoggedIn = (props: Props) => {
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
     if (allDataIsReady && noErrors && doneLoading) {
-      const withAccountRecovery = Connection.db().exists('accountRecovery');
       const storedUuid = Connection.db().exists('uuid');
       const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
       const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 
-      if (withAccountRecovery) {
-        if (inForgotPasswordProcess()) {
-          callSetFinishedWizard(true);
-        }
-
-        if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
-          shouldNavigateToDashboard && callSetFinishedWizard(true);
-        }
-      }
-      else if (shouldNavigateToDashboard) {
+      if (inForgotPasswordProcess()) {
         callSetFinishedWizard(true);
+      }
+
+      if ((!userInfo.uuid && storedUuid) || (isPrimaryDevice(userInfo.uuid) && !inRecoveryProcess())) {
+        shouldNavigateToDashboard && callSetFinishedWizard(true);
       }
 
       toggleFinishLoadingAll(true);

@@ -42,7 +42,7 @@ const Test = () => {
   const organizationService = new OrganizationService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
-  let [network, setNetwork] = useState(config.env.TEST_NETWORK);
+  let [network, setNetwork] = useState(config.env.PYRMONT_NETWORK);
   let [accessKeyId, setAccessKeyId] = useState('');
   let [mnemonic, setMnemonic] = useState('');
   let [publicKey, setPublicKey] = useState('');
@@ -91,11 +91,14 @@ const Test = () => {
         <br/>
         <button
           onClick={async () => {
-            await Connection.db().setCryptoKey(cryptoKey);
-            if (Connection.db().exists('credentials')) {
-              const credentials: any = Connection.db().get('credentials');
-              setAccessKeyId(credentials.accessKeyId);
-              setSecretAccessKey(credentials.secretAccessKey);
+            const isValid = Connection.db().isCryptoKeyValid(cryptoKey);
+            if (isValid) {
+              await Connection.db().setCryptoKey(cryptoKey);
+              if (Connection.db().exists('credentials')) {
+                const credentials: any = Connection.db().get('credentials');
+                setAccessKeyId(credentials.accessKeyId);
+                setSecretAccessKey(credentials.secretAccessKey);
+              }
             }
           }}
         >
@@ -155,7 +158,7 @@ const Test = () => {
           Connection.db().set('network', event.target.value);
           console.log('network:', event.target.value);
         }}>
-          <option value={config.env.TEST_NETWORK}>Test Network</option>
+          <option value={config.env.PYRMONT_NETWORK}>Test Network</option>
           <option value={config.env.MAINNET_NETWORK}>MainNet Network</option>
         </select>
         <h3>Step 4. Account create</h3>
@@ -252,7 +255,7 @@ const Test = () => {
           Create Wallet
         </button>
         <button onClick={async () => {
-          await accountService.createAccount({network});
+          await accountService.createAccount();
         }}>
           Create Account
         </button>
