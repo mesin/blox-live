@@ -11,6 +11,7 @@ export default class KeyVaultSsh {
   getConnection = async (): Promise<NodeSSH> => {
     const ssh = new NodeSSH();
     const keyPair: any = Connection.db(this.storePrefix).get('keyPair');
+    console.log('keyPair=', keyPair)
     await ssh.connect({
       host: Connection.db(this.storePrefix).get('publicIp'),
       username: 'ec2-user',

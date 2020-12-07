@@ -40,6 +40,7 @@ export default class KeyVaultApi extends Http {
       }
     }
     const ssh = await this.keyVaultSsh.getConnection();
+    console.log('222111');
     const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
     const command = this.keyVaultSsh.buildCurlCommand({
       authToken: Connection.db(this.storePrefix).get('vaultRootToken'),
@@ -48,7 +49,10 @@ export default class KeyVaultApi extends Http {
       route: `http${checkVersion(keyVaultVersion, config.env.SSL_SUPPORTED_TAG) >= 0 ? 's' : ''}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
     }, true);
     console.log('curl=', command);
-    const { stdout } = await ssh.execCommand(command, {});
+    const { stdout, stderr } = await ssh.execCommand(command, {});
+    if (stderr) {
+      throw new Error(stderr);
+    }
     const body = JSON.parse(stdout);
     console.log('curl answer=', body);
     if (body.errors) {

@@ -9,7 +9,7 @@ import WalletService from '../wallet/wallet.service';
 import config from '../../common/config';
 import { hexDecode } from '../../../utils/service';
 
-@CatchClass<AccountService>()
+// @CatchClass<AccountService>()
 export default class AccountService {
   private readonly walletService: WalletService;
   private readonly keyVaultService: KeyVaultService;
@@ -154,6 +154,7 @@ export default class AccountService {
 
   async getNextIndex(network: string): Promise<number> {
     let index = 0;
+    console.log('try getIndex...');
     const accounts = await this.keyVaultService.listAccounts();
     console.log('=getnextindex', accounts);
     if (accounts.length) {

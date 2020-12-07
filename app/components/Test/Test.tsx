@@ -91,14 +91,16 @@ const Test = () => {
         <br/>
         <button
           onClick={async () => {
-            const isValid = Connection.db().isCryptoKeyValid(cryptoKey);
+            const isValid = await Connection.db().isCryptoKeyValid(cryptoKey);
             if (isValid) {
-              await Connection.db().setCryptoKey(cryptoKey);
+              await Connection.db().setNewPassword(cryptoKey);
               if (Connection.db().exists('credentials')) {
                 const credentials: any = Connection.db().get('credentials');
                 setAccessKeyId(credentials.accessKeyId);
                 setSecretAccessKey(credentials.secretAccessKey);
               }
+            } else {
+              console.error('password is incorrect');
             }
           }}
         >

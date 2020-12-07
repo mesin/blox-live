@@ -43,6 +43,7 @@ export default class KeyVaultService {
   }
 
   async listAccounts() {
+    console.log('try list accounts...');
     try {
       const response = await this.keyVaultApi.requestThruSsh({
         method: METHOD.LIST,
@@ -50,6 +51,7 @@ export default class KeyVaultService {
       });
       return response?.data.accounts || [];
     } catch (e) {
+      console.log('g=', e);
       const { errors } = JSON.parse(e.message);
       if (Array.isArray(errors)) {
         // eslint-disable-next-line no-restricted-syntax
