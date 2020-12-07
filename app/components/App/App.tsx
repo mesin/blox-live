@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import querystring from 'querystring';
+
+import electron from 'electron';
 
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
@@ -14,6 +17,10 @@ import userSaga from '../User/saga';
 
 import { Loader } from '../../common/components';
 import { useInjectSaga } from '../../utils/injectSaga';
+
+import Auth from '../Auth';
+
+const auth = new Auth();
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -37,6 +44,18 @@ const App = (props: Props) => {
   useEffect(() => {
     if (!didInitApp) {
       init();
+      electron.remote.app.on('open-url', (event, data) => {
+        if (data) {
+          const questionMarkIndex = data.indexOf('//');
+          const trimmedCode = data.substring(questionMarkIndex + 2);
+          try {
+            auth.handleCallBackFromBrowser(trimmedCode);
+          }
+          catch (e) {
+            throw new Error(e);
+          }
+        }
+      });
     }
   }, [didInitApp, isLoggedIn, isLoading]);
 

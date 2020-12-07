@@ -32,6 +32,10 @@ function* onLoginFailure(error: Record<string, any>) {
 
 export function* startLogin(action) {
   const { payload } = action;
+  if (payload === 'google') {
+    yield call(auth.loginFromBrowser, payload);
+    return;
+  }
   try {
     const authResult = yield call(auth.loginWithSocialApp, payload);
     yield call(onLoginSuccess, authResult);

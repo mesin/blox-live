@@ -1,5 +1,6 @@
 import url from 'url';
 import jwtDecode from 'jwt-decode';
+import { shell } from 'electron';
 import { SOCIAL_APPS } from 'common/constants';
 import { createAuthWindow } from './Auth-Window';
 import { createLogoutWindow } from './Logout-Window';
@@ -47,6 +48,8 @@ export default class Auth {
     });
   };
 
+  loginFromBrowser = (name: string) => shell.openExternal(`http://localhost:3000?provider=${name}`);
+
   getAuthenticationURL = (socialAppName: string) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
     let authUrl = `https://${domain}/`;
@@ -76,6 +79,11 @@ export default class Auth {
       await this.logout();
       return Error(error);
     }
+  };
+
+  handleCallBackFromBrowser = async (id_token: string) => {
+    const userProfile: Profile = jwtDecode(id_token);
+    await this.setSession({ id_token }, userProfile);
   };
 
   setSession = async (authResult: Auth0ResponseData, userProfile: Profile) => {

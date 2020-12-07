@@ -23,7 +23,7 @@ export const createAuthWindow = async (auth, socialAppName, onSuccess, onFailure
   const { session: { webRequest } } = win.webContents;
   const filter = { urls: ['file:///callback*'] };
 
-  const listener = async ({ url }) => {
+  const listener = async ({ url }) => { // url returns code
     const tokensResponse = await auth.loadAuthToken(url);
     await onSuccess(tokensResponse);
     finishedAuthentication = true;
