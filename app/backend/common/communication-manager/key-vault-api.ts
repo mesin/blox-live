@@ -42,7 +42,7 @@ export default class KeyVaultApi extends Http {
     const ssh = await this.keyVaultSsh.getConnection();
     let remoteFileName;
     if (data) {
-      remoteFileName = await this.keyVaultSsh.dataToRemoteFile({ data });
+      remoteFileName = await this.keyVaultSsh.dataToRemoteFile(data);
     }
     const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
     const command = this.keyVaultSsh.buildCurlCommand({
@@ -58,7 +58,7 @@ export default class KeyVaultApi extends Http {
       throw new Error(stderr);
     }
     const body = JSON.parse(stdout);
-    remoteFileName && await ssh.execCommand(`rm ${remoteFileName}`, {});
+    // remoteFileName && await ssh.execCommand(`rm ${remoteFileName}`, {});
     console.log('curl answer=', body);
     if (body.errors) {
       throw new Error(JSON.stringify(body));
