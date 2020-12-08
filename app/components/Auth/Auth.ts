@@ -82,8 +82,19 @@ export default class Auth {
   };
 
   handleCallBackFromBrowser = async (id_token: string) => {
-    const userProfile: Profile = jwtDecode(id_token);
-    await this.setSession({ id_token }, userProfile);
+    return new Promise((resolve, reject) => {
+      const userProfile: Profile = jwtDecode(id_token);
+      this.setSession({ id_token }, userProfile);
+      if (id_token && userProfile) {
+        resolve({
+          idToken: id_token,
+          idTokenPayload: userProfile
+        });
+      }
+      else {
+        reject(new Error('Error in login'));
+      }
+    });
   };
 
   setSession = async (authResult: Auth0ResponseData, userProfile: Profile) => {

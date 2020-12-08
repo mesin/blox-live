@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
-import querystring from 'querystring';
 
-import electron from 'electron';
+import { remote } from 'electron';
 
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
@@ -12,15 +12,12 @@ import GlobalStyle from '../../common/styles/global-styles';
 import { initApp } from './service';
 
 import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
+import * as loginActions from '../CallbackPage/actions';
 import loginSaga from '../CallbackPage/saga';
 import userSaga from '../User/saga';
 
 import { Loader } from '../../common/components';
 import { useInjectSaga } from '../../utils/injectSaga';
-
-import Auth from '../Auth';
-
-const auth = new Auth();
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -34,7 +31,8 @@ const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
   useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
   useInjectSaga({ key: loginKey, saga: loginSaga, mode: '' });
-  const { isLoggedIn, isLoading } = props;
+  const { isLoggedIn, isLoading, actions } = props;
+  const { setSession, loginFailure } = actions;
 
   const init = async () => {
     await setAppInitialised(true);
@@ -44,15 +42,15 @@ const App = (props: Props) => {
   useEffect(() => {
     if (!didInitApp) {
       init();
-      electron.remote.app.on('open-url', (event, data) => {
+      remote.app.on('open-url', (event, data) => {
         if (data) {
           const questionMarkIndex = data.indexOf('//');
           const trimmedCode = data.substring(questionMarkIndex + 2);
           try {
-            auth.handleCallBackFromBrowser(trimmedCode);
+            setSession(trimmedCode);
           }
           catch (e) {
-            throw new Error(e);
+            loginFailure(e);
           }
         }
       });
@@ -75,6 +73,7 @@ type Props = {
   isLoggedIn: boolean;
   isLoading: boolean;
   isTokensExist: () => void;
+  actions: Record<string, any>;
 };
 
 const mapStateToProps = (state: any) => ({
@@ -82,4 +81,8 @@ const mapStateToProps = (state: any) => ({
   isLoading: getIsLoading(state),
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(loginActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

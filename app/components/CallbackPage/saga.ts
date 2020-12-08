@@ -2,7 +2,7 @@ import { call, put, takeLatest } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
 
-import { LOGIN_INIT, LOGOUT } from './actionTypes';
+import { LOGIN_INIT, LOGIN_SET_SESSION, LOGOUT } from './actionTypes';
 import { setIdToken, loginSuccess, loginFailure } from './actions';
 import Auth from '../Auth';
 import { saveLastConnection } from 'common/service';
@@ -17,6 +17,7 @@ function* onLoginSuccess(authResult) {
   const { idToken, idTokenPayload } = authResult;
   const userInfo = { os: getOsVersion(), appVersion: version };
   yield put(updateUserInfo(userInfo));
+
   yield put(setIdToken(idToken));
   yield put(loginSuccess(idTokenPayload));
   yield put(push('/'));
@@ -32,12 +33,13 @@ function* onLoginFailure(error: Record<string, any>) {
 
 export function* startLogin(action) {
   const { payload } = action;
-  if (payload === 'google') {
-    yield call(auth.loginFromBrowser, payload);
-    return;
-  }
+  yield call(auth.loginFromBrowser, payload);
+}
+
+export function* setLoginSession(action) {
+  const { payload } = action;
   try {
-    const authResult = yield call(auth.loginWithSocialApp, payload);
+    const authResult = yield call(auth.handleCallBackFromBrowser, payload);
     yield call(onLoginSuccess, authResult);
   } catch (error) {
     yield error && call(onLoginFailure, error);
@@ -52,5 +54,6 @@ export function* startLogOut() {
 
 export default function* loginSaga() {
   yield takeLatest(LOGIN_INIT, startLogin);
+  yield takeLatest(LOGIN_SET_SESSION, setLoginSession);
   yield takeLatest(LOGOUT, startLogOut);
 }
