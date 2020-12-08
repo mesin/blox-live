@@ -84,6 +84,7 @@ export default class Auth {
     const { id_token } = authResult;
     this.idToken = id_token;
     this.userProfile = userProfile;
+    console.log('CONN SETUP', userProfile.sub);
     Connection.setup({ currentUserId: userProfile.sub, authToken: authResult.id_token });
     // Store.getStore().init(userProfile.sub, authResult.id_token);
 
