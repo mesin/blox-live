@@ -18,7 +18,6 @@ export default class Store {
   constructor(prefix: string = '') {
     this.baseStore = new BaseStore();
     const env = this.baseStore.get('env');
-    console.log('SETUP NEW STORE', env, this.baseStore);
     if (env && env !== 'production') {
       this.prefix = `${env}${prefix}`;
     } else {

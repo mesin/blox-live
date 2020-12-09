@@ -13,7 +13,6 @@ export default class Connection {
     const name = `${payload.currentUserId}${payload.prefix || ''}`;
     instances[name] = new Store(payload.prefix);
     instances[name].init(payload.currentUserId, payload.authToken);
-    console.log('DB SETUP:', Connection.userId, instances[name]);
   }
 
   static db(prefix: string = ''): Store {
@@ -21,13 +20,11 @@ export default class Connection {
     if (!instances[name]) {
       throw new Error('There is no active store connection');
     }
-    console.log('DB:', name, instances[name].get('uuid'));
     return instances[name];
   }
 
   static cloneCryptoKey(payload: { fromPrefix: string, toPrefix: string }): void {
     Connection.db(payload.toPrefix).cryptoKey = Connection.db(payload.fromPrefix).cryptoKey;
-    console.log('set toprefix cryptokey', Connection.db(payload.toPrefix).cryptoKey, 'from:', Connection.db(payload.toPrefix).get('credentials'));
   }
 
   @Step({
@@ -44,7 +41,6 @@ export default class Connection {
       return aggr;
     }, {});
     Connection.db(payload.toPrefix).setMultiple(data);
-    console.log('clone cryptkey', Connection.db(payload.toPrefix).cryptoKey, Connection.db(payload.toPrefix).get('credentials'))
     const { postClean } = payload;
     if (postClean) {
       if (postClean.fields) {

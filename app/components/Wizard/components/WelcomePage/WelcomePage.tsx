@@ -90,12 +90,10 @@ const WelcomePage = (props: Props) => {
     const isPrimaryDevice = !!storedUuid && (storedUuid === userInfo.uuid);
 
     if (hasWallet) {
-      console.log('DEB 1', storedUuid, '-', userInfo.uuid, '-', accounts?.length);
       if (!storedUuid && !userInfo.uuid && accounts?.length > 0) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
       }
-      console.log('DEB 2', userInfo.uuid, '-', !isPrimaryDevice, '-', accounts?.length, '-', isInRecoveryProcess);
       if (userInfo.uuid && ((!isPrimaryDevice && accounts?.length > 0) || isInRecoveryProcess)) {
         setModalDisplay({ show: true, type: MODAL_TYPES.DEVICE_SWITCH});
         return;
