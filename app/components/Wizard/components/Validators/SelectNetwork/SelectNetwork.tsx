@@ -6,7 +6,6 @@ import { getUserData } from '../../../../CallbackPage/selectors';
 import { Title, SubTitle, Paragraph } from '../../common';
 import CustomButton from './CustomButton';
 import { NETWORKS } from '../constants';
-import Connection from 'backend/common/store-manager/connection';
 
 const Wrapper = styled.div`
   width:650px;
@@ -24,12 +23,7 @@ const onClick = ({ page, setPage, setNetwork }: Props, network) => {
   setNetwork(network);
 };
 
-const canUseMainNet = () => {
-  return Connection.db().exists('testPage');
-};
-
 const Validators = (props: Props) => {
-  const isMainNetEnabled = canUseMainNet();
   return (
     <Wrapper>
       <Title>Select your Staking network</Title>
@@ -53,8 +47,8 @@ const Validators = (props: Props) => {
         <CustomButton
           title={NETWORKS.mainnet.title}
           image={NETWORKS.mainnet.image}
-          isDisabled={!isMainNetEnabled}
-          onClick={() => isMainNetEnabled && onClick({ ...props }, NETWORKS.mainnet.label)}
+          isDisabled={false}
+          onClick={() => onClick({ ...props }, NETWORKS.mainnet.label)}
         />
       </ButtonsWrapper>
     </Wrapper>
