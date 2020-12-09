@@ -54,6 +54,20 @@ const App = (props: Props) => {
           }
         }
       });
+
+      remote.app.on('second-instance', (event, commandLine) => {
+        if (commandLine[2].includes('blox-live://')) {
+          const questionMarkIndex = commandLine[2].indexOf('//');
+          const trimmedCode = commandLine[2].substring(questionMarkIndex + 2);
+          const withoutSlash = trimmedCode.slice(0, trimmedCode.length - 1);
+          try {
+            setSession(withoutSlash);
+          }
+          catch (e) {
+            loginFailure(e);
+          }
+        }
+      });
     }
   }, [didInitApp, isLoggedIn, isLoading]);
 
