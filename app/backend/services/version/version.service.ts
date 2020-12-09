@@ -1,24 +1,25 @@
 import { CatchClass } from '../../decorators';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
-import Store from '../../common/store-manager/store';
+import Connection from '../../common/store-manager/connection';
 
 @CatchClass<VersionService>()
 export default class VersionService {
-  private readonly store: Store;
+  private readonly bloxApi: BloxApi;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
+  constructor() {
+    this.bloxApi = new BloxApi();
+    this.bloxApi.init();
   }
 
   async getLatestKeyVaultVersion() {
-    if (this.store.exists('customKeyVaultVersion')) {
-      return this.store.get('customKeyVaultVersion');
+    if (Connection.db().exists('customKeyVaultVersion')) {
+      return Connection.db().get('customKeyVaultVersion');
     }
-    return await BloxApi.request(METHOD.GET, 'version/key-vault');
+    return await this.bloxApi.request(METHOD.GET, 'version/key-vault');
   }
 
   async getLatestBloxLiveVersion() {
-    return await BloxApi.request(METHOD.GET, 'version/blox-live');
+    return await this.bloxApi.request(METHOD.GET, 'version/blox-live');
   }
 }

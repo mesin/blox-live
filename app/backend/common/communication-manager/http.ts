@@ -1,16 +1,13 @@
-import Store from '../store-manager/store';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { Catch } from '../../decorators';
 import config from '../config';
 
 export default class Http {
-  protected readonly store: Store;
   baseUrl: string;
   protected instance: any;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
+  constructor() {
     this.instance = axios.create();
     axiosRetry(this.instance, {
       retries: +config.env.HTTP_RETRIES,

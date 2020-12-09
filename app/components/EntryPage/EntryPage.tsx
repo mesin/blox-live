@@ -26,7 +26,7 @@ import * as actionsFromDashboard from '../Dashboard/actions';
 import { MODAL_TYPES } from '../Dashboard/constants';
 
 import { useInjectSaga } from '../../utils/injectSaga';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 const wizardKey = 'wizard';
 const walletKey = 'keyvaultManagement';
@@ -63,8 +63,7 @@ const EntryPage = (props: Props) => {
   const { processData, error, clearProcessState } = useProcessRunner();
 
   useEffect(() => {
-    const store: Store = Store.getStore();
-    const inForgotPasswordProcess = store.get('inForgotPasswordProcess');
+    const inForgotPasswordProcess = Connection.db().get('inForgotPasswordProcess');
     if (inForgotPasswordProcess) {
       setModalDisplay({show: true, type: MODAL_TYPES.FORGOT_PASSWORD});
     }

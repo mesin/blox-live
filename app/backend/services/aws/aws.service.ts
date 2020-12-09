@@ -1,10 +1,10 @@
 import net from 'net';
-import Store from '../../common/store-manager/store';
+import Connection from '../../common/store-manager/connection';
 import * as AWS from 'aws-sdk';
 import { Catch, CatchClass, Step } from '../../decorators';
+import config from '../../common/config';
 
 // TODO import from .env
-const tempStorePrefix = 'tmp';
 const defaultAwsOptions = {
   apiVersion: '2016-11-15',
   region: 'us-west-1'
@@ -12,14 +12,13 @@ const defaultAwsOptions = {
 @CatchClass<AwsService>()
 export default class AwsService {
   private ec2!: AWS.EC2;
-  private readonly store: Store;
   private readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   private readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
+  private storePrefix: string;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
-
-    if (!this.ec2 && this.store.exists('credentials')) {
+  constructor(prefix: string = '') {
+    this.storePrefix = prefix;
+    if (!this.ec2 && Connection.db(this.storePrefix).exists('credentials')) {
       this.setAWSCredentials();
     }
   }
@@ -42,11 +41,10 @@ export default class AwsService {
   }
 
   @Step({
-    name: 'Securely connecting to AWS...',
-    requiredConfig: ['credentials']
+    name: 'Securely connecting to AWS...'
   })
   async setAWSCredentials(): Promise<any> {
-    const credentials: any = this.store.get('credentials');
+    const credentials: any = Connection.db(this.storePrefix).get('credentials');
     this.ec2 = new AWS.EC2({
       ...defaultAwsOptions,
       credentials
@@ -64,54 +62,53 @@ export default class AwsService {
       await this.ec2.describeInstances().promise();
       await this.ec2.describeAddresses().promise();
     } catch (error) {
-      this.store.delete('credentials');
+      Connection.db(this.storePrefix).delete('credentials');
       throw new Error(error.message);
     }
   }
 
   @Step({
-    name: 'Creating secure EC2 key pair...',
-    requiredConfig: ['uuid']
+    name: 'Creating secure EC2 key pair...'
   })
   async createEc2KeyPair() {
-    if (this.store.exists('keyPair')) return;
+    console.log('KEYPAIIIIR', this.storePrefix, Connection.db(this.storePrefix).exists('keyPair'));
+    if (Connection.db(this.storePrefix).exists('keyPair')) return;
 
     const {
       KeyPairId: pairId,
       KeyMaterial: privateKey
     } = await this.ec2
-      .createKeyPair({ KeyName: `${this.keyName}-${this.store.get('uuid')}` })
+      .createKeyPair({ KeyName: `${this.keyName}-${Connection.db(this.storePrefix).get('uuid')}` })
       .promise();
-    this.store.set('keyPair', { pairId, privateKey });
+      Connection.db(this.storePrefix).set('keyPair', { pairId, privateKey });
   }
 
   @Step({
     name: 'Enabling connection using Elastic IP...'
   })
   async createElasticIp() {
-    if (this.store.exists('addressId')) return;
+    if (Connection.db(this.storePrefix).exists('addressId')) return;
 
     const {
       AllocationId: addressId,
       PublicIp: publicIp
     } = await this.ec2.allocateAddress({ Domain: 'vpc' }).promise();
-    this.store.set('addressId', addressId);
-    this.store.set('publicIp', publicIp);
+    Connection.db(this.storePrefix).set('addressId', addressId);
+    Connection.db(this.storePrefix).set('publicIp', publicIp);
   }
 
   @Step({
-    name: 'Setting security group permissions...',
-    requiredConfig: ['uuid']
+    name: 'Setting security group permissions...'
   })
   async createSecurityGroup() {
-    if (this.store.exists('securityGroupId')) return;
+    if (Connection.db(this.storePrefix).exists('securityGroupId')) return;
 
     const vpcList = await this.ec2.describeVpcs().promise();
     const vpc = vpcList?.Vpcs![0].VpcId;
     const securityData = await this.ec2
       .createSecurityGroup({
-        Description: `${this.securityGroupName}-${this.store.get('uuid')}`,
-        GroupName: `${this.securityGroupName}-${this.store.get('uuid')}`,
+        Description: `${this.securityGroupName}-${Connection.db(this.storePrefix).get('uuid')}`,
+        GroupName: `${this.securityGroupName}-${Connection.db(this.storePrefix).get('uuid')}`,
         VpcId: vpc
       })
       .promise();
@@ -131,24 +128,29 @@ export default class AwsService {
             FromPort: 22,
             ToPort: 22,
             IpRanges: [{ CidrIp: '0.0.0.0/0' }]
+          },
+          {
+            IpProtocol: 'tcp',
+            FromPort: config.env.TARGET_SSH_PORT,
+            ToPort: config.env.TARGET_SSH_PORT,
+            IpRanges: [{ CidrIp: '0.0.0.0/0' }]
           }
         ]
       }).promise();
-    this.store.set('securityGroupId', securityGroupId);
+      Connection.db(this.storePrefix).set('securityGroupId', securityGroupId);
   }
 
   @Step({
-    name: 'Establishing KeyVault server...',
-    requiredConfig: ['uuid', 'securityGroupId', 'addressId']
+    name: 'Establishing KeyVault server...'
   })
   async createInstance() {
-    if (this.store.exists('instanceId')) return;
+    if (Connection.db(this.storePrefix).exists('instanceId')) return;
 
     const data = await this.ec2.runInstances({
       ImageId: 'ami-0d3caf10672b8e870', // ubuntu 16.04LTS for us-west-1
       InstanceType: 't2.micro',
-      SecurityGroupIds: [this.store.get('securityGroupId')],
-      KeyName: `${this.keyName}-${this.store.get('uuid')}`,
+      SecurityGroupIds: [Connection.db(this.storePrefix).get('securityGroupId')],
+      KeyName: `${this.keyName}-${Connection.db(this.storePrefix).get('uuid')}`,
       MinCount: 1,
       MaxCount: 1
     }).promise();
@@ -156,7 +158,7 @@ export default class AwsService {
     await this.ec2
       .waitFor('instanceRunning', { InstanceIds: [instanceId] })
       .promise();
-    this.store.set('instanceId', instanceId);
+    Connection.db(this.storePrefix).set('instanceId', instanceId);
 
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
@@ -164,45 +166,44 @@ export default class AwsService {
     };
     await this.ec2.createTags(tagsOptions).promise();
     await this.ec2.associateAddress({
-      AllocationId: this.store.get('addressId'),
+      AllocationId: Connection.db(this.storePrefix).get('addressId'),
       InstanceId: instanceId
     }).promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
   }
 
   @Step({
-    name: 'Delete all EC2 items',
-    requiredConfig: ['instanceId', 'securityGroupId', 'addressId', 'keyPair']
+    name: 'Delete all EC2 items'
   })
   async uninstallItems() {
-    await this.ec2.terminateInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.store.get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: this.store.get('addressId') }).promise();
-    const keyPair = this.store.get('keyPair');
+    await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
+    await this.ec2.releaseAddress({ AllocationId: Connection.db(this.storePrefix).get('addressId') }).promise();
+    const keyPair = Connection.db(this.storePrefix).get('keyPair');
     await this.ec2.deleteKeyPair({ KeyPairId: keyPair.pairId }).promise();
-    await this.ec2.deleteSecurityGroup({ GroupId: this.store.get('securityGroupId'), DryRun: false }).promise();
-    this.store.clear();
+    await this.ec2.deleteSecurityGroup({ GroupId: Connection.db(this.storePrefix).get('securityGroupId'), DryRun: false }).promise();
+    Connection.db(this.storePrefix).clear();
+    /*
     if (Store.isExist(tempStorePrefix)) {
       Store.getStore(tempStorePrefix).clear();
     }
+    */
   }
 
   @Step({
-    name: 'Removing old EC2 instance...',
-    requiredConfig: ['instanceId', 'addressId']
+    name: 'Removing old EC2 instance...'
   })
   async truncateServer() {
-    await this.ec2.terminateInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [this.store.get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: this.store.get('addressId') }).promise();
+    await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
+    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
+    await this.ec2.releaseAddress({ AllocationId: Connection.db(this.storePrefix).get('addressId') }).promise();
   }
 
   @Step({
-    name: 'Establishing connection to your server...',
-    requiredConfig: ['instanceId', 'publicIp']
+    name: 'Establishing connection to your server...'
   })
   async rebootInstance() {
-    await this.ec2.rebootInstances({ InstanceIds: [this.store.get('instanceId')] }).promise();
+    await this.ec2.rebootInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
     await new Promise((resolve) => {
       let totalSeconds = 0;
       const DELAY = 5000; // 5 sec
@@ -210,7 +211,7 @@ export default class AwsService {
         const socket = new net.Socket();
         const onError = () => {
           socket.destroy();
-          console.log('waiting', this.store.get('publicIp'), totalSeconds);
+          console.log('waiting', Connection.db(this.storePrefix).get('publicIp'), totalSeconds);
           if (totalSeconds >= 80000) { // 80 sec
             console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
@@ -222,8 +223,8 @@ export default class AwsService {
         socket.setTimeout(1000);
         socket.once('error', onError);
         socket.once('timeout', onError);
-        const ip: any = this.store.get('publicIp');
-        socket.connect(22, ip, () => {
+        const ip: any = Connection.db(this.storePrefix).get('publicIp');
+        socket.connect(config.env.port, ip, () => {
           console.log('Server is online');
           socket.destroy();
           clearInterval(intervalId);

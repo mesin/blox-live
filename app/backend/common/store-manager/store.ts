@@ -2,93 +2,62 @@ import * as crypto from 'crypto';
 import ElectronStore from 'electron-store';
 import BaseStore from './base-store';
 import { Logger } from '../logger/logger';
-import { Catch, Step } from '../../decorators';
+import { Catch } from '../../decorators';
 import { Migrate } from '../../migrate';
-
-// TODO import from .env
-const tempStorePrefix = 'tmp';
-
-export default class Store extends BaseStore {
-  private static instances: any = {};
+export default class Store {
   private storage: ElectronStore;
+  private baseStore: BaseStore;
   private readonly prefix: string;
   private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
-  private cryptoKey: string;
+  public cryptoKey: string;
   private cryptoKeyTTL: number = 20; // 20 minutes
   private timer: any;
   private logger: Logger;
 
-  private constructor(prefix: string = '') {
-    super();
-    this.prefix = prefix;
+  constructor(prefix: string = '') {
+    this.baseStore = new BaseStore();
+    const env = this.baseStore.get('env');
+    console.log('SETUP NEW STORE', env, this.baseStore);
+    if (env && env !== 'production') {
+      this.prefix = `${env}${prefix}`;
+    } else {
+      this.prefix = prefix;
+    }
     this.logger = new Logger();
   }
 
-  static getStore = (prefix: string = '') => {
-    if (!Store.instances[prefix]) {
-      let configStore = new Store(prefix);
-      const env = configStore.baseStore.get('env');
-      if (env && env !== 'production') {
-        configStore = new Store(`${env}${prefix}`);
-      }
-      Store.instances[prefix] = configStore;
-      // Temp solution to init prefix storage
-      if (prefix && !Store.instances[prefix].storage && Store.instances['']) {
-        const userId = Store.instances[''].get('currentUserId');
-        const authToken = Store.instances[''].get('authToken');
-        // eslint-disable-next-line prefer-destructuring
-        const cryptoKey = Store.instances[''].cryptoKey;
-        if (cryptoKey) {
-          Store.instances[prefix].cryptoKey = cryptoKey;
-        }
-        Store.instances[prefix].init(userId, authToken);
-      }
-    }
-    return Store.instances[prefix];
-  };
-
-  static close = (prefix: string = '') => {
-    Store.instances[prefix] = undefined;
-  };
-
-  static isExist = (prefix: string = '') => {
-    return !!Store.instances[prefix];
-  };
-
-  init = (userId: string, authToken: string, oldPattern?: boolean): any => {
+  init(userId: string, authToken: string): void {
     if (!userId) {
       throw new Error('Store not ready to be initialised, currentUserId is missing');
     }
     let currentUserId = userId;
     this.baseStore.set('currentUserId', currentUserId);
     this.baseStore.set('authToken', authToken);
-    if (!oldPattern) {
-      currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
-    }
-    const storeName = `${this.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
+    currentUserId = currentUserId.replace(/[/\\:*?"<>|]/g, '-');
+    const storeName = `${this.baseStore.baseStoreName}${currentUserId ? `-${currentUserId}` : ''}${this.prefix ? `-${this.prefix}` : ''}`;
     this.storage = new ElectronStore({ name: storeName });
-  };
+  }
 
-  setEnv = (env: string): any => {
+  setEnv(env: string): any {
     this.baseStore.set('env', env);
-  };
+  }
 
-  deleteEnv = (): any => {
+  deleteEnv(): any {
     this.baseStore.delete('env');
-  };
+  }
 
-  isEncryptedKey = (key: string): boolean => {
+  isEncryptedKey(key: string): boolean {
     const keyToCheck = key.replace(/\..*/, '.*');
     return this.encryptedKeys.includes(keyToCheck);
-  };
+  }
 
-  exists = (key: string): boolean => {
+  exists(key: string): boolean {
     const value = (this.storage && this.storage.get(key)) || this.baseStore.get(key);
     return !!value;
-  };
+  }
 
-  get = (key: string): any => {
+  get(key: string): any {
     const value = (this.storage && this.storage.get(key)) || this.baseStore.get(key);
     if (value && this.isEncryptedKey(key)) {
       if (!this.cryptoKey) {
@@ -101,13 +70,18 @@ export default class Store extends BaseStore {
       }
     }
     return value;
-  };
+  }
 
-  all = () : any => {
-    return this.storage.store;
-  };
+  all(): any {
+    const keys = Object.keys(this.storage.store);
+    return keys.reduce((aggr, key) => {
+      // eslint-disable-next-line no-param-reassign
+      aggr[key] = this.get(key);
+      return aggr;
+    }, {});
+  }
 
-  set = (key: string, value: any, noCrypt? : boolean): void => {
+  set(key: string, value: any, noCrypt? : boolean): void {
     if (value === undefined) {
       return;
     }
@@ -121,30 +95,32 @@ export default class Store extends BaseStore {
         ? this.storage.set(key, value)
         : this.baseStore.set(key, value);
     }
-  };
+  }
 
-  setMultiple = (params: any, noCrypt?: boolean): void => {
+  setMultiple(params: any, noCrypt?: boolean): void {
     // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(params)) {
       this.set(key, value, noCrypt);
     }
-  };
+  }
 
-  delete = (key: string): void => {
+  delete(key: string): void {
     this.storage.delete(key);
-  };
+  }
 
-  clear = (): void => {
+  clear(): void {
     this.storage.clear();
-  };
+  }
 
-  logout = (): void => {
+  logout(): void {
     this.baseStore.clear();
     // this.cryptoKey = undefined;
     // Object.keys(Store.instances).forEach(prefix => Store.close(prefix));
-  };
+  }
 
-  isCryptoKeyStored = () => !!this.cryptoKey;
+  isCryptoKeyStored() {
+    return !!this.cryptoKey;
+  }
 
   @Catch()
   createCryptoKey(cryptoKey: string) {
@@ -220,6 +196,7 @@ export default class Store extends BaseStore {
     }
   }
 
+  /*
   @Step({
     name: 'Creating local backup...'
   })
@@ -257,4 +234,5 @@ export default class Store extends BaseStore {
     });
     tmpStore.clear();
   }
+  */
 }

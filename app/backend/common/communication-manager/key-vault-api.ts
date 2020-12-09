@@ -1,26 +1,29 @@
 import Http from './http';
+import Connection from '../store-manager/connection';
 import KeyVaultSsh from './key-vault-ssh';
-import { checkVersion } from '../../../utils/service';
+import { isVersionHigherOrEqual } from '../../../utils/service';
 import config from '../config';
 
-class KeyVaultApi extends Http {
+export default class KeyVaultApi extends Http {
+  private storePrefix: string;
   private readonly keyVaultSsh: KeyVaultSsh;
 
-  constructor(storePrefix: string = '') {
-    super(storePrefix);
-    this.keyVaultSsh = new KeyVaultSsh(storePrefix);
+  constructor(prefix: string = '') {
+    super();
+    this.storePrefix = prefix;
+    this.keyVaultSsh = new KeyVaultSsh(prefix);
   }
 
   init(isNetworkRequired: boolean = true) {
     let network: string;
     if (isNetworkRequired) {
-      network = this.store.get('network');
+      network = Connection.db(this.storePrefix).get('network');
       if (!network) {
         throw new Error('Configuration settings network not found');
       }
     }
-    this.instance.defaults.baseURL = `http://${this.store.get('publicIp')}:8200/v1/${isNetworkRequired ? `ethereum/${network}` : ''}`;
-    this.instance.defaults.headers.common['Authorization'] = `Bearer ${this.store.get('vaultRootToken')}`;
+    this.instance.defaults.baseURL = `http://${Connection.db(this.storePrefix).get('publicIp')}:8200/v1/${isNetworkRequired ? `ethereum/${network}` : ''}`;
+    this.instance.defaults.headers.common.Authorization = `Bearer ${Connection.db(this.storePrefix).get('vaultRootToken')}`;
   }
 
   async requestThruSsh({
@@ -31,18 +34,23 @@ class KeyVaultApi extends Http {
   }): Promise<any> {
     let network: string;
     if (isNetworkRequired) {
-      network = this.store.get('network');
+      network = Connection.db(this.storePrefix).get('network');
       if (!network) {
         throw new Error('Configuration settings network not found');
       }
     }
     const ssh = await this.keyVaultSsh.getConnection();
-    const keyVaultVersion = this.store.get('keyVaultVersion');
+    let remoteFileName;
+    if (data) {
+      remoteFileName = await this.keyVaultSsh.dataToRemoteFile(data);
+    }
+    const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
     const command = this.keyVaultSsh.buildCurlCommand({
-      authToken: this.store.get('vaultRootToken'),
+      authToken: Connection.db(this.storePrefix).get('vaultRootToken'),
       method,
-      data,
-      route: `http${checkVersion(keyVaultVersion, config.env.SSL_SUPPORTED_TAG) >= 0 ? "s" : ""}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
+      // data: { data },
+      dataAsFile: remoteFileName,
+      route: `http${isVersionHigherOrEqual(keyVaultVersion, config.env.SSL_SUPPORTED_TAG) ? 's' : ''}://localhost:8200/v1/${isNetworkRequired ? `ethereum/${network}/` : ''}${path}`
     }, true);
     console.log('curl=', command);
     const { stdout, stderr } = await ssh.execCommand(command, {});
@@ -50,6 +58,7 @@ class KeyVaultApi extends Http {
       throw new Error(stderr);
     }
     const body = JSON.parse(stdout);
+    // remoteFileName && await ssh.execCommand(`rm ${remoteFileName}`, {});
     console.log('curl answer=', body);
     if (body.errors) {
       throw new Error(JSON.stringify(body));
@@ -57,18 +66,3 @@ class KeyVaultApi extends Http {
     return body;
   }
 }
-
-const keyVaultApi = new KeyVaultApi();
-
-const resolveKeyVaultApi = (storePrefix: string = ''): KeyVaultApi => {
-  if (storePrefix) {
-    return new KeyVaultApi(storePrefix);
-  }
-  return keyVaultApi;
-};
-
-export {
-  keyVaultApi,
-  resolveKeyVaultApi,
-  KeyVaultApi
-};

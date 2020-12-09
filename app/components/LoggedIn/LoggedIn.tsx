@@ -51,7 +51,7 @@ import * as userSelectors from '../User/selectors';
 import userSaga from '../User/saga';
 
 import { ModalsManager } from 'components/Dashboard/components';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 const wizardKey = 'wizard';
 const accountsKey = 'accounts';
@@ -88,8 +88,7 @@ const LoggedIn = (props: Props) => {
     const doneLoading = !isLoadingWallet && !isLoadingAccounts && !isWebsocketLoading && !isLoadingUserInfo;
 
     if (allDataIsReady && noErrors && doneLoading) {
-      const store: Store = Store.getStore();
-      const storedUuid = store.exists('uuid');
+      const storedUuid = Connection.db().exists('uuid');
       const hasWallet = walletStatus === 'active' || walletStatus === 'offline';
       const shouldNavigateToDashboard = hasWallet && accounts.length > 0 && allAccountsDeposited(accounts) && !addAnotherAccount;
 

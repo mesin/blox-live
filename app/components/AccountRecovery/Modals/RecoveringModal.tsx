@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ProcessLoader, ModalTemplate } from 'common/components';
 import { Title, SmallText, Wrapper } from 'common/components/ModalTemplate/components';
 import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 import { MODAL_TYPES } from '../../Dashboard/constants';
 
@@ -14,12 +14,11 @@ const RecoveringModal = (props: Props) => {
 
   const onSuccess = () => {
     move1StepForward();
-    const store: Store = Store.getStore();
     if (type === MODAL_TYPES.DEVICE_SWITCH) {
-      store.delete('inRecoveryProcess');
+      Connection.db().delete('inRecoveryProcess');
     }
     else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
-      store.delete('inForgotPasswordProcess');
+      Connection.db().delete('inForgotPasswordProcess');
     }
   };
 

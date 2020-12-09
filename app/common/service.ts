@@ -1,16 +1,14 @@
 import { app, remote, shell } from 'electron';
 import moment from 'moment';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 export const saveLastConnection = () => {
   const now = moment().utc();
-  const store = Store.getStore();
-  store.set('lastConnection', now);
+  Connection.db().set('lastConnection', now);
 };
 
 export const loadLastConnection = () => {
-  const store = Store.getStore();
-  return store.get('lastConnection');
+  Connection.db().get('lastConnection');
 };
 
 export const onWindowClose = () => {

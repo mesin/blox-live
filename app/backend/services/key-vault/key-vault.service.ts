@@ -1,12 +1,13 @@
-import Store from '../../common/store-manager/store';
+import Connection from '../../common/store-manager/connection';
 import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
 import VersionService from '../version/version.service';
 import WalletService from '../wallet/wallet.service';
-import { resolveKeyVaultApi, KeyVaultApi } from '../../common/communication-manager/key-vault-api';
+import KeyVaultApi from '../../common/communication-manager/key-vault-api';
+import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
-import { CatchClass, Step } from '../../decorators';
+import { Catch, CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
-import { checkVersion } from '../../../utils/service';
+import { isVersionHigherOrEqual } from '../../../utils/service';
 
 function sleep(msec) {
   return new Promise(resolve => {
@@ -16,18 +17,21 @@ function sleep(msec) {
 
 // @CatchClass<KeyVaultService>()
 export default class KeyVaultService {
-  private readonly store: Store;
   private readonly keyVaultSsh: KeyVaultSsh;
   private readonly keyVaultApi: KeyVaultApi;
   private readonly versionService: VersionService;
   private readonly walletService: WalletService;
+  private readonly bloxApi: BloxApi;
+  private storePrefix: string;
 
-  constructor(storePrefix: string = '') {
-    this.store = Store.getStore(storePrefix);
-    this.keyVaultSsh = new KeyVaultSsh(storePrefix);
+  constructor(prefix: string = '') {
+    this.storePrefix = prefix;
+    this.keyVaultSsh = new KeyVaultSsh(this.storePrefix);
     this.versionService = new VersionService();
-    this.keyVaultApi = resolveKeyVaultApi(storePrefix);
-    this.walletService = new WalletService(storePrefix);
+    this.keyVaultApi = new KeyVaultApi(this.storePrefix);
+    this.walletService = new WalletService(this.storePrefix);
+    this.bloxApi = new BloxApi();
+    this.bloxApi.init();
   }
 
   async updateStorage(payload: any) {
@@ -39,6 +43,7 @@ export default class KeyVaultService {
   }
 
   async listAccounts() {
+    console.log('try list accounts...');
     try {
       const response = await this.keyVaultApi.requestThruSsh({
         method: METHOD.LIST,
@@ -46,6 +51,7 @@ export default class KeyVaultService {
       });
       return response?.data.accounts || [];
     } catch (e) {
+      console.log('g=', e);
       const { errors } = JSON.parse(e.message);
       if (Array.isArray(errors)) {
         // eslint-disable-next-line no-restricted-syntax
@@ -121,14 +127,13 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Getting KeyVault authentication token...',
-    requiredConfig: ['publicIp']
+    name: 'Getting KeyVault authentication token...'
   })
   async getKeyVaultRootToken(): Promise<void> {
     const ssh = await this.keyVaultSsh.getConnection();
     const { stdout: rootToken } = await ssh.execCommand('sudo cat data/keys/vault.root.token', {});
     if (!rootToken) throw new Error('vault-plugin rootToken not found');
-    this.store.set('vaultRootToken', rootToken);
+    Connection.db(this.storePrefix).set('vaultRootToken', rootToken);
   }
 
   @Step({
@@ -141,15 +146,15 @@ export default class KeyVaultService {
     }
 
     const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
-    const envKey = (this.store.get('env') || 'production');
+    const envKey = (Connection.db(this.storePrefix).get('env') || 'production');
     const dockerHubImage = `bloxstaking/key-vault${envKey === 'production' ? '' : '-rc'}:${keyVaultVersion}`;
 
     const dockerCMD = 'docker start key_vault 2>/dev/null || ' +
-      `docker pull ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
+      `docker pull  ${dockerHubImage} && docker run -d --restart unless-stopped --cap-add=IPC_LOCK --name=key_vault ` +
       '-v $(pwd)/data:/data ' +
       '-v $(pwd)/policies:/policies ' +
       '-p 8200:8200 ' +
-      `-e VAULT_EXTERNAL_ADDRESS='${this.store.get('publicIp')}' ` +
+      `-e VAULT_EXTERNAL_ADDRESS='${Connection.db(this.storePrefix).get('publicIp')}' ` +
       '-e UNSEAL=true ' +
       `-e VAULT_CLIENT_TIMEOUT='30s' '${dockerHubImage}'`;
 
@@ -159,7 +164,8 @@ export default class KeyVaultService {
       {}
     );
 
-    this.store.set('keyVaultVersion', keyVaultVersion);
+    Connection.db(this.storePrefix).set('keyVaultVersion', keyVaultVersion);
+
     await sleep(12000);
 
     if (error) {
@@ -168,14 +174,13 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Updating server storage...',
-    requiredConfig: ['network']
+    name: 'Updating server storage...'
   })
   async updateVaultStorage(): Promise<void> {
-    const network = this.store.get('network');
-    if (this.store.exists(`keyVaultStorage.${network}`)) {
-      await this.updateStorage({ data: this.store.get(`keyVaultStorage.${network}`) });
-      this.store.delete(`keyVaultStorage.${network}`);
+    const network = Connection.db(this.storePrefix).get('network');
+    if (Connection.db(this.storePrefix).exists(`keyVaultStorage.${network}`)) {
+      await this.updateStorage({ data: Connection.db(this.storePrefix).get(`keyVaultStorage.${network}`) });
+      Connection.db(this.storePrefix).delete(`keyVaultStorage.${network}`);
     }
   }
 
@@ -183,18 +188,18 @@ export default class KeyVaultService {
     name: 'Updating server storage...'
   })
   async updateVaultMountsStorage(): Promise<any> {
-    const keyVaultStorage = this.store.get('keyVaultStorage');
+    const keyVaultStorage = Connection.db(this.storePrefix).get('keyVaultStorage');
 
     if (keyVaultStorage) {
       // eslint-disable-next-line no-restricted-syntax
       for (const [network, storage] of Object.entries(keyVaultStorage)) {
         if (storage) {
-          this.store.set('network', network);
+          Connection.db(this.storePrefix).set('network', network);
           // eslint-disable-next-line no-await-in-loop
           await this.updateVaultStorage();
         }
       }
-      this.store.delete('keyVaultStorage');
+      Connection.db(this.storePrefix).delete('keyVaultStorage');
     }
     return { isActive: true };
   }
@@ -205,11 +210,14 @@ export default class KeyVaultService {
   })
   async importKeyVaultData(): Promise<any> {
     const supportedNetworks = [config.env.PYRMONT_NETWORK, config.env.MAINNET_NETWORK];
+    // eslint-disable-next-line no-restricted-syntax
     for (const network of supportedNetworks) {
-      this.store.set('network', network);
+      Connection.db(this.storePrefix).set('network', network);
       // save latest network index
+      // eslint-disable-next-line no-await-in-loop
       const accounts = await this.listAccounts();
-      this.store.set(`index.${network}`, (accounts.length - 1).toString());
+      Connection.db(this.storePrefix).set(`index.${network}`, (accounts.length - 1).toString());
+      // eslint-disable-next-line no-await-in-loop
       await this.importSlashingData();
     }
   }
@@ -219,13 +227,13 @@ export default class KeyVaultService {
     requiredConfig: ['publicIp', 'vaultRootToken']
   })
   async importSlashingData(): Promise<any> {
-    const keyVaultVersion = this.store.get('keyVaultVersion');
+    const keyVaultVersion = Connection.db(this.storePrefix).get('keyVaultVersion');
 
-    if (keyVaultVersion && checkVersion(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG) >= 0) {
-      const network = this.store.get('network');
+    if (keyVaultVersion && isVersionHigherOrEqual(keyVaultVersion, config.env.HIGHEST_ATTESTATION_SUPPORTED_TAG)) {
+      const network = Connection.db(this.storePrefix).get('network');
       const slashingData = await this.getSlashingStorage();
       if (Object.keys(slashingData).length) {
-        this.store.set(`slashingData.${network}`, slashingData);
+        Connection.db(this.storePrefix).set(`slashingData.${network}`, slashingData);
       }
     }
   }
@@ -245,8 +253,30 @@ export default class KeyVaultService {
       }
       return { isActive: true };
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return { isActive: false };
+    }
+  }
+
+  @Step({
+    name: 'Configurate sshd settings...'
+  })
+  @Catch({
+    displayMessage: 'Configurate sshd failed'
+  })
+  async configurateSshd() {
+    if (Connection.db(this.storePrefix).get('port')) {
+      return;
+    }
+    const ssh = await this.keyVaultSsh.getConnection();
+    Connection.db(this.storePrefix).set('port', config.env.TARGET_SSH_PORT);
+    try {
+      const { stderr: error } = await ssh.execCommand(`sudo sed -i '1iPort ${config.env.port}\\nLoginGraceTime 30s' /etc/ssh/sshd_config && sudo service sshd restart`, {});
+      if (error) {
+        throw new Error('Could not setup ssh configuration');
+      }
+    } catch (e) {
+      await this.keyVaultSsh.getConnection();
     }
   }
 }

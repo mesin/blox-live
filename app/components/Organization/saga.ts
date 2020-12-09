@@ -5,8 +5,6 @@ import { LOAD_ORGANIZATION, UPDATE_ORGANIZATION } from './actionTypes';
 import * as actions from './actions';
 import OrganizationService from '../../backend/services/organization/organization.service';
 
-const organizationService = new OrganizationService();
-
 function* onLoadingSuccess(response) {
   if (response.status === 200) {
     yield put(actions.loadOrganizationSuccess(response));
@@ -22,6 +20,7 @@ function* onLoadingFailure(error: Record<string, any>) {
 
 export function* startLoadingOrganization() {
   try {
+    const organizationService = new OrganizationService();
     const response = yield call([organizationService, 'get']);
     yield call(onLoadingSuccess, response);
   } catch (error) {
@@ -44,6 +43,7 @@ function* onUpdatingFailure(error: Record<string, any>) {
 
 export function* startUpdatingOrganization(action) {
   try {
+    const organizationService = new OrganizationService();
     const response = yield call([organizationService, 'update'], { name: action.payload });
     yield call(onUpdatingSuccess, response);
   } catch (error) {

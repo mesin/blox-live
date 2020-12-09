@@ -3,18 +3,15 @@ import { notification } from 'antd';
 import * as actionTypes from './actionTypes';
 import * as actions from './actions';
 
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 import AwsService from 'backend/services/aws/aws.service';
 import VersionService from 'backend/services/version/version.service';
 import KeyManagerService from 'backend/services/key-manager/key-manager.service';
 import AccountService from 'backend/services/account/account.service';
 
-const keyManagerService = new KeyManagerService();
-const accountService = new AccountService();
-const versionService = new VersionService();
-
 function* loadMnemonicSaga() {
   try {
+    const keyManagerService = new KeyManagerService();
     const mnemonicPhrase = yield call([keyManagerService, 'mnemonicGenerate']);
     yield put(actions.keyvaultLoadMnemonicSuccess(mnemonicPhrase));
   } catch (error) {
@@ -26,9 +23,9 @@ function* loadMnemonicSaga() {
 function* saveMnemonicSaga(action) {
   try {
     const { payload: { mnemonic } } = action;
-    const store: Store = Store.getStore();
+    const keyManagerService = new KeyManagerService();
     const seed = yield call([keyManagerService, 'seedFromMnemonicGenerate'], mnemonic);
-    yield store.set('seed', seed);
+    yield Connection.db().set('seed', seed);
     yield put(actions.keyvaultSaveMnemonicSuccess());
   }
   catch (error) {
@@ -41,6 +38,7 @@ function* saveMnemonicSaga(action) {
 
 function* loadLatestVersionSaga() {
   try {
+    const versionService = new VersionService();
     const latestVersion = yield call([versionService, 'getLatestKeyVaultVersion']);
     yield put(actions.keyvaultLoadLatestVersionSuccess(latestVersion));
   } catch (error) {
@@ -62,6 +60,7 @@ function* validatePassphraseSaga() {
 function* checkRecoveryCredentialsSaga(action) {
   try {
     const { payload } = action;
+    const accountService = new AccountService();
     yield call([accountService, 'recovery'], payload);
     yield put(actions.validateRecoveryCredentialsSuccess());
   }

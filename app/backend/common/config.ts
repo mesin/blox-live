@@ -1,4 +1,4 @@
-import Store from './store-manager/store';
+import BaseStore from './store-manager/base-store';
 
 export default class Config {
   private static instance: Config;
@@ -24,13 +24,16 @@ export default class Config {
       PYRMONT_NETWORK: 'pyrmont',
       MAINNET_NETWORK: 'mainnet',
       SSL_SUPPORTED_TAG: 'v0.1.25',
-      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2'
+      HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2',
+      DEFAULT_SSH_PORT: 22,
+      TARGET_SSH_PORT: 2200,
     }
   };
 
   private constructor() {
-    const backendStore = Store.getStore();
-    const envKey = (backendStore.get('env') || 'production');
+    const baseStore: BaseStore = new BaseStore();
+    const envKey = baseStore.get('env') || 'production';
+    this.settings.default.SSH_PORT = baseStore.get('port') || this.settings.default.DEFAULT_SSH_PORT;
     // env related
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings[envKey])) {
@@ -43,9 +46,16 @@ export default class Config {
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings.default)) {
       Object.defineProperty(this, key, {
+
         get: () => this.settings.default[key]
       });
     }
+
+    Object.defineProperty(this, 'port', {
+      get: () => {
+        return baseStore.get('port') || this.settings.default.DEFAULT_SSH_PORT;
+      }
+    });
   }
 
   static get env(): any {

@@ -8,7 +8,7 @@ import { Title, Description } from 'common/components/ModalTemplate/components';
 import useCreateServer from 'common/hooks/useCreateServer';
 import * as actionsFromKeyvault from '../../KeyVaultManagement/actions';
 import * as keyvaultSelectors from '../../KeyVaultManagement/selectors';
-import Store from 'backend/common/store-manager/store';
+import Connection from 'backend/common/store-manager/connection';
 
 import { MODAL_TYPES } from '../../Dashboard/constants';
 
@@ -56,12 +56,11 @@ const Step1Modal = (props: Props) => {
   const { validateAwsKeys, clearAwsKeysState } = keyvaultActions;
 
   React.useEffect(() => {
-    const store: Store = Store.getStore();
     if (type === MODAL_TYPES.DEVICE_SWITCH) {
-      store.set('inRecoveryProcess', true);
+      Connection.db().set('inRecoveryProcess', true);
     }
     else if (type === MODAL_TYPES.FORGOT_PASSWORD) {
-      store.set('inForgotPasswordProcess', true);
+      Connection.db().set('inForgotPasswordProcess', true);
     }
   }, []);
 

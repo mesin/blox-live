@@ -1,29 +1,26 @@
 import { v4 as uuidv4 } from 'uuid';
 import { version } from 'package.json';
 import { getOsVersion } from 'utils/service';
-import Store from 'backend/common/store-manager/store';
-
-const store: Store = Store.getStore();
+import Connection from 'backend/common/store-manager/connection';
 
 export const handleUserInfo = (updateUserInfo) => {
-  if (!store.exists('uuid')) {
+  if (!Connection.db().exists('uuid')) {
     const uuid = uuidv4();
-    store.set('uuid', uuid);
+    Connection.db().set('uuid', uuid);
     updateUserInfo({ uuid, version, os: getOsVersion() });
   }
 };
 
 export const isPrimaryDevice = (userInfoUuid: string) => {
-  const storedUuid = store.get('uuid');
-  return userInfoUuid === storedUuid;
+  return userInfoUuid === Connection.db().get('uuid');
 };
 
 export const inRecoveryProcess = () => {
-  const result = !!store.get('inRecoveryProcess');
+  const result = !!Connection.db().get('inRecoveryProcess');
   return result;
 };
 
 export const inForgotPasswordProcess = () => {
-  const result = !!store.get('inForgotPasswordProcess');
+  const result = !!Connection.db().get('inForgotPasswordProcess');
   return result;
 };

@@ -4,19 +4,26 @@ import { CatchClass } from '../../decorators';
 
 @CatchClass<OrganizationService>()
 export default class OrganizationService {
+  private readonly bloxApi: BloxApi;
+
+  constructor() {
+    this.bloxApi = new BloxApi();
+    this.bloxApi.init();
+  }
+
   async get() {
-    return await BloxApi.request(METHOD.GET, 'organizations/profile');
+    return await this.bloxApi.request(METHOD.GET, 'organizations/profile');
   }
 
   async update(payload: any) {
-    return await BloxApi.request(METHOD.PATCH, 'organizations/profile', payload);
+    return await this.bloxApi.request(METHOD.PATCH, 'organizations/profile', payload);
   }
 
   async getEventLogs() {
-    return await BloxApi.request(METHOD.GET, 'organizations/event-logs');
+    return await this.bloxApi.request(METHOD.GET, 'organizations/event-logs');
   }
 
   async reportCrash(payload: any) {
-    return await BloxApi.request(METHOD.POST, 'organizations/crash-report', payload); // , { 'Content-Type': 'multipart/form-data' }
+    return await this.bloxApi.request(METHOD.POST, 'organizations/crash-report', payload); // , { 'Content-Type': 'multipart/form-data' }
   }
 }

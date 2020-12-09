@@ -16,14 +16,6 @@ export function Step(metadata: any) {
         // eslint-disable-next-line prefer-rest-params
         args[i] = arguments[i];
       }
-      // validate config properties
-      if (Array.isArray(metadata.requiredConfig)) {
-        metadata.requiredConfig.forEach((prop) => {
-          if (!this.store.exists(prop)) {
-            throw new Error(`Configuration settings ${prop} not found`);
-          }
-        });
-      }
       const result = await originalMethod.apply(this, args);
       return { ...result, step: { name: metadata ? metadata.name : key } };
     };

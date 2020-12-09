@@ -4,7 +4,7 @@ import WalletService from '../services/wallet/wallet.service';
 import KeyVaultService from '../services/key-vault/key-vault.service';
 import UsersService from '../services/users/users.service';
 import ProcessClass from './process.class';
-import Store from '../common/store-manager/store';
+import Connection from '../common/store-manager/connection';
 
 export default class InstallProcess extends ProcessClass {
   private readonly awsService: AwsService;
@@ -20,11 +20,9 @@ export default class InstallProcess extends ProcessClass {
     this.awsService = new AwsService();
     this.walletService = new WalletService();
 
-    const store: Store = Store.getStore();
-
     const uuid = uuidv4();
-    store.set('uuid', uuid);
-    store.set('credentials', { accessKeyId, secretAccessKey });
+    Connection.db().set('uuid', uuid);
+    Connection.db().set('credentials', { accessKeyId, secretAccessKey });
     this.userService.update({ uuid });
 
     this.actions = [
@@ -34,6 +32,7 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.awsService, method: 'createElasticIp' },
       { instance: this.awsService, method: 'createSecurityGroup' },
       { instance: this.awsService, method: 'createInstance' },
+      { instance: this.keyVaultService, method: 'configurateSshd' },
       { instance: this.keyVaultService, method: 'installDockerScope' },
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },

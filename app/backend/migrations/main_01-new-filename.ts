@@ -1,7 +1,8 @@
-import Store from '../common/store-manager/store';
-import getPlatform from '../../get-platform';
+// import Store from '../common/store-manager/store';
+// import getPlatform from '../../get-platform';
 
 const up = async (payload) => {
+  /*
   if (getPlatform() === 'win') return;
   const baseStore = Store.getStore();
   const currentUserId = baseStore.get('currentUserId');
@@ -11,6 +12,7 @@ const up = async (payload) => {
   baseStore.clear();
   baseStore.init(currentUserId, authToken);
   baseStore.setMultiple(oldData, true);
+  */
 };
 
 const down = async (payload) => {};
