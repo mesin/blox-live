@@ -48,7 +48,7 @@ export default class Auth {
     });
   };
 
-  loginFromBrowser = (name: string) => shell.openExternal(`http://localhost:3000?provider=${name}`);
+  loginFromBrowser = (name: string) => shell.openExternal(`http://localhost:3000/auth/?provider=${name}`);
 
   getAuthenticationURL = (socialAppName: string) => {
     const { domain, clientID, redirectUri, responseType, scope } = this.auth;
