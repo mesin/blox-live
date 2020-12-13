@@ -38,6 +38,9 @@ export default class ReinstallProcess extends ProcessClass {
     this.accountService = new AccountService(tempStorePrefix);
     this.walletService = new WalletService(tempStorePrefix);
     this.actions = [
+      { instance: this.awsServiceTmp, method: 'setAWSCredentials' },
+      { instance: this.awsServiceTmp, method: 'truncateOldKvResources' },
+      /*
       { instance: this.keyVaultService, method: 'importKeyVaultData' },
       {
         instance: Connection,
@@ -75,6 +78,7 @@ export default class ReinstallProcess extends ProcessClass {
         }
       },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
+      */
     ];
   }
 }

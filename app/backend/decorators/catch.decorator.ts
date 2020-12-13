@@ -64,6 +64,7 @@ function Catch(payload: any = {}, toReflect: boolean = true) {
 
 function CatchClass<T>(payload: any = {}) {
   return function(target: new (...params: any[]) => T) {
+    // eslint-disable-next-line no-restricted-syntax
     for (const propertyName of Object.getOwnPropertyNames(target.prototype)) {
       if (Reflect.getMetadata(propertyName, target.prototype, propertyName)) {
         continue;

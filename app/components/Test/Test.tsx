@@ -14,10 +14,10 @@ import AccountService from '../../backend/services/account/account.service';
 import WalletService from '../../backend/services/wallet/wallet.service';
 import VersionService from '../../backend/services/version/version.service';
 import OrganizationService from '../../backend/services/organization/organization.service';
+import UserService from '../../backend/services/users/users.service';
 import { Link } from 'react-router-dom/esm/react-router-dom';
 import config from '../../backend/common/config';
 import { reportCrash } from '../common/service';
-import { KeyVaultApi } from '../../backend/common/communication-manager/key-vault-api';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -41,6 +41,7 @@ const Test = () => {
   const walletService = new WalletService();
   const versionService = new VersionService();
   const organizationService = new OrganizationService();
+  const userService = new UserService();
   let [env, setEnv] = useState('');
   let [cryptoKey, setCryptoKey] = useState('');
   let [network, setNetwork] = useState(config.env.PYRMONT_NETWORK);
@@ -317,6 +318,11 @@ const Test = () => {
           console.log(await versionService.getLatestBloxLiveVersion());
         }}>
           Get Latest Blox-Live Version
+        </button>
+        <button onClick={async () => {
+          console.log(await userService.get());
+        }}>
+          Get User Profile
         </button>
         <button onClick={async () => {
           console.log(await organizationService.get());

@@ -9,7 +9,7 @@ import WalletService from '../wallet/wallet.service';
 import config from '../../common/config';
 import { hexDecode } from '../../../utils/service';
 
-// @CatchClass<AccountService>()
+@CatchClass<AccountService>()
 export default class AccountService {
   private readonly walletService: WalletService;
   private readonly keyVaultService: KeyVaultService;

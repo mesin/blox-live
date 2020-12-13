@@ -3,6 +3,8 @@ import Connection from '../../common/store-manager/connection';
 import * as AWS from 'aws-sdk';
 import { Catch, CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
+import VersionService from '../version/version.service';
+import UserService from '../users/users.service';
 
 // TODO import from .env
 const defaultAwsOptions = {
@@ -15,12 +17,16 @@ export default class AwsService {
   private readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   private readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
   private storePrefix: string;
+  private readonly versionService: VersionService;
+  private readonly userService: UserService;
 
   constructor(prefix: string = '') {
     this.storePrefix = prefix;
     if (!this.ec2 && Connection.db(this.storePrefix).exists('credentials')) {
       this.setAWSCredentials();
     }
+    this.versionService = new VersionService();
+    this.userService = new UserService();
   }
 
   static async validateAWSCredentials({ accessKeyId, secretAccessKey }) {
@@ -45,10 +51,15 @@ export default class AwsService {
   })
   async setAWSCredentials(): Promise<any> {
     const credentials: any = Connection.db(this.storePrefix).get('credentials');
+    console.log(credentials);
     this.ec2 = new AWS.EC2({
       ...defaultAwsOptions,
       credentials
     });
+    console.log({
+      ...defaultAwsOptions,
+      credentials
+    })
   }
 
   @Step({
@@ -160,9 +171,16 @@ export default class AwsService {
       .promise();
     Connection.db(this.storePrefix).set('instanceId', instanceId);
 
+    const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
+    const userProfile = await this.userService.get();
+
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
-      Tags: [{ Key: 'Name', Value: 'Blox-Infra-Server' }]
+      Tags: [
+        { Key: 'Name', Value: 'Blox-Infra-Server'},
+        { Key: 'kv-version', Value: `${keyVaultVersion}` },
+        { Key: 'org-id', Value: `${userProfile.organizationId}`},
+      ]
     };
     await this.ec2.createTags(tagsOptions).promise();
     await this.ec2.associateAddress({
@@ -194,9 +212,25 @@ export default class AwsService {
     name: 'Removing old EC2 instance...'
   })
   async truncateServer() {
-    await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: Connection.db(this.storePrefix).get('addressId') }).promise();
+    this.desctroyResources({
+      instanceId: Connection.db(this.storePrefix).get('instanceId'),
+      addressId: Connection.db(this.storePrefix).get('addressId')
+    });
+  }
+
+  @Step({
+    name: 'Truncate old keyvault instances...'
+  })
+  async truncateOldKvResources() {
+    const instances = await this.ec2.describeInstances().promise();
+    console.log(instances);
+    // desctroyResources
+  }
+
+  async desctroyResources({ instanceId, addressId }) {
+    instanceId && await this.ec2.terminateInstances({ InstanceIds: [instanceId] }).promise();
+    instanceId && await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
+    addressId && await this.ec2.releaseAddress({ AllocationId: addressId }).promise();
   }
 
   @Step({
