@@ -11,7 +11,7 @@ const Wrapper = styled.button`
   display:flex;
   align-items:center;
   padding:0px;
-  margin:1px 0px 0px 8px;
+  margin:1px 0px 5px 0px;
 `;
 
 const Text = styled.span`

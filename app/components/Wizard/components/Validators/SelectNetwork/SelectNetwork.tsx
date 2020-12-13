@@ -30,7 +30,7 @@ const Validators = (props: Props) => {
       <Paragraph>
         Blox let’s you stake on the Eth2 Mainnet or run a Testnet validator to try
         our <br />
-        staking services. Currently, only our Testnet is available.
+        staking services.
       </Paragraph>
       <Paragraph>
         Please select your staking network and our wizard will guide you through the <br />
