@@ -259,7 +259,7 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Configurate sshd settings...'
+    name: 'Configure secure communication settings...'
   })
   @Catch({
     displayMessage: 'Configurate sshd failed'
