@@ -8,7 +8,7 @@ export const saveLastConnection = () => {
 };
 
 export const loadLastConnection = () => {
-  Connection.db().get('lastConnection');
+  return Connection.db().get('lastConnection');
 };
 
 export const onWindowClose = () => {
