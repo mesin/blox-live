@@ -11,11 +11,11 @@ const tempStorePrefix = 'tmp';
 const mainStorePrefix = '';
 export default class ReinstallProcess extends ProcessClass {
   private readonly awsServiceTmp: AwsService;
-  private readonly accountService: AccountService;
+  private readonly accountServiceTmp: AccountService;
   private readonly awsService: AwsService;
   private readonly keyVaultServiceTmp: KeyVaultService;
   private readonly keyVaultService: KeyVaultService;
-  private readonly walletService: WalletService;
+  private readonly walletServiceTmp: WalletService;
   public readonly actions: Array<any>;
 
   constructor() {
@@ -35,8 +35,8 @@ export default class ReinstallProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService();
     this.awsServiceTmp = new AwsService(tempStorePrefix);
     this.awsService = new AwsService();
-    this.accountService = new AccountService(tempStorePrefix);
-    this.walletService = new WalletService(tempStorePrefix);
+    this.accountServiceTmp = new AccountService(tempStorePrefix);
+    this.walletServiceTmp = new WalletService(tempStorePrefix);
     this.actions = [
       { instance: this.keyVaultService, method: 'importKeyVaultData' },
       {
@@ -45,23 +45,23 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
-          fields: ['uuid', 'credentials', 'keyPair', 'securityGroupId', 'keyVaultStorage', 'slashingData', 'port'],
+          fields: ['uuid', 'credentials', 'keyPair', 'securityGroupId', 'slashingData', 'port', 'index', 'seed'],
           postClean: {
             prefix: mainStorePrefix,
-            fields: ['slashingData']
+            fields: ['slashingData', 'index']
           }
         }
       },
       { instance: this.awsServiceTmp, method: 'setAWSCredentials' },
       { instance: this.awsServiceTmp, method: 'createElasticIp' },
       { instance: this.awsServiceTmp, method: 'createInstance' },
-      { instance: this.keyVaultService, method: 'configurateSshd' },
+      { instance: this.keyVaultServiceTmp, method: 'configurateSshd' },
       { instance: this.keyVaultServiceTmp, method: 'installDockerScope' },
       { instance: this.keyVaultServiceTmp, method: 'runDockerContainer' },
       { instance: this.keyVaultServiceTmp, method: 'getKeyVaultRootToken' },
-      { instance: this.accountService, method: 'restoreAccounts' },
+      { instance: this.accountServiceTmp, method: 'restoreAccounts' },
       { instance: this.keyVaultServiceTmp, method: 'updateVaultMountsStorage' },
-      { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew: false } },
+      { instance: this.walletServiceTmp, method: 'syncVaultWithBlox', params: { isNew: false } },
       { instance: this.awsService, method: 'truncateServer' },
       {
         instance: Connection,
@@ -69,7 +69,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: tempStorePrefix,
           toPrefix: mainStorePrefix,
-          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'keyVaultStorage', 'port'],
+          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'port'],
           postClean: {
             prefix: tempStorePrefix
           }
