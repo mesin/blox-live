@@ -247,8 +247,8 @@ export default class KeyVaultService {
     await new Promise((resolve) => setTimeout(resolve, 5000));
     try {
       await this.getVersion();
-      const answer = await this.walletService.health();
-      if (answer[0].status !== 'active') {
+      const { status } = await this.walletService.health();
+      if (status !== 'active') {
         throw new Error('wallet health check: status is not active');
       }
       return { isActive: true };
