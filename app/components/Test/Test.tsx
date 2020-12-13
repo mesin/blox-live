@@ -94,7 +94,7 @@ const Test = () => {
           onClick={async () => {
             const isValid = await Connection.db().isCryptoKeyValid(cryptoKey);
             if (isValid) {
-              await Connection.db().setNewPassword(cryptoKey);
+              await Connection.db().setCryptoKey(cryptoKey);
               if (Connection.db().exists('credentials')) {
                 const credentials: any = Connection.db().get('credentials');
                 setAccessKeyId(credentials.accessKeyId);
