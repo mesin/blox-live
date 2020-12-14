@@ -19,7 +19,8 @@ const Wrapper = styled.div`
 `;
 
 const pendingTooltipText = `
-  Approving your validator can sometime take between 4 to 24 hours.
+  Approving your validator can sometime take between 4 to 24 hours or longer,
+  depending on the validator activation queue.
   We will notify you via email once your validator is approved and is
   actively staking on the ETH 2 network.
 `;
