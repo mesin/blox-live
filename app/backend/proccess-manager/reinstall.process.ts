@@ -45,7 +45,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
-          fields: ['uuid', 'credentials', 'keyPair', 'slashingData', 'index', 'seed'],
+          fields: ['uuid', 'securityGroupId', 'credentials', 'keyPair', 'slashingData', 'index', 'seed', 'port'],
           postClean: {
             prefix: mainStorePrefix,
             fields: ['slashingData', 'index']

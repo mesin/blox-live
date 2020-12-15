@@ -102,7 +102,10 @@ export default class AwsService {
     name: 'Setting security group permissions...'
   })
   async createSecurityGroup() {
-    if (Connection.db(this.storePrefix).exists('securityGroupId')) return;
+    // validate if in main.json we have port AND port === TARGET PORT (2200)
+    if (Connection.db(this.storePrefix).exists('port') && Connection.db(this.storePrefix).exists('port') === config.env.TARGET_SSH_PORT) {
+      return;
+    }
 
     const vpcList = await this.ec2.describeVpcs().promise();
     const vpc = vpcList?.Vpcs![0].VpcId;
@@ -140,6 +143,7 @@ export default class AwsService {
         ]
       }).promise();
       Connection.db(this.storePrefix).set('securityGroupId', securityGroupId);
+      Connection.db(this.storePrefix).delete('port');
   }
 
   @Step({
