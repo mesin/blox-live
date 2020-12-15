@@ -1,70 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
-import { notification } from 'antd';
-import { NETWORKS } from '../constants';
-import { Title, Link, BigButton } from '../../common';
+import {notification} from 'antd';
+import {NETWORKS} from '../constants';
+import {Title, Link, BigButton} from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
 
-import { clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
-import { getAccounts, getDepositNeededStatus, getDepositToPublicKey,
-         getDepositToIndex, getDepositToNetwork } from '../../../../Accounts/selectors';
+import {clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
+import {
+  getAccounts, getDepositNeededStatus, getDepositToPublicKey,
+  getDepositToIndex, getDepositToNetwork
+} from '../../../../Accounts/selectors';
 
-import { getData } from '../../../../ProcessRunner/selectors';
+import {getData} from '../../../../ProcessRunner/selectors';
 
-import { DepositData, MainNetText, TestNetText } from './components';
-import { openExternalLink } from '../../../../common/service';
+import {MainNetText, TestNetText} from './components';
 
-import EarlyAdopters from '../EarlyAdopters';
-
-import tipImage from 'assets/images/info.svg';
+import theme from "../../../../../theme";
+import MoveToBrowserModal from "./components/MoveToBrowserModal";
+import {openExternalLink} from "../../../../common/service";
+import config from "../../../../../backend/common/config";
 
 const Wrapper = styled.div`
   width:580px;
 `;
 
+const SubTitle = styled.div`
+  font-size: 16px;
+  font-weight: 28px;
+  color: ${({theme}) => theme.gray800};
+  margin-top: 24px;
+`;
+
+const SmallText = styled.div`
+  font-size: 12px;
+  font-weight: 500px;
+  color: ${({theme}) => theme.gray600};
+  margin-top: 12px;
+`;
+
 const ButtonsWrapper = styled.div`
   width:100%;
-  margin-top:36px;
+  margin-top:12px;
   display:flex;
   justify-content:space-between;
 `;
 
-const CancelButton = styled(BigButton)`
-  color:${({theme}) => theme.gray600};
-  background-color:transparent;
-  border:1px solid ${({theme}) => theme.gray400};
-`;
-
-const Tip = styled.div`
-  font-size: 12px;
-  font-weight: 500;
-  display:flex;
-  align-items:center;
-  margin-top:78px;
-  margin-bottom:8px;
-`;
-
-const TipImage = styled.img`
-  width:24px;
-  height:24px;
-  margin-right:7px;
-`;
-
-const WarningText = styled.div`
-  font-size: 11px;
-  font-weight: 500;
-  color: ${({theme}) => theme.warning900};
-`;
-
 const StakingDeposit = (props: Props) => {
-  const { setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
-          isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network } = props;
-  const { updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard } = actions;
-
-  const [showEarlyAdopters, setShowEarlyAdopters] = useState(network === 'mainnet');
+  const {
+    setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
+    isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network
+  } = props;
+  const {updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard} = actions;
 
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
@@ -73,19 +62,21 @@ const StakingDeposit = (props: Props) => {
     }
   }, [isDepositNeeded, publicKey]);
 
+  const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
+
   const onMadeDepositButtonClick = async () => {
-    const accountFromApi: Record<string, any> = accountsFromApi.find(
+    setShowMoveToBrowserModal(true)
+  /*  const accountFromApi: Record<string, any> = accountsFromApi.find(
       (account) => (account.publicKey === publicKey && account.network === network)
     );
     const currentAccount = accountDataFromProcess || accountFromApi;
     if (currentAccount) {
       await setPage(page + 1);
       await updateAccountStatus(currentAccount.id);
-      await callSetDepositNeeded({ isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
-    }
-    else {
+      await callSetDepositNeeded({isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
+    } else {
       notification.error({message: 'Account not found'});
-    }
+    }*/
   };
 
   const onDepositLaterButtonClick = () => {
@@ -94,33 +85,24 @@ const StakingDeposit = (props: Props) => {
     setFinishedWizard(true);
   };
 
-  const onCopy = () => notification.success({message: 'Copied to clipboard!'});
-
-  if (showEarlyAdopters) {
-    return <EarlyAdopters onClick={() => setShowEarlyAdopters(false)} />;
-  }
+  const openDepositBrowser = () => {
+    const {depositTo} = depositData;
+    openExternalLink('', `${config.env.DEPOSIT_URL}?network_id=${NETWORKS[network].id}&public_key=${publicKey}&deposit_to=${depositTo}`)
+  };
 
   if (network) {
-    const needHelpLink = NETWORKS[network].label === NETWORKS.mainnet.label ?
-     'docs-guides/#pp-toc__heading-anchor-14' :
-     'documents/guides/#pp-toc__heading-anchor-20';
 
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
-        {NETWORKS[network].label === NETWORKS.mainnet.label ? (<MainNetText />) : (<TestNetText />)}
-        {depositData && <DepositData depositData={depositData} onCopy={onCopy} network={network} />}
-        {NETWORKS[network].label === NETWORKS.pyrmont.label && (
-          <WarningText>Make sure you send GoETH Testnet tokens and not real ETH!</WarningText>
-        )}
-        <Tip>
-          <TipImage src={tipImage} />If your deposit transaction fails, try increasing the Gas Price and Gas Limit.
-        </Tip>
-        <Link onClick={() => openExternalLink(needHelpLink)}>Need help?</Link>
+        <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
+        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey}/> : <MainNetText publicKey={publicKey}/>}
+        <SmallText>Total: 32.5 ETH + gas fees</SmallText>
+        <SmallText style={{'font-size': '14px', 'color': theme['gray800'], 'margin-top': '34px'}}>You will be transferred to a secured Blox webpage</SmallText>
         <ButtonsWrapper>
-          <BigButton onClick={onMadeDepositButtonClick}>I&apos;ve Made the Deposit</BigButton>
-          <CancelButton onClick={onDepositLaterButtonClick}>I&apos;ll Deposit Later</CancelButton>
+          <BigButton onClick={onMadeDepositButtonClick}>Continue to Web Deposit</BigButton>
         </ButtonsWrapper>
+        {showMoveToBrowserModal && <MoveToBrowserModal onClose={() => setShowMoveToBrowserModal(false)} onMoveToBrowser={openDepositBrowser}/>}
       </Wrapper>
     );
   }

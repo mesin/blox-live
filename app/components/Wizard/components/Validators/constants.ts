@@ -4,12 +4,14 @@ import config from 'backend/common/config';
 
 export const NETWORKS = {
   pyrmont: {
+    id: 1,
     name: 'Pyrmont',
     title: 'Test on Pyrmont',
     image: testNetImage,
     label: config.env.PYRMONT_NETWORK,
   },
   mainnet: {
+    id: 2,
     name: 'Mainnet',
     title: 'Stake on Mainnet',
     image: mainNetImage,
