@@ -46,7 +46,7 @@ const ExternalLink = styled.span`
 `;
 
 const moreInfo = `
-  * AWS offers a 12-months free tier following your initial sign-up date to AWS.
+  * AWS offers a 12 months free tier following your initial sign-up date to AWS.
   In most cases, we built it in a way that the free tier should be enough,
   but in some cases small charges may apply. Want to learn more? visit our discord channel.
 `;
@@ -66,7 +66,7 @@ const CreateServer = (props: Props) => {
       <Title>Create your Staking KeyVault</Title>
       <Paragraph>
         We will now create a KeyVault on AWS free tier* <InfoWithTooltip title={moreInfo} placement={'right'} /> <br />
-        Blox nedds to have access to your AWS access/secret tokens.
+        Blox needs to have access to your AWS access/secret tokens.
         <br /> <br />
 
         <b>Important</b>: make sure your&nbsp;
