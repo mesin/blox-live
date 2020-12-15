@@ -66,7 +66,7 @@ const CreateServer = (props: Props) => {
       <Title>Create your Staking KeyVault</Title>
       <Paragraph>
         We will now create a KeyVault on AWS free tier* <InfoWithTooltip title={moreInfo} placement={'right'} /> <br />
-        Blox nedds to have access to your AWS access/secret tokens.
+        Blox needs to have access to your AWS access/secret tokens.
         <br /> <br />
 
         <b>Important</b>: make sure your&nbsp;
