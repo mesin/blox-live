@@ -54,6 +54,7 @@ export default class ReinstallProcess extends ProcessClass {
       },
       { instance: this.awsServiceTmp, method: 'setAWSCredentials' },
       { instance: this.awsServiceTmp, method: 'createElasticIp' },
+      { instance: this.awsServiceTmp, method: 'createSecurityGroup' },
       { instance: this.awsServiceTmp, method: 'createInstance' },
       { instance: this.keyVaultServiceTmp, method: 'configurateSshd' },
       { instance: this.keyVaultServiceTmp, method: 'installDockerScope' },
