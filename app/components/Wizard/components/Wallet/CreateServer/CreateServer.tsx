@@ -46,7 +46,7 @@ const ExternalLink = styled.span`
 `;
 
 const moreInfo = `
-  * AWS offers a 12-months free tier following your initial sign-up date to AWS.
+  * AWS offers a 12 months free tier following your initial sign-up date to AWS.
   In most cases, we built it in a way that the free tier should be enough,
   but in some cases small charges may apply. Want to learn more? visit our discord channel.
 `;
