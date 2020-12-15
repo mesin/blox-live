@@ -16,7 +16,7 @@ const FEE_TOOLTIP = 'By depositing the service fee, Blox will provide you with a
 const DEPOSIT_TOOLTIP = 'Blox has no access to your 32 ETHs as they are to be deposited to the Ethereum 2.0 Blockchain deposit smart contract. Withdrawal of if the ETHs is currently not enabled and should be available when ETH 2.0 reaches Phase 1';
 
 const MainNetText = (props: Props) => {
-  const {publicKey} = props;
+  const {publicKey, onCopy} = props;
   return (
     <div>
       <DepositStepData step={1} title={'Validator yearly service fee'} tooltip={FEE_TOOLTIP} amount={0.5} token={'ETH'}>
@@ -34,6 +34,7 @@ const MainNetText = (props: Props) => {
 
 type Props = {
   publicKey: string;
+  onCopy: () => void;
 };
 
 export default MainNetText;

@@ -85,20 +85,21 @@ const StakingDeposit = (props: Props) => {
     setFinishedWizard(true);
   };
 
+  const onCopy = () => notification.success({message: 'Copied to clipboard!'});
+
   const openDepositBrowser = () => {
     const {depositTo} = depositData;
     openExternalLink('', `${config.env.DEPOSIT_URL}?network_id=${NETWORKS[network].id}&public_key=${publicKey}&deposit_to=${depositTo}`)
   };
 
   if (network) {
-
     return (
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
         <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
-        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey}/> : <MainNetText publicKey={publicKey}/>}
+        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy}/> : <MainNetText publicKey={publicKey} onCopy={onCopy}/>}
         <SmallText>Total: 32.5 ETH + gas fees</SmallText>
-        <SmallText style={{'font-size': '14px', 'color': theme['gray800'], 'margin-top': '34px'}}>You will be transferred to a secured Blox webpage</SmallText>
+        <SmallText style={{'fontSize': '14px', 'color': theme['gray800'], 'marginTop': '34px'}}>You will be transferred to a secured Blox webpage</SmallText>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>Continue to Web Deposit</BigButton>
         </ButtonsWrapper>

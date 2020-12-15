@@ -15,7 +15,7 @@ const TextInfo = styled.span`
 const DEPOSIT_TOOLTIP = 'Blox has no access to your 32 ETHs as they are to be deposited to the Ethereum 2.0 Blockchain deposit smart contract. Withdrawal of if the ETHs is currently not enabled and should be available when ETH 2.0 reaches Phase 1';
 
 const TestNetText = (props: Props) => {
-  const {publicKey} = props;
+  const {publicKey, onCopy} = props;
 
   return (
     <div>
@@ -38,6 +38,7 @@ const TestNetText = (props: Props) => {
 
 type Props = {
   publicKey: string;
+  onCopy: () => void;
 };
 
 export default TestNetText;
