@@ -45,7 +45,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
-          fields: ['uuid', 'credentials', 'keyPair', 'securityGroupId', 'slashingData', 'index', 'seed'],
+          fields: ['uuid', 'credentials', 'keyPair', 'slashingData', 'index', 'seed'],
           postClean: {
             prefix: mainStorePrefix,
             fields: ['slashingData', 'index']
@@ -69,7 +69,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: tempStorePrefix,
           toPrefix: mainStorePrefix,
-          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'port'],
+          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'securityGroupId', 'port'],
           postClean: {
             prefix: tempStorePrefix
           }
