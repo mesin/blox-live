@@ -16,10 +16,12 @@ export default class KeyVaultSsh {
   async getConnection(): Promise<NodeSSH> {
     const ssh = new NodeSSH();
     const keyPair: any = Connection.db(this.storePrefix).get('keyPair');
-    console.log('keyPair=', keyPair)
+    console.log('keyPair=', keyPair);
+    console.log('publicIp=', Connection.db(this.storePrefix).get('publicIp'));
+    console.log('port=', Connection.db(this.storePrefix).get('port') || config.env.port);
     await ssh.connect({
       host: Connection.db(this.storePrefix).get('publicIp'),
-      port: config.env.port,
+      port: Connection.db(this.storePrefix).get('port') || config.env.port,
       username: 'ec2-user',
       privateKey: keyPair.privateKey
     });

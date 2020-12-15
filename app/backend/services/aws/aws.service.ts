@@ -3,6 +3,7 @@ import Connection from '../../common/store-manager/connection';
 import * as AWS from 'aws-sdk';
 import { Catch, CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
+import { v4 as uuidv4 } from 'uuid';
 
 // TODO import from .env
 const defaultAwsOptions = {
@@ -105,10 +106,11 @@ export default class AwsService {
 
     const vpcList = await this.ec2.describeVpcs().promise();
     const vpc = vpcList?.Vpcs![0].VpcId;
+    const uuid = uuidv4();
     const securityData = await this.ec2
       .createSecurityGroup({
-        Description: `${this.securityGroupName}-${Connection.db(this.storePrefix).get('uuid')}`,
-        GroupName: `${this.securityGroupName}-${Connection.db(this.storePrefix).get('uuid')}`,
+        Description: `${this.securityGroupName}-${uuid}`,
+        GroupName: `${this.securityGroupName}-${uuid}`,
         VpcId: vpc
       })
       .promise();

@@ -45,7 +45,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
-          fields: ['uuid', 'credentials', 'keyPair', 'securityGroupId', 'slashingData', 'port', 'index', 'seed'],
+          fields: ['uuid', 'credentials', 'keyPair', 'slashingData', 'index', 'seed'],
           postClean: {
             prefix: mainStorePrefix,
             fields: ['slashingData', 'index']
@@ -54,6 +54,7 @@ export default class ReinstallProcess extends ProcessClass {
       },
       { instance: this.awsServiceTmp, method: 'setAWSCredentials' },
       { instance: this.awsServiceTmp, method: 'createElasticIp' },
+      { instance: this.awsServiceTmp, method: 'createSecurityGroup' },
       { instance: this.awsServiceTmp, method: 'createInstance' },
       { instance: this.keyVaultServiceTmp, method: 'configurateSshd' },
       { instance: this.keyVaultServiceTmp, method: 'installDockerScope' },
@@ -69,7 +70,7 @@ export default class ReinstallProcess extends ProcessClass {
         params: {
           fromPrefix: tempStorePrefix,
           toPrefix: mainStorePrefix,
-          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'port'],
+          fields: ['uuid', 'addressId', 'publicIp', 'instanceId', 'vaultRootToken', 'keyVaultVersion', 'securityGroupId', 'port'],
           postClean: {
             prefix: tempStorePrefix
           }

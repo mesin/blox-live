@@ -35,7 +35,6 @@ export default class Config {
   private constructor() {
     const baseStore: BaseStore = new BaseStore();
     const envKey = baseStore.get('env') || 'production';
-    this.settings.default.SSH_PORT = baseStore.get('port') || this.settings.default.DEFAULT_SSH_PORT;
     // env related
     // eslint-disable-next-line no-restricted-syntax
     for (const key of Object.keys(this.settings[envKey])) {
@@ -55,7 +54,7 @@ export default class Config {
 
     Object.defineProperty(this, 'port', {
       get: () => {
-        return baseStore.get('port') || this.settings.default.DEFAULT_SSH_PORT;
+        return this.settings.default.DEFAULT_SSH_PORT;
       }
     });
   }
