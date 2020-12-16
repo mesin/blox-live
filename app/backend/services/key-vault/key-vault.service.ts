@@ -268,10 +268,10 @@ export default class KeyVaultService {
     if (Connection.db(this.storePrefix).get('port')) {
       return;
     }
-    const ssh = await this.keyVaultSsh.getConnection();
-    Connection.db(this.storePrefix).set('port', config.env.TARGET_SSH_PORT);
     try {
+      const ssh = await this.keyVaultSsh.getConnection();
       const { stderr: error } = await ssh.execCommand(`sudo sed -i '1iPort ${config.env.TARGET_SSH_PORT}\\nLoginGraceTime 30s' /etc/ssh/sshd_config && sudo service sshd restart`, {});
+      Connection.db(this.storePrefix).set('port', config.env.TARGET_SSH_PORT);
       if (error) {
         throw new Error('Could not setup ssh configuration');
       }

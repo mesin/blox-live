@@ -103,7 +103,8 @@ export default class AwsService {
   })
   async createSecurityGroup() {
     // validate if in main.json we have port AND port === TARGET PORT (2200)
-    if (Connection.db(this.storePrefix).exists('port') && Connection.db(this.storePrefix).exists('port') === config.env.TARGET_SSH_PORT) {
+    if (Connection.db(this.storePrefix).exists('port') && Connection.db(this.storePrefix).get('port') === config.env.TARGET_SSH_PORT) {
+      Connection.db(this.storePrefix).delete('port');
       return;
     }
 
