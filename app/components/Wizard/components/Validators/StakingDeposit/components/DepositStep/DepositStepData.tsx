@@ -8,19 +8,29 @@ import {InfoWithTooltip, Tooltip} from '../../../../../../../common/components';
 const Wrapper = styled.div`
   width:100%;
   height: 100px;
-  display: flex;
-  align-items: center;
+  // display: flex;
+  align-items: top;
   background: ${({theme}) => theme.white};
   border: solid 1px ${({theme}) => theme.gray300};
   border-radius: 8px;
   padding-left: 25px;
+  padding-bottom: 16px;
+  // padding-top: 16px;
   margin-top: 24px;
+`;
+
+const InnerWrapper = styled.div`
+  width:100%;
+  height: 80%;
+  display: flex;
+  align-items: center;
 `;
 
 const StepNumber = styled.div`
     width:10%;
     font-size: 16px;
     font-weight: 900;
+    // margin-bottom: 20px;
     color: ${({theme}) => theme.primary900};
 `;
 
@@ -30,21 +40,17 @@ const LeftWrapper = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding-top: 10px;
+    // padding-bottom: 24px;
 `;
 
-const PriceWrapper = styled.div`
-  height: 35%;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-`;
-
-const BigTitle = styled.div`
+const BigTitle = styled.span`
     font-size: 32px;
     font-weight: 800;
     color: ${({theme, color}) => theme[color] || theme.gray800};
-    height: 100%;
     display:flex;
+    line-height: 30px;
+    height: 30px;
     align-items:baseline;
 `;
 
@@ -53,23 +59,21 @@ const MediumTitle = styled.div`
     font-weight: 500;
     color: ${({theme, color}) => theme[color] || theme.gray800};
     margin-left: 4px;
-    height: 100%;
+    // height: 100%;
     display:flex;
     align-items:flex-end;
 `;
 
 const HintTitle = styled.div`
-    height: 10%;
+    height: 12px;
     font-size: 12px;
     font-weight: 500;
     color: ${({theme, color}) => theme[color] || theme.gray600};
     display: flex;
-    margin-top: 5px;
-    // background: ${({theme}) => theme.accent1200};
 `;
 
 const InfoWrapper = styled.div`
-    width:90%;
+    width:95%;
     margin-left: 5px;
     align-items: bottom;
 `;
@@ -82,47 +86,56 @@ const BigInfoTitle = styled.div`
 `;
 
 const ActionWrapper = styled.div`
-    width:15%;
+    width:10%;
     height: 100%;
     display: flex;
-    align-items: top;
+    align-items: center;
     justify-content: center;
 `;
 
+const TagWrapper = styled.div`
+  width:100%;
+  height: 20%;
+  display: flex;
+  justify-content: flex-end;
+`;
+
 const FreeTag = styled.div`
-    width:40px;
+    // width:40px;
     height: 20px;
     background: ${({theme}) => theme.accent2600};
     border-bottom-left-radius:4px;
     border-top-right-radius:8px;
+    display: flex;
     text-align: center;
     font-size: 12px;
     font-weight: 900;
+    padding: 0 7px;
     color: ${({theme, color}) => theme[color] || theme.gray50};
 `;
 
 const DepositStepData = (props: Props) => {
-  const {step, title, isFree, amount, token, tooltip, children} = props;
+  const {step, title, tag, hint, amount, token, tooltip, children} = props;
   return (
     <Wrapper>
-      <StepNumber>{step}</StepNumber>
-      <LeftWrapper>
-        <PriceWrapper>
+      <TagWrapper>
+        <FreeTag style={{'padding': tag ? '0 7px' : '0'}}>{tag}</FreeTag>
+      </TagWrapper>
+      <InnerWrapper>
+        <StepNumber>{step}</StepNumber>
+        <LeftWrapper>
           <BigTitle>{amount} <MediumTitle>{token}</MediumTitle></BigTitle>
-        </PriceWrapper>
-        <HintTitle style={{textDecorationLine: 'line-through', textDecorationStyle: 'solid'}}>{isFree ? '0.5 ETH' : ''}</HintTitle>
-      </LeftWrapper>
-      <InfoWrapper>
-        <BigInfoTitle>{title}</BigInfoTitle>
-        {children}
-      </InfoWrapper>
-      <ActionWrapper style={{'align-items': isFree ? 'top' : 'center', 'justify-content': isFree ? 'flex-end' : 'center'}}>
-        {
-          isFree ?
-            <FreeTag>Free</FreeTag> :
-            (tooltip ? <InfoWithTooltip title={tooltip} placement="bottom" /> : null)
-        }
-      </ActionWrapper>
+          <HintTitle style={{textDecorationLine: 'line-through', textDecorationStyle: 'solid'}}>{hint ? '0.5 ETH' : ''}</HintTitle>
+        </LeftWrapper>
+        <InfoWrapper>
+          <BigInfoTitle>{title}</BigInfoTitle>
+          {children}
+        </InfoWrapper>
+        {tooltip &&
+        <ActionWrapper>
+          <InfoWithTooltip title={tooltip} placement="bottom"/>
+        </ActionWrapper>}
+      </InnerWrapper>
     </Wrapper>
   );
 };

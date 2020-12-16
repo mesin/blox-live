@@ -12,17 +12,17 @@ const TextInfo = styled.span`
     color: ${({theme, color}) => theme[color] || theme.gray600};
 `;
 
-const FEE_TOOLTIP = 'By depositing the service fee, Blox will provide you with a full year of staking services for your Eth2 validator. The fee will not renew automatically and you will be asked to deposit a new fee the following year. 1 service fee of 0.5 ETH provides services for 1 validator for 1 year. The service fee is non refundable. Network gas fees will apply.';
+const FEE_TOOLTIP = 'Blox Staking service charges will only be applied to validators created after this promotion ends. Don\'t worry, we will NEVER charge you for creating or running the validators created during this promotion period.';
 const DEPOSIT_TOOLTIP = 'Blox has no access to your 32 ETHs as they are to be deposited to the Ethereum 2.0 Blockchain deposit smart contract. Withdrawal of if the ETHs is currently not enabled and should be available when ETH 2.0 reaches Phase 1';
 
 const MainNetText = (props: Props) => {
   const {publicKey, onCopy} = props;
   return (
     <div>
-      <DepositStepData step={1} title={'Validator yearly service fee'} tooltip={FEE_TOOLTIP} amount={0.5} token={'ETH'}>
+      <DepositStepData step={1} title={'Yearly fee - Free for a limited time'} tooltip={FEE_TOOLTIP} tag={'Yes, It\'s Free'} hint={true} amount={0.5} token={'ETH'}>
         <TextInfo>
-          <TextInfo>Run 1 validator until transfers are enabled (phase 1.5) OR up to 2 years. Whichever comes first. Fee is converted into CDT and </TextInfo>
-          <Link style={{color: theme['primary600']}} onClick={() => openExternalLink('https://www.bloxstaking.com')}>burnt.</Link>
+          <TextInfo>We will NOT charge you on validators created during the "early stage" period. Once we start to charge, you will be notified.</TextInfo>
+          {/*<Link style={{color: theme['primary600']}} onClick={() => openExternalLink('https://www.bloxstaking.com')}>burnt.</Link>*/}
         </TextInfo>
       </DepositStepData>
       <DepositStepData step={2} title={'Validator deposit'} amount={32} token={'ETH'} tooltip={DEPOSIT_TOOLTIP}>
