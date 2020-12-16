@@ -1,4 +1,5 @@
 export const LOGIN_INIT = 'LOGIN/init';
+export const LOGIN_SET_SESSION = 'LOGIN/setSession';
 export const LOGIN_SUCCESS = 'LOGIN/success';
 export const LOGIN_FAILURE = 'LOGIN/failure';
 
