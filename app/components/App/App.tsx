@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+
+import { remote } from 'electron';
 
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
@@ -9,6 +12,7 @@ import GlobalStyle from '../../common/styles/global-styles';
 import { initApp } from './service';
 
 import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
+import * as loginActions from '../CallbackPage/actions';
 import loginSaga from '../CallbackPage/saga';
 import userSaga from '../User/saga';
 
@@ -27,7 +31,8 @@ const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
   useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
   useInjectSaga({ key: loginKey, saga: loginSaga, mode: '' });
-  const { isLoggedIn, isLoading } = props;
+  const { isLoggedIn, isLoading, actions } = props;
+  const { setSession, loginFailure } = actions;
 
   const init = async () => {
     await setAppInitialised(true);
@@ -37,6 +42,32 @@ const App = (props: Props) => {
   useEffect(() => {
     if (!didInitApp) {
       init();
+      remote.app.on('open-url', (event, data) => {
+        if (data) {
+          const questionMarkIndex = data.indexOf('//');
+          const trimmedCode = data.substring(questionMarkIndex + 2);
+          try {
+            setSession(trimmedCode);
+          }
+          catch (e) {
+            loginFailure(e);
+          }
+        }
+      });
+
+      remote.app.on('second-instance', (event, commandLine) => {
+        if (commandLine[2].includes('blox-live://')) {
+          const questionMarkIndex = commandLine[2].indexOf('//');
+          const trimmedCode = commandLine[2].substring(questionMarkIndex + 2);
+          const withoutSlash = trimmedCode.slice(0, trimmedCode.length - 1);
+          try {
+            setSession(withoutSlash);
+          }
+          catch (e) {
+            loginFailure(e);
+          }
+        }
+      });
     }
   }, [didInitApp, isLoggedIn, isLoading]);
 
@@ -56,6 +87,7 @@ type Props = {
   isLoggedIn: boolean;
   isLoading: boolean;
   isTokensExist: () => void;
+  actions: Record<string, any>;
 };
 
 const mapStateToProps = (state: any) => ({
@@ -63,4 +95,8 @@ const mapStateToProps = (state: any) => ({
   isLoading: getIsLoading(state),
 });
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  actions: bindActionCreators(loginActions, dispatch)
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
