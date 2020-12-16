@@ -37,7 +37,8 @@ export default class InstallProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'runDockerContainer' },
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
       { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew } },
-      { instance: this.keyVaultService, method: 'getKeyVaultStatus' }
+      { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+      { instance: this.awsService, method: 'truncateOldKvResources' },
     ];
   }
 }
