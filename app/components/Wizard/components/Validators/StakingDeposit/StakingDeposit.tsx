@@ -89,7 +89,7 @@ const StakingDeposit = (props: Props) => {
 
   const openDepositBrowser = () => {
     const {depositTo} = depositData;
-    openExternalLink('', `${config.env.DEPOSIT_URL}?network=${NETWORKS[network].metaMaskId}&public_key=${publicKey}&deposit_to=${depositTo}`)
+    openExternalLink('', `${config.env.WEB_APP_URL}?network=${NETWORKS[network].metaMaskId}&public_key=${publicKey}&deposit_to=${depositTo}`)
   };
 
   if (network) {

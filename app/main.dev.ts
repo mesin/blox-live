@@ -9,7 +9,6 @@
  * `./app/main.prod.js` using webpack. This gives us some performance wins.
  */
 
-// import path from 'path';
 import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
@@ -97,6 +96,12 @@ const createWindow = async (downloadsDir) => {
 /**
  * Add event listeners...
  */
+
+app.setAsDefaultProtocolClient('blox-live');
+
+// for avoid second instance in Windows
+const gotTheLock = app.requestSingleInstanceLock();
+if (!gotTheLock) { app.quit(); }
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
