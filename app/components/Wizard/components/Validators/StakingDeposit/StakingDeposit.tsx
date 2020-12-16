@@ -8,7 +8,7 @@ import {Title, Link, BigButton} from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
 
-import {clearAccountsData, setDepositNeeded, } from '../../../../Accounts/actions';
+import {clearAccountsData, setDepositNeeded, setAddAnotherAccount} from '../../../../Accounts/actions';
 import {
   getAccounts, getDepositNeededStatus, getDepositToPublicKey,
   getDepositToIndex, getDepositToNetwork
@@ -50,11 +50,11 @@ const ButtonsWrapper = styled.div`
 
 const StakingDeposit = (props: Props) => {
   const {
-    setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, accountDataFromProcess,
+    setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, callSetAddAnotherAccount, accountDataFromProcess,
     isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network
   } = props;
   const {updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard} = actions;
-
+  callSetAddAnotherAccount(true);
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
       loadDepositData(publicKey, accountIndex, network);
@@ -123,6 +123,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(wizardActions, dispatch),
   callClearAccountsData: () => dispatch(clearAccountsData()),
+  callSetAddAnotherAccount: () => dispatch(setAddAnotherAccount(true)),
   callSetDepositNeeded: (payload: DepositNeededPayload) => dispatch(setDepositNeeded(payload)),
 });
 
@@ -136,6 +137,7 @@ type Props = {
   accountDataFromProcess: Record<string, any> | null;
   actions: Record<string, any> | null;
   callClearAccountsData: () => void;
+  callSetAddAnotherAccount: (addAnotherAccount : boolean) => void;
   callSetDepositNeeded: (payload: DepositNeededPayload) => void;
   isDepositNeeded: boolean;
   publicKey: string;
