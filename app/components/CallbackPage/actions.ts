@@ -5,6 +5,11 @@ export const login = (connectionName: string) => ({
   payload: connectionName,
 });
 
+export const setSession = (idToken: string) => ({
+  type: actionTypes.LOGIN_SET_SESSION,
+  payload: idToken,
+});
+
 export const loginSuccess = (idTokenPayload) => ({
   type: actionTypes.LOGIN_SUCCESS,
   payload: idTokenPayload,
