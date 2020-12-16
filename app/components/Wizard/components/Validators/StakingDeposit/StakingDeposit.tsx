@@ -54,11 +54,12 @@ const StakingDeposit = (props: Props) => {
     isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network
   } = props;
   const {updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard} = actions;
-  callSetAddAnotherAccount(true);
+
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
       loadDepositData(publicKey, accountIndex, network);
       callSetDepositNeeded({isNeeded: false, publicKey, accountIndex, network});
+      callSetAddAnotherAccount(true);
     }
   }, [isDepositNeeded, publicKey]);
 
