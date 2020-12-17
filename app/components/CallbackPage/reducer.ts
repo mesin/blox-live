@@ -14,23 +14,19 @@ export const initialState: State = {
 const loginReducer = (state = initialState, action: Action) => produce(state, (draft) => {
     switch (action.type) {
       case actionTypes.LOGIN_INIT:
-        draft.isLoading = true;
         break;
       case actionTypes.LOGIN_SET_ID_TOKEN:
         draft.idToken = action.payload;
         break;
       case actionTypes.LOGIN_SUCCESS:
         draft.userData = { ...action.payload };
-        draft.isLoading = false;
         draft.isLoggedIn = true;
         break;
       case actionTypes.LOGIN_FAILURE:
-        draft.isLoading = false;
         break;
       case actionTypes.LOGOUT:
         draft.idToken = initialState.idToken;
         draft.isLoggedIn = initialState.isLoggedIn;
-        draft.isLoading = initialState.isLoading;
         draft.userData = initialState.userData;
         break;
     }
