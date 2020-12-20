@@ -22,9 +22,6 @@ const TestNetText = (props: Props) => {
       <DepositStepData step={1} title={'Validator yearly service fee'} tag={'Free'} hint={true} amount={0} token={'ETH'}>
         <TextInfo>
           <TextInfo color={'gray800'}>Testnet validators are FREE. </TextInfo>
-          {/*<TextInfo>Staking on Mainnet will require a service fee deposit. </TextInfo>*/}
-          {/*<Link style={{color: theme['primary600']}} onClick={() => openExternalLink('https://www.bloxstaking.com')}>Learn*/}
-          {/*  more</Link>*/}
         </TextInfo>
       </DepositStepData>
       <DepositStepData step={2} title={'Validator deposit'} amount={32} token={'GoETH'} tooltip={DEPOSIT_TOOLTIP}>

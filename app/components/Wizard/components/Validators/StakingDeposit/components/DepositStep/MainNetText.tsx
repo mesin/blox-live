@@ -22,7 +22,6 @@ const MainNetText = (props: Props) => {
       <DepositStepData step={1} title={'Yearly fee - Free for a limited time'} tooltip={FEE_TOOLTIP} tag={'Yes, It\'s Free'} hint={true} amount={0.5} token={'ETH'}>
         <TextInfo>
           <TextInfo>We will NOT charge you on validators created during the "early stage" period. Once we start to charge, you will be notified.</TextInfo>
-          {/*<Link style={{color: theme['primary600']}} onClick={() => openExternalLink('https://www.bloxstaking.com')}>burnt.</Link>*/}
         </TextInfo>
       </DepositStepData>
       <DepositStepData step={2} title={'Validator deposit'} amount={32} token={'ETH'} tooltip={DEPOSIT_TOOLTIP}>
