@@ -67,7 +67,7 @@ const Test = () => {
         <option value="production">production</option>
       </select>
       <button
-        onClick={async () => {
+        onClick={() => {
           console.log('set custom env', env);
           Connection.db().setEnv(env);
         }}
@@ -75,7 +75,7 @@ const Test = () => {
         Set Custom Environment
       </button>
       <button
-        onClick={async () => {
+        onClick={() => {
           console.log('delete custom env');
           Connection.db().deleteEnv();
         }}
