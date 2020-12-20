@@ -226,41 +226,41 @@ export default class AwsService {
   })
   async truncateOldKvResources() {
     const userProfile = await this.userService.get();
-    const latestKeyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
     const instances = await this.ec2.describeInstances().promise();
-    const orgInstances = instances.Reservations.reduce((aggr, reserv) => {
+    const addresses = (await this.ec2.describeAddresses().promise()).Addresses;
+    const activeInstanceId = Connection.db(this.storePrefix).get('instanceId');
+    const kvOldOrgInstances = instances.Reservations.reduce((aggr, reserv) => {
       // eslint-disable-next-line no-param-reassign
       aggr = [
         ...aggr,
-        ...reserv.Instances.filter(instance => instance.Tags.find(tag => tag.Key === 'org-id' && tag.Value === `${userProfile.organizationId}`))
+        ...reserv.Instances
+          .filter(instance => instance.Tags.find(tag => tag.Key === 'org-id' && tag.Value === `${userProfile.organizationId}`))
+          .filter(instance => instance.InstanceId !== activeInstanceId)
       ];
       return aggr;
     }, []);
-    const kvOldInstances = orgInstances.filter(instance => {
-      const versionTag = instance.Tags.find(tag => tag.Key === 'kv-version');
-      if (!versionTag) {
-        console.warn('Version KV Tag not found in instance');
-        return false;
-      }
-      const isOlder = !isVersionHigherOrEqual(versionTag.Value, latestKeyVaultVersion);
-      return isOlder;
-    });
     // eslint-disable-next-line no-restricted-syntax
-    const addresses = (await this.ec2.describeAddresses().promise()).Addresses;
-    // eslint-disable-next-line no-restricted-syntax
-    for (const oldInstance of kvOldInstances) {
+    for (const oldInstance of kvOldOrgInstances) {
       const instanceId = oldInstance.InstanceId;
       const filteredAssocs = addresses.filter(addr => addr.InstanceId === instanceId);
-      console.log('going to destroy', oldInstance);
+      const params = {
+        instanceId,
+        addressId: filteredAssocs[0]?.AllocationId,
+        securityGroupId: oldInstance.SecurityGroups[0].GroupId
+      }
+      console.log('going to destroy', params);
       // eslint-disable-next-line no-await-in-loop
-      await this.destroyResources({ instanceId, addressId: filteredAssocs[0]?.AllocationId });
+      await this.destroyResources(params);
     }
   }
 
-  async destroyResources({ instanceId = null, addressId = null }) {
-    instanceId && await this.ec2.terminateInstances({ InstanceIds: [instanceId] }).promise();
-    instanceId && await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
+  async destroyResources({ instanceId = null, addressId = null, securityGroupId = null }) {
+    if (instanceId) {
+      await this.ec2.terminateInstances({ InstanceIds: [instanceId] }).promise();
+      await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
+    }
     addressId && await this.ec2.releaseAddress({ AllocationId: addressId }).promise();
+    securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
   }
 
   @Step({

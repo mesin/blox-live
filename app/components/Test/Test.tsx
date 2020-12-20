@@ -17,7 +17,6 @@ import OrganizationService from '../../backend/services/organization/organizatio
 import { Link } from 'react-router-dom/esm/react-router-dom';
 import config from '../../backend/common/config';
 import { reportCrash } from '../common/service';
-
 class Listener implements Observer {
   private readonly logFunc: any;
 
