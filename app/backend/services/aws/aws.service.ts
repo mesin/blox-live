@@ -246,11 +246,14 @@ export default class AwsService {
       return isOlder;
     });
     // eslint-disable-next-line no-restricted-syntax
+    const addresses = (await this.ec2.describeAddresses().promise()).Addresses;
+    // eslint-disable-next-line no-restricted-syntax
     for (const oldInstance of kvOldInstances) {
       const instanceId = oldInstance.InstanceId;
-      console.log('going to destroy', instanceId);
+      const filteredAssocs = addresses.filter(addr => addr.InstanceId === instanceId);
+      console.log('going to destroy', oldInstance);
       // eslint-disable-next-line no-await-in-loop
-      await this.destroyResources({ instanceId });
+      await this.destroyResources({ instanceId, addressId: filteredAssocs[0]?.AllocationId });
     }
   }
 

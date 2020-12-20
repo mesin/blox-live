@@ -17,7 +17,6 @@ import OrganizationService from '../../backend/services/organization/organizatio
 import { Link } from 'react-router-dom/esm/react-router-dom';
 import config from '../../backend/common/config';
 import { reportCrash } from '../common/service';
-import AWSService from '../../backend/services/aws/aws.service';
 
 class Listener implements Observer {
   private readonly logFunc: any;
@@ -70,9 +69,7 @@ const Test = () => {
       <button
         onClick={async () => {
           console.log('set custom env', env);
-          // Connection.db().setEnv(env);
-          const awsService = new AWSService();
-          await awsService.truncateOldKvResources();
+          Connection.db().setEnv(env);
         }}
       >
         Set Custom Environment
