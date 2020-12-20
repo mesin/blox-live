@@ -67,23 +67,6 @@ const StakingDeposit = (props: Props) => {
 
   const onMadeDepositButtonClick = async () => {
     setShowMoveToBrowserModal(true)
-  /*  const accountFromApi: Record<string, any> = accountsFromApi.find(
-      (account) => (account.publicKey === publicKey && account.network === network)
-    );
-    const currentAccount = accountDataFromProcess || accountFromApi;
-    if (currentAccount) {
-      await setPage(page + 1);
-      await updateAccountStatus(currentAccount.id);
-      await callSetDepositNeeded({isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
-    } else {
-      notification.error({message: 'Account not found'});
-    }*/
-  };
-
-  const onDepositLaterButtonClick = () => {
-    callClearAccountsData();
-    clearWizardData();
-    setFinishedWizard(true);
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
