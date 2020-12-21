@@ -197,7 +197,7 @@ export default class AccountService {
 
     const data = depositMethod.encodeABI();
     return {
-      txHash: data,
+      txData: data,
       network,
       accountIndex: index,
       publicKey,

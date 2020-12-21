@@ -83,8 +83,8 @@ const StakingDeposit = (props: Props) => {
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
   const openDepositBrowser = () => {
-    const {depositTo} = depositData;
-    openExternalLink('', `${config.env.WEB_APP_URL}/staking-deposit?network=${NETWORKS[network].chainId}&public_key=${publicKey}&deposit_to=${depositTo}`);
+    const {depositTo, txData} = depositData;
+    openExternalLink('', `${config.env.WEB_APP_URL}/staking-deposit?network_id=${NETWORKS[network].chainId}&public_key=${publicKey}&deposit_to=${depositTo}&tx_data=${txData}`);
   };
 
   if (network) {

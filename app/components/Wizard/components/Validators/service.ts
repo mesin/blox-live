@@ -1,5 +1,5 @@
 export const generateDepositDataInfo = (depositData) => {
-  const { depositTo, coin, txHash } = depositData;
+  const { depositTo, coin, txData } = depositData;
   return [
     {
       label: 'depositTo',
@@ -9,7 +9,7 @@ export const generateDepositDataInfo = (depositData) => {
     },
     {
       label: 'txData',
-      value: txHash,
+      value: txData,
       title: 'Tx Data',
       moreInfo: 'TX data holds additional information that is required for the transaction.',
     },
