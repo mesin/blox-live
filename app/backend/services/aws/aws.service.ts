@@ -219,6 +219,7 @@ export default class AwsService {
       instanceId: Connection.db(this.storePrefix).get('instanceId'),
       addressId: Connection.db(this.storePrefix).get('addressId')
     });
+    return { isActive: true };
   }
 
   @Step({
@@ -246,12 +247,13 @@ export default class AwsService {
       const params = {
         instanceId,
         addressId: filteredAssocs[0]?.AllocationId,
-        securityGroupId: oldInstance.SecurityGroups[0].GroupId
+        securityGroupId: oldInstance.SecurityGroups[0]?.GroupId
       }
       console.log('going to destroy', params);
       // eslint-disable-next-line no-await-in-loop
       await this.destroyResources(params);
     }
+    return { isActive: true };
   }
 
   async destroyResources({ instanceId = null, addressId = null, securityGroupId = null }) {
