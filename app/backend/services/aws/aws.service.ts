@@ -180,7 +180,7 @@ export default class AwsService {
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
       Tags: [
-        { Key: 'Name', Value: 'Blox-Infra-Server'},
+        { Key: 'Name', Value: 'blox-staking'},
         { Key: 'kv-version', Value: `${keyVaultVersion}` },
         { Key: 'org-id', Value: `${userProfile.organizationId}`},
       ]
