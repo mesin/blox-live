@@ -4,6 +4,9 @@ import * as AWS from 'aws-sdk';
 import { Catch, CatchClass, Step } from '../../decorators';
 import config from '../../common/config';
 import { v4 as uuidv4 } from 'uuid';
+import VersionService from '../version/version.service';
+import UserService from '../users/users.service';
+import { isVersionHigherOrEqual } from '../../../utils/service';
 
 // TODO import from .env
 const defaultAwsOptions = {
@@ -16,12 +19,16 @@ export default class AwsService {
   private readonly keyName: string = 'BLOX_INFRA_KEY_PAIR';
   private readonly securityGroupName: string = 'BLOX_INFRA_GROUP';
   private storePrefix: string;
+  private readonly versionService: VersionService;
+  private readonly userService: UserService;
 
   constructor(prefix: string = '') {
     this.storePrefix = prefix;
     if (!this.ec2 && Connection.db(this.storePrefix).exists('credentials')) {
       this.setAWSCredentials();
     }
+    this.versionService = new VersionService();
+    this.userService = new UserService();
   }
 
   static async validateAWSCredentials({ accessKeyId, secretAccessKey }) {
@@ -103,7 +110,8 @@ export default class AwsService {
   })
   async createSecurityGroup() {
     // validate if in main.json we have port AND port === TARGET PORT (2200)
-    if (Connection.db(this.storePrefix).exists('port') && Connection.db(this.storePrefix).exists('port') === config.env.TARGET_SSH_PORT) {
+    if (Connection.db(this.storePrefix).exists('port') && Connection.db(this.storePrefix).get('port') === config.env.TARGET_SSH_PORT) {
+      Connection.db(this.storePrefix).delete('port');
       return;
     }
 
@@ -166,9 +174,16 @@ export default class AwsService {
       .promise();
     Connection.db(this.storePrefix).set('instanceId', instanceId);
 
+    const keyVaultVersion = await this.versionService.getLatestKeyVaultVersion();
+    const userProfile = await this.userService.get();
+
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
-      Tags: [{ Key: 'Name', Value: 'Blox-Infra-Server' }]
+      Tags: [
+        { Key: 'Name', Value: 'Blox-Infra-Server'},
+        { Key: 'kv-version', Value: `${keyVaultVersion}` },
+        { Key: 'org-id', Value: `${userProfile.organizationId}`},
+      ]
     };
     await this.ec2.createTags(tagsOptions).promise();
     await this.ec2.associateAddress({
@@ -200,9 +215,54 @@ export default class AwsService {
     name: 'Removing old EC2 instance...'
   })
   async truncateServer() {
-    await this.ec2.terminateInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
-    await this.ec2.waitFor('instanceTerminated', { InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
-    await this.ec2.releaseAddress({ AllocationId: Connection.db(this.storePrefix).get('addressId') }).promise();
+    await this.destroyResources({
+      instanceId: Connection.db(this.storePrefix).get('instanceId'),
+      addressId: Connection.db(this.storePrefix).get('addressId')
+    });
+    return { isActive: true };
+  }
+
+  @Step({
+    name: 'Truncate old keyvault instances...'
+  })
+  async truncateOldKvResources() {
+    const userProfile = await this.userService.get();
+    const instances = await this.ec2.describeInstances().promise();
+    const addresses = (await this.ec2.describeAddresses().promise()).Addresses;
+    const activeInstanceId = Connection.db(this.storePrefix).get('instanceId');
+    const kvOldOrgInstances = instances.Reservations.reduce((aggr, reserv) => {
+      // eslint-disable-next-line no-param-reassign
+      aggr = [
+        ...aggr,
+        ...reserv.Instances
+          .filter(instance => instance.Tags.find(tag => tag.Key === 'org-id' && tag.Value === `${userProfile.organizationId}`))
+          .filter(instance => instance.InstanceId !== activeInstanceId)
+      ];
+      return aggr;
+    }, []);
+    // eslint-disable-next-line no-restricted-syntax
+    for (const oldInstance of kvOldOrgInstances) {
+      const instanceId = oldInstance.InstanceId;
+      const filteredAssocs = addresses.filter(addr => addr.InstanceId === instanceId);
+      const params = {
+        instanceId,
+        addressId: filteredAssocs[0]?.AllocationId,
+        securityGroupId: oldInstance.SecurityGroups[0]?.GroupId
+      }
+      console.log('going to destroy', params);
+      // eslint-disable-next-line no-await-in-loop
+      await this.destroyResources(params);
+    }
+    return { isActive: true };
+  }
+
+  async destroyResources({ instanceId = null, addressId = null, securityGroupId = null }) {
+    if (instanceId) {
+      await this.ec2.terminateInstances({ InstanceIds: [instanceId] }).promise();
+      await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
+    }
+    addressId && await this.ec2.releaseAddress({ AllocationId: addressId }).promise();
+    securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
   }
 
   @Step({

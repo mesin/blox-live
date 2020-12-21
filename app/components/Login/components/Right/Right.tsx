@@ -29,7 +29,6 @@ const InnerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
 `;
 
 const Title = styled.h2`
@@ -41,17 +40,25 @@ const Title = styled.h2`
   margin: 0px 0px 40px 0px;
 `;
 
+const SmallText = styled.div`
+  width: 257px;
+  height: 16px;
+  margin-bottom:8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: ${(props) => props.theme.gray600};
+`;
+
 const ButtonsWrapper = styled.div`
   width: 300px;
   height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
 `;
 
 const SocialAppButton = styled.button`
-  width: 90%;
+  width: 85%;
   height: 40px;
   background-color: #ffffff;
   border-color: ${(props) => props.theme.gray400};
@@ -96,12 +103,15 @@ const LinksWrapper = styled.div`
 `;
 
 const Link = styled.a`
+  text-decoration:underline;
   color: ${(props) => props.theme.gray600};
   &:hover {
     color: ${(props) => props.theme.gray400};
+    text-decoration:underline;
   }
   &:active {
     color: ${(props) => props.theme.gray800};
+    text-decoration:underline;
   }
 `;
 
@@ -138,6 +148,7 @@ const Right = ({ actions }: Props) => {
     <Wrapper>
       <InnerWrapper>
         <Title>Welcome to Blox Staking</Title>
+        <SmallText>You will be directed to your web browser to log in</SmallText>
         <ButtonsWrapper>
           {socialAppsList.map((socialApp, index) => {
             const { label } = socialApp;

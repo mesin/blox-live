@@ -42,7 +42,8 @@ export default class RecoveryProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'getKeyVaultRootToken' },
       { instance: this.walletService, method: 'syncVaultWithBlox', params: { isNew } },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
-      { instance: this.keyVaultService, method: 'updateVaultMountsStorage' }
+      { instance: this.keyVaultService, method: 'updateVaultMountsStorage' },
+      { instance: this.awsService, method: 'truncateOldKvResources' },
     ];
   }
 }
