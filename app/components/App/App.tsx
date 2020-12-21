@@ -3,8 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { remote } from 'electron';
-
 import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
 

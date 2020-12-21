@@ -34,7 +34,9 @@ export const deepLink = (onSuccess, onFailure) => {
       const params : Record<string, any> = queryString.parse(withoutSlash);
       try {
         if (params) {
+          const win = remote.getCurrentWindow();
           onSuccess(params);
+          win.focus();
         } else {
           onFailure('Unknown DeepLink!');
         }
