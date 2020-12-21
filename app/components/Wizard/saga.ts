@@ -57,10 +57,11 @@ function* loadDepositData(action) {
 }
 
 function* startUpdatingAccountStatus(action) {
-  const {payload, body} = action;
+  const {payload} = action;
+  const {accountId, txHash} = payload;
   try {
     const accountService = new AccountService();
-    yield call([accountService, 'updateStatus'], payload, {...body, ...{deposited: true}});
+    yield call([accountService, 'updateStatus'], accountId, {deposited: true, depositTxHash: txHash});
     yield call(onAccountStatusUpdateSuccess);
   } catch (error) {
     yield error && call(onAccountStatusUpdateFailure, error);

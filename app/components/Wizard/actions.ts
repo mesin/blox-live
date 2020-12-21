@@ -49,8 +49,7 @@ export const clearDepositData = () => ({ type: actionTypes.CLEAR_DEPOSIT_DATA});
 
 export const updateAccountStatus = (accountId: string, txHash: string) => ({
   type: actionTypes.UPDATE_ACCOUNT_STATUS,
-  payload: accountId,
-  body: {txHash}
+  payload: {accountId, txHash},
 });
 
 export const updateAccountStatusSuccess = () => ({
