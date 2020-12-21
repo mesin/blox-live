@@ -9,7 +9,7 @@ import LoggedIn from '../LoggedIn';
 import NotLoggedIn from '../NotLoggedIn';
 
 import GlobalStyle from '../../common/styles/global-styles';
-import { initApp } from './service';
+import {deepLink, initApp} from './service';
 
 import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
 import * as loginActions from '../CallbackPage/actions';
@@ -42,32 +42,12 @@ const App = (props: Props) => {
   useEffect(() => {
     if (!didInitApp) {
       init();
-      remote.app.on('open-url', (event, data) => {
-        if (data) {
-          const questionMarkIndex = data.indexOf('//');
-          const trimmedCode = data.substring(questionMarkIndex + 2);
-          try {
-            setSession(trimmedCode);
+      deepLink((obj) => {
+          if ('token_id' in obj) {
+            setSession(obj.token_id);
           }
-          catch (e) {
-            loginFailure(e);
-          }
-        }
-      });
-
-      remote.app.on('second-instance', (event, commandLine) => {
-        if (commandLine[2].includes('blox-live://')) {
-          const questionMarkIndex = commandLine[2].indexOf('//');
-          const trimmedCode = commandLine[2].substring(questionMarkIndex + 2);
-          const withoutSlash = trimmedCode.slice(0, trimmedCode.length - 1);
-          try {
-            setSession(withoutSlash);
-          }
-          catch (e) {
-            loginFailure(e);
-          }
-        }
-      });
+        },
+        loginFailure);
     }
   }, [didInitApp, isLoggedIn, isLoading]);
 
