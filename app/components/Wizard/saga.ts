@@ -1,6 +1,6 @@
-import { call, put, takeLatest } from 'redux-saga/effects';
-import { notification } from 'antd';
-import { LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS } from './actionTypes';
+import {call, put, takeLatest} from 'redux-saga/effects';
+import {notification} from 'antd';
+import {LOAD_WALLET, LOAD_DEPOSIT_DATA, UPDATE_ACCOUNT_STATUS} from './actionTypes';
 import * as actions from './actions';
 import WalletService from '../../backend/services/wallet/wallet.service';
 import AccountService from '../../backend/services/account/account.service';
@@ -11,16 +11,18 @@ function* onAccountStatusUpdateSuccess() {
 
 function* onAccountStatusUpdateFailure(error) {
   yield put(actions.updateAccountStatusFailure(error));
-  notification.error({ message: 'Error', description: error.message });
+  notification.error({message: 'Error', description: error.message});
 }
 
 function* onLoadWalletSuccess(response) {
-  if (response) { yield put(actions.loadWalletSuccess(response)); }
+  if (response) {
+    yield put(actions.loadWalletSuccess(response));
+  }
 }
 
 function* onLoadWalletFailure(error) {
   yield put(actions.loadWalletFailure(error));
-  notification.error({ message: 'Error', description: error.message});
+  notification.error({message: 'Error', description: error.message});
 }
 
 function* onLoadDepositDataSuccess(depositData) {
@@ -29,7 +31,7 @@ function* onLoadDepositDataSuccess(depositData) {
 
 function* onLoadDepositDataFailure(error) {
   yield put(actions.loadDepositDataFailure(error));
-  notification.error({ message: 'Error', description: error.message });
+  notification.error({message: 'Error', description: error.message});
 }
 
 function* loadWallet() {
@@ -43,8 +45,8 @@ function* loadWallet() {
 }
 
 function* loadDepositData(action) {
-  const { payload } = action;
-  const { publicKey, accountIndex, network } = payload;
+  const {payload} = action;
+  const {publicKey, accountIndex, network} = payload;
   try {
     const accountService = new AccountService();
     const response = yield call([accountService, 'getDepositData'], publicKey, accountIndex, network);
@@ -55,10 +57,10 @@ function* loadDepositData(action) {
 }
 
 function* startUpdatingAccountStatus(action) {
-  const { payload } = action;
+  const {payload, body} = action;
   try {
     const accountService = new AccountService();
-    yield call([accountService, 'updateStatus'], payload, { deposited: true });
+    yield call([accountService, 'updateStatus'], payload, {...body, ...{deposited: true}});
     yield call(onAccountStatusUpdateSuccess);
   } catch (error) {
     yield error && call(onAccountStatusUpdateFailure, error);

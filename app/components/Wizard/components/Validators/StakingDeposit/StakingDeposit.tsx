@@ -18,10 +18,11 @@ import {getData} from '../../../../ProcessRunner/selectors';
 
 import {MainNetText, TestNetText} from './components';
 
-import theme from "../../../../../theme";
-import MoveToBrowserModal from "./components/MoveToBrowserModal";
-import {openExternalLink} from "../../../../common/service";
-import config from "../../../../../backend/common/config";
+import theme from '../../../../../theme';
+import MoveToBrowserModal from './components/MoveToBrowserModal';
+import {openExternalLink} from '../../../../common/service';
+import config from '../../../../../backend/common/config';
+import {deepLink} from '../../../../App/service';
 
 const Wrapper = styled.div`
   width:580px;
@@ -63,17 +64,27 @@ const StakingDeposit = (props: Props) => {
     }
   }, [isDepositNeeded, publicKey]);
 
+  useEffect(() => {
+    deepLink((obj) => {
+      if ('tx_hash' in obj && 'account_id' in obj) {
+        setPage(page + 1);
+        updateAccountStatus(obj.account_id, obj.tx_hash);
+        callSetDepositNeeded({ isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
+      }
+    }, (e) => notification.error({message: e}));
+  }, []);
+
   const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
 
   const onMadeDepositButtonClick = async () => {
-    setShowMoveToBrowserModal(true)
+    setShowMoveToBrowserModal(true);
   };
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
   const openDepositBrowser = () => {
     const {depositTo} = depositData;
-    openExternalLink('', `${config.env.WEB_APP_URL}/staking-deposit?network=${NETWORKS[network].chainId}&public_key=${publicKey}&deposit_to=${depositTo}`)
+    openExternalLink('', `${config.env.WEB_APP_URL}/staking-deposit?network=${NETWORKS[network].chainId}&public_key=${publicKey}&deposit_to=${depositTo}`);
   };
 
   if (network) {
@@ -81,13 +92,13 @@ const StakingDeposit = (props: Props) => {
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
         <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
-        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy}/> : <MainNetText publicKey={publicKey} onCopy={onCopy}/>}
+        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy} /> : <MainNetText publicKey={publicKey} onCopy={onCopy} />}
         <SmallText>Total: 32.5 ETH + gas fees</SmallText>
-        <SmallText style={{'fontSize': '14px', 'color': theme['gray800'], 'marginTop': '34px'}}>You will be transferred to a secured Blox webpage</SmallText>
+        <SmallText style={{'fontSize': '14px', 'color': theme.gray800, 'marginTop': '34px'}}>You will be transferred to a secured Blox webpage</SmallText>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>Continue to Web Deposit</BigButton>
         </ButtonsWrapper>
-        {showMoveToBrowserModal && <MoveToBrowserModal onClose={() => setShowMoveToBrowserModal(false)} onMoveToBrowser={openDepositBrowser}/>}
+        {showMoveToBrowserModal && <MoveToBrowserModal onClose={() => setShowMoveToBrowserModal(false)} onMoveToBrowser={openDepositBrowser} />}
       </Wrapper>
     );
   }

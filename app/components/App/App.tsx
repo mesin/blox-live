@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import styled from 'styled-components';
 
 import LoggedIn from '../LoggedIn';
@@ -9,13 +9,13 @@ import NotLoggedIn from '../NotLoggedIn';
 import GlobalStyle from '../../common/styles/global-styles';
 import {deepLink, initApp} from './service';
 
-import { getIsLoggedIn, getIsLoading } from '../CallbackPage/selectors';
+import {getIsLoggedIn, getIsLoading} from '../CallbackPage/selectors';
 import * as loginActions from '../CallbackPage/actions';
 import loginSaga from '../CallbackPage/saga';
 import userSaga from '../User/saga';
 
-import { Loader } from '../../common/components';
-import { useInjectSaga } from '../../utils/injectSaga';
+import {Loader} from '../../common/components';
+import {useInjectSaga} from '../../utils/injectSaga';
 
 const AppWrapper = styled.div`
   margin: 0 auto;
@@ -27,10 +27,10 @@ const userKey = 'user';
 
 const App = (props: Props) => {
   const [didInitApp, setAppInitialised] = useState(false);
-  useInjectSaga({ key: userKey, saga: userSaga, mode: '' });
-  useInjectSaga({ key: loginKey, saga: loginSaga, mode: '' });
-  const { isLoggedIn, isLoading, actions } = props;
-  const { setSession, loginFailure } = actions;
+  useInjectSaga({key: userKey, saga: userSaga, mode: ''});
+  useInjectSaga({key: loginKey, saga: loginSaga, mode: ''});
+  const {isLoggedIn, isLoading, actions} = props;
+  const {setSession, loginFailure} = actions;
 
   const init = async () => {
     await setAppInitialised(true);
@@ -40,7 +40,12 @@ const App = (props: Props) => {
   useEffect(() => {
     if (!didInitApp) {
       init();
-      deepLink(setSession, loginFailure);
+      deepLink((obj) => {
+          if ('token_id' in obj) {
+            setSession(obj.token_id);
+          }
+        },
+        loginFailure);
     }
   }, [didInitApp, isLoggedIn, isLoading]);
 
