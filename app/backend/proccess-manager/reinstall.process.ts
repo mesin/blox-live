@@ -64,7 +64,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultServiceTmp, method: 'updateVaultMountsStorage' },
       { instance: this.walletServiceTmp, method: 'syncVaultWithBlox', params: { isNew: false } },
       { instance: this.awsService, method: 'truncateServer' },
-      { instance: this.awsService, method: 'truncateOldKvResources' },
+      { instance: this.awsServiceTmp, method: 'truncateOldKvResources' },
       {
         instance: Connection,
         method: 'clone',
