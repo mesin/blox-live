@@ -26,7 +26,7 @@ function* onLoginSuccess(authResult) {
 function* onLoginFailure(error: Record<string, any>) {
   yield put(loginFailure(error.message));
   if (error.message) {
-    notification.error({ message: 'Error', description: error.message });
+    notification.error({ message: 'Error', description: 'login failure' });
   }
   yield put(push('/login'));
 }
