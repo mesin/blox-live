@@ -1,8 +1,8 @@
-import { shell } from 'electron';
+import {shell} from 'electron';
 import config from 'backend/common/config';
 import OrganizationService from '../../backend/services/organization/organization.service';
 import Connection from '../../backend/common/store-manager/connection';
-import { version } from '../../package.json';
+import {version} from '../../package.json';
 import FormData from 'form-data';
 
 export const truncateText = (value, fromStartIndex, fromEndIndex) => {
@@ -13,7 +13,8 @@ export const truncateText = (value, fromStartIndex, fromEndIndex) => {
 };
 
 export const openExternalLink = async (url, base: string = undefined) => {
-  await shell.openExternal(`${base ?? config.env.WEBSITE_URL}/${url}`);
+  const fullUrl = `${config.env.WEBSITE_URL}/${url}`;
+  await shell.openExternal(`${base ?? fullUrl}`);
 };
 
 export const reportCrash = async () => {
