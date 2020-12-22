@@ -214,11 +214,15 @@ export default class AwsService {
   @Step({
     name: 'Removing old EC2 instance...'
   })
-  async truncateServer() {
-    await this.destroyResources({
+  async truncateServer({ all }) {
+    const sources: any = {
       instanceId: Connection.db(this.storePrefix).get('instanceId'),
       addressId: Connection.db(this.storePrefix).get('addressId')
-    });
+    };
+    if (all) {
+      sources.securityGroupId = Connection.db(this.storePrefix).get('securityGroupId');
+    }
+    await this.destroyResources(sources);
     return { isActive: true };
   }
 
@@ -248,7 +252,7 @@ export default class AwsService {
         instanceId,
         addressId: filteredAssocs[0]?.AllocationId,
         securityGroupId: oldInstance.SecurityGroups[0]?.GroupId
-      }
+      };
       console.log('going to destroy', params);
       // eslint-disable-next-line no-await-in-loop
       await this.destroyResources(params);

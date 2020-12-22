@@ -64,4 +64,11 @@ export default class Connection {
     delete instances[name];
     Connection.userId = null;
   }
+
+  @Step({
+    name: 'Clear temporary config...'
+  })
+  static clear(payload: { prefix: string }): void {
+    Connection.db(payload.prefix).clear();
+  }
 }
