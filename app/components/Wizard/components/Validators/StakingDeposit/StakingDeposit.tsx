@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import styled from 'styled-components';
 import {notification} from 'antd';
 import {NETWORKS} from '../constants';
-import {Title, Link, BigButton} from '../../common';
+import {Title, BigButton} from '../../common';
 import * as wizardActions from '../../../actions';
 import * as selectors from '../../../selectors';
 
@@ -32,14 +32,14 @@ const Wrapper = styled.div`
 const SubTitle = styled.div`
   font-size: 16px;
   font-weight: 28px;
-  color: ${({theme}) => theme.gray800};
+  color: ${theme.gray800};
   margin-top: 24px;
 `;
 
 const SmallText = styled.div`
   font-size: 12px;
   font-weight: 500px;
-  color: ${({theme}) => theme.gray600};
+  color: ${theme.gray600};
   margin-top: 12px;
 `;
 
@@ -103,7 +103,7 @@ const StakingDeposit = (props: Props) => {
         <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
         {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy} /> :
         <MainNetText publicKey={publicKey} onCopy={onCopy} />}
-        <SmallText>Total: 32.5 ETH + gas fees</SmallText>
+        <SmallText>Total: 32 ETH + gas fees</SmallText>
         <SmallText style={{'fontSize': '14px', 'color': theme.gray800, 'marginTop': '34px'}}>You will be transferred to
           a secured Blox webpage</SmallText>
         <ButtonsWrapper>

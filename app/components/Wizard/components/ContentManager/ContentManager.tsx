@@ -7,11 +7,10 @@ import { Template } from '../common';
 import * as WalletPages from '../Wallet';
 import * as ValidatorPages from '../Validators';
 
-import { getNetwork } from '../../selectors';
-
 import walletImage from 'components/Wizard/assets/img-key-vault.svg';
-import testnetValidatorImage from 'components/Wizard/assets/img-validator-test-net.svg';
-import mainnetValidatorImage from 'components/Wizard/assets/img-validator-main-net.svg';
+import testnetValidatorImage from '../../assets/img-validator-test-net.svg';
+import mainnetValidatorImage from '../../assets/img-validator-main-net.svg';
+import {getDepositToNetwork} from '../../../Accounts/selectors';
 
 const Wrapper = styled.div`
   height: 100%;
@@ -20,7 +19,7 @@ const Wrapper = styled.div`
 
 const switcher = (props: Props) => {
   const { page, network } = props;
-  const validatorImage = network === 'test' ? testnetValidatorImage : mainnetValidatorImage;
+  const validatorImage = network === 'pyrmont' ? testnetValidatorImage : mainnetValidatorImage;
 
   switch (page) {
     case 0:
@@ -81,7 +80,7 @@ const switcher = (props: Props) => {
 const ContentManager = (props: Props) => <Wrapper>{switcher(props)}</Wrapper>;
 
 const mapStateToProps = (state: any) => ({
-  network: getNetwork(state),
+  network: getDepositToNetwork(state),
 });
 
 type Props = {

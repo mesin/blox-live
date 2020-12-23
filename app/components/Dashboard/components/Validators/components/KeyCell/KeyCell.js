@@ -30,7 +30,7 @@ const KeyCell = ({ value }) => {
         <CopyToClipboard text={publicKey} onCopy={onCopy}>
           <Icon name="copy" color="gray800" fontSize="16px" onClick={() => false} />
         </CopyToClipboard>
-        {network === NETWORKS.pyrmont.label && <TestNet>Pyrmont</TestNet>}
+        {network === NETWORKS.pyrmont.label && <TestNet>Pyrmont Testnet</TestNet>}
         {network === NETWORKS.mainnet.label && <TestNet>MainNet</TestNet>}
       </Right>
     </Wrapper>

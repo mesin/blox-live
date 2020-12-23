@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const TestNet = styled.div`
-  width: 50px;
+  // width: 150px;
   height: 20px;
   font-size: 11px;
   font-weight: 500;
@@ -12,6 +12,7 @@ const TestNet = styled.div`
   justify-content: center;
   border-radius: 5px;
   margin-left:4px;
+  padding: 2%;
 `;
 
 export default TestNet;

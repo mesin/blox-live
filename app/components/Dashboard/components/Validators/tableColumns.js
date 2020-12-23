@@ -6,7 +6,7 @@ export default [
   {
     key: 'key',
     title: 'Public Key',
-    width: '34%',
+    width: '40%',
     justifyContent: 'flex-start',
     compareFunction: (a, b, dir) => compareFunction('publicKey', a, b, dir, 'string'),
     valueRender: (value) => <KeyCell value={value} />,
@@ -14,7 +14,7 @@ export default [
   {
     key: 'currentBalance',
     title: 'Balance',
-    width: '18%',
+    width: '15%',
     justifyContent: 'flex-end',
     compareFunction: (a, b, dir) => compareFunction('currentBalance', a, b, dir, 'number'),
     valueRender: (balance) => <Balance balance={balance} />,
@@ -22,7 +22,7 @@ export default [
   {
     key: 'change',
     title: 'Change',
-    width: '18%',
+    width: '15%',
     justifyContent: 'flex-end',
     compareFunction: (a, b, dir) => compareFunction('change', a, b, dir, 'number'),
     valueRender: (change) => <Change change={change} />,

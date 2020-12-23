@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {openExternalLink, truncateText} from '../../../../../../common/service';
-import {Link} from '../../../../common/index';
-import theme from '../../../../../../../theme';
-import {InfoWithTooltip, Tooltip} from '../../../../../../../common/components';
+import {InfoWithTooltip} from '../../../../../../../common/components';
 
 const Wrapper = styled.div`
   width:100%;
@@ -131,15 +128,25 @@ const DepositStepData = (props: Props) => {
           <BigInfoTitle>{title}</BigInfoTitle>
           {children}
         </InfoWrapper>
-        {tooltip &&
+        {tooltip && (
         <ActionWrapper>
-          <InfoWithTooltip title={tooltip} placement="bottom"/>
-        </ActionWrapper>}
+          <InfoWithTooltip title={tooltip} placement="bottom" />
+        </ActionWrapper>
+      )}
       </InnerWrapper>
     </Wrapper>
   );
 };
 
-type Props = {};
+type Props = {
+  step?: number;
+  title?: string;
+  tag?: string;
+  hint?: boolean;
+  amount?: number;
+  token?: string;
+  tooltip?: string;
+  children: React.ReactNode;
+};
 
 export default DepositStepData;
