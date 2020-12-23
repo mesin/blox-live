@@ -60,6 +60,7 @@ export default class ProcessClass implements Subject {
     displayMessage: 'Process failed'
   })
   async run(): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
     for (const [index, action] of this.actions.entries()) {
       catchDecoratorStore.setHandler(error => this.errorHandler(error));
       this.action = action;
@@ -73,24 +74,45 @@ export default class ProcessClass implements Subject {
       if (action.params) {
         extra = { ...extra, ...action.params };
       }
+      // eslint-disable-next-line no-await-in-loop
       const result = await action.instance[action.method].bind(action.instance)(extra);
       const { step = null } = { ...result };
       catchDecoratorStore.setHandler(null);
       if (this.error) {
-        if (Array.isArray(this.fallbackActions)) {
-          const found = this.fallbackActions.find(step => step.method === this.action.method);
-          if (found) {
-            for (const fallbackAction of found.actions) {
-              await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)();
-            }
-          }
-        }
-        this.notify({ step: { status: 'error' }, error: this.error });
-        this.error = null;
+        // eslint-disable-next-line no-await-in-loop
+        await this.fallBack();
         return;
       }
       delete result.step;
       this.notify({ step: { name: step.name, status: 'completed' }, ...result });
     }
+  }
+
+  async fallBack(): Promise<void> {
+    console.log('-----FALL BACK ACTIONS-----');
+    if (Array.isArray(this.fallbackActions)) {
+      const fallBack4Method = this.fallbackActions.find(item => item.method === this.action.method);
+      if (fallBack4Method) {
+        console.log('==!==', fallBack4Method);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const fallbackAction of fallBack4Method.actions) {
+          // eslint-disable-next-line no-await-in-loop
+          await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)({ ...fallbackAction.params });
+        }
+      }
+      // finilize fallback thru post postActions params
+      const postFallback = this.fallbackActions.find(item => item.postActions);
+      if (postFallback) {
+        console.log('==---==', postFallback);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const fallbackAction of postFallback.actions) {
+          console.log('===:::', fallbackAction.method);
+          // eslint-disable-next-line no-await-in-loop
+          await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)({ ...fallbackAction.params });
+        }
+      }
+    }
+    this.notify({ step: { status: 'error' }, error: this.error });
+    // this.error = null;
   }
 }

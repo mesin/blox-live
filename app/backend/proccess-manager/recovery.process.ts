@@ -14,6 +14,7 @@ export default class RecoveryProcess extends ProcessClass {
   private readonly walletService: WalletService;
   private readonly userService: UsersService;
   public readonly actions: Array<any>;
+  public readonly fallbackActions: Array<any>;
 
   constructor({ accessKeyId, secretAccessKey, isNew = true }) {
     super();
@@ -44,6 +45,20 @@ export default class RecoveryProcess extends ProcessClass {
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
       { instance: this.keyVaultService, method: 'updateVaultMountsStorage' },
       { instance: this.awsService, method: 'truncateOldKvResources' },
+    ];
+
+    this.fallbackActions = [
+      {
+        postActions: true,
+        actions: [
+          { instance: this.awsService, method: 'truncateServer', params: { all: true } },
+          {
+            instance: Connection,
+            method: 'clear',
+            params: {}
+          }
+        ]
+      }
     ];
   }
 }
