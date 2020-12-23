@@ -6,7 +6,6 @@ import config from '../../common/config';
 import { v4 as uuidv4 } from 'uuid';
 import VersionService from '../version/version.service';
 import UserService from '../users/users.service';
-import { isVersionHigherOrEqual } from '../../../utils/service';
 
 // TODO import from .env
 const defaultAwsOptions = {

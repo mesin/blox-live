@@ -15,7 +15,7 @@ function sleep(msec) {
   });
 }
 
-// @CatchClass<KeyVaultService>()
+@CatchClass<KeyVaultService>()
 export default class KeyVaultService {
   private readonly keyVaultSsh: KeyVaultSsh;
   private readonly keyVaultApi: KeyVaultApi;
