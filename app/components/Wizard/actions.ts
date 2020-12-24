@@ -47,9 +47,9 @@ export const loadDepositDataFailure = (error: Record<string, any>) => ({
 
 export const clearDepositData = () => ({ type: actionTypes.CLEAR_DEPOSIT_DATA});
 
-export const updateAccountStatus = (accountId: string, txHash: string) => ({
+export const updateAccountStatus = (accountId: string, txHash: string, deposited: boolean) => ({
   type: actionTypes.UPDATE_ACCOUNT_STATUS,
-  payload: {accountId, txHash},
+  payload: {accountId, txHash, deposited},
 });
 
 export const updateAccountStatusSuccess = () => ({

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import styled from 'styled-components';
@@ -52,10 +52,10 @@ const ButtonsWrapper = styled.div`
 
 const StakingDeposit = (props: Props) => {
   const {
-    setPage, page, depositData, accountsFromApi, actions, callClearAccountsData, callSetAddAnotherAccount, accountDataFromProcess,
+    setPage, page, depositData, accountsFromApi, actions, callSetAddAnotherAccount, accountDataFromProcess,
     isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network, idToken
   } = props;
-  const {updateAccountStatus, clearWizardData, loadDepositData, setFinishedWizard} = actions;
+  const {updateAccountStatus, loadDepositData} = actions;
 
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
@@ -69,7 +69,7 @@ const StakingDeposit = (props: Props) => {
     deepLink((obj) => {
       if ('tx_hash' in obj && 'account_id' in obj) {
         setPage(page + 1);
-        updateAccountStatus(obj.account_id, obj.tx_hash);
+        updateAccountStatus(obj.account_id, obj.tx_hash, true);
         callSetDepositNeeded({isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
       }
     }, (e) => notification.error({message: e}));
