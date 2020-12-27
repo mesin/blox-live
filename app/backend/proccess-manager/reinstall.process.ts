@@ -17,6 +17,7 @@ export default class ReinstallProcess extends ProcessClass {
   private readonly keyVaultService: KeyVaultService;
   private readonly walletServiceTmp: WalletService;
   public readonly actions: Array<any>;
+  public readonly fallbackActions: Array<any>;
 
   constructor() {
     super();
@@ -64,7 +65,7 @@ export default class ReinstallProcess extends ProcessClass {
       { instance: this.keyVaultServiceTmp, method: 'updateVaultMountsStorage' },
       { instance: this.walletServiceTmp, method: 'syncVaultWithBlox', params: { isNew: false } },
       { instance: this.awsService, method: 'truncateServer' },
-      { instance: this.awsService, method: 'truncateOldKvResources' },
+      { instance: this.awsServiceTmp, method: 'truncateOldKvResources' },
       {
         instance: Connection,
         method: 'clone',
@@ -78,6 +79,22 @@ export default class ReinstallProcess extends ProcessClass {
         }
       },
       { instance: this.keyVaultService, method: 'getKeyVaultStatus' },
+    ];
+
+    this.fallbackActions = [
+      {
+        postActions: true,
+        actions: [
+          { instance: this.awsServiceTmp, method: 'truncateServer' },
+          {
+            instance: Connection,
+            method: 'clear',
+            params: {
+              prefix: tempStorePrefix
+            }
+          }
+        ]
+      }
     ];
   }
 }

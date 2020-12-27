@@ -6,7 +6,6 @@ import config from '../../common/config';
 import { v4 as uuidv4 } from 'uuid';
 import VersionService from '../version/version.service';
 import UserService from '../users/users.service';
-import { isVersionHigherOrEqual } from '../../../utils/service';
 
 // TODO import from .env
 const defaultAwsOptions = {
@@ -180,7 +179,7 @@ export default class AwsService {
     const tagsOptions: AWS.EC2.Types.CreateTagsRequest = {
       Resources: [instanceId],
       Tags: [
-        { Key: 'Name', Value: 'Blox-Infra-Server'},
+        { Key: 'Name', Value: 'blox-staking'},
         { Key: 'kv-version', Value: `${keyVaultVersion}` },
         { Key: 'org-id', Value: `${userProfile.organizationId}`},
       ]
@@ -214,11 +213,15 @@ export default class AwsService {
   @Step({
     name: 'Removing old EC2 instance...'
   })
-  async truncateServer() {
-    await this.destroyResources({
+  async truncateServer({ all }) {
+    const sources: any = {
       instanceId: Connection.db(this.storePrefix).get('instanceId'),
       addressId: Connection.db(this.storePrefix).get('addressId')
-    });
+    };
+    if (all) {
+      sources.securityGroupId = Connection.db(this.storePrefix).get('securityGroupId');
+    }
+    await this.destroyResources(sources);
     return { isActive: true };
   }
 
@@ -248,7 +251,7 @@ export default class AwsService {
         instanceId,
         addressId: filteredAssocs[0]?.AllocationId,
         securityGroupId: oldInstance.SecurityGroups[0]?.GroupId
-      }
+      };
       console.log('going to destroy', params);
       // eslint-disable-next-line no-await-in-loop
       await this.destroyResources(params);
