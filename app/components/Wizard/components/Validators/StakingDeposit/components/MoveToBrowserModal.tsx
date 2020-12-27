@@ -59,10 +59,10 @@ const MoveToBrowserModal = (props: Props) => {
         <ButtonWrapper>
           <BigButton style={{'width': '320px'}} onClick={onMoveToBrowser}>Continue To Staking Deposit</BigButton>
         </ButtonWrapper>
-        <BottomWrapper>
+        {/*<BottomWrapper>
           <Icon name={'verified-user'} fontSize={'16px'} color={'gray400'}/>
           <AuditText>Security Audited By</AuditText>
-        </BottomWrapper>
+        </BottomWrapper>*/}
       </InnerWrapper>
     </CustomModal>
   );

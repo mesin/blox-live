@@ -1,6 +1,7 @@
 export const STATUSES: Record<string, any> = {
   active: { name: 'Active', color: 'accent2400' },
   waiting: { name: 'Waiting', color: 'warning700' },
+  deposited: { name: 'Deposited', color: 'warning900' },
   pending: { name: 'Pending', color: 'warning900' },
   exited: { name: 'Exited', color: 'gray400' },
   invalid: { name: 'Invalid', color: 'gray400' },

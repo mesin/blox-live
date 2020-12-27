@@ -103,7 +103,7 @@ const StakingDeposit = (props: Props) => {
         <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
         {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy} /> :
         <MainNetText publicKey={publicKey} onCopy={onCopy} />}
-        <SmallText>Total: 32 ETH + gas fees</SmallText>
+        <SmallText>Total: 32 {NETWORKS[network].label === NETWORKS.pyrmont.label ? 'GoETH' : 'ETH'} + gas fees</SmallText>
         <SmallText style={{'fontSize': '14px', 'color': theme.gray800, 'marginTop': '34px'}}>You will be transferred to
           a secured Blox webpage</SmallText>
         <ButtonsWrapper>
