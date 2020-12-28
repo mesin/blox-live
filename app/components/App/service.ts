@@ -47,3 +47,8 @@ export const deepLink = (onSuccess, onFailure) => {
     }
   });
 };
+
+export const cleanDeepLink = () => {
+  remote.app.removeAllListeners('open-url');
+  remote.app.removeAllListeners('second-instance');
+};

@@ -22,7 +22,7 @@ import theme from '../../../../../theme';
 import MoveToBrowserModal from './components/MoveToBrowserModal';
 import {openExternalLink} from '../../../../common/service';
 import config from '../../../../../backend/common/config';
-import {deepLink} from '../../../../App/service';
+import {deepLink, cleanDeepLink} from '../../../../App/service';
 import {getIdToken} from '../../../../CallbackPage/selectors';
 
 const Wrapper = styled.div`
@@ -56,6 +56,7 @@ const StakingDeposit = (props: Props) => {
     isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network, idToken
   } = props;
   const {updateAccountStatus, loadDepositData} = actions;
+  const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
 
   useEffect(() => {
     if (isDepositNeeded && publicKey) {
@@ -73,9 +74,8 @@ const StakingDeposit = (props: Props) => {
         callSetDepositNeeded({isNeeded: false, publicKey: '', accountIndex: -1, network: ''});
       }
     }, (e) => notification.error({message: e}));
+    return () => cleanDeepLink();
   }, []);
-
-  const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
 
   const onMadeDepositButtonClick = async () => {
     setShowMoveToBrowserModal(true);
