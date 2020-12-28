@@ -16,7 +16,7 @@ const MainNetText = (props: Props) => {
   const {publicKey, onCopy} = props;
   return (
     <div>
-      <DepositStepData step={1} title={'Yearly fee - Free for a limited time'} tooltip={FEE_TOOLTIP} tag={'Yes, It\'s Free'} hint amount={0.5} token={'ETH'}>
+      <DepositStepData step={1} title={'Yearly fee - Free for a limited time'} tooltip={FEE_TOOLTIP} tag={'Yes, It\'s Free'} hint amount={0} token={'ETH'}>
         <TextInfo>
           <TextInfo>We will NOT charge you on validators created during the &quot;early stage&quot; period. Once we start to charge, you will be notified.</TextInfo>
         </TextInfo>
