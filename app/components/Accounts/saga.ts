@@ -36,7 +36,7 @@ function* updateReceipt(account) {
   if (depositTxHash && !deposited) {
     try {
       const txReceipt = yield web3.eth.getTransactionReceipt(depositTxHash);
-      yield onGetTxReceiptSuccess(id, depositTxHash, txReceipt);
+      if (txReceipt != null) return yield onGetTxReceiptSuccess(id, depositTxHash, txReceipt);
     }
     catch (error) {
       yield onGetTxReceiptFailure(error);
@@ -53,8 +53,7 @@ export function* startLoadingAccounts() {
       yield call(onLoadingSuccess, response);
       return;
     }
-    yield call(updateReceipt, withTxHash[0]);
-    yield setTimeout(() => true, 5000);
+    const tx = yield call(updateReceipt, withTxHash[0]);
     const withUpdate = yield call([accountService, 'get']);
     yield call(onLoadingSuccess, withUpdate);
   }
