@@ -190,6 +190,7 @@ export default class AwsService {
       InstanceId: instanceId
     }).promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
+    throw 1;
   }
 
   @Step({
@@ -213,14 +214,11 @@ export default class AwsService {
   @Step({
     name: 'Removing old EC2 instance...'
   })
-  async truncateServer({ all }) {
+  async truncateServer() {
     const sources: any = {
       instanceId: Connection.db(this.storePrefix).get('instanceId'),
       addressId: Connection.db(this.storePrefix).get('addressId')
     };
-    if (all) {
-      sources.securityGroupId = Connection.db(this.storePrefix).get('securityGroupId');
-    }
     await this.destroyResources(sources);
     return { isActive: true };
   }
@@ -273,7 +271,7 @@ export default class AwsService {
   })
   async rebootInstance() {
     await this.ec2.rebootInstances({ InstanceIds: [Connection.db(this.storePrefix).get('instanceId')] }).promise();
-    await new Promise((resolve) => {
+    await new Promise((resolve, reject) => {
       let totalSeconds = 0;
       const DELAY = 5000; // 5 sec
       const intervalId = setInterval(() => {
@@ -284,7 +282,7 @@ export default class AwsService {
           if (totalSeconds >= 80000) { // 80 sec
             console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
-            resolve();
+            reject(new Error('Reached max timeout'));
             return;
           }
           totalSeconds += DELAY;

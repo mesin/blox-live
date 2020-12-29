@@ -14,18 +14,29 @@ function* startProcess(action) {
   try {
     while (true) {
       const result = yield take(channel);
+      const { payload: { isActive, step, data }, subject } = result;
       console.log('result', result);
-      console.log('state', result.subject.state);
-      console.log('allStates', result.subject.actions.length);
-      console.log('stepName', result.payload.step.name);
-      console.log('isActive', result.payload.isActive);
+      console.log('state', subject.state);
+      console.log(`${step.num}/${step.numOf} - ${step.name}`);
+      console.log('isActive', isActive);
+      let message = step.name;
+      if (subject.state === 'fallback') {
+        message = 'Process failed, Rolling back...';
+      }
+      let currentStep = 0;
+      let overallSteps = 0;
+      if (subject.state !== 'fallback') {
+        overallSteps = step.numOf;
+        currentStep = step.num;
+      }
       const observePayload = {
-        overallSteps: result.subject.actions.length,
-        currentStep: result.subject.state,
-        message: result.payload.step.name,
-        isActive: result.payload.isActive,
-        data: result.payload.data
+        overallSteps,
+        currentStep,
+        message,
+        isActive: !subject.error && isActive,
+        data
       };
+      console.log('====???? observePayload:', observePayload);
       yield put(actions.processObserve(observePayload));
     }
   } catch (e) {
@@ -40,19 +51,19 @@ function* startProcess(action) {
 function createChannel(process) {
   return eventChannel((emitter) => {
     const callback = (subject, payload) => {
-      const { state } = subject;
-      const { status } = payload.step;
-      if (status === 'error') {
-        process.unsubscribe(listener);
-        emitter(payload.error);
-      }
-      if (status === 'completed' && state === subject.actions.length) {
-        process.unsubscribe(listener);
+      const { state, error } = subject;
+      if (state === 'completed') {
+        if (error) {
+          process.unsubscribe(listener);
+          emitter(error);
+        } else {
+          process.unsubscribe(listener);
+          emitter({ subject, payload });
+          emitter(END);
+        }
+      } else {
         emitter({ subject, payload });
-        emitter(END);
-        return;
       }
-      emitter({ subject, payload });
     };
 
     const listener = new Listener(callback);
