@@ -62,7 +62,7 @@ const switcher = (props: Props) => {
       );
     case 7:
       return (
-        <Template key={7} bgImage={validatorImage} {...props}
+        <Template key={7} bgImage={validatorImage} laterBtn {...props}
           component={<ValidatorPages.StakingDeposit {...props} />}
         />
       );
