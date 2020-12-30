@@ -190,7 +190,6 @@ export default class AwsService {
       InstanceId: instanceId
     }).promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
-    throw 1;
   }
 
   @Step({
