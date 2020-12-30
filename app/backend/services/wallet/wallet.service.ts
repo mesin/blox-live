@@ -80,7 +80,7 @@ export default class WalletService {
   async syncVaultWithBlox({ isNew }): Promise<void> {
     const payload = {
       url: `https://${Connection.db(this.storePrefix).get('publicIp')}:8200`,
-      accessToken: Connection.db(this.storePrefix).get('vaultRootToken'),
+      accessToken: Connection.db(this.storePrefix).get('vaultSignerToken'),
       version: Connection.db().get('keyVaultVersion')
     };
     try {
@@ -92,6 +92,7 @@ export default class WalletService {
         route: `${this.bloxApi.baseUrl}/wallets/sync`
       });
       await ssh.execCommand(command, {});
+      Connection.db(this.storePrefix).delete('vaultSignerToken');
     } catch (err) {
       this.logger.error('ssh error - retrying directly', err);
       await this.sync(payload);

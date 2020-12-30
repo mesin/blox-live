@@ -9,7 +9,7 @@ export default class Store {
   private storage: ElectronStore;
   private baseStore: BaseStore;
   private readonly prefix: string;
-  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken'];
+  private readonly encryptedKeys: Array<string> = ['keyPair', 'seed', 'credentials', 'vaultRootToken', 'vaultSignerToken'];
   private readonly cryptoAlgorithm: string = 'aes-256-ecb';
   public cryptoKey: string;
   private cryptoKeyTTL: number = 20; // 20 minutes
