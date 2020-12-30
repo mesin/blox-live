@@ -120,6 +120,7 @@ export default class ProcessClass implements Subject {
       // eslint-disable-next-line no-restricted-syntax
       for (const [index, fallbackAction] of fallBack4Method.actions.entries()) {
         this.step = index + 1;
+        console.log('1===:::>>>>>>>>', this.state, '===', fallbackAction.method, this.step, totalSteps);
         // eslint-disable-next-line no-await-in-loop
         const result = await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)({ ...fallbackAction.params });
         const { name } = result.step;
@@ -133,6 +134,7 @@ export default class ProcessClass implements Subject {
             num: this.step,
             numOf: fallBack4Method.actions.length
           },
+          state: this.state,
           ...result
         };
         console.log('===> notify', payload);
@@ -147,7 +149,7 @@ export default class ProcessClass implements Subject {
       // eslint-disable-next-line no-restricted-syntax
       for (const [index, fallbackAction] of postFallback.actions.entries()) {
         this.step = index + 1;
-        console.log('===:::', fallbackAction.method);
+        console.log('2===:::>>>>>>>>', this.state, '===', fallbackAction.method, this.step, totalSteps);
         // eslint-disable-next-line no-await-in-loop
         const result = await fallbackAction.instance[fallbackAction.method].bind(fallbackAction.instance)({ ...fallbackAction.params });
         const { name } = result.step;
@@ -159,8 +161,9 @@ export default class ProcessClass implements Subject {
           step: {
             name,
             num: this.step,
-            numOf: postFallback.actions.length
+            numOf: totalSteps
           },
+          state: this.state,
           ...result
         };
         console.log('===> notify', payload);

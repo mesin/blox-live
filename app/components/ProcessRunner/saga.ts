@@ -14,18 +14,17 @@ function* startProcess(action) {
   try {
     while (true) {
       const result = yield take(channel);
-      const { payload: { isActive, step, data }, subject } = result;
+      const { payload: { isActive, step, state, data }, subject } = result;
       console.log('result', result);
       console.log('state', subject.state);
       console.log(`${step.num}/${step.numOf} - ${step.name}`);
       console.log('isActive', isActive);
       let message = step.name;
-      if (subject.state === 'fallback') {
-        message = 'Process failed, Rolling back...';
-      }
       let currentStep = 0;
       let overallSteps = 0;
-      if (subject.state !== 'fallback') {
+      if (state === 'fallback') {
+        message = 'Process failed, Rolling back...';
+      } else {
         overallSteps = step.numOf;
         currentStep = step.num;
       }

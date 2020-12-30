@@ -53,6 +53,7 @@ export default class InstallProcess extends ProcessClass {
               prefix: ''
             }
           },
+          { instance: this.awsService, method: 'setAWSCredentials' },
           { instance: this.awsService, method: 'truncateOldKvResources' },
           { instance: Connection, method: 'remove' }
         ]

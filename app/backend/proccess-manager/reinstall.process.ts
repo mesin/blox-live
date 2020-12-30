@@ -84,6 +84,7 @@ export default class ReinstallProcess extends ProcessClass {
       {
         postActions: true,
         actions: [
+          { instance: this.awsService, method: 'setAWSCredentials' },
           {
             instance: Connection,
             method: 'clear',
