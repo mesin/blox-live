@@ -93,4 +93,11 @@ export default class Connection {
   static remove(payload: { prefix: string }): void {
     Connection.db(payload.prefix).remove();
   }
+
+  @Step({
+    name: 'Fail..'
+  })
+  static fail(): void {
+    throw 1;
+  }
 }
