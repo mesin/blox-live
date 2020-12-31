@@ -47,6 +47,7 @@ export default class ReinstallProcess extends ProcessClass {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
           fields: ['uuid', 'securityGroupId', 'credentials', 'keyPair', 'slashingData', 'index', 'seed', 'port'],
+          preClean: true, // clean toPrefix store before clone fields valie
           postClean: {
             prefix: mainStorePrefix,
             fields: ['slashingData', 'index']

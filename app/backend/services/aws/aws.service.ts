@@ -282,7 +282,6 @@ export default class AwsService {
             console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
             reject(new Error('Reached max timeout'));
-            return;
           }
           totalSeconds += DELAY;
         };
@@ -290,11 +289,11 @@ export default class AwsService {
         socket.once('error', onError);
         socket.once('timeout', onError);
         const ip: any = Connection.db(this.storePrefix).get('publicIp');
-        socket.connect(config.env.port, ip, () => {
+        socket.connect(Connection.db(this.storePrefix).get('port') || config.env.port, ip, () => {
           console.log('Server is online');
           socket.destroy();
           clearInterval(intervalId);
-          resolve();
+          resolve({});
         });
       }, DELAY);
     });

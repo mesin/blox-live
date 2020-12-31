@@ -25,14 +25,12 @@ class Listener implements Observer {
   }
 
   public update(subject: Subject, payload: any) {
-    let message = payload.step.name;
-    if (subject.state === 'fallback') {
+    let message = payload.step?.name;
+    if (payload.state === 'fallback') {
       message = 'Process failed, Rolling back...';
     }
-    // eslint-disable-next-line no-param-reassign
-    payload.step.name = message;
-    this.logFunc(`${payload.step.num}/${payload.step.numOf} > ${payload.step.name}`);
-    console.log(`${payload.step.num}/${payload.step.numOf}`, payload);
+    this.logFunc(`${payload.step?.num}/${payload.step?.numOf} > ${message}`);
+    console.log(`${payload.step?.num}/${payload.step?.numOf}`, payload);
   }
 }
 

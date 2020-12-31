@@ -13,6 +13,7 @@ export default class InstallProcess extends ProcessClass {
   private readonly userService: UsersService;
   public readonly actions: Array<any>;
   public readonly fallbackActions: Array<any>;
+  public readonly maxRunBeforeFallback: number;
 
   constructor({ accessKeyId, secretAccessKey, isNew = true }) {
     super();
@@ -20,6 +21,7 @@ export default class InstallProcess extends ProcessClass {
     this.keyVaultService = new KeyVaultService();
     this.awsService = new AwsService();
     this.walletService = new WalletService();
+    this.maxRunBeforeFallback = 2;
 
     const uuid = uuidv4();
     Connection.db().set('uuid', uuid);
@@ -46,6 +48,7 @@ export default class InstallProcess extends ProcessClass {
       {
         postActions: true,
         actions: [
+          { instance: this.awsService, method: 'setAWSCredentials' },
           {
             instance: Connection,
             method: 'clear',
@@ -53,7 +56,6 @@ export default class InstallProcess extends ProcessClass {
               prefix: ''
             }
           },
-          { instance: this.awsService, method: 'setAWSCredentials' },
           { instance: this.awsService, method: 'truncateOldKvResources' },
           { instance: Connection, method: 'remove' }
         ]

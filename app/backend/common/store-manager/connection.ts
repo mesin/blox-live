@@ -33,15 +33,27 @@ export default class Connection {
   @Catch({
     showErrorMessage: true
   })
-  static clone(payload: { fromPrefix: string, toPrefix: string, fields: any, postClean?: { prefix: string, fields?: any } }): void {
+  static clone(payload: {
+    fromPrefix: string,
+    toPrefix: string,
+    fields: any,
+    preClean?: boolean,
+    postClean?: {
+      prefix: string,
+      fields?: any
+    }
+  }): void {
     const items = Connection.db(payload.fromPrefix).all();
+    const { preClean, postClean } = payload;
+    if (preClean) {
+      Connection.db(payload.toPrefix).clear();
+    }
     const data = payload.fields.reduce((aggr, field) => {
       // eslint-disable-next-line no-param-reassign
       aggr[field] = items[field];
       return aggr;
     }, {});
     Connection.db(payload.toPrefix).setMultiple(data);
-    const { postClean } = payload;
     if (postClean) {
       if (postClean.fields) {
         postClean.fields.forEach(field => Connection.db(postClean.prefix).delete(field));
