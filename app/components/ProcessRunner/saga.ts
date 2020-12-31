@@ -11,32 +11,36 @@ function* startProcess(action) {
   const network = yield select(getNetwork);
   const process = processInstantiator(name, { credentials, network });
   const channel = yield call(createChannel, process);
+  let isActive = false;
+  let data;
   try {
     while (true) {
       const result = yield take(channel);
-      const { payload: { isActive, step, data }, subject } = result;
-      console.log('result', result);
-      console.log('state', subject.state);
-      console.log(`${step.num}/${step.numOf} - ${step.name}`);
-      console.log('isActive', isActive);
-      let message = step.name;
-      if (subject.state === 'fallback') {
-        message = 'Process failed, Rolling back...';
+      const { payload: { isActive: isActiveFromStep, step, state, data: stepData, error }, subject } = result;
+      if (isActiveFromStep) {
+        isActive = isActiveFromStep;
       }
+      if (stepData) {
+        data = stepData;
+      }
+      console.log('result', result);
+      console.log(`${step?.num}/${step?.numOf} - ${step?.name}`);
+      let message = step?.name;
       let currentStep = 0;
       let overallSteps = 0;
-      if (subject.state !== 'fallback') {
-        overallSteps = step.numOf;
-        currentStep = step.num;
+      if (state === 'fallback') {
+        message = 'Process failed, Rolling back...';
+      } else {
+        overallSteps = step?.numOf;
+        currentStep = step?.num;
       }
       const observePayload = {
         overallSteps,
         currentStep,
         message,
-        isActive: !subject.error && isActive,
-        data
+        isActive: !error && isActive,
+        data: !error && data
       };
-      console.log('====???? observePayload:', observePayload);
       yield put(actions.processObserve(observePayload));
     }
   } catch (e) {
@@ -51,18 +55,16 @@ function* startProcess(action) {
 function createChannel(process) {
   return eventChannel((emitter) => {
     const callback = (subject, payload) => {
-      const { state, error } = subject;
+      const { error, state } = payload;
+      console.log('==???', error, state);
+      emitter({ subject, payload });
       if (state === 'completed') {
+        process.unsubscribe(listener);
         if (error) {
-          process.unsubscribe(listener);
           emitter(error);
         } else {
-          process.unsubscribe(listener);
-          emitter({ subject, payload });
           emitter(END);
         }
-      } else {
-        emitter({ subject, payload });
       }
     };
 

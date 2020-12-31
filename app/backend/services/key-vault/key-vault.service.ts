@@ -138,6 +138,8 @@ export default class KeyVaultService {
     const { stdout: signerToken } = await ssh.execCommand('sudo cat data/keys/vault.signer.token', {});
     if (!signerToken) throw new Error('vault-plugin signerToken not found');
     Connection.db(this.storePrefix).set('vaultSignerToken', signerToken);
+
+    console.log('ROOTSIGNER', rootToken, signerToken);
   }
 
   @Step({

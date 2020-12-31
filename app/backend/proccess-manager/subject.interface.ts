@@ -14,6 +14,12 @@ export interface Subject {
   // describe all steps inside subject
   actions: Array<any>;
 
+  // describe all fallback steps inside subject
+  fallbackActions: Array<any>;
+
+  // describe all fallback steps inside subject
+  maxRunBeforeFallback: number;
+
   // Attach an observer to the subject.
   subscribe(observer: Observer): void;
 

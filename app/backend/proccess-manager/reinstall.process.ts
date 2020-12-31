@@ -47,6 +47,7 @@ export default class ReinstallProcess extends ProcessClass {
           fromPrefix: mainStorePrefix,
           toPrefix: tempStorePrefix,
           fields: ['uuid', 'securityGroupId', 'credentials', 'keyPair', 'slashingData', 'index', 'seed', 'port'],
+          preClean: true, // clean toPrefix store before clone fields valie
           postClean: {
             prefix: mainStorePrefix,
             fields: ['slashingData', 'index']
@@ -84,6 +85,7 @@ export default class ReinstallProcess extends ProcessClass {
       {
         postActions: true,
         actions: [
+          { instance: this.awsService, method: 'setAWSCredentials' },
           {
             instance: Connection,
             method: 'clear',

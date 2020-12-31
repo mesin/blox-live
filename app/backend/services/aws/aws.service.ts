@@ -190,7 +190,6 @@ export default class AwsService {
       InstanceId: instanceId
     }).promise();
     await new Promise((resolve) => setTimeout(resolve, 25000)); // hard delay for 25sec
-    throw 1;
   }
 
   @Step({
@@ -263,7 +262,11 @@ export default class AwsService {
       await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
     }
     addressId && await this.ec2.releaseAddress({ AllocationId: addressId }).promise();
-    securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
+    try {
+      securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @Step({
@@ -283,7 +286,6 @@ export default class AwsService {
             console.log('Reached max timeout, exiting...', intervalId);
             clearInterval(intervalId);
             reject(new Error('Reached max timeout'));
-            return;
           }
           totalSeconds += DELAY;
         };
@@ -291,11 +293,11 @@ export default class AwsService {
         socket.once('error', onError);
         socket.once('timeout', onError);
         const ip: any = Connection.db(this.storePrefix).get('publicIp');
-        socket.connect(config.env.port, ip, () => {
+        socket.connect(Connection.db(this.storePrefix).get('port') || config.env.port, ip, () => {
           console.log('Server is online');
           socket.destroy();
           clearInterval(intervalId);
-          resolve();
+          resolve({});
         });
       }, DELAY);
     });
