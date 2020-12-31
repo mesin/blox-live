@@ -262,7 +262,11 @@ export default class AwsService {
       await this.ec2.waitFor('instanceTerminated', { InstanceIds: [instanceId] }).promise();
     }
     addressId && await this.ec2.releaseAddress({ AllocationId: addressId }).promise();
-    securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
+    try {
+      securityGroupId && await this.ec2.deleteSecurityGroup({ GroupId: securityGroupId }).promise();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @Step({
