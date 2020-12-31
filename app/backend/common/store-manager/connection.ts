@@ -46,6 +46,7 @@ export default class Connection {
     const items = Connection.db(payload.fromPrefix).all();
     const { preClean, postClean } = payload;
     if (preClean) {
+      console.log('PRECLEAN');
       Connection.db(payload.toPrefix).clear();
     }
     const data = payload.fields.reduce((aggr, field) => {
@@ -53,7 +54,9 @@ export default class Connection {
       aggr[field] = items[field];
       return aggr;
     }, {});
+    console.log('SET MULTIPLE');
     Connection.db(payload.toPrefix).setMultiple(data);
+    console.log('=======', Connection.db(payload.toPrefix).all());
     if (postClean) {
       if (postClean.fields) {
         postClean.fields.forEach(field => Connection.db(postClean.prefix).delete(field));
