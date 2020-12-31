@@ -90,4 +90,11 @@ export default class Connection {
   static remove(payload: { prefix: string }): void {
     Connection.db(payload.prefix).remove();
   }
+
+  @Step({
+    name: 'temp throw errror...'
+  })
+  static throwError(): void {
+    throw 1;
+  }
 }
