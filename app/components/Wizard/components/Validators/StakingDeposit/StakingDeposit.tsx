@@ -55,7 +55,7 @@ const StakingDeposit = (props: Props) => {
     setPage, page, depositData, accountsFromApi, actions, callSetAddAnotherAccount, accountDataFromProcess,
     isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network, idToken
   } = props;
-  const {updateAccountStatus, loadDepositData} = actions;
+  const {updateAccountStatus, loadDepositData, setFinishedWizard, clearWizardData} = actions;
   const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
 
   useEffect(() => {
@@ -83,7 +83,13 @@ const StakingDeposit = (props: Props) => {
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
-  const openDepositBrowser = () => {
+  const openDepositBrowser = async (moveToBrowser) => {
+    if (!moveToBrowser) {
+      await clearAccountsData();
+      await clearWizardData();
+      await setFinishedWizard(true);
+      return
+    }
     const accountFromApi: Record<string, any> = accountsFromApi.find(
       (account) => (account.publicKey === publicKey && account.network === network)
     );
@@ -101,16 +107,20 @@ const StakingDeposit = (props: Props) => {
       <Wrapper>
         <Title>{NETWORKS[network].name} Staking Deposit</Title>
         <SubTitle>To Start Staking, you&apos;ll need to make 2 deposits:</SubTitle>
-        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy} /> :
-        <MainNetText publicKey={publicKey} onCopy={onCopy} />}
-        <SmallText>Total: 32 {NETWORKS[network].label === NETWORKS.pyrmont.label ? 'GoETH' : 'ETH'} + gas fees</SmallText>
+        {NETWORKS[network].label === NETWORKS.pyrmont.label ? <TestNetText publicKey={publicKey} onCopy={onCopy}/> :
+          <MainNetText publicKey={publicKey} onCopy={onCopy}/>}
+        <SmallText>Total: 32 {NETWORKS[network].label === NETWORKS.pyrmont.label ? 'GoETH' : 'ETH'} + gas
+          fees</SmallText>
         <SmallText style={{'fontSize': '14px', 'color': theme.gray800, 'marginTop': '34px'}}>You will be transferred to
           a secured Blox webpage</SmallText>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>Continue to Web Deposit</BigButton>
         </ButtonsWrapper>
         {showMoveToBrowserModal &&
-        <MoveToBrowserModal onClose={() => setShowMoveToBrowserModal(false)} onMoveToBrowser={openDepositBrowser} />}
+        <MoveToBrowserModal onClose={(moveToBrowser) => {
+          setShowMoveToBrowserModal(false);
+          if (!moveToBrowser) openDepositBrowser(false)
+        }} onMoveToBrowser={openDepositBrowser}/>}
       </Wrapper>
     );
   }
