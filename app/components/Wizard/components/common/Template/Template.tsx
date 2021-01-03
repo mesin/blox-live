@@ -45,19 +45,8 @@ const CloseButton = styled.div`
   cursor:pointer;
 `;
 
-const LaterBtn = styled.span`
-    position: absolute;
-    font-size: 16px;
-    font-weight: 900;
-    top:594px;
-    bottom: 78px;
-    right: 26px;
-    cursor:pointer;
-    color: ${({theme, color}) => theme[color] || theme.primary900};
-`;
-
 const Template = (props: Props) => {
-  const { component, bgImage, laterBtn, wizardActions, accountsActions, ...rest } = props;
+  const { component, bgImage, wizardActions, accountsActions, ...rest } = props;
   const { isFinishedWizard, addAnotherAccount, step } = rest;
   const { clearAccountsData } = accountsActions;
   const { setFinishedWizard, clearWizardData } = wizardActions;
@@ -80,7 +69,6 @@ const Template = (props: Props) => {
         )}
         <ComponentWrapper>{React.cloneElement(component)}</ComponentWrapper>
         {bgImage && <BackgroundImage src={bgImage} />}
-        {laterBtn && <LaterBtn onClick={onCloseClick}>Continue Later</LaterBtn>}
       </Content>
     </Wrapper>
   );

@@ -44,10 +44,20 @@ const SmallText = styled.div`
 `;
 
 const ButtonsWrapper = styled.div`
-  width:100%;
+  width:270px;
   margin-top:12px;
-  display:flex;
-  justify-content:space-between;
+  // align-items: center;
+  text-align: center;
+`;
+
+const LaterBtn = styled.span`
+    // width: 100%;
+    font-size: 16px;
+    font-weight: 900;
+    cursor:pointer;
+    display: inline-block;
+    margin-top:10px;
+    color: ${({theme, color}) => theme[color] || theme.primary900};
 `;
 
 const StakingDeposit = (props: Props) => {
@@ -62,7 +72,7 @@ const StakingDeposit = (props: Props) => {
     if (isDepositNeeded && publicKey) {
       loadDepositData(publicKey, accountIndex, network);
       callSetDepositNeeded({isNeeded: false, publicKey, accountIndex, network});
-      callSetAddAnotherAccount(true);
+      // callSetAddAnotherAccount(true);
     }
   }, [isDepositNeeded, publicKey]);
 
@@ -83,11 +93,15 @@ const StakingDeposit = (props: Props) => {
 
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
+  const moveToDashboard = async () =>{
+    await clearAccountsData();
+    await clearWizardData();
+    await setFinishedWizard(true);
+  };
+
   const openDepositBrowser = async (moveToBrowser) => {
     if (!moveToBrowser) {
-      await clearAccountsData();
-      await clearWizardData();
-      await setFinishedWizard(true);
+      await moveToDashboard();
       return
     }
     const accountFromApi: Record<string, any> = accountsFromApi.find(
@@ -115,11 +129,12 @@ const StakingDeposit = (props: Props) => {
           a secured Blox webpage</SmallText>
         <ButtonsWrapper>
           <BigButton onClick={onMadeDepositButtonClick}>Continue to Web Deposit</BigButton>
+          <LaterBtn onClick={moveToDashboard}>I'll Deposit Later</LaterBtn>
         </ButtonsWrapper>
         {showMoveToBrowserModal &&
         <MoveToBrowserModal onClose={(moveToBrowser) => {
           setShowMoveToBrowserModal(false);
-          if (!moveToBrowser) openDepositBrowser(false)
+          if (!moveToBrowser) moveToDashboard()
         }} onMoveToBrowser={openDepositBrowser}/>}
       </Wrapper>
     );
