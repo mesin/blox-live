@@ -206,12 +206,16 @@ export default class AccountService {
     };
   }
 
+  @Step({
+    name: 'Delete Last Indexed Account'
+  })
   async deleteLastIndexedAccount(): Promise<void> {
     const network = Connection.db(this.storePrefix).get('network');
     if (!network) {
       throw new Error('Configuration settings network not found');
     }
     const index: number = +Connection.db(this.storePrefix).get(`index.${network}`);
+    console.log('----delete', index);
     if (index < 0) {
       await this.walletService.createWallet();
     } else {

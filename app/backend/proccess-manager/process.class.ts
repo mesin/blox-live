@@ -124,9 +124,9 @@ export default class ProcessClass implements Subject {
     if (!Array.isArray(this.fallbackActions)) return;
     this.state = 'fallback';
     console.log('-----FALLBACK-----');
-    const { actions = null} = this.fallbackActions.find(item => item.method === this.action.method) || this.fallbackActions.find(item => item.postActions);
-    if (!actions) return;
     try {
+      const { actions = null} = this.fallbackActions.find(item => item.method === this.action.method) || this.fallbackActions.find(item => item.postActions);
+      if (!actions) return;
       await this.processActions(actions);
     } catch (error) {
       console.log('-----FALLBACK FAILED-----', error);
