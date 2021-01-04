@@ -78,6 +78,7 @@ export default class AwsService {
     name: 'Creating secure EC2 key pair...'
   })
   async createEc2KeyPair() {
+    throw 1;
     console.log('KEYPAIIIIR', this.storePrefix, Connection.db(this.storePrefix).exists('keyPair'));
     if (Connection.db(this.storePrefix).exists('keyPair')) return;
 

@@ -115,7 +115,6 @@ export default class KeyVaultService {
     name: 'Installing docker...'
   })
   async installDockerScope(): Promise<void> {
-    throw 1;
     const ssh = await this.keyVaultSsh.getConnection();
     const { stdout } = await ssh.execCommand('docker -v', {});
     const installedAlready = stdout.includes('version');
