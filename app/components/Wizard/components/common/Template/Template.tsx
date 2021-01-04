@@ -51,7 +51,6 @@ const Template = (props: Props) => {
   const { clearAccountsData } = accountsActions;
   const { setFinishedWizard, clearWizardData } = wizardActions;
   const addAdditionalAccount = !isFinishedWizard && addAnotherAccount && step === 2;
-
   const onCloseClick = async () => {
     await clearAccountsData();
     await clearWizardData();

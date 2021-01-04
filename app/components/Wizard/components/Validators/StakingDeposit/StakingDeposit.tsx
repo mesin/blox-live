@@ -63,7 +63,7 @@ const LaterBtn = styled.span`
 const StakingDeposit = (props: Props) => {
   const {
     setPage, page, depositData, accountsFromApi, actions, callSetAddAnotherAccount, accountDataFromProcess,
-    isDepositNeeded, publicKey, callSetDepositNeeded, accountIndex, network, idToken
+    isDepositNeeded, publicKey, callSetDepositNeeded, callClearAccountsData, accountIndex, network, idToken
   } = props;
   const {updateAccountStatus, loadDepositData, setFinishedWizard, clearWizardData} = actions;
   const [showMoveToBrowserModal, setShowMoveToBrowserModal] = React.useState(false);
@@ -72,11 +72,11 @@ const StakingDeposit = (props: Props) => {
     if (isDepositNeeded && publicKey) {
       loadDepositData(publicKey, accountIndex, network);
       callSetDepositNeeded({isNeeded: false, publicKey, accountIndex, network});
-      // callSetAddAnotherAccount(true);
     }
   }, [isDepositNeeded, publicKey]);
 
   useEffect(() => {
+    callSetAddAnotherAccount(false);
     deepLink((obj) => {
       if ('tx_hash' in obj && 'account_id' in obj) {
         setPage(page + 1);
@@ -94,7 +94,7 @@ const StakingDeposit = (props: Props) => {
   const onCopy = () => notification.success({message: 'Copied to clipboard!'});
 
   const moveToDashboard = async () =>{
-    await clearAccountsData();
+    await callClearAccountsData();
     await clearWizardData();
     await setFinishedWizard(true);
   };
@@ -156,7 +156,7 @@ const mapStateToProps = (state: State) => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   actions: bindActionCreators(wizardActions, dispatch),
   callClearAccountsData: () => dispatch(clearAccountsData()),
-  callSetAddAnotherAccount: () => dispatch(setAddAnotherAccount(true)),
+  callSetAddAnotherAccount: () => dispatch(setAddAnotherAccount(false)),
   callSetDepositNeeded: (payload: DepositNeededPayload) => dispatch(setDepositNeeded(payload)),
 });
 
