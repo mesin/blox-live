@@ -101,4 +101,22 @@ export default class KeyManagerService {
       throw new Error('Passphrase not correct');
     }
   }
+
+  @Catch({
+    showErrorMessage: true
+  })
+  async getAttestation(): Promise<any> {
+    try {
+      const { stdout: epochData } = await this.executor(`${this.executablePath} config current-epoch --network pyrmont`);
+      const epoch = epochData.replace('\n', '');
+      const { stdout: slotData } = await this.executor(`${this.executablePath} config current-slot --network pyrmont`);
+      const slot = slotData.replace('\n', '');
+      return {
+        epoch: +epoch,
+        slot: +slot
+      };
+    } catch (e) {
+      throw new Error('Passphrase not correct');
+    }
+  }
 }

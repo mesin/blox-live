@@ -29,6 +29,8 @@ export default class Config {
       HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2',
       DEFAULT_SSH_PORT: 22,
       TARGET_SSH_PORT: 2200,
+      BEACONCHA_URL: 'https://beaconcha.in/api/v1',
+      PYRMONT_BEACONCHA_URL: 'https://pyrmont.beaconcha.in/api/v1',
     }
   };
 
