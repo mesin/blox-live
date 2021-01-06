@@ -285,7 +285,7 @@
     "archiver": "^5.0.0",
     "auth0-js": "^9.13.4",
     "aws-sdk": "^2.715.0",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "axios-retry": "3.1.8",
     "bl": "^4.0.3",
     "connected-react-router": "^6.6.1",
