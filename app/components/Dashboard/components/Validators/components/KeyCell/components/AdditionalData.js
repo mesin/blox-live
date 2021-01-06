@@ -28,6 +28,13 @@ const AdditionalData = (props) => {
     checkIfPasswordIsNeeded(onPasswordSuccess);
   };
 
+  if (['pending', 'deposited'].includes(status)) {
+    return (
+      <>
+        <WarningText>Waiting for approval</WarningText>
+      </>
+    );
+  }
   if (['waiting', 'partially_deposited'].includes(status)) {
     let warningTitle = '';
     if (status === 'waiting') {
