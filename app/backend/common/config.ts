@@ -29,6 +29,7 @@ export default class Config {
       HIGHEST_ATTESTATION_SUPPORTED_TAG: 'v0.3.2',
       DEFAULT_SSH_PORT: 22,
       TARGET_SSH_PORT: 2200,
+      INFURA_API_KEY: 'ad49ce6ad5d64c2685f4b2ba86512c76',
     }
   };
 
