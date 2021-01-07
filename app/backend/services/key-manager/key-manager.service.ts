@@ -105,11 +105,11 @@ export default class KeyManagerService {
   @Catch({
     showErrorMessage: true
   })
-  async getAttestation(): Promise<any> {
+  async getAttestation(network: string): Promise<any> {
     try {
-      const { stdout: epochData } = await this.executor(`${this.executablePath} config current-epoch --network pyrmont`);
+      const { stdout: epochData } = await this.executor(`${this.executablePath} config current-epoch --network ${network}`);
       const epoch = epochData.replace('\n', '');
-      const { stdout: slotData } = await this.executor(`${this.executablePath} config current-slot --network pyrmont`);
+      const { stdout: slotData } = await this.executor(`${this.executablePath} config current-slot --network ${network}`);
       const slot = slotData.replace('\n', '');
       return {
         epoch: +epoch,

@@ -53,19 +53,35 @@ export default class AccountService {
       this.beaconchaApi.init(payload.network);
       const generalData = await this.bloxApi.request(METHOD.POST, 'ethereum2/highest-attestation', payload);
       const beaconchaData = await this.beaconchaApi.request(METHOD.GET, 'block/latest');
-      const keyManagerData = await this.keyManagerService.getAttestation();
+      const keyManagerData = await this.keyManagerService.getAttestation(payload.network);
       console.warn('getHighestAttestation: raw answers', generalData, beaconchaData, keyManagerData);
       logger.debug(`getHighestAttestation: raw answers > ${JSON.stringify({ generalData, beaconchaData, keyManagerData })}`);
       Object.keys(generalData).forEach(key => {
+        const {
+          highest_source_epoch: bloxSourceEpoch,
+          highest_target_epoch: bloxTargetEpoch,
+          highest_proposal_slot: bloxSlot
+        } = generalData[key];
+        const { slot: beaconchaSlot, epoch: beaconchaEpoch } = beaconchaData?.data;
+        [
+          beaconchaSlot,
+          beaconchaEpoch,
+          bloxSourceEpoch,
+          bloxTargetEpoch,
+          bloxSlot
+        ].forEach(value => {
+          // eslint-disable-next-line no-restricted-globals
+          if (isNaN(value)) throw new Error(`${value} is not number value`);
+        });
         const epoch = Math.max(...[
-          generalData[key].highest_source_epoch,
-          generalData[key].highest_target_epoch,
-          beaconchaData?.data?.epoch,
+          bloxSourceEpoch,
+          bloxTargetEpoch,
+          beaconchaEpoch,
           keyManagerData.epoch
         ]);
         const slot = Math.max(...[
-          generalData[key].highest_proposal_slot,
-          beaconchaData?.data?.slot,
+          bloxSlot,
+          beaconchaSlot,
           keyManagerData.slot
         ]);
         generalData[key] = {
