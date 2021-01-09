@@ -3,6 +3,7 @@ import InstallProcess from '../../backend/proccess-manager/install.process';
 import RecoveryProcess from '../../backend/proccess-manager/recovery.process';
 import RebootProcess from '../../backend/proccess-manager/reboot.process';
 import ReinstallProcess from '../../backend/proccess-manager/reinstall.process';
+import SendImagesProcess from '../../backend/proccess-manager/send-images.process';
 import AccountCreateProcess from '../../backend/proccess-manager/account-create.process';
 
 import { Observer } from '../../backend/proccess-manager/observer.interface';
@@ -22,6 +23,13 @@ export const processInstantiator = (processName: string, payload: Record<string,
   }
   if (processName === PROCESSES.REINSTALL) {
     return new ReinstallProcess();
+  }
+  if (processName === PROCESSES.SEND_IMAGES) {
+    console.log('Send images process - new!');
+    return new SendImagesProcess(payload.images);
+  }
+  if (processName === PROCESSES.SHOW_IMAGES) {
+    // TODO: return new ShowImagesProcess();
   }
   if (processName === PROCESSES.CREATE_ACCOUNT && payload.network) {
     return new AccountCreateProcess(payload.network);

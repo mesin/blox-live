@@ -223,6 +223,24 @@ export default class KeyVaultService {
   }
 
   @Step({
+    name: 'Saving images...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  async saveImages(images: { url: string }[]): Promise<any> {
+    console.log('KeyVaultService::saveImages: ', images);
+    return Connection.db('CustomUserData').set('images', images);
+  }
+
+  @Step({
+    name: 'Retrieving images...',
+    requiredConfig: ['publicIp', 'vaultRootToken']
+  })
+  async getImages(): Promise<any> {
+    console.log('KeyVaultService::getImages');
+    return Connection.db('CustomUserData').get('images');
+  }
+
+  @Step({
     name: 'Import slashing protection data...',
     requiredConfig: ['publicIp', 'vaultRootToken']
   })

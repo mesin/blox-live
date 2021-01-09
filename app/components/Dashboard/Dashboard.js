@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Wallet, Validators } from './components';
+import { Wallet, Validators, TestTask } from './components';
 import { summarizeAccounts, normalizeAccountsData, normalizeEventLogs } from './service';
 import EventLogs from './components/EventLogs';
 import { DiscordButton } from 'common/components';
@@ -22,6 +22,7 @@ const Dashboard = (props) => {
   const normalizedEventLogs = eventLogs && normalizeEventLogs(eventLogs);
   return (
     <Wrapper>
+      <TestTask />
       <Wallet isActive={walletStatus === 'active'} isNeedUpdate={bloxLiveNeedsUpdate} walletNeedsUpdate={walletNeedsUpdate} summary={accountsSummary} />
       <Validators accounts={normalizedAccounts} />
       <EventLogs events={normalizedEventLogs} />
