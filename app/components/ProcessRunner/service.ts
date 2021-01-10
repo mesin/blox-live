@@ -25,7 +25,6 @@ export const processInstantiator = (processName: string, payload: Record<string,
     return new ReinstallProcess();
   }
   if (processName === PROCESSES.SEND_IMAGES) {
-    console.log('Send images process - new!');
     return new SendImagesProcess(payload.images);
   }
   if (processName === PROCESSES.SHOW_IMAGES) {

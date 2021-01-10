@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 // import { saveImages, showImages } from './actions';
@@ -33,14 +33,23 @@ const TestTaskButton = styled.button`
 const TestTask = () => {
   const dispatch = useDispatch();
 
-  const { startProcess, isLoading, processMessage, isDone, isServerActive, clearProcessState, loaderPrecentage } = useProcessRunner();
+  const {
+    startProcess,
+    isLoading,
+    processMessage,
+    isDone,
+    error,
+    isServerActive,
+    clearProcessState,
+    loaderPrecentage
+  } = useProcessRunner();
 
   const onSuccess = () => {
-    console.log('Done!');
+    console.log('Done with success!');
   };
 
   const onFailure = () => {
-    console.log('Error!');
+    console.log('Done with error:', error);
   };
 
   useEffect(() => {
@@ -51,9 +60,11 @@ const TestTask = () => {
   }, [isLoading, isDone, processMessage]);
 
   const saveImagesCallback = async () => {
-    console.log('Sending images to KeyVault..');
-    await startProcess('send-images', null, {});
-    console.log('Sending images to KeyVault.. done!');
+    await startProcess(
+      'sendImages',
+      'Sending images to KeyVault..',
+      null
+    );
   };
 
   const showImagesCallback = async () => {
@@ -65,7 +76,7 @@ const TestTask = () => {
 
   return (
     <div>
-      { isLoading && (
+      { isServerActive && isLoading && !isDone && !error && (
         <TestTaskButtonsPanel>
           <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
         </TestTaskButtonsPanel>
