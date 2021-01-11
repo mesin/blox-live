@@ -6,7 +6,7 @@ import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
 const ReinstallingModal = (props: Props) => {
   const { isLoading, processMessage, isDone, isServerActive, processName,
-    startProcess, clearProcessState, loaderPrecentage } = useProcessRunner();
+    startProcess, clearProcessState, loaderPercentage } = useProcessRunner();
   const { title, description, move1StepForward, move2StepsForward, onClose, image } = props;
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const ReinstallingModal = (props: Props) => {
       <Title>{title}</Title>
       <Wrapper>
         {description && <Description>{description}</Description>}
-        <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
+        <ProcessLoader text={processMessage} precentage={loaderPercentage} />
       </Wrapper>
       <SmallText withWarning />
     </ModalTemplate>

@@ -1,11 +1,22 @@
-import React, {useEffect, useState } from 'react';
+// eslint-disable-next-line max-classes-per-file
+import React, { useState } from 'react';
+import { notification } from 'antd';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-// import { saveImages, showImages } from './actions';
-import { ProcessLoader } from '../../../../common/components';
-import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
 
-const TestTaskButtonsPanel = styled.div`
+import ShowImagesModal from './ShowImagesModal';
+import useProcessRunner from 'components/ProcessRunner/useProcessRunner';
+import { Subject } from '../../../../backend/proccess-manager/subject.interface';
+import { Observer } from '../../../../backend/proccess-manager/observer.interface';
+import RetrieveImagesProcess from '../../../../backend/proccess-manager/retrieve-images.process';
+import SendImagesProcess, { ImagesType } from '../../../../backend/proccess-manager/send-images.process';
+
+const TestTaskError = styled.div`
+  color: red;
+  width: 100%;
+  font-size: 18px;
+`;
+
+const TestTaskPanel = styled.div`
   width: 100%;
   display: flex;
   margin-bottom: 30px;
@@ -30,61 +41,106 @@ const TestTaskButton = styled.button`
   }
 `;
 
+class SaveImagesProcessListener implements Observer {
+  private readonly logFunc: any;
+
+  constructor(func: any) {
+    this.logFunc = func;
+  }
+
+  public update(_subject: Subject, payload: any) {
+    switch (payload.state) {
+      case 'fallback':
+        notification.error({ message: 'Error', description: 'Can not save images!' });
+        break;
+      case 'completed':
+        notification.success({ message: 'Succeeded', description: 'Images saved successfully' });
+        break;
+    }
+    console.log(`${payload.step?.num}/${payload.step?.numOf}`, payload);
+    this.logFunc(`${payload.step?.num}/${payload.step?.numOf}`, payload);
+  }
+}
+
+class GetImagesProcessListener implements Observer {
+  private readonly setLoadedImages: any;
+  private images: ImagesType = [];
+
+  constructor(func: Function) {
+    this.setLoadedImages = func;
+  }
+
+  public update(_subject: Subject, payload: any) {
+    switch (payload.state) {
+      case 'fallback':
+        notification.error({ message: 'Error', description: 'Can not get images!' });
+        break;
+      case 'running':
+        this.images = payload.images || this.images;
+        notification.success({ message: 'Succeeded', description: `Successfully retrieved ${this.images.length || 0} image(s)` });
+        break;
+      case 'completed':
+        this.setLoadedImages(this.images);
+        break;
+    }
+    console.log(`${payload.step?.num}/${payload.step?.numOf}`, payload);
+  }
+}
+
 const TestTask = () => {
-  const dispatch = useDispatch();
+  const [loadedImages, setLoadedImages] = useState([]);
+  const processStateArray = useState('');
+  const setProcessStatus = processStateArray[1];
 
   const {
-    startProcess,
-    isLoading,
-    processMessage,
     isDone,
+    isLoading,
     error,
-    isServerActive,
-    clearProcessState,
-    loaderPrecentage
+    clearProcessState
   } = useProcessRunner();
 
-  const onSuccess = () => {
-    console.log('Done with success!');
-  };
-
-  const onFailure = () => {
-    console.log('Done with error:', error);
-  };
-
-  useEffect(() => {
-    if (isDone) {
-      clearProcessState();
-      isServerActive ? onSuccess() : onFailure();
-    }
-  }, [isLoading, isDone, processMessage]);
-
   const saveImagesCallback = async () => {
-    await startProcess(
-      'sendImages',
-      'Sending images to KeyVault..',
-      null
-    );
+    const images: ImagesType = [
+      {
+        url: 'https://bit.ly/3ozqA3e'
+      }
+    ];
+    const accountCreateProcess = new SendImagesProcess(images);
+    const listener = new SaveImagesProcessListener(setProcessStatus);
+    accountCreateProcess.subscribe(listener);
+    try {
+      await accountCreateProcess.run();
+      clearProcessState();
+    } catch (e) {
+      setProcessStatus(e);
+    }
   };
 
   const showImagesCallback = async () => {
-    console.log('Retrieving images from KeyVault..');
-    // await startProcess('get-images', null, {});
-    // await dispatch(showImages());
-    // console.log('Retrieving images from KeyVault.. done!');
+    const accountCreateProcess = new RetrieveImagesProcess();
+    const listener = new GetImagesProcessListener(setLoadedImages);
+    accountCreateProcess.subscribe(listener);
+    try {
+      await accountCreateProcess.run();
+      await clearProcessState();
+      console.log({ loadedImages });
+    } catch (e) {
+      setProcessStatus(e);
+    }
   };
 
   return (
     <div>
-      { isServerActive && isLoading && !isDone && !error && (
-        <TestTaskButtonsPanel>
-          <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
-        </TestTaskButtonsPanel>
-      )}
-      <TestTaskButtonsPanel>
+      { error && !isLoading && <TestTaskError>{error}</TestTaskError> }
+
+      <TestTaskPanel>
         <TestTaskButton onClick={() => saveImagesCallback()}>Process A: Send Images JSON to KeyVault</TestTaskButton>
         <TestTaskButton onClick={() => showImagesCallback()}>Process B: Show stored images in dialog</TestTaskButton>
-      </TestTaskButtonsPanel>
+      </TestTaskPanel>
+
+      {!isLoading && !error && loadedImages.length &&
+        <ShowImagesModal onClose={() => { setLoadedImages([]); }} images={loadedImages} />
+      }
     </div>
   );
 };

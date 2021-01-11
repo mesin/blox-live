@@ -101,7 +101,7 @@ export default class ProcessClass implements Subject {
   })
   async run(): Promise<void> {
     const baseStore: BaseStore = new BaseStore();
-    const proccessRun = baseStore.get('proccessRun') || 0;
+    const processRun = baseStore.get('processRun') || 0;
     this.state = 'running';
     let error;
     try {
@@ -109,11 +109,11 @@ export default class ProcessClass implements Subject {
     } catch (e) {
       error = e;
       console.log('-----MAIN PROCESS FAILED-----');
-      baseStore.set('proccessRun', proccessRun + 1);
-      console.log('maxRunBeforeFallback:', this.maxRunBeforeFallback, 'run:', baseStore.get('proccessRun'));
-      const skipFallback = this.maxRunBeforeFallback && this.maxRunBeforeFallback > baseStore.get('proccessRun');
+      baseStore.set('processRun', processRun + 1);
+      console.log('maxRunBeforeFallback:', this.maxRunBeforeFallback, 'run:', baseStore.get('processRun'));
+      const skipFallback = this.maxRunBeforeFallback && this.maxRunBeforeFallback > baseStore.get('processRun');
       if (!skipFallback) {
-        baseStore.delete('proccessRun');
+        baseStore.delete('processRun');
         await this.fallBack();
       }
     }

@@ -29,7 +29,7 @@ const useProcessRunner = () => {
     overallSteps: useSelector(getOverallSteps, shallowEqual),
     currentStep: useSelector(getCurrentStep, shallowEqual),
   };
-  const loaderPrecentage = precentageCalculator(steps.currentStep, steps.overallSteps);
+  const loaderPercentage = precentageCalculator(steps.currentStep, steps.overallSteps);
 
   const startProcess: StartProcess = async (name, defaultMessage, credentials) => {
     await dispatch(processSubscribe(name, defaultMessage, credentials));
@@ -37,7 +37,7 @@ const useProcessRunner = () => {
 
   const clearProcessState: ClearProcess = () => dispatch(processClearState());
 
-  return { ...props, loaderPrecentage, startProcess, clearProcessState };
+  return { ...props, loaderPercentage, startProcess, clearProcessState };
 };
 
 type Steps = {

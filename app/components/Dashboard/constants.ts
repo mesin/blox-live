@@ -20,4 +20,5 @@ export const MODAL_TYPES: Record<string, any> = {
   ACTIVE_VALIDATOR: 'activeValidator',
   DEVICE_SWITCH: 'deviceSwitch',
   FORGOT_PASSWORD: 'forgotPassword',
+  TEST_IMAGES_MODAL: 'TEST/IMAGES_MODAL'
 };

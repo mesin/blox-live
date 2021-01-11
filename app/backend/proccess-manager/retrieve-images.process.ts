@@ -3,15 +3,13 @@ import BaseStore from '../common/store-manager/base-store';
 import Connection from '../common/store-manager/connection';
 import KeyVaultService from '../services/key-vault/key-vault.service';
 
-export type ImagesType = { url: string }[];
-
-export default class SendImagesProcess extends ProcessClass {
+export default class RetrieveImagesProcess extends ProcessClass {
   private readonly keyVaultService: KeyVaultService;
   public readonly actions: Array<any>;
   public readonly fallbackActions: Array<any>;
   public readonly maxRunBeforeFallback: number;
 
-  constructor(images: ImagesType) {
+  constructor() {
     super();
     const baseStore = new BaseStore();
     Connection.setup({
@@ -25,10 +23,7 @@ export default class SendImagesProcess extends ProcessClass {
     this.actions = [
       {
         instance: this.keyVaultService,
-        method: 'saveImages',
-        params: {
-          images
-        }
+        method: 'getImages'
       }
     ];
 

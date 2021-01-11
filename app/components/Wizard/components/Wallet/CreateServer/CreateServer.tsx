@@ -57,7 +57,7 @@ const CreateServer = (props: Props) => {
 
   const onSuccess = () => setPage(page + 1);
 
-  const { isLoading, error, processMessage, loaderPrecentage, accessKeyId, setAccessKeyId,
+  const { isLoading, error, processMessage, loaderPercentage, accessKeyId, setAccessKeyId,
           secretAccessKey, setSecretAccessKey, onStartProcessClick, isPasswordInputDisabled, isButtonDisabled
         } = useCreateServer({onSuccess});
 
@@ -87,7 +87,7 @@ const CreateServer = (props: Props) => {
       <Button isDisabled={isButtonDisabled} onClick={() => onStartProcessClick('install')}>Continue</Button>
       {isLoading && processMessage && !error && (
         <ProgressWrapper>
-          <ProcessLoader text={processMessage} precentage={loaderPrecentage} />
+          <ProcessLoader text={processMessage} precentage={loaderPercentage} />
         </ProgressWrapper>
       )}
       {error && (

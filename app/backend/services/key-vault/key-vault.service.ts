@@ -1,13 +1,13 @@
-import Connection from '../../common/store-manager/connection';
-import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
-import VersionService from '../version/version.service';
+import config from '../../common/config';
 import WalletService from '../wallet/wallet.service';
-import KeyVaultApi from '../../common/communication-manager/key-vault-api';
+import VersionService from '../version/version.service';
+import { Catch, CatchClass, Step } from '../../decorators';
+import Connection from '../../common/store-manager/connection';
+import { isVersionHigherOrEqual } from '../../../utils/service';
 import BloxApi from '../../common/communication-manager/blox-api';
 import { METHOD } from '../../common/communication-manager/constants';
-import { Catch, CatchClass, Step } from '../../decorators';
-import config from '../../common/config';
-import { isVersionHigherOrEqual } from '../../../utils/service';
+import KeyVaultSsh from '../../common/communication-manager/key-vault-ssh';
+import KeyVaultApi from '../../common/communication-manager/key-vault-api';
 
 function sleep(msec) {
   return new Promise(resolve => {
@@ -22,7 +22,7 @@ export default class KeyVaultService {
   private readonly versionService: VersionService;
   private readonly walletService: WalletService;
   private readonly bloxApi: BloxApi;
-  private storePrefix: string;
+  private readonly storePrefix: string;
 
   constructor(prefix: string = '') {
     this.storePrefix = prefix;
@@ -223,21 +223,27 @@ export default class KeyVaultService {
   }
 
   @Step({
-    name: 'Saving images...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
+    name: 'Saving images...'
   })
-  async saveImages(images: { url: string }[]): Promise<any> {
-    console.log('KeyVaultService::saveImages: ', images);
-    return Connection.db('CustomUserData').set('images', images);
+  async saveImages({ images }): Promise<any> {
+    try {
+      Connection.db('CustomUserData').set('images', images);
+      return { saved: true };
+    } catch (error) {
+      return { saved: false, error };
+    }
   }
 
   @Step({
-    name: 'Retrieving images...',
-    requiredConfig: ['publicIp', 'vaultRootToken']
+    name: 'Retrieving images...'
   })
   async getImages(): Promise<any> {
-    console.log('KeyVaultService::getImages');
-    return Connection.db('CustomUserData').get('images');
+    try {
+      const images = await Connection.db('CustomUserData').get('images');
+      return { images };
+    } catch (error) {
+      return { images: [], error };
+    }
   }
 
   @Step({

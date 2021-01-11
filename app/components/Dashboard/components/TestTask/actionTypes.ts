@@ -1,2 +1,0 @@
-export const TEST_SAVE_IMAGES = 'TEST/SAVE_IMAGES';
-export const TEST_SHOW_IMAGES = 'TEST/SHOW_IMAGES';

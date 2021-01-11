@@ -1,21 +1,28 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { KeyVaultReactivation, KeyVaultUpdate, DepositInfoModal, AccountRecovery } from '../../..';
-import { PasswordModal } from '../../../KeyVaultModals';
-import ActiveValidatorModal from '../../../ActiveValidatorModal';
-
-import * as actionsFromDashboard from '../../actions';
-import * as actionsFromWizard from '../../../Wizard/actions';
-import * as actionsFromAccounts from '../../../Accounts/actions';
-import * as actionsFromUser from '../../../User/actions';
-import * as selectors from '../../selectors';
-import { getActiveValidators } from '../../../EventLogs/selectors';
 
 import { MODAL_TYPES } from '../../constants';
 
+import {
+  KeyVaultReactivation, KeyVaultUpdate,
+  DepositInfoModal, AccountRecovery } from '../../..';
+
+import { PasswordModal } from '../../../KeyVaultModals';
+import ShowImagesModal from '../TestTask/ShowImagesModal';
+import ActiveValidatorModal from '../../../ActiveValidatorModal';
+
+import * as selectors from '../../selectors';
+import * as actionsFromDashboard from '../../actions';
+import * as actionsFromUser from '../../../User/actions';
+import * as actionsFromWizard from '../../../Wizard/actions';
+import * as actionsFromAccounts from '../../../Accounts/actions';
+import { getActiveValidators } from '../../../EventLogs/selectors';
+
 const ModalsManager = (props: Props) => {
-  const { dashboardActions, wizardActions, accountsActions, userActions, showModal, modalType, onSuccess, activeValidators } = props;
+  const { dashboardActions, wizardActions, accountsActions,
+    userActions, showModal, modalType, onSuccess, activeValidators
+  } = props;
   const { clearModalDisplayData } = dashboardActions;
   const { loadWallet, setFinishedWizard } = wizardActions;
   const { loadAccounts } = accountsActions;
@@ -49,6 +56,8 @@ const ModalsManager = (props: Props) => {
         return <KeyVaultUpdate onSuccess={() => onKeyvaultProcessSuccess()} onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.DEPOSIT_INFO:
         return <DepositInfoModal onClose={() => clearModalDisplayData()} />;
+      case MODAL_TYPES.TEST_IMAGES_MODAL:
+        return <ShowImagesModal onClose={() => clearModalDisplayData()} />;
       case MODAL_TYPES.ACTIVE_VALIDATOR:
         return activeValidators.length > 0 && (
           <ActiveValidatorModal onClose={() => clearModalDisplayData()} activeValidators={activeValidators} />

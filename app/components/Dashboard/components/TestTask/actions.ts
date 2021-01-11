@@ -1,10 +1,8 @@
-import * as actionTypes from './actionTypes';
+import { MODAL_TYPES } from '../../constants';
 
-export const saveImages = (payload: Record<string, any>) => ({
-  type: actionTypes.TEST_SAVE_IMAGES,
-  payload: payload.images
-});
-
-export const showImages = () => ({
-  type: actionTypes.TEST_SHOW_IMAGES,
+export const showModalWithImages = (payload: Record<string, any>) => ({
+  type: MODAL_TYPES.TEST_IMAGES_MODAL,
+  payload: {
+    images: payload
+  }
 });
